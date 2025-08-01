@@ -9,8 +9,22 @@ public class LayoutController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String page = req.getParameter("page");
-        if (page == null || page.isEmpty()) {
+        String uri = req.getRequestURI();               // e.g., /myApp/dashboard
+        String contextPath = req.getContextPath();      // e.g., /myApp
+        String path = uri.substring(contextPath.length()); // e.g., /dashboard
+
+        // Skip static files (like .css, .js, etc.)
+        if (path.matches("^/(resources|css|js|images)/.*") || path.matches(".*\\.(css|js|png|jpg|jpeg|gif|ico|svg)$")) {
+            req.getRequestDispatcher(path).forward(req, resp);
+            return;
+        }
+
+        // Extract the page name
+        String page = path;
+        if (page.startsWith("/")) {
+            page = page.substring(1); // Remove the leading '/'
+        }
+        if (page.isEmpty()) {
             page = "landing"; // Default page
         }
 
@@ -18,7 +32,7 @@ public class LayoutController extends HttpServlet {
         String layoutType;
 
         switch (page) {
-            // Public pages (landing, about, etc.)
+            // Public pages
             case "landing":
             case "about":
             case "contact":
@@ -26,14 +40,14 @@ public class LayoutController extends HttpServlet {
                 layoutType = "public";
                 break;
 
-            // Auth pages (login, signup)
+            // Auth pages
             case "login":
             case "signup":
                 contentPage = "/fragments/" + page + "Content.jsp";
                 layoutType = "auth";
                 break;
 
-            // App pages (dashboard etc.)
+            // Dashboard pages
             case "dashboard":
             case "settings":
                 contentPage = "/fragments/" + page + "Content.jsp";
@@ -46,6 +60,7 @@ public class LayoutController extends HttpServlet {
                 layoutType = "feed";
                 break;
 
+            // Default 404
             default:
                 contentPage = "/fragments/404.jsp";
                 layoutType = "public";

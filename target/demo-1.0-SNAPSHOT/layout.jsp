@@ -10,10 +10,14 @@
   <title>My Web App</title>
   <!-- You can dynamically load different CSS based on layoutType -->
   <c:if test="${layoutType == 'auth'}">
-    <link rel="stylesheet" href="resources/css/auth.css">
+    <link rel="stylesheet" href="resources/login.css">
   </c:if>
   <c:if test="${layoutType == 'dashboard'}">
-    <link rel="stylesheet" href="resources/css/dashboard.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/login.css">
+
+  </c:if>
+  c:if test="${layoutType == 'login'}">
+  <link rel="stylesheet" href="resources/login.css">
   </c:if>
 </head>
 <body>

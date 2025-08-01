@@ -15,11 +15,6 @@
         <servlet-class>com.demo.web.controller.LayoutController</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>Landings</servlet-name>
-        <servlet-class>com.demo.web.controller.Landings</servlet-class>
-    </servlet>
-
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/main</url-pattern>
@@ -27,13 +22,9 @@
 
     <servlet-mapping>
         <servlet-name>LayoutController</servlet-name>
-        <url-pattern>/view</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>Landings</servlet-name>
-        <url-pattern>/landing</url-pattern>
-    </servlet-mapping>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
