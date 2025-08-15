@@ -35,7 +35,6 @@
 
 <jsp:include page="/fragments/header.jsp"/>
 
-<!-- Dynamically include content -->
 <jsp:include page="${contentPage}" />
 
 <jsp:include page="/fragments/footer.jsp"/>
