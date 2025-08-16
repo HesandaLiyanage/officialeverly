@@ -21,7 +21,25 @@ public class LayoutController extends HttpServlet {
             case "login":
                 contentPage = "/fragments/loginContent.jsp";
                 break;
+            case "memories":
+                contentPage = "/fragments/memories.jsp";
+                break;
+            case "journals":
+                contentPage = "/fragments/journals.jsp";
+                break;
             case "autographs":
+                contentPage = "/fragments/autographcontent.jsp";
+                break;
+            case "groups":
+                contentPage = "/fragments/autographcontent.jsp";
+                break;
+            case "events":
+                contentPage = "/fragments/autographcontent.jsp";
+                break;
+            case "feed":
+                contentPage = "/fragments/autographcontent.jsp";
+                break;
+            case "settings":
                 contentPage = "/fragments/autographcontent.jsp";
                 break;
             default:

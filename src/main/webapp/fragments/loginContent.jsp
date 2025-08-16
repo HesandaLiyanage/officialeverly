@@ -21,9 +21,9 @@
   <h1>Log in to Everly</h1>
   <p>Don't have an account? <a href="/create-account">Create one.</a></p>
 
-  <form action="/login" method="post" class="login-form">
+  <form action="${pageContext.request.contextPath}/login" method="post" class="login-form">
     <label for="email">Email address</label>
-    <input type="email" id="email" name="email" required>
+    <input id="email" name="email" required>
 
     <label for="password">Password</label>
     <input type="password" id="password" name="password" required>
