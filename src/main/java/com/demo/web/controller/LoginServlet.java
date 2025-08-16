@@ -1,11 +1,9 @@
 package com.demo.web.controller;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.WebServlet;
+import javax.servlet.*;
+import javax.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet("/login") // Maps this servlet to /login URL
 public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -22,11 +20,11 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("username", username);
 
             // 4. Redirect to dashboard (or protected page)
-            response.sendRedirect("fragments/dashboard.jsp");
+            response.sendRedirect(request.getContextPath() + "/view?page=memories");
         } else {
             // 5. Invalid login → send back to login page with error
             request.setAttribute("errorMessage", "Invalid username or password");
-            RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/view?page=login");
             rd.forward(request, response);
         }
     }
