@@ -59,8 +59,27 @@ public class LayoutController extends HttpServlet {
                 contentPage = "/fragments/" + page + "Content.jsp";
                 layoutType = "feed";
                 break;
-
-            // Default 404
+            case "memories":
+                contentPage = "/fragments/memories.jsp";
+                break;
+            case "journals":
+                contentPage = "/fragments/journals.jsp";
+                break;
+            case "autographs":
+                contentPage = "/fragments/autographcontent.jsp";
+                break;
+            case "groups":
+                contentPage = "/fragments/autographcontent.jsp";
+                break;
+            case "events":
+                contentPage = "/fragments/autographcontent.jsp";
+                break;
+            case "feed":
+                contentPage = "/fragments/autographcontent.jsp";
+                break;
+            case "settings":
+                contentPage = "/fragments/autographcontent.jsp";
+                break;
             default:
                 contentPage = "/fragments/404.jsp";
                 layoutType = "public";
