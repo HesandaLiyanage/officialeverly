@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="/fragments/header2.jsp" />
+<jsp:include page="/fragments/header.jsp" />
 
 <div id="main">
   <jsp:include page="${contentPage}" />

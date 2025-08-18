@@ -35,7 +35,7 @@
 
   <form action="/google-login" method="post">
     <button type="submit" class="google-login-btn">
-      <img src="/static/icons/google-icon.svg" alt="Google" />
+      <img src="${pageContext.request.contextPath}/resources/assets/googleicon.png" alt="Google" />
       Continue with Google
     </button>
   </form>
@@ -43,6 +43,6 @@
   <div class="extra-links">
     <a href="/create-account">Create a new account</a>
     <a href="/forgot-password">Forgot password?</a>
-    <a href="/">← Back to Everly.com</a>
+    <a href="/">Back to Everly.com</a>
   </div>
 </main>

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Created-By: IntelliJ IDEA
-Built-By: nethm
-Build-Jdk: Microsoft OpenJDK 21.0.8
+Built-By: Hesanda Liyanage
+Build-Jdk: Oracle OpenJDK 24.0.1
 
