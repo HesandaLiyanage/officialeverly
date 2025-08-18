@@ -1,49 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Memories - Everly</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/components.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memories.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-<!-- Header Navigation -->
-<header class="header">
-  <div class="header__container">
-    <div class="header__brand">
-      <h1 class="brand__logo">Everly</h1>
-    </div>
-    <nav class="header__nav">
-      <a href="${pageContext.request.contextPath}/home" class="nav__link">Home</a>
-      <a href="${pageContext.request.contextPath}/groups" class="nav__link">Groups</a>
-      <a href="${pageContext.request.contextPath}/events" class="nav__link">Events</a>
-      <a href="${pageContext.request.contextPath}/announcements" class="nav__link">Announcements</a>
-      <a href="${pageContext.request.contextPath}/journal" class="nav__link">Journal</a>
-      <a href="${pageContext.request.contextPath}/autographs" class="nav__link">Autographs</a>
-    </nav>
-    <div class="header__actions">
-      <div class="search-input">
-        <input type="text" placeholder="Search" class="search-input__field" id="headerSearch">
-        <svg class="search-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M21 21L16.514 16.506M19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <button class="btn btn--icon" id="notificationsBtn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M14.857 17.082C16.465 16.617 17.888 15.655 18.944 14.326C19.999 12.997 20.628 11.368 20.746 9.662C20.864 7.956 20.464 6.25 19.592 4.773C18.72 3.296 17.417 2.12 15.857 1.408" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M3 12C3 13.1819 3.23279 14.3522 3.68508 15.4442C4.13738 16.5361 4.80031 17.5282 5.63604 18.364C6.47177 19.1997 7.46392 19.8626 8.55585 20.3149C9.64778 20.7672 10.8181 21 12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div class="avatar">
-        <img src="${pageContext.request.contextPath}/images/avatar.jpg" alt="User Avatar" class="avatar__image">
-      </div>
-    </div>
-  </div>
-</header>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<!-- Add CSS specific to memories page in the head section -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/components.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memories.css">
 
 <main class="main-content">
   <div class="container">
@@ -259,20 +218,5 @@
   </div>
 </main>
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer__content">
-      <a href="${pageContext.request.contextPath}/privacy" class="footer__link">Privacy Policy</a>
-      <a href="${pageContext.request.contextPath}/terms" class="footer__link">Terms of Service</a>
-      <a href="${pageContext.request.contextPath}/contact" class="footer__link">Contact Us</a>
-    </div>
-    <div class="footer__copyright">
-      © 2023 Everly. All rights reserved.
-    </div>
-  </div>
-</footer>
-
+<!-- Include JavaScript at the bottom -->
 <script src="${pageContext.request.contextPath}/resources/ts/memories.js"></script>
-</body>
-</html>
