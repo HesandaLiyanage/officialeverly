@@ -9,27 +9,66 @@ public class LayoutController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String page = req.getParameter("page");
+        String uri = req.getRequestURI();               // e.g., /myApp/dashboard
+        String contextPath = req.getContextPath();      // e.g., /myApp
+        String path = uri.substring(contextPath.length()); // e.g., /dashboard
 
-        if (page == null || page.isEmpty()) {
-            page = "login"; // default page
+        // Skip static files (like .css, .js, etc.)
+        if (path.matches("^/(resources|css|js|images)/.*") || path.matches(".*\\.(css|js|png|jpg|jpeg|gif|ico|svg)$")) {
+            req.getRequestDispatcher(path).forward(req, resp);
+            return;
         }
 
+        // Extract the page name
+        String page = path;
+        if (page.startsWith("/")) {
+            page = page.substring(1); // Remove the leading '/'
+        }
+        if (page.isEmpty()) {
+            page = "landing"; // Default page
+        }
 
         String contentPage;
+        String layoutType;
+
         switch (page) {
+            // Public pages
+            case "landing":
+            case "about":
+            case "contact":
+                contentPage = "/fragments/" + page + "Content.jsp";
+                layoutType = "public";
+                break;
+
+            // Auth pages
             case "login":
-                contentPage = "/fragments/loginContent.jsp";
+            case "signup":
+                contentPage = "/fragments/" + page + "Content.jsp";
+                layoutType = "auth";
                 break;
-            case "autographs":
-                contentPage = "/fragments/autographcontent.jsp";
+
+            // Dashboard pages
+            case "dashboard":
+            case "settings":
+                contentPage = "/fragments/" + page + "Content.jsp";
+                layoutType = "dashboard";
                 break;
+
+            // Feed
+            case "feed":
+                contentPage = "/fragments/" + page + "Content.jsp";
+                layoutType = "feed";
+                break;
+
+            // Default 404
             default:
                 contentPage = "/fragments/404.jsp";
+                layoutType = "public";
                 break;
         }
 
         req.setAttribute("contentPage", contentPage);
+        req.setAttribute("layoutType", layoutType);
         req.getRequestDispatcher("/layout.jsp").forward(req, resp);
     }
 }
