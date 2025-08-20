@@ -1,0 +1,42 @@
+/* Global font: Plus Jakarta Sans */
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Specific text sizes */
+.main-title {
+    font-size: 32px;
+}
+
+.subtext {
+    font-size: 14px;
+}
+
+.add-book-container {
+    position: fixed !important;
+    bottom: 100px !important;
+    right: 100px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 1000; /* ensure it stays above other elements */
+}
+
+.add-book-btn {
+    font-family: 'Roboto', sans-serif;
+    background-color: #7C3AED;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+    transition: background 0.3s ease;
+}
+
+.add-book-btn:hover {
+    background-color: #6D28D9;
+}
+
