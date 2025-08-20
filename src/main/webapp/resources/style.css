@@ -1,25 +1,69 @@
-/* Global font: Plus Jakarta Sans */
+/* Global font */
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #F9FAFB;
+    color: #1F2937;
+    margin: 0;
+    padding: 0;
 }
 
-/* Specific text sizes */
+/* MAIN CONTENT */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
 .main-title {
     font-size: 32px;
+    font-weight: bold;
 }
 
 .subtext {
     font-size: 14px;
+    color: #6B7280;
+    margin-top: 8px;
 }
 
+/* GRID */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 32px;
+}
+
+/* CARD */
+.card {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+}
+
+.card-img img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.card-title {
+    margin: 12px 0 4px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.card-date {
+    font-size: 12px;
+    color: #6B7280;
+}
+
+/* FIXED ADD BOOK BUTTON */
 .add-book-container {
-    position: fixed !important;
-    bottom: 100px !important;
-    right: 100px !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    z-index: 1000; /* ensure it stays above other elements */
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
 }
 
 .add-book-btn {
@@ -40,3 +84,25 @@ body {
     background-color: #6D28D9;
 }
 
+/* FOOTER */
+.footer {
+    background-color: #F9FAFB;
+    padding: 32px 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #9CA3AF;
+}
+
+.footer-links a {
+    margin: 0 12px;
+    color: #6B7280;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: #111827;
+}
+
+.footer-copy {
+    margin-top: 12px;
+}
