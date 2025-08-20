@@ -30,6 +30,9 @@ public class LayoutController extends HttpServlet {
             case "autographs":
                 contentPage = "/fragments/autographcontent.jsp";
                 break;
+            case "viewautograph":
+                contentPage = "/fragments/viewautograph.jsp";
+                break;
             case "groups":
                 contentPage = "/fragments/autographcontent.jsp";
                 break;
