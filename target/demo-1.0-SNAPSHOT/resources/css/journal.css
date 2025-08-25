@@ -1,0 +1,315 @@
+body {
+    margin: 0;
+    font-family: 'Epilogue', sans-serif;
+    background: #fff;
+    color: #120D1C;
+}
+
+.journals-page {
+    display: flex;
+    padding: 32px 80px;
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Header */
+.journals-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+    margin-bottom: 16px;
+}
+
+/* Search bar */
+.search-bar {
+    display: flex;
+    width: 100%;
+    max-width: 600px;
+    background: #F1EAFE;
+    border-radius: 12px;
+    padding: 8px 16px;
+    margin-bottom: 16px;
+    align-items: center;
+}
+
+.search-bar .search-logo {
+    font-size: 18px;
+    color: #614F96;
+    margin-right: 8px;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 400;
+    background: transparent;
+    color: #614F96;
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.filter-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    height: 36px;
+    background: #F1EAFE;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Pinned Journals Grid */
+.journal-entries {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.journal-entry {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border-radius: 12px;
+    background-color: lightgray;
+    background-size: cover;
+    background-position: center;
+    color: #120D1C;
+    padding: 12px;
+    min-height: 176px;
+}
+
+.journal-entry h2 {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    margin: 0;
+}
+
+.journal-entry p {
+    font-size: 14px;
+    font-weight: 400;
+    color: #614F96;
+    line-height: 21px;
+    margin: 4px 0 0 0;
+}
+
+/* Add Journal + Vault buttons */
+.journal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.journal-actions button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-journal-btn {
+    background: #9B51E0;
+    color: #fff;
+}
+
+.vault-btn {
+    background: #EADDFF;
+    color: #4F378A;
+    box-shadow: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px 0 rgba(0,0,0,0.3);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    flex-shrink: 0;
+}
+
+/* Sidebar Sections */
+.sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sidebar-section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+    color: #120D1C;
+    margin: 0;
+}
+
+/* Streak Section */
+.streak-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #F8F9FA;
+    border-radius: 12px;
+}
+
+.streak-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #FF6B35;
+    border-radius: 8px;
+    color: white;
+    font-size: 20px;
+}
+
+.streak-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.streak-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #120D1C;
+    margin: 0;
+}
+
+.streak-days {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666B87;
+    margin: 0;
+}
+
+/* Milestones and Favourites */
+.milestone-item,
+.favourite-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.milestone-item:hover,
+.favourite-item:hover {
+    background: #F8F9FA;
+}
+
+.milestone-icon,
+.favourite-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #F1EAFE;
+    border-radius: 6px;
+    color: #614F96;
+    font-size: 16px;
+}
+
+.milestone-content,
+.favourite-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.milestone-title,
+.favourite-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #120D1C;
+    margin: 0;
+}
+
+.milestone-subtitle,
+.favourite-subtitle {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666B87;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .journals-page {
+        flex-direction: column;
+        padding: 24px 40px;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        gap: 24px;
+        overflow-x: auto;
+    }
+
+    .sidebar-section {
+        min-width: 250px;
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .journals-page {
+        padding: 16px 24px;
+    }
+
+    .filters {
+        flex-wrap: wrap;
+    }
+
+    .sidebar {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .sidebar-section {
+        min-width: auto;
+    }
+
+    .journal-entries {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .journals-page {
+        padding: 16px;
+    }
+
+    .journal-actions {
+        flex-direction: column;
+    }
+
+    .journal-actions button {
+        width: 100%;
+    }
+}
