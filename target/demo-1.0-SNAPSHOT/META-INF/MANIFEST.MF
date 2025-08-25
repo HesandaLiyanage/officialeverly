@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Created-By: IntelliJ IDEA
-Built-By: HP
-Build-Jdk: Oracle OpenJDK 22.0.2
+Built-By: Hesanda Liyanage
+Build-Jdk: Oracle OpenJDK 24.0.1
 
