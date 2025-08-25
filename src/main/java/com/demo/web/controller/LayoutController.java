@@ -16,7 +16,8 @@ public class LayoutController extends HttpServlet {
         }
 
 
-        String contentPage,layoutPage;
+        String contentPage;
+        String layoutPage;
         switch (page) {
             case "login":
                 contentPage = "/fragments/loginContent.jsp";
@@ -36,6 +37,7 @@ public class LayoutController extends HttpServlet {
                 break;
             case "viewautograph":
                 contentPage = "/fragments/viewautograph.jsp";
+                layoutPage = "/layout2.jsp";
                 break;
             case "groups":
                 contentPage = "/fragments/autographcontent.jsp";

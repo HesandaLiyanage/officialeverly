@@ -162,23 +162,23 @@
           <c:otherwise>
             <!-- Default favorites -->
             <li class="favorite-item">
-              <div class="favorite-icon graduation">🎓</div>
+              <div class="favorite-icon graduation">  </div>
               <span class="favorite-name">Graduation Ceremony</span>
             </li>
             <li class="favorite-item">
-              <div class="favorite-icon bbq">🔥</div>
+              <div class="favorite-icon bbq"> </div>
               <span class="favorite-name">Summer BBQ</span>
             </li>
             <li class="favorite-item">
-              <div class="favorite-icon city">🏙️</div>
+              <div class="favorite-icon city"> </div>
               <span class="favorite-name">City Exploration</span>
             </li>
             <li class="favorite-item">
-              <div class="favorite-icon art">🎨</div>
+              <div class="favorite-icon art">  </div>
               <span class="favorite-name">Art Exhibition</span>
             </li>
             <li class="favorite-item">
-              <div class="favorite-icon road">🛣️</div>
+              <div class="favorite-icon road">  </div>
               <span class="favorite-name">Road Trip</span>
             </li>
           </c:otherwise>
