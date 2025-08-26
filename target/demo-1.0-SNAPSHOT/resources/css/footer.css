@@ -5,7 +5,7 @@
 }
 
 body {
-    font-family: 'Manrope', sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
     min-height: 100vh;
     background-color: #f5f5f5;
     display: flex;
@@ -18,7 +18,7 @@ body {
     display: flex;
     padding: 40px 20px;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 24px;
     flex: 1 0 0;
     align-self: stretch;
@@ -31,26 +31,41 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    align-content: center;
-    row-gap: 24px;
-    align-self: stretch;
-    flex-wrap: wrap;
     width: 100%;
+    max-width: 800px; /* optional: control max width */
+    gap: 100px; /* space between items */
+    position: relative;
 }
 
 /* Footer Links */
 .footer-links {
     display: flex;
-    gap: 250px;
-    flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+/* Use wrappers to space items properly */
+.footer-link-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+/* Center link exactly in the middle */
+.footer-link-wrapper.center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    flex: none; /* prevent stretching */
 }
 
 .footer-link {
     color: #666B87;
     text-align: center;
     font-feature-settings: 'dlig' on;
-    font-family: 'Manrope', sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -65,10 +80,11 @@ body {
 
 /* Copyright Text */
 .footer-copyright {
+    justify-content: center;
     color: #666B87;
     text-align: center;
     font-feature-settings: 'dlig' on;
-    font-family: 'Manrope', sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -79,17 +95,17 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .footer-inner {
-        justify-content: center;
-        text-align: center;
+        gap: 40px;
     }
 
     .footer-links {
-        justify-content: center;
-        gap: 24px;
+        flex-direction: column;
+        align-items: center;
     }
 
-    .footer-copyright {
-        text-align: center;
+    .footer-link-wrapper.center {
+        position: static;
+        transform: none;
     }
 }
 
@@ -98,7 +114,7 @@ body {
         padding: 30px 15px;
     }
 
-    .footer-links {
-        flex-direction: column;
-        gap: 16px;
-        width: 100%;
+    .footer-inner {
+        gap: 24px;
+    }
+}

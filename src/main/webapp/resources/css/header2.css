@@ -112,3 +112,32 @@ body {
     border-radius: 20px;
     background: url('profile.jpg') lightgray 50% / cover no-repeat;
 }
+
+.header-btn {
+    display: flex;
+    width: 86px;
+    height: 26px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: var(--Corner-Large, 16px);
+    background: var(--Schemes-Primary-Container, #EADDFF);
+    box-shadow: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.30);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0D141C;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.header-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Optional: differentiate login and signup */
+.signup-btn {
+    background: #7F39FB; /* just example, you can use same background */
+    color: #fff;
+}
