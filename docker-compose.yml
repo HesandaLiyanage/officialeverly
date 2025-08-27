@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: everly
+    environment:
+      POSTGRES_DB: everly
+      POSTGRES_USER: everly_user
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
