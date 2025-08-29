@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
-    response.sendRedirect("view?page=autographs");
+    response.sendRedirect("view?page=login");
 %>
 
