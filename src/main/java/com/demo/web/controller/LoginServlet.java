@@ -1,7 +1,8 @@
 package com.demo.web.controller;
 
-import com.demo.web.util.DatabaseUtil;
-import com.demo.web.util.PasswordUtil;
+import com.demo.web.dao.userDAO;
+import com.demo.web.dao.userSessionDAO;
+import com.demo.web.model.user;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,14 +11,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.UUID;
+
 
 public class LoginServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    private userDAO userDAO;
+    private userSessionDAO userSessionDAO;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        userDAO = new userDAO();
+        userSessionDAO = new userSessionDAO();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -26,12 +33,21 @@ public class LoginServlet extends HttpServlet {
         // Check if already logged in
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("user_id") != null) {
-            response.sendRedirect(request.getContextPath() + "/memories");
+            response.sendRedirect(request.getContextPath() + "/views?page=memories");
             return;
         }
 
+        // Check for remember me cookie
+//        user rememberedUser = checkRememberMeToken(request);
+//        if (rememberedUser != null) {
+//            // Auto-login with remember me
+//            createUserSession(request, rememberedUser);
+//            response.sendRedirect(request.getContextPath() + "/memories");
+//            return;
+//        }
+
         // Show login form
-        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/views?page=login").forward(request, response);
     }
 
     @Override
@@ -42,150 +58,102 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("remember_me");
 
+        // Input validation
         if (username == null || password == null ||
                 username.trim().isEmpty() || password.trim().isEmpty()) {
             request.setAttribute("error", "Username and password are required");
-            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/views?page=login.jsp").forward(request, response);
             return;
         }
 
-        // Authenticate user
-        User user = authenticateUser(username, password);
-        if (user != null) {
-            // Create session
-            HttpSession session = request.getSession();
-            session.setAttribute("user_id", user.getId());
-            session.setAttribute("username", user.getUsername());
-            session.setMaxInactiveInterval(30 * 60); // 30 minutes
+        try {
+            // Authenticate user using DAO
+            user user = userDAO.authenticateUser(username, password);
 
-            // Handle remember me
-            if ("on".equals(rememberMe)) {
-                createRememberMeToken(user.getId(), response);
+            if (user != null) {
+                // Create session
+                createUserSession(request, user);
+
+                // Handle remember me functionality
+                if ("on".equals(rememberMe)) {
+                    handleRememberMe(user.getId(), response);
+                }
+
+                // Update last login
+                userDAO.updateLastLogin(user.getId());
+
+                // Redirect to memories page
+                response.sendRedirect(request.getContextPath() + "/views?page=/journals");
+
+            } else {
+                // Authentication failed
+                request.setAttribute("error", "Invalid username or password");
+                request.setAttribute("username", username); // Preserve username
+                request.getRequestDispatcher("/views?page=login").forward(request, response);
             }
 
-            // Update last login
-            updateLastLogin(user.getId());
+        } catch (Exception e) {
+            // Log the exception (use proper logging framework)
+            e.printStackTrace();
 
-            response.sendRedirect(request.getContextPath() + "/memories");
-        } else {
-            request.setAttribute("error", "Invalid username or password");
+            request.setAttribute("error", "An error occurred during login. Please try again.");
             request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
         }
     }
 
-    private User authenticateUser(String username, String password) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    /**
+     * Create user session
+     */
+    private void createUserSession(HttpServletRequest request, user user) {
+        HttpSession session = request.getSession();
+        session.setAttribute("user_id", user.getId());
+        session.setAttribute("username", user.getUsername());
+        session.setAttribute("email", user.getEmail());
+        session.setMaxInactiveInterval(30 * 60); // 30 minutes
+    }
 
+    /**
+     * Handle remember me functionality
+     */
+    private void handleRememberMe(int userId, HttpServletResponse response) {
         try {
-            conn = DatabaseUtil.getConnection();
-            String sql = "SELECT id, username, password_hash, salt FROM users " +
-                    "WHERE username = ? AND is_active = true";
+            String sessionToken = userSessionDAO.createRememberMeToken(userId);
 
-            stmt = conn.prepareStatement(sql);
-            stmt.setString(1, username);
+            if (sessionToken != null) {
+                // Create cookie
+                Cookie cookie = new Cookie("session_token", sessionToken);
+                cookie.setMaxAge(30 * 24 * 60 * 60); // 30 days
+                cookie.setHttpOnly(true);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+            }
 
-            rs = stmt.executeQuery();
+        } catch (Exception e) {
+            // Log error but don't fail login
+            e.printStackTrace();
+        }
+    }
 
-            if (rs.next()) {
-                String storedHash = rs.getString("password_hash");
-                String salt = rs.getString("salt");
-
-                if (PasswordUtil.verifyPassword(password, salt, storedHash)) {
-                    User user = new User();
-                    user.setId(rs.getInt("id"));
-                    user.setUsername(rs.getString("username"));
-                    return user;
+    /**
+     * Check for remember me token and auto-login
+     */
+    private user checkRememberMeToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("session_token".equals(cookie.getName())) {
+                    try {
+                        Integer userId = userSessionDAO.getUserIdByToken(cookie.getValue());
+                        if (userId != null) {
+                            return userDAO.findById(userId);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
                 }
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
-
         return null;
-    }
-
-    private void createRememberMeToken(int userId, HttpServletResponse response) {
-        String sessionToken = UUID.randomUUID().toString();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = DatabaseUtil.getConnection();
-            String sql = "INSERT INTO user_sessions (user_id, session_id, expires_at) VALUES (?, ?, ?)";
-
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userId);
-            stmt.setString(2, sessionToken);
-            stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000))); // 30 days
-
-            stmt.executeUpdate();
-
-            // Create cookie
-            Cookie cookie = new Cookie("session_token", sessionToken);
-            cookie.setMaxAge(30 * 24 * 60 * 60); // 30 days
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void updateLastLogin(int userId) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = DatabaseUtil.getConnection();
-            String sql = "UPDATE users SET last_login = ? WHERE id = ?";
-
-            stmt = conn.prepareStatement(sql);
-            stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
-            stmt.setInt(2, userId);
-
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    // Simple User class
-    private static class User {
-        private int id;
-        private String username;
-
-        public int getId() { return id; }
-        public void setId(int id) { this.id = id; }
-
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
     }
 }

@@ -70,6 +70,15 @@
         <url-pattern>/view</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>DebugServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.DebugServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DebugServlet</servlet-name>
+        <url-pattern>/debug</url-pattern>
+    </servlet-mapping>
+
     <!-- Database Connection Context Parameters -->
     <context-param>
         <param-name>db.url</param-name>
@@ -86,6 +95,6 @@
 
     <!-- Welcome File -->
     <welcome-file-list>
-        <welcome-file>login</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 </web-app>
