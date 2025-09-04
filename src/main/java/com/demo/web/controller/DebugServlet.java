@@ -40,7 +40,7 @@ public class DebugServlet extends HttpServlet {
         // Test 2: Check users in database
         out.println("<h3>2. Users in Database</h3>");
         try (Connection conn = DatabaseUtil.getConnection()) {
-            String sql = "SELECT id, username, email, is_active FROM users LIMIT 5";
+            String sql = "SELECT id, username, email, is_active FROM users LIMIT 10";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
