@@ -23,6 +23,18 @@ public class LayoutController extends HttpServlet {
                 contentPage = "/fragments/loginContent.jsp";
                 layoutPage = "/layout.jsp";
                 break;
+            case "signup":
+                contentPage = "/fragments/signup.jsp";
+                layoutPage = "/layout.jsp";
+                break;
+            case "profile":
+                contentPage = "/fragments/profile.jsp";
+                layoutPage = "/layout.jsp";
+                break;
+            case "signupThankyou":
+                contentPage = "/fragments/signupThankyou.jsp";
+                layoutPage = "/layout2.jsp";
+                break;
             case "memories":
                 contentPage = "/fragments/memories.jsp";
                 layoutPage = "/layout2.jsp";
