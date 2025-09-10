@@ -64,7 +64,7 @@ public class LayoutController extends HttpServlet {
                 contentPage = "/fragments/404.jsp";
                 break;
         }
-
+//
         req.setAttribute("contentPage", contentPage);
         req.getRequestDispatcher(layoutPage).forward(req, resp);
     }
