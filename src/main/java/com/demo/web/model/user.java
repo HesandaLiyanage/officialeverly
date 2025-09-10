@@ -47,11 +47,11 @@ public class user {
         this.email = email;
     }
 
-    public String getPasswordHash() {
+    public String getPassword() {
         return password_hash;
     }
 
-    public void setPasswordHash(String passwordHash) {
+    public void setPassword(String passwordHash) {
         this.password_hash = passwordHash;
     }
 
