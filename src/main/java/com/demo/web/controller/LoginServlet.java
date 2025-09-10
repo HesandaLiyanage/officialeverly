@@ -47,7 +47,7 @@ public class LoginServlet extends HttpServlet {
 //        }
 
         // Show login form
-        request.getRequestDispatcher("/views?page=login").forward(request, response);
+        request.getRequestDispatcher("/views?page=memories").forward(request, response);
     }
 
     @Override
