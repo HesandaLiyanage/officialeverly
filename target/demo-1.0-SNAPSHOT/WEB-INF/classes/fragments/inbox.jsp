@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password - Everly</title>
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="login2.css">
 </head>
 <body>
+<!-- Include your header here -->
+<%@ include file="header.jsp" %>
 
 <div class="login-container">
     <!-- Lock icon with refresh arrow -->
@@ -26,28 +28,23 @@
         </svg>
     </div>
 
-    <h1>Forgot password?</h1>
-    <p>Enter the email address associated with your account<br>and we'll send you a link to reset your password.</p>
+    <h1>Check your inbox</h1>
+    <p>We've sent a password reset link to your email address. Please check your inbox and follow the instructions to reset your
+        password.</p>
 
-    <form action="forgotPassword" method="POST" class="login-form">
-        <input type="email"
-               name="email"
-               placeholder="Email address"
-               required
-               autocomplete="email"
-               value="${param.email != null ? param.email : ''}">
-
-        <button type="submit" class="btn login-btn">Send Reset Link</button>
-    </form>
 
     <div class="extra-links">
-        <a href="login.jsp">Remember your password? Sign in</a>
+        <a href="login.jsp"> Didn't got the mail? Resend in 30s</a>
     </div>
 
-    <div class="back-link">
-        <a href="login.jsp">← Back</a>
+    <div class="login-form">
+        <button type="submit" class="btn login-btn">Go back to login</button>
     </div>
 </div>
+
+<!-- Include your footer here -->
+<%@ include file="footer.jsp" %>
+
 
 </body>
 </html>

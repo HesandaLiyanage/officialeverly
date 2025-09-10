@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
-<!-- Include your header here -->
-<%@ include file="header.jsp" %>
 
 <div class="login-container">
     <!-- Lock icon with refresh arrow -->
@@ -50,10 +48,6 @@
         <a href="login.jsp">← Back</a>
     </div>
 </div>
-
-<!-- Include your footer here -->
-<%@ include file="footer.jsp" %>
-
 
 </body>
 </html>

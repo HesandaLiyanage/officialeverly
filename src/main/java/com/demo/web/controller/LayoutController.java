@@ -55,6 +55,10 @@ public class LayoutController extends HttpServlet {
                 contentPage = "/fragments/autographcontent.jsp";
                 layoutPage = "/layout2.jsp";
                 break;
+            case "forgotpassword":
+                contentPage = "/fragments/forgotpassword.jsp";
+                layoutPage = "/layout.jsp";
+                break;
             default:
                 layoutPage = "/layout.jsp";
                 contentPage = "/fragments/404.jsp";
