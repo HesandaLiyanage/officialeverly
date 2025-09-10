@@ -21,6 +21,7 @@ public class signup extends HttpServlet {
     private userSessionDAO userSessionDAO;
 
     // Email validation pattern
+    //new
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
