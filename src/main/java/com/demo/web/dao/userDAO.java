@@ -22,7 +22,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT id, username, email, password_hash, salt, is_active, created_at, last_login " +
+            String sql = "SELECT user_id, username, email, password, salt, bio ,is_active, joined_at, last_login, is_active " +
                     "FROM users WHERE username = ? AND is_active = true";
 
             stmt = conn.prepareStatement(sql);
@@ -31,7 +31,7 @@ public class userDAO {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                String storedHash = rs.getString("password_hash");
+                String storedHash = rs.getString("password");
                 String salt = rs.getString("salt");
 
                 // Verify password
@@ -60,7 +60,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT id, username, email, password_hash, salt, is_active, created_at, last_login " +
+            String sql = "SELECT user_id, username, email, password, salt, bio ,is_active, joined_at, last_login, is_active" +
                     "FROM users WHERE id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -83,6 +83,38 @@ public class userDAO {
     }
 
     /**
+     * Find user by email
+     */
+    public user findByemail(String email) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT user_id, username, email, password, salt, bio ,is_active, joined_at, last_login, is_active" +
+                    "FROM users WHERE email = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email);
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return mapResultSetToUser(rs);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Database error while finding user", e);
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return 1;
+    }
+
+    /**
      * Find user by username
      */
     public user findByUsername(String username) {
@@ -92,7 +124,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT id, username, email, password_hash, salt, is_active, created_at, last_login " +
+            String sql = "SELECT user_id, username, email, password, salt, bio ,is_active, joined_at, last_login, is_active" +
                     "FROM users WHERE username = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -154,8 +186,10 @@ public class userDAO {
             String salt = PasswordUtil.generateSalt();
             String passwordHash = PasswordUtil.hashPassword(password, salt);
 
-            String sql = "INSERT INTO users (username, email, password_hash, salt, is_active, created_at) " +
+            String sql = "INSERT INTO users (username, email, password, salt, is_active, created_at) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
+
+            //need to add the salt generating query here
 
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getUsername());
@@ -210,7 +244,7 @@ public class userDAO {
         user.setId(rs.getInt("id"));
         user.setUsername(rs.getString("username"));
         user.setEmail(rs.getString("email"));
-        user.setPasswordHash(rs.getString("password_hash"));
+        user.setPassword(rs.getString("password"));
         user.setSalt(rs.getString("salt"));
         user.setActive(rs.getBoolean("is_active"));
         user.setCreatedAt(rs.getTimestamp("created_at"));

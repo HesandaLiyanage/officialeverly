@@ -40,7 +40,7 @@ public class DebugServlet extends HttpServlet {
         // Test 2: Check users in database
         out.println("<h3>2. Users in Database</h3>");
         try (Connection conn = DatabaseUtil.getConnection()) {
-            String sql = "SELECT id, username, email, is_active FROM users LIMIT 5";
+            String sql = "SELECT user_id, username, email, is_active FROM users LIMIT 2";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
@@ -51,7 +51,7 @@ public class DebugServlet extends HttpServlet {
             while (rs.next()) {
                 hasUsers = true;
                 out.println("<tr>");
-                out.println("<td>" + rs.getInt("id") + "</td>");
+                out.println("<td>" + rs.getInt("user_id") + "</td>");
                 out.println("<td>" + rs.getString("username") + "</td>");
                 out.println("<td>" + rs.getString("email") + "</td>");
                 out.println("<td>" + rs.getBoolean("is_active") + "</td>");
@@ -123,13 +123,13 @@ public class DebugServlet extends HttpServlet {
                 // Let's check what's in the database for this user
                 out.println("<h4>Debug Info:</h4>");
                 try (Connection conn = DatabaseUtil.getConnection()) {
-                    String sql = "SELECT username, password_hash, salt, is_active FROM users WHERE username = ?";
+                    String sql = "SELECT username, password, salt, is_active FROM users WHERE username = ?";
                     PreparedStatement stmt = conn.prepareStatement(sql);
                     stmt.setString(1, testUsername);
                     ResultSet rs = stmt.executeQuery();
 
                     if (rs.next()) {
-                        String storedHash = rs.getString("password_hash");
+                        String storedHash = rs.getString("password");
                         String storedSalt = rs.getString("salt");
                         boolean active = rs.getBoolean("is_active");
 
