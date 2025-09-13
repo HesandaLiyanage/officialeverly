@@ -19,7 +19,7 @@
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/login.css">
 <main class="login-container">
   <h1>Log in to Everly</h1>
-  <p>Don't have an account? <a href="${pageContext.request.contextPath}/fragments/signup.jsp">Create one.</a></p>
+  <p>Don't have an account? <a href="${pageContext.request.contextPath}/view?page=signup">Create one.</a></p>
 
   <form action="${pageContext.request.contextPath}/login" method="POST" class="login-form">
     <label for="email">Email address</label>
@@ -41,8 +41,8 @@
   </form>
 
   <div class="extra-links">
-    <a href="/create-account">Create a new account</a>
-    <a href="/fragments/passwordreset.jsp">Forgot password?</a>
+    <a href="${pageContext.request.contextPath}/view?page=signup">Create a new account</a>
+    <a href="${pageContext.request.contextPath}/view?page=forgotpassword">Forgot password?</a>
     <a href="/">Back to Everly.com</a>
   </div>
 </main>
