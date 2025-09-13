@@ -42,7 +42,7 @@
 
   <div class="extra-links">
     <a href="/create-account">Create a new account</a>
-    <a href="/forgot-password">Forgot password?</a>
+    <a href="/fragments/passwordreset.jsp">Forgot password?</a>
     <a href="/">Back to Everly.com</a>
   </div>
 </main>

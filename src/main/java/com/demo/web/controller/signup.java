@@ -70,7 +70,9 @@ public class signup extends HttpServlet {
             }
 
             // Check if user already exists
-            if (userDAO.findByemail(email)) {
+            // Check if user already exists
+            user existingUser = userDAO.findByemail(email);
+            if (existingUser != null) {
                 request.setAttribute("errorMessage", "An account with this email already exists.");
                 request.setAttribute("messageType", "error");
                 request.getRequestDispatcher("/signup.jsp").forward(request, response);
@@ -120,16 +122,7 @@ public class signup extends HttpServlet {
                 request.getRequestDispatcher("/signup.jsp").forward(request, response);
             }
 
-        } catch (SQLException e) {
-            // Log the error
-            System.err.println("Database error during signup: " + e.getMessage());
-            e.printStackTrace();
-
-            request.setAttribute("errorMessage", "A database error occurred. Please try again later.");
-            request.setAttribute("messageType", "error");
-            request.getRequestDispatcher("/signup.jsp").forward(request, response);
-
-        } catch (Exception e) {
+        }  catch (Exception e) {
             // Log unexpected errors
             System.err.println("Unexpected error during signup: " + e.getMessage());
             e.printStackTrace();

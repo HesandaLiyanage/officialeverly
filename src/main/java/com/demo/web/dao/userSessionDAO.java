@@ -1,5 +1,6 @@
 package com.demo.web.dao;
 
+import com.demo.web.model.UserSession;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.Connection;
@@ -12,70 +13,65 @@ import java.util.UUID;
 public class userSessionDAO {
 
     /**
-     * Create a remember me token for user
+     * Create a new user session
      */
-    public String createRememberMeToken(int userId) {
-        String sessionToken = UUID.randomUUID().toString();
+    public boolean createSession(int userId, String sessionId) {
         Connection conn = null;
         PreparedStatement stmt = null;
 
         try {
             conn = DatabaseUtil.getConnection();
-
-            // First, clean up any existing tokens for this user
-            cleanupExpiredTokens(userId, conn);
-
-            String sql = "INSERT INTO user_sessions (user_id, session_id, expires_at, created_at) " +
+            String sql = "INSERT INTO user_sessions (session_id, user_id, created_at, expires_at) " +
                     "VALUES (?, ?, ?, ?)";
 
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userId);
-            stmt.setString(2, sessionToken);
-            stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000))); // 30 days
-            stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+            stmt.setString(1, sessionId);
+            stmt.setInt(2, userId);
+            stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+
+            // Set expiration time (e.g., 24 hours from now)
+            Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + (24L * 60 * 60 * 1000));
+            stmt.setTimestamp(4, expiresAt);
 
             int rowsInserted = stmt.executeUpdate();
-
-            if (rowsInserted > 0) {
-                return sessionToken;
-            }
+            return rowsInserted > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Database error while creating remember me token", e);
+            return false;
         } finally {
             closeResources(null, stmt, conn);
         }
-
-        return null;
     }
 
     /**
-     * Validate and get user ID from remember me token
+     * Find session by session ID
      */
-    public Integer getUserIdByToken(String sessionToken) {
+    public UserSession findBySessionId(String sessionId) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id FROM user_sessions " +
-                    "WHERE session_id = ? AND expires_at > ? AND is_active = true";
+            String sql = "SELECT session_id, user_id, created_at, expires_at FROM user_sessions WHERE session_id = ?";
 
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, sessionToken);
-            stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+            stmt.setString(1, sessionId);
 
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getInt("user_id");
+                UserSession session = new UserSession();
+                session.setSessionId(rs.getString("session_id"));
+                session.setUserId(rs.getInt("user_id"));
+                session.setCreatedAt(rs.getTimestamp("created_at"));
+                session.setExpiresAt(rs.getTimestamp("expires_at"));
+                return session;
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Database error while validating token", e);
         } finally {
             closeResources(rs, stmt, conn);
         }
@@ -84,55 +80,34 @@ public class userSessionDAO {
     }
 
     /**
-     * Invalidate a remember me token
+     * Delete user session
      */
-    public boolean invalidateToken(String sessionToken) {
+    public boolean deleteSession(String sessionId) {
         Connection conn = null;
         PreparedStatement stmt = null;
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "UPDATE user_sessions SET is_active = false WHERE session_id = ?";
+            String sql = "DELETE FROM user_sessions WHERE session_id = ?";
 
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, sessionToken);
+            stmt.setString(1, sessionId);
 
-            int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
+            int rowsDeleted = stmt.executeUpdate();
+            return rowsDeleted > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Database error while invalidating token", e);
+            return false;
         } finally {
             closeResources(null, stmt, conn);
         }
     }
 
     /**
-     * Clean up expired tokens for a user
+     * Delete expired sessions
      */
-    private void cleanupExpiredTokens(int userId, Connection conn) throws SQLException {
-        PreparedStatement stmt = null;
-
-        try {
-            String sql = "DELETE FROM user_sessions WHERE user_id = ? AND " +
-                    "(expires_at < ? OR is_active = false)";
-
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userId);
-            stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-
-            stmt.executeUpdate();
-
-        } finally {
-            if (stmt != null) stmt.close();
-        }
-    }
-
-    /**
-     * Clean up all expired tokens (call this periodically)
-     */
-    public void cleanupAllExpiredTokens() {
+    public int deleteExpiredSessions() {
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -143,14 +118,135 @@ public class userSessionDAO {
             stmt = conn.prepareStatement(sql);
             stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
 
-            stmt.executeUpdate();
+            int rowsDeleted = stmt.executeUpdate();
+            return rowsDeleted;
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Database error while cleaning up tokens", e);
+            return 0;
         } finally {
             closeResources(null, stmt, conn);
         }
+    }
+
+    /**
+     * Check if session exists and is valid
+     */
+    public boolean isValidSession(String sessionId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT 1 FROM user_sessions WHERE session_id = ? AND expires_at > ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, sessionId);
+            stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+
+            rs = stmt.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    /**
+     * Update session expiration time
+     */
+    public boolean updateSessionExpiration(String sessionId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE user_sessions SET expires_at = ? WHERE session_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            Timestamp newExpiresAt = new Timestamp(System.currentTimeMillis() + (24L * 60 * 60 * 1000));
+            stmt.setTimestamp(1, newExpiresAt);
+            stmt.setString(2, sessionId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Create remember me token
+     */
+    public String createRememberMeToken(int userId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String token = UUID.randomUUID().toString();
+            String sql = "INSERT INTO remember_me_tokens (user_id, token, created_at, expires_at) VALUES (?, ?, ?, ?)";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+            stmt.setString(2, token);
+            stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+
+            // Set expiration time (e.g., 30 days from now)
+            Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000));
+            stmt.setTimestamp(4, expiresAt);
+
+            int rowsInserted = stmt.executeUpdate();
+            if (rowsInserted > 0) {
+                return token;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get user ID by remember me token
+     */
+    public Integer getUserIdByToken(String token) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT user_id FROM remember_me_tokens WHERE token = ? AND expires_at > ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, token);
+            stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("user_id");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return null;
     }
 
     /**

@@ -22,7 +22,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio ,is_active, joined_at, last_login, is_active " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, is_active, joined_at, last_login " +
                     "FROM users WHERE username = ? AND is_active = true";
 
             stmt = conn.prepareStatement(sql);
@@ -60,8 +60,8 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio ,is_active, joined_at, last_login, is_active" +
-                    "FROM users WHERE id = ?";
+            String sql = "SELECT user_id, username, email, password, salt, bio, is_active, joined_at, last_login " +
+                    "FROM users WHERE user_id = ?";
 
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
@@ -85,6 +85,9 @@ public class userDAO {
     /**
      * Find user by email
      */
+    /**
+     * Find user by email
+     */
     public user findByemail(String email) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -92,7 +95,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio ,is_active, joined_at, last_login, is_active" +
+            String sql = "SELECT user_id, username, email, password, salt, bio, is_active, joined_at, last_login " +
                     "FROM users WHERE email = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -103,6 +106,7 @@ public class userDAO {
             if (rs.next()) {
                 return mapResultSetToUser(rs);
             }
+            return null;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -111,7 +115,7 @@ public class userDAO {
             closeResources(rs, stmt, conn);
         }
 
-        return 1;
+        // Fixed: was returning 1
     }
 
     /**
@@ -124,7 +128,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio ,is_active, joined_at, last_login, is_active" +
+            String sql = "SELECT user_id, username, email, password, salt, bio, is_active, joined_at, last_login " +
                     "FROM users WHERE username = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -155,7 +159,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "UPDATE users SET last_login = ? WHERE id = ?";
+            String sql = "UPDATE users SET last_login = ? WHERE user_id = ?";
 
             stmt = conn.prepareStatement(sql);
             stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
@@ -175,7 +179,7 @@ public class userDAO {
     /**
      * Create a new user
      */
-    public boolean createUser(user user, String password) {
+    public boolean createUser(user user) {
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -184,20 +188,19 @@ public class userDAO {
 
             // Generate salt and hash password
             String salt = PasswordUtil.generateSalt();
-            String passwordHash = PasswordUtil.hashPassword(password, salt);
+            String passwordHash = PasswordUtil.hashPassword(user.getPassword(), salt);
 
-            String sql = "INSERT INTO users (username, email, password, salt, is_active, created_at) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
-
-            //need to add the salt generating query here
+            String sql = "INSERT INTO users (username, email, password, salt, bio, is_active, joined_at) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getEmail());
             stmt.setString(3, passwordHash);
             stmt.setString(4, salt);
-            stmt.setBoolean(5, true);
-            stmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            stmt.setString(5, user.getBio());
+            stmt.setBoolean(6, true);
+            stmt.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
@@ -237,17 +240,44 @@ public class userDAO {
     }
 
     /**
+     * Check if email exists
+     */
+    public boolean emailExists(String email) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT 1 FROM users WHERE email = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email);
+
+            rs = stmt.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Database error while checking email", e);
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    /**
      * Map ResultSet to User object
      */
     private user mapResultSetToUser(ResultSet rs) throws SQLException {
         user user = new user();
-        user.setId(rs.getInt("id"));
+        user.setId(rs.getInt("user_id"));
         user.setUsername(rs.getString("username"));
         user.setEmail(rs.getString("email"));
         user.setPassword(rs.getString("password"));
         user.setSalt(rs.getString("salt"));
+        user.setBio(rs.getString("bio"));
         user.setActive(rs.getBoolean("is_active"));
-        user.setCreatedAt(rs.getTimestamp("created_at"));
+        user.setCreatedAt(rs.getTimestamp("joined_at"));
         user.setLastLogin(rs.getTimestamp("last_login"));
         return user;
     }

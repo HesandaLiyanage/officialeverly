@@ -6,20 +6,15 @@ public class user {
     private int id;
     private String username;
     private String email;
-    private String password_hash;
+    private String password;
     private String salt;
-    private boolean is_active;
-    private Timestamp created_at;
-    private Timestamp last_login;
+    private String bio;
+    private boolean isActive;
+    private Timestamp createdAt;
+    private Timestamp lastLogin;
 
     // Default constructor
-    public user() {}
-
-    // Constructor with essential fields
-    public user(String username, String email) {
-        this.username = username;
-        this.email = email;
-        this.is_active = true;
+    public user() {
     }
 
     // Getters and Setters
@@ -48,11 +43,11 @@ public class user {
     }
 
     public String getPassword() {
-        return password_hash;
+        return password;
     }
 
-    public void setPassword(String passwordHash) {
-        this.password_hash = passwordHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getSalt() {
@@ -63,39 +58,49 @@ public class user {
         this.salt = salt;
     }
 
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
     public boolean isActive() {
-        return is_active;
+        return isActive;
     }
 
     public void setActive(boolean active) {
-        is_active = active;
+        isActive = active;
     }
 
     public Timestamp getCreatedAt() {
-        return created_at;
+        return createdAt;
     }
 
     public void setCreatedAt(Timestamp createdAt) {
-        this.created_at = createdAt;
+        this.createdAt = createdAt;
     }
 
     public Timestamp getLastLogin() {
-        return last_login;
+        return lastLogin;
     }
 
     public void setLastLogin(Timestamp lastLogin) {
-        this.last_login = lastLogin;
+        this.lastLogin = lastLogin;
     }
 
+    // Optional: toString method for debugging
     @Override
     public String toString() {
-        return "User{" +
+        return "user{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", isActive=" + is_active +
-                ", createdAt=" + created_at +
-                ", lastLogin=" + last_login +
+                ", bio='" + bio + '\'' +
+                ", isActive=" + isActive +
+                ", createdAt=" + createdAt +
+                ", lastLogin=" + lastLogin +
                 '}';
     }
 }

@@ -1,7 +1,7 @@
 package com.demo.web.controller;
 
 import com.demo.web.dao.userDAO;
-import com.demo.web.dao.userSessionDAO;
+import com.demo.web.dao.userSessionDAO; // Updated import
 import com.demo.web.model.user;
 
 import javax.servlet.ServletException;
@@ -17,13 +17,13 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private userDAO userDAO;
-    private userSessionDAO userSessionDAO;
+    private userSessionDAO userSessionDAO; // Updated type
 
     @Override
     public void init() throws ServletException {
         super.init();
         userDAO = new userDAO();
-        userSessionDAO = new userSessionDAO();
+        userSessionDAO = new userSessionDAO(); // Updated class name
     }
 
     @Override
@@ -38,16 +38,16 @@ public class LoginServlet extends HttpServlet {
         }
 
         // Check for remember me cookie
-//        user rememberedUser = checkRememberMeToken(request);
-//        if (rememberedUser != null) {
-//            // Auto-login with remember me
-//            createUserSession(request, rememberedUser);
-//            response.sendRedirect(request.getContextPath() + "/memories");
-//            return;
-//        }
+        user rememberedUser = checkRememberMeToken(request);
+        if (rememberedUser != null) {
+            // Auto-login with remember me
+            createUserSession(request, rememberedUser);
+            response.sendRedirect(request.getContextPath() + "/views?page=memories");
+            return;
+        }
 
         // Show login form
-        request.getRequestDispatcher("/views?page=memories").forward(request, response);
+        request.getRequestDispatcher("/views?page=login").forward(request, response);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class LoginServlet extends HttpServlet {
         if (username == null || password == null ||
                 username.trim().isEmpty() || password.trim().isEmpty()) {
             request.setAttribute("error", "Username and password are required");
-            request.getRequestDispatcher("/views?page=login.jsp").forward(request, response);
+            request.getRequestDispatcher("/views?page=login").forward(request, response);
             return;
         }
 
@@ -82,8 +82,12 @@ public class LoginServlet extends HttpServlet {
                 // Update last login
                 userDAO.updateLastLogin(user.getId());
 
+                // Store session in database
+                HttpSession httpSession = request.getSession();
+                userSessionDAO.createSession(user.getId(), httpSession.getId());
+
                 // Redirect to memories page
-                response.sendRedirect(request.getContextPath() + "/views?page=/journals");
+                response.sendRedirect(request.getContextPath() + "/views?page=memories");
 
             } else {
                 // Authentication failed
@@ -97,7 +101,7 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace();
 
             request.setAttribute("error", "An error occurred during login. Please try again.");
-            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/views?page=login").forward(request, response);
         }
     }
 

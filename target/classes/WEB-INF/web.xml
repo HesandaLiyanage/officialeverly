@@ -84,7 +84,7 @@
         <servlet-class>com.demo.web.controller.signup</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>singup</servlet-name>
+        <servlet-name>signup</servlet-name>
         <url-pattern>/signup</url-pattern>
     </servlet-mapping>
 
