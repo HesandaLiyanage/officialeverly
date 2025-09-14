@@ -352,3 +352,11 @@
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 20px;
     }
+
+    .vault-desc {
+        margin-top: 40px;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 60px;
+    }
+
