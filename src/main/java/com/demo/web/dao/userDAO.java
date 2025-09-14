@@ -22,7 +22,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, is_active, joined_at, last_login " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at,is_active, last_login, profile_picture_url" +
                     "FROM users WHERE username = ? AND is_active = true";
 
             stmt = conn.prepareStatement(sql);
@@ -60,7 +60,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, is_active, joined_at, last_login " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at,is_active, last_login, profile_picture_url" +
                     "FROM users WHERE user_id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -95,7 +95,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, is_active, joined_at, last_login " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at,is_active, last_login, profile_picture_url " +
                     "FROM users WHERE email = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -128,7 +128,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, is_active, joined_at, last_login " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at,is_active, last_login, profile_picture_url " +
                     "FROM users WHERE username = ?";
 
             stmt = conn.prepareStatement(sql);

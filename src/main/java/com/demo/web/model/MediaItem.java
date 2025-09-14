@@ -18,6 +18,14 @@ public class MediaItem {
     private String storageBucket;
     private String metadata; // JSON string for additional data
 
+    // Encryption fields
+    private boolean isEncrypted;
+    private String encryptionKeyId;
+    private String fileHash;
+    private int splitCount;
+    private long originalFileSize;
+    private boolean isSplit;
+
     // Constructors
     public MediaItem() {}
 
@@ -34,6 +42,11 @@ public class MediaItem {
         this.storageBucket = storageBucket;
         this.title = originalFilename;
         this.uploadTimestamp = new Timestamp(System.currentTimeMillis());
+        // Default encryption values
+        this.isEncrypted = true;
+        this.splitCount = 1;
+        this.isSplit = false;
+        this.originalFileSize = fileSize;
     }
 
     // Getters and Setters
@@ -79,6 +92,25 @@ public class MediaItem {
     public String getMetadata() { return metadata; }
     public void setMetadata(String metadata) { this.metadata = metadata; }
 
+    // Encryption-related getters and setters
+    public boolean isEncrypted() { return isEncrypted; }
+    public void setEncrypted(boolean encrypted) { isEncrypted = encrypted; }
+
+    public String getEncryptionKeyId() { return encryptionKeyId; }
+    public void setEncryptionKeyId(String encryptionKeyId) { this.encryptionKeyId = encryptionKeyId; }
+
+    public String getFileHash() { return fileHash; }
+    public void setFileHash(String fileHash) { this.fileHash = fileHash; }
+
+    public int getSplitCount() { return splitCount; }
+    public void setSplitCount(int splitCount) { this.splitCount = splitCount; }
+
+    public long getOriginalFileSize() { return originalFileSize; }
+    public void setOriginalFileSize(long originalFileSize) { this.originalFileSize = originalFileSize; }
+
+    public boolean isSplit() { return isSplit; }
+    public void setSplit(boolean split) { isSplit = split; }
+
     @Override
     public String toString() {
         return "MediaItem{" +
@@ -87,6 +119,9 @@ public class MediaItem {
                 ", filename='" + filename + '\'' +
                 ", mediaType='" + mediaType + '\'' +
                 ", fileSize=" + fileSize +
+                ", isEncrypted=" + isEncrypted +
+                ", encryptionKeyId='" + encryptionKeyId + '\'' +
+                ", splitCount=" + splitCount +
                 ", uploadTimestamp=" + uploadTimestamp +
                 '}';
     }

@@ -203,6 +203,31 @@ public class MediaUploadServlet extends HttpServlet {
         forwardToView(request, response, "memories");
     }
 
+    // Add this missing method
+    private void handleCreateMemory(HttpServletRequest request, HttpServletResponse response, int userId)
+            throws ServletException, IOException, SQLException {
+
+        String title = request.getParameter("memoryTitle");
+        String description = request.getParameter("memoryDescription");
+
+        if (title == null || title.trim().isEmpty()) {
+            request.setAttribute("error", "Memory title is required");
+            forwardToView(request, response, "memories");
+            return;
+        }
+
+        Memory memory = new Memory(userId, title.trim(), description);
+        boolean created = mediaDAO.createMemory(memory);
+
+        if (created) {
+            request.setAttribute("success", "Memory created successfully!");
+        } else {
+            request.setAttribute("error", "Failed to create memory");
+        }
+
+        forwardToView(request, response, "memories");
+    }
+
     private void handlePublicShare(HttpServletRequest request, HttpServletResponse response, int userId)
             throws ServletException, IOException, SQLException {
 
@@ -299,8 +324,6 @@ public class MediaUploadServlet extends HttpServlet {
 
         forwardToView(request, response, "memories");
     }
-
-    // ... rest of existing methods ...
 
     private boolean isValidMediaFile(String fileName) {
         String extension = getFileExtension(fileName).toLowerCase();

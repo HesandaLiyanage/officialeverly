@@ -9,7 +9,195 @@ import java.util.List;
 
 public class MediaDAO {
 
-    // ... existing methods ...
+    /**
+     * Save media item to database
+     */
+    public boolean saveMediaItem(MediaItem mediaItem) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "INSERT INTO media_items (user_id, filename, original_filename, " +
+                    "file_path, file_size, mime_type, media_type, title, storage_bucket, metadata) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setInt(1, mediaItem.getUserId());
+            stmt.setString(2, mediaItem.getFilename());
+            stmt.setString(3, mediaItem.getOriginalFilename());
+            stmt.setString(4, mediaItem.getFilePath());
+            stmt.setLong(5, mediaItem.getFileSize());
+            stmt.setString(6, mediaItem.getMimeType());
+            stmt.setString(7, mediaItem.getMediaType());
+            stmt.setString(8, mediaItem.getTitle());
+            stmt.setString(9, mediaItem.getStorageBucket());
+            stmt.setString(10, mediaItem.getMetadata());
+
+            int rowsInserted = stmt.executeUpdate();
+
+            if (rowsInserted > 0) {
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    mediaItem.setMediaId(generatedKeys.getInt(1));
+                }
+                return true;
+            }
+            return false;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Get all media items for a user
+     */
+    public List<MediaItem> getUserMediaItems(int userId) throws SQLException {
+        List<MediaItem> mediaItems = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT * FROM media_items WHERE user_id = ? ORDER BY upload_timestamp DESC";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                mediaItems.add(mapResultSetToMediaItem(rs));
+            }
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return mediaItems;
+    }
+
+    /**
+     * Get media item by ID
+     */
+    public MediaItem getMediaItemById(int mediaId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT * FROM media_items WHERE media_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, mediaId);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return mapResultSetToMediaItem(rs);
+            }
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return null;
+    }
+
+    /**
+     * Create a new memory/album
+     */
+    public boolean createMemory(Memory memory) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "INSERT INTO memories (user_id, title, description, cover_media_id, is_public) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+
+            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setInt(1, memory.getUserId());
+            stmt.setString(2, memory.getTitle());
+            stmt.setString(3, memory.getDescription());
+            stmt.setObject(4, memory.getCoverMediaId(), Types.INTEGER);
+            stmt.setBoolean(5, memory.isPublic());
+
+            int rowsInserted = stmt.executeUpdate();
+
+            if (rowsInserted > 0) {
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    memory.setMemoryId(generatedKeys.getInt(1));
+                }
+                return true;
+            }
+            return false;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Add media to memory
+     */
+    public boolean addMediaToMemory(int memoryId, int mediaId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "INSERT INTO memory_media (memory_id, media_id) VALUES (?, ?)";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            stmt.setInt(2, mediaId);
+
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Get memories for user
+     */
+    public List<Memory> getUserMemories(int userId) throws SQLException {
+        List<Memory> memories = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT * FROM memories WHERE user_id = ? ORDER BY created_timestamp DESC";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Memory memory = new Memory();
+                memory.setMemoryId(rs.getInt("memory_id"));
+                memory.setUserId(rs.getInt("user_id"));
+                memory.setTitle(rs.getString("title"));
+                memory.setDescription(rs.getString("description"));
+                memory.setCoverMediaId(rs.getObject("cover_media_id", Integer.class));
+                memory.setCreatedTimestamp(rs.getTimestamp("created_timestamp"));
+                memory.setPublic(rs.getBoolean("is_public"));
+                memories.add(memory);
+            }
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return memories;
+    }
 
     /**
      * Save encryption key
@@ -217,6 +405,41 @@ public class MediaDAO {
 
         } finally {
             closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Map ResultSet to MediaItem
+     */
+    private MediaItem mapResultSetToMediaItem(ResultSet rs) throws SQLException {
+        MediaItem mediaItem = new MediaItem();
+        mediaItem.setMediaId(rs.getInt("media_id"));
+        mediaItem.setUserId(rs.getInt("user_id"));
+        mediaItem.setFilename(rs.getString("filename"));
+        mediaItem.setOriginalFilename(rs.getString("original_filename"));
+        mediaItem.setFilePath(rs.getString("file_path"));
+        mediaItem.setFileSize(rs.getLong("file_size"));
+        mediaItem.setMimeType(rs.getString("mime_type"));
+        mediaItem.setMediaType(rs.getString("media_type"));
+        mediaItem.setTitle(rs.getString("title"));
+        mediaItem.setDescription(rs.getString("description"));
+        mediaItem.setUploadTimestamp(rs.getTimestamp("upload_timestamp"));
+        mediaItem.setPublic(rs.getBoolean("is_public"));
+        mediaItem.setStorageBucket(rs.getString("storage_bucket"));
+        mediaItem.setMetadata(rs.getString("metadata"));
+        return mediaItem;
+    }
+
+    /**
+     * Close database resources
+     */
+    private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
+        try {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
