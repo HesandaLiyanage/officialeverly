@@ -9,6 +9,7 @@ public class user {
     private String password;
     private String salt;
     private String bio;
+    private String profilePictureUrl;
     private boolean isActive;
     private Timestamp createdAt;
     private Timestamp lastLogin;
@@ -66,6 +67,14 @@ public class user {
         this.bio = bio;
     }
 
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
     public boolean isActive() {
         return isActive;
     }
@@ -98,6 +107,7 @@ public class user {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", bio='" + bio + '\'' +
+                ", profilePictureUrl='" + profilePictureUrl + '\'' +
                 ", isActive=" + isActive +
                 ", createdAt=" + createdAt +
                 ", lastLogin=" + lastLogin +

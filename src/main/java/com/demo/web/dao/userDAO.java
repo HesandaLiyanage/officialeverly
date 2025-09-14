@@ -190,8 +190,8 @@ public class userDAO {
             String salt = PasswordUtil.generateSalt();
             String passwordHash = PasswordUtil.hashPassword(user.getPassword(), salt);
 
-            String sql = "INSERT INTO users (username, email, password, salt, bio, is_active, joined_at) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO users (username, email, password, salt, bio, profile_picture_url, is_active, joined_at) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getUsername());
@@ -199,8 +199,9 @@ public class userDAO {
             stmt.setString(3, passwordHash);
             stmt.setString(4, salt);
             stmt.setString(5, user.getBio());
-            stmt.setBoolean(6, true);
-            stmt.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+            stmt.setString(6, user.getProfilePictureUrl());
+            stmt.setBoolean(7, true);
+            stmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
@@ -236,6 +237,27 @@ public class userDAO {
             throw new RuntimeException("Database error while checking username", e);
         } finally {
             closeResources(rs, stmt, conn);
+        }
+    }
+
+    //update profile pic
+    public boolean updateProfilePicture(int userId, String profilePictureUrl) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE users SET profile_picture_url = ? WHERE user_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, profilePictureUrl);
+            stmt.setInt(2, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
         }
     }
 
@@ -276,6 +298,7 @@ public class userDAO {
         user.setPassword(rs.getString("password"));
         user.setSalt(rs.getString("salt"));
         user.setBio(rs.getString("bio"));
+        user.setProfilePictureUrl(rs.getString("profile_picture_url"));
         user.setActive(rs.getBoolean("is_active"));
         user.setCreatedAt(rs.getTimestamp("joined_at"));
         user.setLastLogin(rs.getTimestamp("last_login"));
