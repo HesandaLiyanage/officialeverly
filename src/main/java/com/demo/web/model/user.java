@@ -3,16 +3,16 @@ package com.demo.web.model;
 import java.sql.Timestamp;
 
 public class user {
-    private int id;
+    private int user_id;
     private String username;
     private String email;
     private String password;
     private String salt;
     private String bio;
-    private String profilePictureUrl;
-    private boolean isActive;
-    private Timestamp createdAt;
-    private Timestamp lastLogin;
+    private String profile_picture_url;
+    private boolean is_active;
+    private Timestamp joined_at;
+    private Timestamp last_login;
 
     // Default constructor
     public user() {
@@ -20,11 +20,11 @@ public class user {
 
     // Getters and Setters
     public int getId() {
-        return id;
+        return user_id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.user_id = id;
     }
 
     public String getUsername() {
@@ -68,49 +68,49 @@ public class user {
     }
 
     public String getProfilePictureUrl() {
-        return profilePictureUrl;
+        return profile_picture_url;
     }
 
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
+    public void setProfilePictureUrl(String profile_picture_url) {
+        this.profile_picture_url = profile_picture_url;
     }
 
-    public boolean isActive() {
-        return isActive;
+    public boolean is_active() {
+        return is_active;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void set_active(boolean active) {
+        is_active = active;
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+        return joined_at;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(Timestamp joined_at) {
+        this.joined_at = joined_at;
     }
 
     public Timestamp getLastLogin() {
-        return lastLogin;
+        return last_login;
     }
 
     public void setLastLogin(Timestamp lastLogin) {
-        this.lastLogin = lastLogin;
+        this.last_login = lastLogin;
     }
 
     // Optional: toString method for debugging
     @Override
     public String toString() {
         return "user{" +
-                "id=" + id +
+                "id=" + user_id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", bio='" + bio + '\'' +
-                ", profilePictureUrl='" + profilePictureUrl + '\'' +
-                ", isActive=" + isActive +
-                ", createdAt=" + createdAt +
-                ", lastLogin=" + lastLogin +
+                ", profilePictureUrl='" + profile_picture_url + '\'' +
+                ", isActive=" + is_active +
+                ", createdAt=" + joined_at +
+                ", lastLogin=" + last_login +
                 '}';
     }
 }

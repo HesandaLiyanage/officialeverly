@@ -22,7 +22,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at,is_active, last_login, profile_picture_url" +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at,is_active, last_login, profile_picture_url " +
                     "FROM users WHERE username = ? AND is_active = true";
 
             stmt = conn.prepareStatement(sql);
@@ -299,7 +299,7 @@ public class userDAO {
         user.setSalt(rs.getString("salt"));
         user.setBio(rs.getString("bio"));
         user.setProfilePictureUrl(rs.getString("profile_picture_url"));
-        user.setActive(rs.getBoolean("is_active"));
+        user.set_active(rs.getBoolean("is_active"));
         user.setCreatedAt(rs.getTimestamp("joined_at"));
         user.setLastLogin(rs.getTimestamp("last_login"));
         return user;

@@ -116,7 +116,7 @@ public class DebugServlet extends HttpServlet {
                 out.println("<p>User ID: " + user.getId() + "</p>");
                 out.println("<p>Username: " + user.getUsername() + "</p>");
                 out.println("<p>Email: " + user.getEmail() + "</p>");
-                out.println("<p>Active: " + user.isActive() + "</p>");
+                out.println("<p>Active: " + user.is_active() + "</p>");
             } else {
                 out.println("<h3>❌ Authentication FAILED!</h3>");
 
