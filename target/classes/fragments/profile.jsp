@@ -12,7 +12,7 @@
 <main class="profile-container">
     <h1 class="profile-title">Tell us about Yourself</h1>
 
-    <form class="profile-form" action="${pageContext.request.contextPath}/saveProfile" method="post" enctype="multipart/form-data">
+    <form class="profile-form" action="${pageContext.request.contextPath}/view?page=saveprofile" method="post" enctype="multipart/form-data">
 
         <!-- Name Field -->
         <label for="name" class="profile-label">Name</label>

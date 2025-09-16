@@ -80,6 +80,19 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>ProfilePictureServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.ProfilePictureServlet</servlet-class>
+        <init-param>
+            <param-name>upload.path</param-name>
+            <param-value>C:/Everly/uploads/profile_pictures</param-value> <!-- Change this -->
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfilePictureServlet</servlet-name>
+        <url-pattern>/uploadProfilePicture</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>signup</servlet-name>
         <servlet-class>com.demo.web.controller.signup</servlet-class>
     </servlet>
