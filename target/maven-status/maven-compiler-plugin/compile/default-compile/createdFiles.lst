@@ -1,2 +1,3 @@
-com\demo\web\controller\LayoutController.class
-com\demo\web\controller\MainServlet.class
+com/demo/web/controller/MainServlet.class
+com/demo/web/controller/LoginServlet.class
+com/demo/web/controller/LayoutController.class
