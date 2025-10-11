@@ -4,7 +4,6 @@
 
 <!-- Memories Page Content -->
 
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/memories.css">
 <div class="container">
   <main class="main-content">
     <!-- Tab Navigation -->
