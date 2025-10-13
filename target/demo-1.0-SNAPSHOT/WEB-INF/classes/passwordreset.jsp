@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password - Everly</title>
-    <link rel="stylesheet" href="../resources/login.css">
+    <link rel="stylesheet" href="resources/login.css">
 </head>
 <body>
 <!-- Include your header here -->
-<%@ include file="header.jsp" %>
+<%@ include file="fragments/header.jsp" %>
 
 <div class="login-container">
     <!-- Lock icon with refresh arrow -->
@@ -27,7 +27,7 @@
 </div>
 
 <!-- Include your footer here -->
-<%@ include file="footer.jsp" %>
+<%@ include file="fragments/footer.jsp" %>
 
 
 </body>

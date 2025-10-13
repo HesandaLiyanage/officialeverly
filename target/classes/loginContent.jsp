@@ -41,8 +41,8 @@
   </form>
 
   <div class="extra-links">
-    <a href="${pageContext.request.contextPath}/view?page=signup">Create a new account</a>
-    <a href="${pageContext.request.contextPath}/view?page=forgotpassword">Forgot password?</a>
+    <a href="${pageContext.request.contextPath}/signup">Create a new account</a>
+    <a href="${pageContext.request.contextPath}/forgotpassword">Forgot password?</a>
     <a href="/">Back to Everly.com</a>
   </div>
 </main>

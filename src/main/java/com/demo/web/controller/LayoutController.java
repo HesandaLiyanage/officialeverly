@@ -20,7 +20,7 @@ public class LayoutController extends HttpServlet {
         String layoutPage;
         switch (page) {
             case "login":
-                contentPage = "/fragments/loginContent.jsp";
+                contentPage = "/loginContent.jsp";
                 layoutPage = "/layout.jsp";
                 break;
             case "signup":
@@ -28,19 +28,19 @@ public class LayoutController extends HttpServlet {
                 layoutPage = "/layout.jsp";
                 break;
             case "signup2":
-                contentPage = "/fragments/signup2.jsp";
+                contentPage = "/signup2.jsp";
                 layoutPage = "/layout.jsp";
                 break;
             case "forgotpassword":
-                contentPage = "/fragments/passwordreset.jsp";
+                contentPage = "/passwordreset.jsp";
                 layoutPage = "/layout.jsp";
                 break;
             case "profile":
-                contentPage = "/fragments/signup2.jsp";
+                contentPage = "/signup2.jsp";
                 layoutPage = "/layout.jsp";
                 break;
             case "signupThankyou":
-                contentPage = "/fragments/signupThankyou.jsp";
+                contentPage = "/signupThankyou.jsp";
                 layoutPage = "/layout2.jsp";
                 break;
             case "vaultSetup":
@@ -93,7 +93,7 @@ public class LayoutController extends HttpServlet {
                 break;
             default:
                 layoutPage = "/layout.jsp";
-                contentPage = "/fragments/404.jsp";
+                contentPage = "/404.jsp";
                 break;
         }
 

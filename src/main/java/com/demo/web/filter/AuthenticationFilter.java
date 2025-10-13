@@ -32,7 +32,14 @@ public class AuthenticationFilter implements Filter {
         //if the page we are trying to access is the login page, allow it
 
         String queryString = httpRequest.getQueryString();
-        if (queryString != null && queryString.contains("page=login") || queryString.contains("page=signup") || queryString.contains("page=signup2")) {
+        String uri = httpRequest.getRequestURI();
+
+        if ((queryString != null && (queryString.contains("page=login")
+                || queryString.contains("page=signup")
+                || queryString.contains("page=signup2")))
+                || uri.endsWith("/login.jsp")
+                || uri.endsWith("/signup.jsp")
+                || uri.endsWith("/signup2.jsp")) {
             // Allow login page to be accessed without authentication
             chain.doFilter(request, response);
             return;
