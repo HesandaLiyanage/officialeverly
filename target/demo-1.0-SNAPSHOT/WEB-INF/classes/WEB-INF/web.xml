@@ -18,6 +18,7 @@
         <url-pattern>/events</url-pattern>
         <url-pattern>/feed</url-pattern>
         <url-pattern>/settings</url-pattern>
+        <url-pattern>/view</url-pattern>
     </filter-mapping>
 
     <!-- Login Servlet -->
@@ -100,6 +101,8 @@
         <servlet-name>signup</servlet-name>
         <url-pattern>/signup</url-pattern>
     </servlet-mapping>
+
+
 
     <!-- Database Connection Context Parameters -->
     <context-param>

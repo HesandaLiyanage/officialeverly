@@ -26,12 +26,12 @@
 
   <!-- Navigation Bar -->
   <nav class="nav-bar">
-    <a href="${pageContext.request.contextPath}//view?page=memories">Memories</a>
-    <a href="${pageContext.request.contextPath}//view?page=journals">Journals</a>
-    <a href="${pageContext.request.contextPath}//view?page=autographs">Autographs</a>
-    <a href="${pageContext.request.contextPath}//view?page=groups">Groups</a>
-    <a href="${pageContext.request.contextPath}//view?page=events">Events</a>
-    <a href="${pageContext.request.contextPath}//view?page=feed">Feed</a>
+    <a href="${pageContext.request.contextPath}/view?page=memories">Memories</a>
+    <a href="${pageContext.request.contextPath}/view?page=journals">Journals</a>
+    <a href="${pageContext.request.contextPath}/view?page=autographs">Autographs</a>
+    <a href="${pageContext.request.contextPath}/view?page=groups">Groups</a>
+    <a href="${pageContext.request.contextPath}/view?page=events">Events</a>
+    <a href="${pageContext.request.contextPath}/view?page=feed">Feed</a>
   </nav>
 
   <!-- Right Section -->

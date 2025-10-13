@@ -34,8 +34,8 @@
 
   <!-- Right Section -->
   <div class="header-right">
-    <button class="header-btn login-btn">Login</button>
-    <button class="header-btn signup-btn">Sign Up</button>
+    <a href="${pageContext.request.contextPath}/view?page=login" class="header-btn login-btn">Login</a>
+    <a href="${pageContext.request.contextPath}/view?page=signup" class="header-btn signup-btn">Sign Up</a>
   </div>
 </header>
 

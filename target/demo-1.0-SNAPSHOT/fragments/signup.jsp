@@ -5,7 +5,7 @@
 <main class="signup-container">
     <h1>Create your account</h1>
 
-    <form action="${pageContext.request.contextPath}/fragments/profile.jsp" method="POST" class="signup-form">
+    <form action="${pageContext.request.contextPath}/view?page=signup2.jsp" method="GET" class="signup-form">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" required>
 
@@ -27,6 +27,6 @@
     </form>
 
     <div class="extra-links">
-        <a href="${pageContext.request.contextPath}/fragments/loginContent.jsp">Already have an account? Log in</a>
+        <a href="${pageContext.request.contextPath}/view?page=login.jsp">Already have an account? Log in</a>
     </div>
 </main>
