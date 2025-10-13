@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Events | Everly</title>
+    <link rel="stylesheet" href="4.css" />
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo">Everly</div>
+    <ul class="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Groups</a></li>
+        <li><a href="#">Events</a></li>
+        <li><a href="#">Announcements</a></li>
+        <li><a href="#">Journal</a></li>
+        <li><a href="#">Autographs</a></li>
+    </ul>
+    <div class="nav-right">
+        <div class="search-box">
+            <input type="text" placeholder="Search" />
+            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Search" />
+        </div>
+        <img src="https://cdn-icons-png.flaticon.com/512/3602/3602145.png" class="icon" alt="Bell" />
+        <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="avatar" alt="User" />
+    </div>
+</nav>
+
+<main class="container">
+    <section class="form-col">
+        <h1 class="page-title">Create Event</h1>
+
+        <form class="event-form" autocomplete="off">
+            <label class="field">
+                <span class="field-label">Event Title</span>
+                <input type="text" placeholder="Enter event title" />
+            </label>
+
+            <label class="field">
+                <span class="field-label">Event Type</span>
+                <select>
+                    <option>Select event type</option>
+                </select>
+            </label>
+
+            <div class="two-col">
+                <label class="field">
+                    <span class="field-label">Date</span>
+                    <input type="date" />
+                </label>
+
+                <label class="field">
+                    <span class="field-label">Location</span>
+                    <input type="text" placeholder="Enter location" />
+                </label>
+            </div>
+
+            <label class="field">
+                <span class="field-label">Description</span>
+                <textarea rows="5" placeholder=""></textarea>
+            </label>
+
+            <div class="upload-area" role="group" aria-label="Upload cover photo">
+                <div class="upload-inner">
+                    <strong>Upload Image or Cover Photo</strong>
+                    <small>Drag and drop or click to upload</small>
+                    <button type="button" class="btn btn-secondary">Upload</button>
+                </div>
+            </div>
+
+            <label class="field">
+                <span class="field-label">Select the group</span>
+                <select>
+                    <option>Select the group you want to assign</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field-label">Add Tags</span>
+                <input type="text" placeholder="Enter tags" />
+            </label>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create New Event</button>
+                <button type="button" class="btn btn-cancel">Cancel</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact Us</a>
+    </div>
+    <p class="copyright">© 2023 Everly. All rights reserved.</p>
+</footer>
+</body>
+</html>
