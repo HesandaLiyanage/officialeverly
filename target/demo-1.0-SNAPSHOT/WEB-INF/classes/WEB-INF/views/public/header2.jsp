@@ -26,16 +26,27 @@
 
   <!-- Navigation Bar -->
   <nav class="nav-bar">
-    <a href="${pageContext.request.contextPath}whyeverly.jsp">Why Everly?</a>
-    <a href="${pageContext.request.contextPath}plans.jsp">Plans</a>
-    <a href="${pageContext.request.contextPath}/view?page=aboutus">About Us</a>
-    <a href="${pageContext.request.contextPath}/view?page=privacy">Privacy</a>
+    <a href="${pageContext.request.contextPath}/view?page=memories">Memories</a>
+    <a href="${pageContext.request.contextPath}/view?page=journals">Journals</a>
+    <a href="${pageContext.request.contextPath}/view?page=autographs">Autographs</a>
+    <a href="${pageContext.request.contextPath}/view?page=groups">Groups</a>
+    <a href="${pageContext.request.contextPath}/view?page=events">Events</a>
+    <a href="${pageContext.request.contextPath}/view?page=feed">Feed</a>
   </nav>
 
   <!-- Right Section -->
   <div class="header-right">
-    <a href="${pageContext.request.contextPath}/view?page=login" class="header-btn login-btn">Login</a>
-    <a href="${pageContext.request.contextPath}/view?page=signup" class="header-btn signup-btn">Sign Up</a>
+    <!-- Search Bar -->
+    <div class="search-box">
+      <div class="search-icon"><img src="${pageContext.request.contextPath}/resources/assets/search.png"></div>
+      <input type="text" placeholder="Search...">
+    </div>
+
+    <!-- Notification Icon -->
+    <div class="notification-icon"><img src="${pageContext.request.contextPath}/resources/assets/notification.png"></div>
+
+    <!-- Profile Photo -->
+    <div class="profile-photo"></div>
   </div>
 </header>
 
