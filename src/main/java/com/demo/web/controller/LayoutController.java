@@ -27,12 +27,32 @@ public class LayoutController extends HttpServlet {
                 contentPage = "/fragments/signup.jsp";
                 layoutPage = "/layout.jsp";
                 break;
+            case "signup2":
+                contentPage = "/fragments/signup2.jsp";
+                layoutPage = "/layout.jsp";
+                break;
+            case "forgotpassword":
+                contentPage = "/fragments/passwordreset.jsp";
+                layoutPage = "/layout.jsp";
+                break;
             case "profile":
-                contentPage = "/fragments/profile.jsp";
+                contentPage = "/fragments/signup2.jsp";
                 layoutPage = "/layout.jsp";
                 break;
             case "signupThankyou":
                 contentPage = "/fragments/signupThankyou.jsp";
+                layoutPage = "/layout2.jsp";
+                break;
+            case "vaultSetup":
+                contentPage = "/fragments/vaultSetup.jsp";
+                layoutPage = "/layout2.jsp";
+                break;
+            case "vaultPassword":
+                contentPage = "/fragments/vaultPassword.jsp";
+                layoutPage = "/layout2.jsp";
+                break;
+            case "vaultForgotPassword":
+                contentPage = "/fragments/vaultForgotPassword.jsp";
                 layoutPage = "/layout2.jsp";
                 break;
             case "vaultMemories":

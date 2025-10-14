@@ -29,13 +29,22 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        //if the page we are trying to access is the login page, allow it
+
+        String queryString = httpRequest.getQueryString();
+        if (queryString != null && queryString.contains("page=login") || queryString.contains("page=signup") || queryString.contains("page=signup2")) {
+            // Allow login page to be accessed without authentication
+            chain.doFilter(request, response);
+            return;
+        }
+
         // Check if user is authenticated
         if (isAuthenticated(httpRequest)) {
             // User is authenticated, continue with the request
             chain.doFilter(request, response);
         } else {
             // User is not authenticated, redirect to login
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/youcantaccessthis.jsp");
         }
     }
 

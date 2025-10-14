@@ -148,7 +148,7 @@
                 </c:otherwise>
             </c:choose>
         </div>
-        
+
     </main>
 
     <aside class="sidebar">
