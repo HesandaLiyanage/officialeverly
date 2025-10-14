@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password - Everly</title>
-    <link rel="stylesheet" href="login2.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/login.css">
 </head>
 <body>
-<!-- Include your header here -->
-<%@ include file="header.jsp" %>
+<jsp:include page="/fragments/header.jsp" />
 
 <div class="reset-password-container">
     <h1>Reset your password</h1>
@@ -106,5 +105,6 @@
     window.location.href = 'forgot-password.jsp';
     <% } %>
 </script>
+<jsp:include page="/fragments/footer.jsp" />
 </body>
 </html>

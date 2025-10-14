@@ -42,7 +42,7 @@
 
   <div class="extra-links">
     <a href="${pageContext.request.contextPath}/view?page=signup">Create a new account</a>
-    <a href="${pageContext.request.contextPath}/view?page=forgotpassword">Forgot password?</a>
+    <a href="${pageContext.request.contextPath}/fragments/forgotpassword.jsp">Forgot password?</a>
     <a href="/">Back to Everly.com</a>
   </div>
 </main>

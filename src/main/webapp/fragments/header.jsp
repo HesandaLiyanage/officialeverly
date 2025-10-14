@@ -26,8 +26,8 @@
 
   <!-- Navigation Bar -->
   <nav class="nav-bar">
-    <a href="${pageContext.request.contextPath}/view?page=whyeverly">Why Everly?</a>
-    <a href="${pageContext.request.contextPath}/view?page=plans">Plans</a>
+    <a href="${pageContext.request.contextPath}/fragments/whyeverly.jsp">Why Everly?</a>
+    <a href="${pageContext.request.contextPath}/fragments/plans.jsp">Plans</a>
     <a href="${pageContext.request.contextPath}/view?page=aboutus">About Us</a>
     <a href="${pageContext.request.contextPath}/view?page=privacy">Privacy</a>
   </nav>
