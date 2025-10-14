@@ -5,11 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Forgot Password - Everly</title>
-  <link rel="stylesheet" href="login2.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/login.css">
 </head>
 <body>
-<!-- Include your header here -->
-<%@ include file="header.jsp" %>
+<jsp:include page="/fragments/header.jsp" />
 
 <div class="login-container">
   <!-- Lock icon with refresh arrow -->
@@ -29,7 +28,7 @@
   </div>
 
   <h1>Forgot password?</h1>
-  <p>Enter the email address associated with your account<br>and we'll send you a link to reset your password.</p>
+  <p>Enter the email address associated with your account and we'll send you a link to reset your password.</p>
 
   <form action="forgotPassword" method="POST" class="login-form">
     <input type="email"
@@ -43,17 +42,10 @@
   </form>
 
   <div class="extra-links">
-    <a href="login.jsp">Remember your password? Sign in</a>
-  </div>
-
-  <div class="back-link">
-    <a href="login.jsp">← Back</a>
+    <p> Remember your password?<a href="${pageContext.request.contextPath}/view?page=login"> Log in</a></p>
   </div>
 </div>
 
-<!-- Include your footer here -->
-<%@ include file="footer.jsp" %>
-
-
+<jsp:include page="/fragments/footer.jsp" />
 </body>
 </html>
