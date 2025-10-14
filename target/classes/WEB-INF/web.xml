@@ -14,6 +14,7 @@
         <url-pattern>/</url-pattern>
     </filter-mapping>
 
+
     <!-- Login Servlet -->
 <!--    <servlet>-->
 <!--        <servlet-name>LoginServlet</servlet-name>-->
@@ -79,14 +80,14 @@
 <!--        <url-pattern>/view</url-pattern>-->
 <!--    </servlet-mapping>-->
 
-<!--    <servlet>-->
-<!--        <servlet-name>DebugServlet</servlet-name>-->
-<!--        <servlet-class>com.demo.web.controller.DebugServlet</servlet-class>-->
-<!--    </servlet>-->
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>DebugServlet</servlet-name>-->
-<!--        <url-pattern>/debug</url-pattern>-->
-<!--    </servlet-mapping>-->
+    <servlet>
+        <servlet-name>DebugServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.DebugServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DebugServlet</servlet-name>
+        <url-pattern>/debug</url-pattern>
+    </servlet-mapping>
 
 <!--    <servlet>-->
 <!--        <servlet-name>ProfilePictureServlet</servlet-name>-->

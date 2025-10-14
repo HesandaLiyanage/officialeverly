@@ -21,7 +21,7 @@
   <jsp:include page="/header.jsp" />
 </header>
 <body>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}resources/login.css">
+<link rel="stylesheet" type="text/css" href="resources/login.css">
 <main class="login-container">
   <h1>Log in to Everly</h1>
   <p>Don't have an account? <a href="${pageContext.request.contextPath}/view?page=signup">Create one.</a></p>

@@ -1,12 +1,13 @@
 package com.demo.web.filter;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.*;
 import java.io.IOException;
 
 /**
  * Clean Subdomain-Based Authentication Filter
+ *
+ * Two domains, completely separate:
  *
  * PUBLIC DOMAIN (no authentication):
  *   - everly.local:8080/
@@ -59,7 +60,7 @@ public class AuthenticationFilter implements Filter {
         if (isAppSubdomain(serverName)) {
 
             // Allow login/register pages on app subdomain
-            if (path.equals("/login") || path.equals("/signup") || path.equals("/logout")) {
+            if (path.equals("/login") || path.equals("/register") || path.equals("/logout")) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -80,25 +81,6 @@ public class AuthenticationFilter implements Filter {
         // ========================================
         // 3. Main domain (everly.local) - all public
         // ========================================
-        // If user tries to access an app-only route from the main domain, redirect to app subdomain
-        if (isAppOnlyPath(path)) {
-            String protocol = req.isSecure() ? "https" : "http";
-            int port = req.getServerPort();
-            String portStr = (port == 80 || port == 443) ? "" : ":" + port;
-
-            // redirect to app subdomain (handles both local and prod)
-            String appDomain = serverName.contains("everly.local") ? "app.everly.local" : "app.everly.com";
-
-            String redirectUrl = protocol + "://" + appDomain + portStr + path;
-            if (req.getQueryString() != null) {
-                redirectUrl += "?" + req.getQueryString();
-            }
-
-            System.out.println("→ Redirecting to app subdomain: " + redirectUrl);
-            res.sendRedirect(redirectUrl);
-            return;
-        }
-
         // Everything on main domain is public, no auth needed
         chain.doFilter(request, response);
     }
@@ -108,13 +90,21 @@ public class AuthenticationFilter implements Filter {
      */
     private boolean isAppSubdomain(String serverName) {
         // Development
-        if (serverName.equals("app.everly.local")) return true;
+        if (serverName.equals("app.everly.local")) {
+            return true;
+        }
 
         // Production
-        if (serverName.equals("app.everly.com")) return true;
+        if (serverName.equals("app.everly.com")) {
+            return true;
+        }
 
         // Generic check for any "app." subdomain
-        return serverName.startsWith("app.");
+        if (serverName.startsWith("app.")) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -123,38 +113,25 @@ public class AuthenticationFilter implements Filter {
     private boolean isStaticResource(String path) {
         String lower = path.toLowerCase();
 
-        // Check file extensions
-        if (lower.endsWith(".css") || lower.endsWith(".js") ||
-                lower.endsWith(".png") || lower.endsWith(".jpg") ||
-                lower.endsWith(".jpeg") || lower.endsWith(".gif") ||
-                lower.endsWith(".ico") || lower.endsWith(".svg") ||
-                lower.endsWith(".woff") || lower.endsWith(".woff2") ||
-                lower.endsWith(".ttf") || lower.endsWith(".map") ||
-                lower.endsWith(".webp")) {
+        // File extensions
+        if (lower.matches(".*\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|map|webp)$")) {
             return true;
         }
 
-        // Check directories
-        if (lower.startsWith("/css/") || lower.startsWith("/js/") ||
-                lower.startsWith("/images/") || lower.startsWith("/img/") ||
-                lower.startsWith("/fonts/") || lower.startsWith("/assets/") ||
-                lower.startsWith("/static/")) {
-            return true;
+        // Common static folders (including /resources/)
+        String[] staticPrefixes = {
+                "/css/", "/js/", "/images/", "/img/", "/fonts/", "/assets/", "/static/", "/resources/",
+                "/resources/css/", "/resources/js/", "/resources/images/", "/resources/img/",
+                "/resources/fonts/", "/resources/assets/", "/resources/static/"
+        };
+
+        for (String prefix : staticPrefixes) {
+            if (lower.startsWith(prefix)) {
+                return true;
+            }
         }
 
         return false;
-    }
-
-    /**
-     * Check if path belongs to the app (authenticated) area
-     */
-    private boolean isAppOnlyPath(String path) {
-        return path.startsWith("/dashboard") ||
-                path.startsWith("/photos") ||
-                path.startsWith("/upload") ||
-                path.startsWith("/albums") ||
-                path.startsWith("/settings") ||
-                path.startsWith("/profile");
     }
 
     /**
@@ -197,15 +174,11 @@ public class AuthenticationFilter implements Filter {
         try {
             loginUrl += "?return=" + java.net.URLEncoder.encode(returnUrl, "UTF-8");
         } catch (Exception e) {
-            // ignore
+            // If encoding fails, just redirect without return URL
         }
 
         System.out.println("→ Redirecting to login: " + loginUrl);
         res.sendRedirect(loginUrl);
     }
 
-    @Override
-    public void destroy() {
-        System.out.println("✗ Everly AuthFilter destroyed");
-    }
 }

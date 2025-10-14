@@ -31,7 +31,7 @@
         <!-- Buttons -->
         <div class="profile-actions">
             <button type="submit" class="btn btn-primary">
-                <a href="${pageContext.request.contextPath}/landingContent.jsp">Next</a>
+                <a href="${pageContext.request.contextPath}/WEB-INF/views/public/app/landingContent.jsp">Next</a>
             </button>
             <button type="button" onclick="window.history.back()" class="btn btn-secondary">
                 <a href="${pageContext.request.contextPath}/fragments/signup.jsp">Back</a>

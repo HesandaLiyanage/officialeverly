@@ -38,7 +38,7 @@ public class signup extends HttpServlet {
             throws ServletException, IOException {
 
         // Show the first signup page
-        req.getRequestDispatcher("/fragments/signup.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/app/signup.jsp").forward(req, resp);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class signup extends HttpServlet {
             req.setAttribute("errorMessage", String.join(" ", errors));
             req.setAttribute("messageType", "error");
             req.setAttribute("email", email);
-            req.getRequestDispatcher("/fragments/signup.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/app/signup.jsp").forward(req, resp);
             return;
         }
 
@@ -112,7 +112,7 @@ public class signup extends HttpServlet {
             req.setAttribute("errorMessage", "An account with this email already exists.");
             req.setAttribute("messageType", "error");
             req.setAttribute("email", email);
-            req.getRequestDispatcher("/fragments/signup.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/app/signup.jsp").forward(req, resp);
             return;
         }
 
@@ -153,7 +153,7 @@ public class signup extends HttpServlet {
         if (!errors.isEmpty()) {
             req.setAttribute("errorMessage", String.join(" ", errors));
             req.setAttribute("messageType", "error");
-            req.getRequestDispatcher("/signup2.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/public/signup2.jsp").forward(req, resp);
             return;
         }
 
@@ -165,7 +165,7 @@ public class signup extends HttpServlet {
             } catch (Exception e) {
                 req.setAttribute("errorMessage", "Failed to upload profile picture: " + e.getMessage());
                 req.setAttribute("messageType", "error");
-                req.getRequestDispatcher("/signup2.jsp").forward(req, resp);
+                req.getRequestDispatcher("/WEB-INF/views/public/signup2.jsp").forward(req, resp);
                 return;
             }
 
@@ -203,12 +203,12 @@ public class signup extends HttpServlet {
                 } else {
                     req.setAttribute("errorMessage", "Account created but login failed. Please try logging in.");
                     req.setAttribute("messageType", "error");
-                    req.getRequestDispatcher("/signup2.jsp").forward(req, resp);
+                    req.getRequestDispatcher("/WEB-INF/views/public/signup2.jsp").forward(req, resp);
                 }
             } else {
                 req.setAttribute("errorMessage", "Failed to create account. Please try again.");
                 req.setAttribute("messageType", "error");
-                req.getRequestDispatcher("/signup2.jsp").forward(req, resp);
+                req.getRequestDispatcher("/WEB-INF/views/public/signup2.jsp").forward(req, resp);
             }
 
         } catch (Exception e) {
@@ -218,7 +218,7 @@ public class signup extends HttpServlet {
 
             req.setAttribute("errorMessage", "An unexpected error occurred. Please try again later.");
             req.setAttribute("messageType", "error");
-            req.getRequestDispatcher("/signup2.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/public/signup2.jsp").forward(req, resp);
         }
     }
 
