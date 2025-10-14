@@ -9,7 +9,7 @@
 </head>
 <body>
 <!-- Include your header here -->
-<%@ include file="fragments/header.jsp" %>
+<%@ include file="header.jsp" %>
 
 <div class="reset-password-container">
     <h1>Reset your password</h1>
@@ -37,7 +37,7 @@
 </div>
 
 <!-- Include your footer here -->
-<%@ include file="fragments/footer.jsp" %>
+<%@ include file="footer.jsp" %>
 
 <script>
     // Password validation

@@ -9,7 +9,7 @@
 </head>
 <body>
 <!-- Include your header here -->
-<%@ include file="fragments/header.jsp" %>
+<%@ include file="header.jsp" %>
 
 <div class="login-container">
   <!-- Lock icon with refresh arrow -->
@@ -43,7 +43,7 @@
 </div>
 
 <!-- Include your footer here -->
-<%@ include file="fragments/footer.jsp" %>
+<%@ include file="footer.jsp" %>
 
 
 </body>

@@ -5,21 +5,14 @@
          version="4.0">
 
     <!-- Authentication Filter -->
-<!--    <filter>-->
-<!--        <filter-name>AuthenticationFilter</filter-name>-->
-<!--        <filter-class>com.demo.web.filter.AuthenticationFilter</filter-class>-->
-<!--    </filter>-->
-<!--    <filter-mapping>-->
-<!--        <filter-name>AuthenticationFilter</filter-name>-->
-<!--        <url-pattern>/memories</url-pattern>-->
-<!--        <url-pattern>/journals</url-pattern>-->
-<!--        <url-pattern>/autographs</url-pattern>-->
-<!--        <url-pattern>/groups</url-pattern>-->
-<!--        <url-pattern>/events</url-pattern>-->
-<!--        <url-pattern>/feed</url-pattern>-->
-<!--        <url-pattern>/settings</url-pattern>-->
-<!--        <url-pattern>/view</url-pattern>-->
-<!--    </filter-mapping>-->
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>com.demo.web.filter.AuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/</url-pattern>
+    </filter-mapping>
 
     <!-- Login Servlet -->
 <!--    <servlet>-->
