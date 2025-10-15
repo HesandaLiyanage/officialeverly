@@ -42,7 +42,7 @@
   </form>
 
   <div class="extra-links">
-    <p> Remember your password?<a href="${pageContext.request.contextPath}/view?page=login""> Log in</a></p>
+    <p> Remember your password?<a href="${pageContext.request.contextPath}/view?page=login"> Log in</a></p>
   </div>
 </div>
 

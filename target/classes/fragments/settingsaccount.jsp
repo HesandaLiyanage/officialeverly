@@ -40,7 +40,7 @@
         <div class="setting-item" onclick="openLinkedDevices()">
             <div class="icon">📱</div>
             <div>
-                <p class="title">Linked Devices</p>
+                <p class="title"><a href="${pageContext.request.contextPath}/fragments/linkeddevices.jsp" style="text-decoration: none;">Linked Devices</a></p>
                 <p class="desc">Manage devices logged into your account</p>
             </div>
         </div>

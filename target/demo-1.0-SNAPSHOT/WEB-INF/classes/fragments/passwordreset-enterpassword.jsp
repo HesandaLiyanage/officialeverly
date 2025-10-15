@@ -35,9 +35,6 @@
     </form>
 </div>
 
-<!-- Include your footer here -->
-<%@ include file="footer.jsp" %>
-
 <script>
     // Password validation
     document.querySelector('.login-form').addEventListener('submit', function(e) {
