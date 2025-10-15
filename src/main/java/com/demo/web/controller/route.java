@@ -79,7 +79,7 @@ public class route extends HttpServlet {
 
         if (path.equals("/login") && !isUserAuthenticated(request)) {
             // We're already trying to access login page
-            request.getRequestDispatcher("/WEB-INF/views/public/loginContent.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/public/loginContent.jsp").forward(request, response);
             return;
         }
 
@@ -101,7 +101,7 @@ public class route extends HttpServlet {
         } else {
             // Handle 404 - route not found
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            request.getRequestDispatcher("/WEB-INF/views/public/404.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/public/404.jsp").forward(request, response);
         }
     }
 
@@ -136,15 +136,15 @@ public class route extends HttpServlet {
             case "/":
                 return "/landing.jsp";
             case "/signup":
-                return "/WEB-INF/views/public/signup.jsp";
+                return "/views/public/signup.jsp";
             case "/memories":
                 return "/memories.jsp";
             case "/about":
                 return "/about.jsp";
             case "/signup2":
-                return "/WEB-INF/views/public/signup2.jsp";
+                return "/views/public/signup2.jsp";
             case "/login":
-                return "/WEB-INF/views/public/loginContent.jsp";
+                return "/views/public/loginContent.jsp";
             case "/dashboard":
                 return "/dashboard.jsp";
             case "/profile":

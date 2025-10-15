@@ -46,9 +46,7 @@ public class AuthenticationFilter implements Filter {
         // Debug log
         System.out.println("→ " + serverName + path);
 
-        // ========================================
-        // 1. ALWAYS allow static resources
-        // ========================================
+        // Skip static resources - let them through without authentication
         if (isStaticResource(path)) {
             chain.doFilter(request, response);
             return;
@@ -85,6 +83,19 @@ public class AuthenticationFilter implements Filter {
         chain.doFilter(request, response);
     }
 
+
+
+    // Add this method to your AuthenticationFilter class
+    private boolean isStaticResource(String path) {
+        return path.endsWith(".css") || path.endsWith(".js") ||
+                path.endsWith(".jpg") || path.endsWith(".png") ||
+                path.endsWith(".gif") || path.endsWith(".ico") ||
+                path.endsWith(".svg") || path.endsWith(".jpeg") ||
+                path.endsWith(".woff") || path.endsWith(".woff2") ||
+                path.endsWith(".ttf") || path.endsWith(".eot");
+    }
+
+
     /**
      * Check if this is the app subdomain
      */
@@ -102,33 +113,6 @@ public class AuthenticationFilter implements Filter {
         // Generic check for any "app." subdomain
         if (serverName.startsWith("app.")) {
             return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if path is a static resource
-     */
-    private boolean isStaticResource(String path) {
-        String lower = path.toLowerCase();
-
-        // File extensions
-        if (lower.matches(".*\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|map|webp)$")) {
-            return true;
-        }
-
-        // Common static folders (including /resources/)
-        String[] staticPrefixes = {
-                "/css/", "/js/", "/images/", "/img/", "/fonts/", "/assets/", "/static/", "/resources/",
-                "/resources/css/", "/resources/js/", "/resources/images/", "/resources/img/",
-                "/resources/fonts/", "/resources/assets/", "/resources/static/"
-        };
-
-        for (String prefix : staticPrefixes) {
-            if (lower.startsWith(prefix)) {
-                return true;
-            }
         }
 
         return false;

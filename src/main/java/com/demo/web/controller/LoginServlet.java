@@ -32,7 +32,7 @@ public class LoginServlet extends HttpServlet {
         // Check if already logged in
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("user_id") != null) {
-            response.sendRedirect(request.getContextPath() + "/view?page=memories");
+            response.sendRedirect(request.getContextPath() + "/memories");
             return;
         }
 
@@ -41,12 +41,12 @@ public class LoginServlet extends HttpServlet {
         if (rememberedUser != null) {
             // Auto-login with remember me
             createUserSession(request, rememberedUser);
-            response.sendRedirect(request.getContextPath() + "/view?page=memories");
+            response.sendRedirect(request.getContextPath() + "/memories");
             return;
         }
 
         // Show login form
-        request.getRequestDispatcher("/view?page=login").forward(request, response);
+        request.getRequestDispatcher("/login").forward(request, response);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class LoginServlet extends HttpServlet {
         if (username == null || password == null ||
                 username.trim().isEmpty() || password.trim().isEmpty()) {
             request.setAttribute("error", "Username and password are required");
-            request.getRequestDispatcher("/view?page=login").forward(request, response);
+            request.getRequestDispatcher("/login").forward(request, response);
             return;
         }
 
@@ -92,13 +92,13 @@ public class LoginServlet extends HttpServlet {
                         deviceName, deviceType, ipAddress, userAgent);
 
                 // Redirect to memories page
-                response.sendRedirect(request.getContextPath() + "/view?page=memories");
+                response.sendRedirect(request.getContextPath() + "/memories");
 
             } else {
                 // Authentication failed
                 request.setAttribute("error", "Invalid username or password");
                 request.setAttribute("username", username); // Preserve username
-                request.getRequestDispatcher("/view?page=login").forward(request, response);
+                request.getRequestDispatcher("/login").forward(request, response);
             }
 
         } catch (Exception e) {
@@ -106,7 +106,7 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace();
 
             request.setAttribute("error", "An error occurred during login. Please try again.");
-            request.getRequestDispatcher("/view?page=login").forward(request, response);
+            request.getRequestDispatcher("/login").forward(request, response);
         }
     }
 
