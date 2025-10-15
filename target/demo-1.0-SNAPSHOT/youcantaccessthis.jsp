@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<jsp:include page="/fragments/header.jsp" />
+<jsp:include page="/header.jsp" />
 
 
 <!DOCTYPE html>
@@ -193,4 +193,4 @@
 </html>
 
 
-<jsp:include page="/fragments/footer.jsp" />
+<jsp:include page="/footer.jsp" />

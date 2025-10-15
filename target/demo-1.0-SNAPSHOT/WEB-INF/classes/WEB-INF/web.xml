@@ -11,65 +11,74 @@
     </filter>
     <filter-mapping>
         <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/memories</url-pattern>
-        <url-pattern>/journals</url-pattern>
-        <url-pattern>/autographs</url-pattern>
-        <url-pattern>/groups</url-pattern>
-        <url-pattern>/events</url-pattern>
-        <url-pattern>/feed</url-pattern>
-        <url-pattern>/settings</url-pattern>
-        <url-pattern>/view</url-pattern>
+        <url-pattern>/</url-pattern>
     </filter-mapping>
 
+
     <!-- Login Servlet -->
-    <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.LoginServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/login</url-pattern>
-    </servlet-mapping>
+<!--    <servlet>-->
+<!--        <servlet-name>LoginServlet</servlet-name>-->
+<!--        <servlet-class>com.demo.web.controller.LoginServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>LoginServlet</servlet-name>-->
+<!--        <url-pattern>/login</url-pattern>-->
+<!--    </servlet-mapping>-->
 
     <!-- Memories Servlet -->
-    <servlet>
-        <servlet-name>MemoriesServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.MemoriesServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>MemoriesServlet</servlet-name>
-        <url-pattern>/memories</url-pattern>
-    </servlet-mapping>
+<!--    <servlet>-->
+<!--        <servlet-name>MemoriesServlet</servlet-name>-->
+<!--        <servlet-class>com.demo.web.controller.MemoriesServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>MemoriesServlet</servlet-name>-->
+<!--        <url-pattern>/memories</url-pattern>-->
+<!--    </servlet-mapping>-->
 
     <!-- Journals Servlet -->
-    <servlet>
-        <servlet-name>JournalsServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.JournalsServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>JournalsServlet</servlet-name>
-        <url-pattern>/journals</url-pattern>
-    </servlet-mapping>
+<!--    <servlet>-->
+<!--        <servlet-name>JournalsServlet</servlet-name>-->
+<!--        <servlet-class>com.demo.web.controller.JournalsServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>JournalsServlet</servlet-name>-->
+<!--        <url-pattern>/journals</url-pattern>-->
+<!--    </servlet-mapping>-->
 
     <!-- Autographs Servlet -->
+<!--    <servlet>-->
+<!--        <servlet-name>AutographsServlet</servlet-name>-->
+<!--        <servlet-class>com.demo.web.controller.AutographsServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>AutographsServlet</servlet-name>-->
+<!--        <url-pattern>/autographs</url-pattern>-->
+<!--    </servlet-mapping>-->
+
     <servlet>
-        <servlet-name>AutographsServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.AutographsServlet</servlet-class>
+        <servlet-name>RouteServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.route</servlet-class>
+<!--        <load-on-startup>1</load-on-startup>-->
     </servlet>
+
     <servlet-mapping>
-        <servlet-name>AutographsServlet</servlet-name>
-        <url-pattern>/autographs</url-pattern>
+        <servlet-name>RouteServlet</servlet-name>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
+<!--    <welcome-file-list>-->
+<!--        <welcome-file>/login.jsp</welcome-file>-->
+<!--    </welcome-file-list>-->
+
     <!-- Keep Layout Controller for static pages -->
-    <servlet>
-        <servlet-name>LayoutController</servlet-name>
-        <servlet-class>com.demo.web.controller.LayoutController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LayoutController</servlet-name>
-        <url-pattern>/view</url-pattern>
-    </servlet-mapping>
+<!--    <servlet>-->
+<!--        <servlet-name>LayoutController</servlet-name>-->
+<!--        <servlet-class>com.demo.web.controller.LayoutController</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>LayoutController</servlet-name>-->
+<!--        <url-pattern>/view</url-pattern>-->
+<!--    </servlet-mapping>-->
 
     <servlet>
         <servlet-name>DebugServlet</servlet-name>
@@ -80,29 +89,35 @@
         <url-pattern>/debug</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>ProfilePictureServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.ProfilePictureServlet</servlet-class>
-        <init-param>
-            <param-name>upload.path</param-name>
-            <param-value>C:/Everly/uploads/profile_pictures</param-value> <!-- Change this -->
-        </init-param>
-    </servlet>
     <servlet-mapping>
-        <servlet-name>ProfilePictureServlet</servlet-name>
-        <url-pattern>/uploadProfilePicture</url-pattern>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/resources/*</url-pattern>
+        <url-pattern>/resources</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>signup</servlet-name>
-        <servlet-class>com.demo.web.controller.signup</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>signup</servlet-name>
-        <url-pattern>/signup</url-pattern>
-    </servlet-mapping>
+<!--    <servlet>-->
+<!--        <servlet-name>ProfilePictureServlet</servlet-name>-->
+<!--        <servlet-class>com.demo.web.controller.ProfilePictureServlet</servlet-class>-->
+<!--        <init-param>-->
+<!--            <param-name>upload.path</param-name>-->
+<!--            <param-value>C:/Everly/uploads/profile_pictures</param-value> &lt;!&ndash; Change this &ndash;&gt;-->
+<!--        </init-param>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>ProfilePictureServlet</servlet-name>-->
+<!--        <url-pattern>/uploadProfilePicture</url-pattern>-->
+<!--    </servlet-mapping>-->
 
 
+
+<!--    <servlet>-->
+<!--        <servlet-name>signup</servlet-name>-->
+<!--        <servlet-class>com.demo.web.controller.signup</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>signup</servlet-name>-->
+<!--        <url-pattern>/signup</url-pattern>-->
+<!--    </servlet-mapping>-->
 
     <!-- Database Connection Context Parameters -->
     <context-param>

@@ -18,7 +18,7 @@
     </p>
     <div class="thankyou-actions">
         <button id="resendEmailBtn" class="btn btn-primary">Resend Email</button>
-        <a href="${pageContext.request.contextPath}/fragments/loginContent.jsp" class="btn btn-secondary">Back to log in</a>
+        <a href="${pageContext.request.contextPath}/loginContent.jsp" class="btn btn-secondary">Back to log in</a>
     </div>
 </main>
 
