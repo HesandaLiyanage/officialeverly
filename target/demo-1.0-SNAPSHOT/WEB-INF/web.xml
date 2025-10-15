@@ -89,6 +89,12 @@
         <url-pattern>/debug</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/resources/*</url-pattern>
+        <url-pattern>/resources</url-pattern>
+    </servlet-mapping>
+
 <!--    <servlet>-->
 <!--        <servlet-name>ProfilePictureServlet</servlet-name>-->
 <!--        <servlet-class>com.demo.web.controller.ProfilePictureServlet</servlet-class>-->
