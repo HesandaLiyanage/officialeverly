@@ -13,33 +13,27 @@
 <main class="profile-container">
     <h1 class="profile-title">Tell us about Yourself</h1>
 
-    <form class="profile-form" action="${pageContext.request.contextPath}/view?page=saveprofile" method="post" enctype="multipart/form-data">
+    <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
+    <% if (errorMessage != null) { %>
+    <div class="error"><%= errorMessage %></div>
+    <% } %>
 
-        <!-- Name Field -->
+    <form class="profile-form" action="/signupservlet" method="post">
+        <input type="hidden" name="step" value="2">
+
         <label for="name" class="profile-label">Name</label>
         <input type="text" id="name" name="name" class="profile-input" placeholder="Enter your name" required>
 
-        <!-- Bio Field -->
         <label for="bio" class="profile-label">Bio</label>
         <textarea id="bio" name="bio" class="profile-textarea" placeholder="Write a short bio..." rows="4"></textarea>
 
-        <!-- Profile Picture -->
-        <label for="profilePicture" class="profile-label">Profile Picture</label>
-        <div class="profile-picture-container">
-            <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="profile-file-input">
-        </div>
-
-        <!-- Buttons -->
         <div class="profile-actions">
-            <button type="submit" class="btn btn-primary">
-                <a href="${pageContext.request.contextPath}/WEB-INF/views/public/app/landingContent.jsp">Next</a>
-            </button>
-            <button type="button" onclick="window.history.back()" class="btn btn-secondary">
-                <a href="${pageContext.request.contextPath}/fragments/signup.jsp">Back</a>
-            </button>
+            <button type="submit" class="btn btn-primary">Finish Signup</button>
+            <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/signup'" class="btn btn-secondary">Back</button>
         </div>
     </form>
 </main>
+
 <jsp:include page="footer.jsp" />
 </body>
 </html>

@@ -55,57 +55,32 @@ public class LoginServlet extends HttpServlet {
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String rememberMe = request.getParameter("remember_me");
 
-        // Input validation
-        if (username == null || password == null ||
-                username.trim().isEmpty() || password.trim().isEmpty()) {
-            request.setAttribute("error", "Username and password are required");
+        // Validate input
+        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+            request.setAttribute("error", "Username and password required");
             request.getRequestDispatcher("/login").forward(request, response);
             return;
         }
 
-        try {
-            // Authenticate user using DAO
-            user user = userDAO.authenticateUser(username, password);
+        // Authenticate user
+        user user = userDAO.authenticateUser(username, password);
+        if (user != null) {
+            // Login success: create session
+            HttpSession session = request.getSession();
+            session.setAttribute("user_id", user.getId());
+            session.setAttribute("username", user.getUsername());
+            session.setMaxInactiveInterval(30 * 60);
 
-            if (user != null) {
-                // Create session
-                createUserSession(request, user);
-
-                // Handle remember me functionality
-                if ("on".equals(rememberMe)) {
-                    handleRememberMe(user.getId(), response);
-                }
-
-                // Update last login
-                userDAO.updateLastLogin(user.getId());
-
-                // Store session in database with device information
-                HttpSession httpSession = request.getSession();
-                String deviceName = getDeviceName(request);
-                String deviceType = getDeviceType(request.getHeader("User-Agent"));
-                String ipAddress = getClientIpAddress(request);
-                String userAgent = request.getHeader("User-Agent");
-
-                userSessionDAO.createSession(user.getId(), httpSession.getId(),
-                        deviceName, deviceType, ipAddress, userAgent);
-
-                // Redirect to memories page
-                response.sendRedirect(request.getContextPath() + "/memories");
-
+            // Redirect to original page or /memories
+            String returnUrl = request.getParameter("return");
+            if (returnUrl != null && !returnUrl.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + returnUrl);
             } else {
-                // Authentication failed
-                request.setAttribute("error", "Invalid username or password");
-                request.setAttribute("username", username); // Preserve username
-                request.getRequestDispatcher("/login").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/memories");
             }
-
-        } catch (Exception e) {
-            // Log the exception (use proper logging framework)
-            e.printStackTrace();
-
-            request.setAttribute("error", "An error occurred during login. Please try again.");
+        } else {
+            request.setAttribute("error", "Invalid username or password");
             request.getRequestDispatcher("/login").forward(request, response);
         }
     }

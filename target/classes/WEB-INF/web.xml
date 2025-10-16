@@ -4,6 +4,38 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
+
+    <!-- Debug Servlet -->
+    <servlet>
+        <servlet-name>DebugServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.DebugServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DebugServlet</servlet-name>
+        <url-pattern>/debug</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- Logic servlets -->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/loginservlet</url-pattern>  <!-- or /process-login if you want different URL -->
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>signup</servlet-name>
+        <servlet-class>com.demo.web.controller.signupservlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>signup</servlet-name>
+        <url-pattern>/signupservlet</url-pattern>  <!-- or /process-login if you want different URL -->
+    </servlet-mapping>
+
     <!-- Authentication Filter -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
@@ -14,7 +46,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- Front Controller Servlet -->
     <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.controller.FrontControllerServlet</servlet-class>
@@ -23,6 +54,7 @@
         <servlet-name>FrontController</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
 
     <!-- Static Resources Mapping -->
     <servlet-mapping>
@@ -72,25 +104,6 @@
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>*.eot</url-pattern>
-    </servlet-mapping>
-
-    <!-- Debug Servlet -->
-    <servlet>
-        <servlet-name>DebugServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.DebugServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DebugServlet</servlet-name>
-        <url-pattern>/debug</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.LoginServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/loginservlet</url-pattern>  <!-- or /process-login if you want different URL -->
     </servlet-mapping>
 
     <!-- Database Connection Context Parameters -->
