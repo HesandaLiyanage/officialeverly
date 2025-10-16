@@ -182,6 +182,7 @@ public class userDAO {
     public boolean createUser(user user) {
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet generatedKeys = null;
 
         try {
             conn = DatabaseUtil.getConnection();
@@ -190,8 +191,9 @@ public class userDAO {
             String salt = PasswordUtil.generateSalt();
             String passwordHash = PasswordUtil.hashPassword(user.getPassword(), salt);
 
+            // Use RETURNING to get the generated ID
             String sql = "INSERT INTO users (username, email, password, salt, bio, profile_picture_url, is_active, joined_at) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING user_id";
 
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getUsername());
@@ -203,14 +205,21 @@ public class userDAO {
             stmt.setBoolean(7, true);
             stmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
 
-            int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
+            generatedKeys = stmt.executeQuery();
+
+            if (generatedKeys.next()) {
+                int newUserId = generatedKeys.getInt("user_id");
+                user.setId(newUserId); // Set the ID on the user object
+                return true;
+            }
+
+            return false;
 
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Database error while creating user", e);
         } finally {
-            closeResources(null, stmt, conn);
+            closeResources(generatedKeys, stmt, conn);
         }
     }
 

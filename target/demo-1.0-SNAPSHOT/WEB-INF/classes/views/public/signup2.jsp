@@ -18,7 +18,7 @@
     <div class="error"><%= errorMessage %></div>
     <% } %>
 
-    <form class="profile-form" action="${pageContext.request.contextPath}/signup" method="post">
+    <form class="profile-form" action="/signupservlet" method="post">
         <input type="hidden" name="step" value="2">
 
         <label for="name" class="profile-label">Name</label>

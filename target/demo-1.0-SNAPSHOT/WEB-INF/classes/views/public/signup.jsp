@@ -26,7 +26,7 @@
 <div class="error"><%= errorMessage %></div>
 <% } %>
 
-<form action="${pageContext.request.contextPath}/signup" method="post">
+<form action="/signupservlet" method="post">
     <input type="hidden" name="step" value="1">
 
     <div class="form-group">

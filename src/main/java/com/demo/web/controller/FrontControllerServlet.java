@@ -24,6 +24,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/signup", "/views/public/signup.jsp");
         routeToJsp.put("/signup2", "/views/public/signup2.jsp");
 
+
         // Protected pages
         routeToJsp.put("/memories", "/views/app/memories.jsp");
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");

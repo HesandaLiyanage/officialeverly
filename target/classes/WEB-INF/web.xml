@@ -33,7 +33,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>signup</servlet-name>
-        <url-pattern>/signup2</url-pattern>  <!-- or /process-login if you want different URL -->
+        <url-pattern>/signupservlet</url-pattern>  <!-- or /process-login if you want different URL -->
     </servlet-mapping>
 
     <!-- Authentication Filter -->

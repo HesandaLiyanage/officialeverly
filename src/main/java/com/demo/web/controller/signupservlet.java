@@ -124,7 +124,7 @@ public class signupservlet extends HttpServlet {
                 session.removeAttribute("temp_email");
                 session.removeAttribute("temp_password");
                 session.setAttribute("user", newUser);
-                session.setAttribute("userId", newUser.getId());
+                session.setAttribute("user_id", newUser.getId());
                 userSessionDAO.createSession(newUser.getId(), session.getId());
 
                 resp.sendRedirect(req.getContextPath() + "/memories");
