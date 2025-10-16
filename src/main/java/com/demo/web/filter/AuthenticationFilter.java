@@ -25,6 +25,22 @@ public class AuthenticationFilter implements Filter {
                 "/signup2",
                 "/signupservlet",
                 "/debug"
+                "/404",
+                "/checkyourinbox",
+                "/emailresetsuccess",
+                "/footer",
+                "/forgotpassword",
+                "/header",
+                "/header2",
+                "/index",
+                "/layout",
+                "/layout2",
+                "/passwordreset",
+                "/passwordreset-enterpassword",
+                "/plans",
+                "/signupThankyou",
+                "/whyeverly",
+                "/youcantaccessthis"
         ));
     }
 
