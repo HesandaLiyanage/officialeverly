@@ -24,6 +24,7 @@ public class AuthenticationFilter implements Filter {
                 "/signup",
                 "/signup2",
                 "/signupservlet",
+                "/debug"
                 "/404",
                 "/checkyourinbox",
                 "/emailresetsuccess",

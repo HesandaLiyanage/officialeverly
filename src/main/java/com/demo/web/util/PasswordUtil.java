@@ -13,6 +13,7 @@ public class PasswordUtil {
     /**
      * Generate a random salt
      */
+
     public static String generateSalt() {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[SALT_LENGTH];
