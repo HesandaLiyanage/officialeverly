@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/settings.css">
 </head>
 <body>
-<jsp:include page="/fragments/header2.jsp" />
+<jsp:include page="../public/header2.jsp" />
 <div class="settings-container">
     <h2>Settings</h2>
     <div class="settings-tabs">
@@ -74,6 +74,6 @@
         window.location.href = tab + ".jsp";
     }
 </script>
-<jsp:include page="/fragments/footer.jsp" />
+<jsp:include page="../public/footer.jsp" />
 </body>
 </html>

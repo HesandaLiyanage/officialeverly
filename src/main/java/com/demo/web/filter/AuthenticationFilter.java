@@ -24,7 +24,7 @@ public class AuthenticationFilter implements Filter {
                 "/signup",
                 "/signup2",
                 "/signupservlet",
-                "/debug"
+                "/debug",
                 "/404",
                 "/checkyourinbox",
                 "/emailresetsuccess",
@@ -36,11 +36,12 @@ public class AuthenticationFilter implements Filter {
                 "/layout",
                 "/layout2",
                 "/passwordreset",
-                "/passwordreset-enterpassword",
+                "/passwordresetenterpassword",
                 "/plans",
-                "/signupThankyou",
+                "/signupthankyou",
                 "/whyeverly",
-                "/youcantaccessthis"
+                "/youcantaccessthis",
+                "/emailsentreset"
         ));
     }
 

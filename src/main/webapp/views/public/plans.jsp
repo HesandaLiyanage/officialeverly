@@ -17,7 +17,7 @@
         <div class="plan-card">
             <h3>Basic</h3>
             <h2>Free <span>/month</span></h2>
-            <button class="cta-btn">Get started</button>
+            <a href="/login" class="cta-btn">Get started</a>
             <ul>
                 <li>20GB storage</li>
                 <li>Advanced Privacy Features</li>

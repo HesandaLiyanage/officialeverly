@@ -30,7 +30,7 @@
   <h1>Forgot password?</h1>
   <p>Enter the email address associated with your account and we'll send you a link to reset your password.</p>
 
-  <form action="forgotPassword" method="POST" class="login-form">
+  <form action="/emailsentreset" method="POST" class="login-form">
     <input type="email"
            name="email"
            placeholder="Email address"

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +22,7 @@
         You can now login with your new password</p>
 
     <div class="login-form">
-        <button type="submit" class="btn login-btn">Go Back to Login</button>
+        <a href="/login" class="btn login-btn">Go Back to Login</a>
     </div>
 </div>
 

@@ -181,7 +181,7 @@
                     Your memories, your rules - secure, emotional, and beautifully organized.
                 </h2>
                 <div class="button-container">
-                    <a href="${pageContext.request.contextPath}/view?page=login" class="get-started-btn">
+                    <a href="${pageContext.request.contextPath}/login" class="get-started-btn">
                         <span>Get Started</span>
                     </a>
                 </div>

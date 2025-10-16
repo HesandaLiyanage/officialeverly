@@ -16,7 +16,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp = new HashMap<>();
 
         // Public pages
-        routeToJsp.put("/", "/views/public/landingContent.jsp");
+        routeToJsp.put("/", "/views/public/landing.jsp");
         routeToJsp.put("/login", "/views/public/loginContent.jsp");
         routeToJsp.put("/register", "/views/public/register.jsp");
         routeToJsp.put("/aboutus", "/views/public/about.jsp");
@@ -26,6 +26,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/404", "/views/public/404.jsp");
         routeToJsp.put("/checkyourinbox", "/views/public/checkyourinbox.jsp");
         routeToJsp.put("/emailsentreset", "/views/public/emailsentreset.jsp");
+        routeToJsp.put("/emailresetsuccess", "/views/public/emailresetsuccess.jsp");
         routeToJsp.put("/footer", "/views/public/footer.jsp");
         routeToJsp.put("/forgotpassword", "/views/public/forgotpassword.jsp");
         routeToJsp.put("/header", "/views/public/header.jsp");
@@ -33,10 +34,10 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/index", "/views/public/index.jsp");
         routeToJsp.put("/layout", "/views/public/layout.jsp");
         routeToJsp.put("/layout2", "/views/public/layout2.jsp");
-        routeToJsp.put("/paswordreset", "/views/public/passwordreset.jsp");
-        routeToJsp.put("/passwordreset-enterpassword", "/views/public/passwordreset-enterpassword.jsp");
+        routeToJsp.put("/passwordreset", "/views/public/passwordreset.jsp");
+        routeToJsp.put("/passwordresetenterpassword", "/views/public/passwordreset-enterpassword.jsp");
         routeToJsp.put("/plans", "/views/public/plans.jsp");
-        routeToJsp.put("/signupThankyou", "/views/public/signupThankyou.jsp");
+        routeToJsp.put("/signupthankyou", "/views/public/signupThankyou.jsp");
         routeToJsp.put("/whyeverly", "/views/public/whyeverly.jsp");
         routeToJsp.put("/youcantaccessthis", "/views/public/youcantaccessthis.jsp");
 

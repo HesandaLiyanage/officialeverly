@@ -1,11 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Forgot Password - Everly</title>
-  <link rel="stylesheet" href="login2.css">
+  <link rel="stylesheet" href="/resources/css/login.css">
 </head>
 <body>
 <!-- Include your header here -->
@@ -34,11 +34,12 @@
 
 
   <div class="extra-links">
-    <a href="login.jsp"> Didn't got the mail? Resend in 30s</a>
+
+    <a href="#"> Didn't got the mail? Resend in 30s</a>
   </div>
 
   <div class="login-form">
-    <button type="submit" class="btn login-btn">Go back to login</button>
+    <a href="/login" class="btn login-btn">Go back to login</a>
   </div>
 </div>
 
