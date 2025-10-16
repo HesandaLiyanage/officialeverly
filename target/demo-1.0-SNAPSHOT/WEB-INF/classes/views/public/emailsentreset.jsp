@@ -16,7 +16,7 @@
                     countdown--;
                 } else {
                     clearInterval(intervalId);
-                    document.getElementById("resendLink").innerHTML = '<a href="ResendMailServlet" class="resend">Resend email</a>';
+                    document.getElementById("resendLink").innerHTML = '<a href="/emailsentreset" class="resend">Resend email</a>';
                 }
             }, 1000);
         }
