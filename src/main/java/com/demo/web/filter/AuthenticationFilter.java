@@ -23,7 +23,8 @@ public class AuthenticationFilter implements Filter {
                 "/loginservlet",
                 "/signup",
                 "/signup2",
-                "/signupservlet"
+                "/signupservlet",
+                "/debug"
         ));
     }
 

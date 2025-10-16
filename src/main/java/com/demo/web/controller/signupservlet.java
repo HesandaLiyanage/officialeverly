@@ -13,6 +13,7 @@ import javax.servlet.http.*;
 import com.demo.web.dao.userDAO;
 import com.demo.web.dao.userSessionDAO;
 import com.demo.web.model.user;
+import com.demo.web.util.PasswordUtil;
 
 public class signupservlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -91,7 +92,7 @@ public class signupservlet extends HttpServlet {
         }
 
         String email = (String) session.getAttribute("temp_email");
-        String password = (String) session.getAttribute("temp_password");
+        String password = (String) session.getAttribute("temp_password"); // Raw password
         String name = req.getParameter("name").trim();
         String bio = req.getParameter("bio").trim();
 
@@ -106,17 +107,11 @@ public class signupservlet extends HttpServlet {
         }
 
         try {
-            // Generate salt and hash
-            String salt = generateSalt();
-            String hashedPassword = hashPassword(password, salt);
-
             user newUser = new user();
             newUser.setUsername(name);
             newUser.setEmail(email);
-            newUser.setPassword(hashedPassword);
-            newUser.setSalt(salt);
+            newUser.setPassword(password); // Raw password - DAO will hash it
             newUser.setBio(bio);
-//            newUser.is_active(true);
 
             boolean created = userDAO.createUser(newUser);
 
@@ -139,16 +134,6 @@ public class signupservlet extends HttpServlet {
             req.getRequestDispatcher("/views/public/signup2.jsp").forward(req, resp);
         }
     }
-
-    private String generateSalt() {
-        byte[] salt = new byte[16];
-        new SecureRandom().nextBytes(salt);
-        return Base64.getEncoder().encodeToString(salt);
     }
 
-    private String hashPassword(String password, String salt) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hash = digest.digest((password + salt).getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(hash);
-    }
-}
+    // Remove the custom hashPassword method since you're using PasswordUtil directly

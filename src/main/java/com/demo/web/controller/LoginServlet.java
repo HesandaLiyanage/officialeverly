@@ -3,6 +3,7 @@ package com.demo.web.controller;
 import com.demo.web.dao.userDAO;
 import com.demo.web.dao.userSessionDAO;
 import com.demo.web.model.user;
+import com.demo.web.util.PasswordUtil; // Add this import
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -63,9 +64,9 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        // Authenticate user
-        user user = userDAO.authenticateUser(username, password);
-        if (user != null) {
+        // Authenticate user - hash the password before comparing
+        user user = userDAO.findByUsername(username);
+        if (user != null && PasswordUtil.verifyPassword(password, user.getSalt(), user.getPassword())) {
             // Login success: create session
             HttpSession session = request.getSession();
             session.setAttribute("user_id", user.getId());

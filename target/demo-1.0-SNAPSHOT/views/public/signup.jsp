@@ -30,11 +30,6 @@
     <input type="hidden" name="step" value="1">
 
     <div class="form-group">
-        <label for="username">Name:</label>
-        <input type="text" id="username" name="username" required>
-    </div>
-
-    <div class="form-group">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
     </div>
