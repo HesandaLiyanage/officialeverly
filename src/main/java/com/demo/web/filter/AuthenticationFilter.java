@@ -23,7 +23,23 @@ public class AuthenticationFilter implements Filter {
                 "/loginservlet",
                 "/signup",
                 "/signup2",
-                "/signupservlet"
+                "/signupservlet",
+                "/404",
+                "/checkyourinbox",
+                "/emailresetsuccess",
+                "/footer",
+                "/forgotpassword",
+                "/header",
+                "/header2",
+                "/index",
+                "/layout",
+                "/layout2",
+                "/passwordreset",
+                "/passwordreset-enterpassword",
+                "/plans",
+                "/signupThankyou",
+                "/whyeverly",
+                "/youcantaccessthis"
         ));
     }
 
