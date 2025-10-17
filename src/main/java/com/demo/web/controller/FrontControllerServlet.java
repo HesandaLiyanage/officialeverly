@@ -59,8 +59,14 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/vaultPassword", "/views/app/vaultPassword.jsp");
         routeToJsp.put("/vaultSetup", "/views/app/vaultSetup.jsp");
         routeToJsp.put("/viewautograph", "/views/app/viewautograph.jsp");
-
-
+        routeToJsp.put("/events", "/views/app/eventdashboard.jsp");
+        routeToJsp.put("/createevent", "/views/app/createevent.jsp");
+        routeToJsp.put("/editevent", "/views/app/editevent.jsp");
+        routeToJsp.put("/groupannouncements", "/views/app/groupannouncement.jsp");
+        routeToJsp.put("/groups", "/views/app/groupdashboard.jsp");
+        routeToJsp.put("/groupmembers", "/views/app/groupmembers.jsp");
+        routeToJsp.put("/groupmemories", "/views/app/groupmemories.jsp");
+        routeToJsp.put("/memberprofile", "/views/app/groupprofile.jsp");
 
         // add other protected pages here
     }

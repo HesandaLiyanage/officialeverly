@@ -1,0 +1,383 @@
+/* Use the same base font and colors as your main site */
+.create-event-container {
+    font-family: Arial, sans-serif;
+    color: #222;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.create-event-container h1 {
+    font-size: 26px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #222;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #a67cfa;
+    box-shadow: 0 0 0 2px rgba(166, 124, 250, 0.2);
+}
+
+/* Date input with calendar icon */
+#eventDate {
+    padding-right: 36px;
+    position: relative;
+}
+
+.calendar-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #666;
+    font-size: 16px;
+}
+
+/* Upload Box */
+.upload-box {
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+    margin: 25px 0;
+    background-color: #fafafa;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.upload-box:hover {
+    background-color: #f5f5f5;
+}
+
+.upload-box h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.upload-box p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.upload-btn {
+    background-color: #eee;
+    color: #222;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.upload-btn:hover {
+    background-color: #ddd;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-create {
+    background-color: #a67cfa;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s;
+}
+
+.btn-create:hover {
+    background-color: #8f5de8;
+}
+
+.btn-cancel {
+    background-color: #f0f0f0;
+    color: #222;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+/* Use your site's base styling */
+.events-container {
+    font-family: Arial, sans-serif;
+    color: #222;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+}
+
+.events-container h1 {
+    font-size: 26px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* Search & Sort Bar */
+.search-sort-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
+.search-box .search-icon {
+    position: absolute;
+    right: 15px;
+    pointer-events: none;
+    color: #666;
+}
+
+.sort-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.sort-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    background-color: white;
+    cursor: pointer;
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: #a67cfa;
+}
+
+/* Section Headers */
+.events-section {
+    margin-bottom: 40px;
+}
+
+.events-section h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+/* Event Cards Grid */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.event-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    background-color: #fafafa;
+    transition: transform 0.2s;
+}
+
+.event-card:hover {
+    transform: translateY(-2px);
+}
+
+.event-image img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.event-details {
+    padding: 15px;
+}
+
+.event-status {
+    display: block;
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.event-details h3 {
+    font-size: 16px;
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.event-details p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Create New Event Button */
+.create-event-btn-wrapper {
+    text-align: right;
+    margin-top: 30px;
+}
+
+.create-event-btn {
+    display: inline-block;
+    background-color: #a67cfa;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+}
+
+.create-event-btn:hover {
+    background-color: #8f5de8;
+}
+
+/* Use your site's base styling */
+.event-detail-container {
+    font-family: Arial, sans-serif;
+    color: #222;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+}
+
+/* Banner Image */
+.event-banner img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+/* Event Info (date/type/group) */
+.event-info {
+    margin-bottom: 25px;
+}
+
+.event-info span {
+    font-size: 14px;
+    color: #555;
+}
+
+/* Event Description */
+.event-description {
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.event-description p {
+    font-size: 15px;
+    color: #222;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #a67cfa;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #8f5de8;
+}
+
+.btn-secondary {
+    background-color: #e8daff;
+    color: #222;
+}
+
+.btn-secondary:hover {
+    background-color: #d8caff;
+}

@@ -7,6 +7,7 @@
     <title>Linked Devices | Everly</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/settings.css">
 </head>
+
 <body>
 <jsp:include page="/fragments/header2.jsp" />
 <div class="settings-container">
