@@ -106,3 +106,333 @@ body {
 .footer-copy {
     margin-top: 12px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------- CREATE BOOK PAGE NEW ADDITIONS ---------- */
+
+.create-book-container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.create-book-form .section {
+    margin-bottom: 32px;
+}
+
+.create-book-form label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 12px 0 6px;
+}
+
+.create-book-form input[type="text"],
+.create-book-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #F9FAFB;
+    transition: border-color 0.2s;
+}
+
+.create-book-form input[type="text"]:focus,
+.create-book-form textarea:focus {
+    border-color: #7C3AED;
+    outline: none;
+}
+
+.create-book-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Upload box */
+.upload-box {
+    border: 2px dashed #D1D5DB;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    background-color: #FAFAFA;
+    cursor: pointer;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.upload-box.dragover {
+    border-color: #7C3AED;
+    background-color: #F3E8FF;
+}
+
+.upload-box input[type="file"] {
+    display: none;
+}
+
+.upload-text {
+    color: #7C3AED;
+    font-weight: 500;
+}
+
+/* Share With */
+.share-input {
+    display: flex;
+    align-items: center;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    background-color: #F9FAFB;
+    padding: 8px 12px;
+}
+
+.share-input input {
+    border: none;
+    background: none;
+    flex: 1;
+    padding-left: 8px;
+    font-size: 14px;
+}
+
+.share-input input:focus {
+    outline: none;
+}
+
+.share-icon {
+    font-size: 16px;
+}
+
+.share-tags {
+    margin-top: 10px;
+}
+
+.tag {
+    display: inline-block;
+    background-color: #F3E8FF;
+    color: #7C3AED;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    margin-right: 8px;
+}
+
+/* Memory buttons */
+.memory-options {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.memory-btn {
+    flex: 1 1 120px;
+    background-color: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.memory-btn:hover {
+    background-color: #F3E8FF;
+    border-color: #7C3AED;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn.cancel {
+    background-color: #F3F4F6;
+    color: #1F2937;
+}
+
+.btn.create {
+    background-color: #7C3AED;
+    color: #fff;
+}
+
+.btn.create:hover {
+    background-color: #6D28D9;
+}
+
+
+
+
+
+/* ---------- AUTOGRAPH BOOK PAGE ADDITIONS ---------- */
+
+/* Tabs */
+.tab-container {
+    display: flex;
+    gap: 24px;
+    margin-top: 12px;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 0;
+    cursor: pointer;
+    color: #6B7280;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    color: #111827;
+    border-bottom: 2px solid #7C3AED;
+}
+
+.tab-section {
+    margin-top: 32px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Grid for Autographs */
+.autograph-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.autograph-card {
+    background: #FDFCFB;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+    width: 180px;
+    height: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.autograph-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+/* Messages */
+.autograph-texts {
+    margin-top: 24px;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 32px;
+    gap: 12px;
+}
+
+.page-number {
+    background-color: transparent;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.page-number.active {
+    background-color: #E5E7EB;
+}
+
+.page-number:hover {
+    background-color: #F3F4F6;
+}
+
+.page-arrow {
+    cursor: pointer;
+    font-size: 18px;
+    color: #6B7280;
+    transition: color 0.3s;
+}
+
+.page-arrow:hover {
+    color: #111827;
+}
+
+/* Page Label */
+.page-label {
+    font-size: 16px;
+    font-weight: 600;
+}
+/* ---------- ADD AUTOGRAPH ENHANCEMENTS ---------- */
+
+/* Sticker Grid */
+.sticker-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.sticker-item {
+    width: 70px;
+    height: 70px;
+    background-color: #FAFAFA;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sticker-item:hover {
+    border-color: #7C3AED;
+    background-color: #F3E8FF;
+}
+
+.sticker-item.selected {
+    border-color: #7C3AED;
+    background-color: #F3E8FF;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+
+.sticker-item img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+/* Upload boxes reuse same style, but visually fit tighter */
+.upload-box p.upload-text {
+    font-size: 14px;
+    color: #7C3AED;
+}
+

@@ -287,3 +287,163 @@ details p {
     font-size: 14px;
     color: #555;
 }
+
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #fff;
+    color: #222;
+}
+
+/* Hero section */
+.hero {
+    position: relative;
+    text-align: center;
+    margin: 40px auto;
+    width: 90%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.hero-img {
+    width: 80%;
+    border-radius: 10px;
+}
+
+.hero-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-15%, -5%);
+    color: white;
+    background: rgba(0,0,0,0.0);
+    padding: 20px 30px;
+    border-radius: 10px;
+}
+
+.hero-text h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.hero-text p {
+    font-size: 16px;
+}
+
+/* Key Differentiators */
+.differentiators {
+    width: 90%;
+    margin: 60px auto;
+    text-align: center;
+}
+
+.differentiators h2 {
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+.desc {
+    color: #555;
+    font-size: 15px;
+    margin-bottom: 40px;
+}
+
+.diff-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.diff-item {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    width: 220px;
+    text-align: left;
+    background-color: #fafafa;
+}
+
+.diff-item h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.diff-item p {
+    font-size: 13px;
+    color: #666;
+}
+
+/* User Groups */
+.user-groups {
+    width: 90%;
+    margin: 60px auto;
+    text-align: center;
+}
+
+.group-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.group-item {
+    width: 250px;
+    text-align: center;
+}
+
+.group-img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.group-item h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.group-item p {
+    color: #555;
+    font-size: 14px;
+}
+
+/* CTA Section */
+.cta {
+    text-align: center;
+    background-color: #f8f5ff;
+    padding: 50px 20px;
+    border-radius: 12px;
+    width: 85%;
+    margin: 60px auto;
+}
+
+.cta h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.cta p {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.cta-btn {
+    background-color: #a67cfa;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.cta-btn:hover {
+    background-color: #8f5de8;
+}

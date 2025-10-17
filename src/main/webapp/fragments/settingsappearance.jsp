@@ -90,7 +90,7 @@
                     <p class="theme-name">Premium Theme 1</p>
                 </div>
 
-                <button class="more-btn">More</button>
+                <button class="more-btn"><a href="${pageContext.request.contextPath}/fragments/morethemes.jsp" style="text-decoration: none;">More</button>
             </div>
         </div>
     </div>

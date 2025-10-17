@@ -313,3 +313,28 @@ body {
         width: 100%;
     }
 }
+
+/* Pinned Journals Header */
+.pinned-header {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+/* Hover effect for journal entries */
+.journal-entry:hover {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+}
+
+/* Journal image backgrounds */
+.journal-entry {
+    background-repeat: no-repeat;
+}
+
+/* Responsive tweak for buttons */
+@media (max-width: 600px) {
+    .pinned-header {
+        text-align: center;
+    }
+}

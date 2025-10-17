@@ -33,7 +33,7 @@
         <div class="setting-item" onclick="openSharedLinks()">
             <div class="icon">🔗</div>
             <div>
-                <p class="title">Shared Links</p>
+                <p class="title"><a href="${pageContext.request.contextPath}/fragments/sharedlinks.jsp" style="text-decoration: none;">Shared Links</p>
                 <p class="desc">View and revoke active share links</p>
             </div>
         </div>

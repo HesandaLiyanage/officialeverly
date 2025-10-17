@@ -28,8 +28,8 @@
   <nav class="nav-bar">
     <a href="${pageContext.request.contextPath}/fragments/whyeverly.jsp">Why Everly?</a>
     <a href="${pageContext.request.contextPath}/fragments/plans.jsp">Plans</a>
-    <a href="${pageContext.request.contextPath}/view?page=aboutus">About Us</a>
-    <a href="${pageContext.request.contextPath}/view?page=privacy">Privacy</a>
+    <a href="${pageContext.request.contextPath}/fragments/aboutus.jsp">About Us</a>
+    <a href="${pageContext.request.contextPath}/fragments/privacy.jsp">Privacy</a>
   </nav>
 
   <!-- Right Section -->

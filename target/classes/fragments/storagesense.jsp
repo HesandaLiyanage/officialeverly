@@ -57,7 +57,7 @@
         <div class="setting-item" onclick="openDuplicateFinder()">
             <div class="icon">🗂️</div>
             <div>
-                <p class="title">Duplicate Finder</p>
+                <p class="title"><a href="${pageContext.request.contextPath}/fragments/duplicatefinder.jsp" style="text-decoration: none;">Duplicate Finder</a></p>
                 <p class="desc">Review and delete duplicate files to free up space</p>
             </div>
         </div>
@@ -65,7 +65,7 @@
         <div class="setting-item" onclick="openTrashManagement()">
             <div class="icon">🗑️</div>
             <div>
-                <p class="title">Trash Management</p>
+                <p class="title"><a href="${pageContext.request.contextPath}/fragments/trashmgt.jsp" style="text-decoration: none;"> Trash Management</a></p>
                 <p class="desc">View, recover, or permanently delete items in the trash</p>
             </div>
         </div>

@@ -74,7 +74,7 @@
 
     <!-- FIXED ADD BOOK BUTTON -->
     <div class="add-book-container">
-        <button class="add-book-btn">Add a Book</button>
+        <button class="add-book-btn"><a href="${pageContext.request.contextPath}/fragments/addautograph.jsp" style="text-decoration: none;">Add a Book</a></button>
     </div>
 
 
