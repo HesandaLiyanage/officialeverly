@@ -8,23 +8,23 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/settings.css">
 </head>
 <body>
-<jsp:include page="/fragments/header2.jsp" />
+<jsp:include page="../public/header2.jsp" />
 <div class="settings-container">
     <h2>Settings</h2>
 
     <!-- Tabs -->
     <div class="settings-tabs">
-        <button class="tab active">Account</button>
-        <button class="tab" onclick="navigateTo('settingsprivacy')">Privacy & Security</button>
-        <button class="tab" onclick="navigateTo('storagesense')">Storage Sense</button>
-        <button class="tab" onclick="navigateTo('settingsnotifications')">Notifications</button>
-        <button class="tab" onclick="navigateTo('settingsappearance')">Appearance</button>
+        <a href="/settingsaccount" class="tab active">Account</a>
+        <a href="/settingsprivacy" class="tab">Privacy & Security</a>
+        <a href="/storagesense" class="tab">Storage Sense</a>
+        <a href="/settingsnotifications" class="tab">Notifications</a>
+        <a href="/settingsappearance" class="tab">Appearance</a>
     </div>
 
     <div class="account-section">
         <!-- 🔙 Back to Settings Account -->
         <div class="back-option">
-            <h2><a href="${pageContext.request.contextPath}/WEB-INF/views/app/settingsaccount.jspount.jsp" class="back-link">&#8592; Linked Devices</a></h2>
+            <h2><a href="${pageContext.request.contextPath}/settingsaccount" class="back-link">&#8592; Linked Devices</a></h2>
         </div>
 
         <%
@@ -64,6 +64,6 @@
         window.location.href = tab + ".jsp";
     }
 </script>
-<jsp:include page="/fragments/footer.jsp" />
+<jsp:include page="../public/footer.jsp" />
 </body>
 </html>

@@ -11,35 +11,38 @@
 <div class="settings-container">
     <h2>Settings</h2>
     <div class="settings-tabs">
-        <button class="tab active">Account</button>
-        <button class="tab" onclick="navigateTo('settingsprivacy')">Privacy & Security</button>
-        <button class="tab" onclick="navigateTo('storagesense')">Storage Sense</button>
-        <button class="tab" onclick="navigateTo('settingsnotifications')">Notifications</button>
-        <button class="tab" onclick="navigateTo('settingsappearance')">Appearance</button>
+        <a href="#" class="tab active">Account</a>
+        <a href="/settingsprivacy" class="tab">Privacy & Security</a>
+        <a href="/storagesense" class="tab">Storage Sense</a>
+        <a href="/settingsnotifications" class="tab">Notifications</a>
+        <a href="/settingsappearance" class="tab">Appearance</a>
     </div>
 
     <div class="account-section">
         <h3>Account</h3>
 
-        <div class="setting-item" onclick="openProfile()">
+        <div class="setting-item" >
             <div class="icon">👤</div>
             <div>
+                <a href="/editprofile" />
                 <p class="title">Profile</p>
                 <p class="desc">Manage your profile information</p>
             </div>
         </div>
 
-        <div class="setting-item" onclick="openFeedProfile()">
+        <div class="setting-item" ">
             <div class="icon">📄</div>
             <div>
+                <a href="/feededitprofile" />
                 <p class="title">Feed Profile</p>
                 <p class="desc">Manage your public profile information</p>
             </div>
         </div>
 
-        <div class="setting-item" onclick="openLinkedDevices()">
+        <div class="setting-item">
             <div class="icon">📱</div>
             <div>
+                <a href="/linkeddevices" />
                 <p class="title"><a href="${pageContext.request.contextPath}/WEB-INF/views/app/linkeddevices.jspices.jsp" style="text-decoration: none;">Linked Devices</a></p>
                 <p class="desc">Manage devices logged into your account</p>
             </div>

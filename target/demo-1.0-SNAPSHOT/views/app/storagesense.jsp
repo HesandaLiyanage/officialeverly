@@ -7,16 +7,16 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/settings.css">
 </head>
 <body>
-<jsp:include page="/fragments/header2.jsp" />
+<jsp:include page="../public/header2.jsp" />
 <div class="settings-container">
     <h2>Settings</h2>
 
     <div class="settings-tabs">
-        <button class="tab" onclick="navigateTo('settingsaccount')">Account</button>
-        <button class="tab" onclick="navigateTo('settingsprivacy')">Privacy & Security</button>
-        <button class="tab active">Storage Sense</button>
-        <button class="tab" onclick="navigateTo('settingsnotifications')">Notifications</button>
-        <button class="tab" onclick="navigateTo('settingsappearance')">Appearance</button>
+        <a href="/settingsaccount" class="tab">Account</a>
+        <a href="/settingsprivacy" class="tab">Privacy & Security</a>
+        <a href="#" class="tab active">Storage Sense</a>
+        <a href="/settingsnotifications" class="tab">Notifications</a>
+        <a href="/settingsappearance" class="tab">Appearance</a>
     </div>
 
     <div class="account-section">
@@ -70,8 +70,7 @@
             </div>
         </div>
 
-        <button class="upgrade-btn" onclick="upgradeStorage()">Upgrade Storage</button>
-    </div>
+        <a href="/plans" class="upgrade-btn" onclick="upgradeStorage(); return false;">Upgrade Storage</a>    </div>
 </div>
 
 <script>
@@ -80,18 +79,18 @@
     }
 
     function openDuplicateFinder() {
-        window.location.href = "duplicateFinder.jsp";
+        window.location.href = "/duplicatefinder";
     }
 
     function openTrashManagement() {
-        window.location.href = "trashManagement.jsp";
+        window.location.href = "/trashmgt";
     }
 
     function upgradeStorage() {
         alert("Redirecting to storage upgrade page...");
-        window.location.href = "upgradeStorage.jsp";
+        window.location.href = "/plans";
     }
 </script>
-<jsp:include page="/fragments/footer.jsp" />
+<jsp:include page="../public/footer.jsp" />
 </body>
 </html>

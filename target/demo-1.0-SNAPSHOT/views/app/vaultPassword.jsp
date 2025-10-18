@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/vault.css">
 </head>
 <body>
-<jsp:include page="/fragments/header2.jsp" />
+<jsp:include page="../public/header2.jsp" />
 <div class="vault-container">
     <div class="vault-box">
         <div class="vault-icon">
@@ -24,6 +24,6 @@
         <p>This is a private space. Your entries are encrypted and only accessible with your passcode.</p>
     </div>
 </div>
-<jsp:include page="/fragments/footer.jsp" />
+<jsp:include page="../public/footer.jsp" />
 </body>
 </html>

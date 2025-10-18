@@ -3,7 +3,7 @@
 <%--<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>--%>
 
 <!-- Memories Page Content -->
-
+<jsp:include page="../public/header2.jsp" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/memories.css">
 <div class="container">
     <main class="main-content">
@@ -228,7 +228,7 @@
                 </c:choose>
             </div>
         </div>
-
+        <jsp:include page="../public/footer.jsp" />
 <script>
     // TypeScript-compatible JavaScript for JSP
     class MemoriesApp {

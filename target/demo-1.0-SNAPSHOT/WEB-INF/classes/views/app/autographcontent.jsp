@@ -7,6 +7,7 @@
     <title>Everly - Autographs</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/autograph.css"/>
 </head>
+<jsp:include page="../public/header2.jsp" />
 <body>
 
 <div class="page-container">
@@ -79,6 +80,6 @@
 
 
 </div>
-
+<jsp:include page="../public/footer.jsp" />
 </body>
 </html>

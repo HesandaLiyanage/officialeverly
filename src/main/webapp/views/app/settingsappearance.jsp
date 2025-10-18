@@ -36,16 +36,16 @@
     </script>
 </head>
 <body>
-<jsp:include page="/fragments/header2.jsp" />
+<jsp:include page="../public/header2.jsp" />
 <div class="settings-container">
     <h2>Settings</h2>
 
     <div class="settings-tabs">
-        <button class="tab" onclick="navigateTo('settingsaccount')">Account</button>
-        <button class="tab" onclick="navigateTo('settingsprivacy')">Privacy & Security</button>
-        <button class="tab" onclick="navigateTo('storagesense')">Storage Sense</button>
-        <button class="tab" onclick="navigateTo('settingsnotifications')">Notifications</button>
-        <button class="tab active">Appearance</button>
+        <a href="/settingsaccount" class="tab">Account</a>
+        <a href="/settingsprivacy" class="tab">Privacy & Security</a>
+        <a href="/storagesense" class="tab">Storage Sense</a>
+        <a href="/settingsnotifications" class="tab">Notifications</a>
+        <a href="#" class="tab active">Appearance</a>
     </div>
 
     <div class="account-section">
@@ -95,6 +95,6 @@
         </div>
     </div>
 </div>
-<jsp:include page="/fragments/footer.jsp" />
+<jsp:include page="../public/footer.jsp" />
 </body>
 </html>

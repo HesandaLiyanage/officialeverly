@@ -3,7 +3,7 @@
     margin: 80px auto;
     padding: 20px;
     text-align: center;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: Arial, sans-serif;
 }
 
 .login-container h1 {
@@ -212,7 +212,7 @@ h2 {
     margin: 80px auto;
     padding: 20px;
     text-align: center;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: Arial, sans-serif;
 }
 
 .reset-password-container h1 {

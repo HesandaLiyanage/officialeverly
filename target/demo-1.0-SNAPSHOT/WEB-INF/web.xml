@@ -36,6 +36,14 @@
         <url-pattern>/signupservlet</url-pattern>  <!-- or /process-login if you want different URL -->
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>editprofileservlet</servlet-name>
+        <servlet-class>com.demo.web.controller.editprofileservlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>editprofileservlet</servlet-name>
+        <url-pattern>/editprofileservlet</url-pattern>  <!-- or /process-login if you want different URL -->
+    </servlet-mapping>
     <!-- Authentication Filter -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
