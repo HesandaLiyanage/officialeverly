@@ -45,7 +45,7 @@
         </p>
     </div>
 
-    <form action="${pageContext.request.contextPath}/view?page=login">
+    <form action="/login">
         <button type="submit" class="btn">Go Back To Login</button>
     </form>
 </div>
