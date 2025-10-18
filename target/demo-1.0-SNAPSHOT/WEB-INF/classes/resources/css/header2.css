@@ -8,13 +8,12 @@
 body {
     font-family: "Plus Jakarta Sans", sans-serif;
     background: #f5f5f5;
-    /* Add padding-top to body to account for fixed header */
-    padding-top: 65px; /* Same as header height */
+    padding-top: 65px;
 }
 
 /* Main Header */
 .main-header {
-    position: fixed; /* Make header fixed */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -22,26 +21,27 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid #e5e7eb;
     background: #fff;
-    padding: 0 16px; /* Reduced padding for smaller screens */
-    z-index: 1000; /* Ensure header stays on top */
-    box-sizing: border-box; /* Include padding in width */
+    padding: 0 24px;
+    z-index: 1000;
+    box-sizing: border-box;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .logo {
     display: flex;
-    width: auto; /* Let it size based on content */
+    width: auto;
     height: 44px;
     justify-content: center;
     align-items: center;
 }
 
 .logo img {
-    width: auto; /* Let it size based on content */
+    width: auto;
     height: auto;
     max-height: 44px;
-    max-width: 100px; /* Adjust as needed */
+    max-width: 100px;
     object-fit: contain;
 }
 
@@ -49,273 +49,175 @@ body {
 .nav-bar {
     display: flex;
     align-items: center;
-    gap: 16px; /* Reduced gap for smaller screens */
-    overflow-x: auto; /* Allow horizontal scrolling if needed on very small screens */
-    padding: 0 10px; /* Add some padding inside the scrollable area */
-    scrollbar-width: thin; /* For Firefox */
-    -ms-overflow-style: -ms-autohiding-scrollbar; /* For IE/Edge */
+    gap: 24px;
+    overflow-x: auto;
+    padding: 0 10px;
+    scrollbar-width: thin;
 }
 
 .nav-bar a {
     text-decoration: none;
-    color: #0D141C;
+    color: #4b5563;
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     line-height: 21px;
-    white-space: nowrap; /* Prevent text wrapping */
-    padding: 4px 8px; /* Add some padding around links */
+    white-space: nowrap;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
-/* Hide scrollbar for Webkit browsers (Chrome, Safari, Edge) */
+.nav-bar a:hover {
+    color: #6366f1;
+    background: #eef2ff;
+}
+
 .nav-bar::-webkit-scrollbar {
     height: 4px;
 }
 
 .nav-bar::-webkit-scrollbar-thumb {
-    background-color: #ccc;
+    background-color: #d1d5db;
     border-radius: 2px;
-}
-
-.nav-bar::-webkit-scrollbar-track {
-    background: #f1f1f1;
 }
 
 /* Right Section */
 .header-right {
     display: flex;
-    width: auto; /* Let it size based on content */
+    width: auto;
     justify-content: flex-end;
     align-items: center;
-    gap: 16px; /* Reduced gap */
-    flex-shrink: 0; /* Prevent it from shrinking */
+    gap: 12px;
+    flex-shrink: 0;
 }
 
-/* Search Box */
-.search-box {
+/* Search Button */
+.search-btn {
+    background: #f3f4f6;
+    border: none;
+    padding: 0;
+    cursor: pointer;
     display: flex;
-    padding: 8px 8px 8px 8px;
     align-items: center;
-    flex: 0 0 auto; /* Don't grow or shrink, size based on content */
-    background: #E8EDF5;
-    border-radius: 12px;
-    min-width: 120px; /* Minimum width to prevent it from getting too small */
-}
-
-.search-icon {
-    display: flex;
-    padding-left: 16px;
     justify-content: center;
-    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
 }
 
-.search-box input {
+.search-btn:hover {
+    background: #e5e7eb;
+    transform: scale(1.05);
+}
+
+.search-btn img {
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+}
+
+/* COMPLETELY NEW MODERN SEARCH BOX */
+.search-box-expanded {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 2px solid #6366f1;
+    border-radius: 16px;
+    padding: 10px 16px;
+    gap: 12px;
+    min-width: 350px;
+    max-width: 450px;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+    animation: expandSearch 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes expandSearch {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.search-icon-expanded {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.search-icon-expanded svg {
+    width: 20px;
+    height: 20px;
+}
+
+.search-box-expanded input {
     border: none;
     background: transparent;
     outline: none;
-    margin-left: 8px;
-    font-size: 14px;
-    width: 80px; /* Set a fixed width or use flex-grow: 1; if you want it to fill available space */
-    min-width: 0; /* Allows flex item to shrink below content size */
+    font-size: 15px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 500;
+    color: #1f2937;
+    flex: 1;
+    min-width: 0;
+}
+
+.search-box-expanded input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.search-close {
+    background: #f3f4f6;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.search-close:hover {
+    background: #e5e7eb;
+    transform: rotate(90deg);
+}
+
+.search-close svg {
+    width: 16px;
+    height: 16px;
 }
 
 /* Notification Icon */
 .notification-icon {
-    display: flex;
-    height: 40px;
-    padding: 0 10px;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0; /* Prevent it from shrinking */
-    border-radius: 12px;
-    background: #E8EDF5;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-/* Profile Photo */
-.profile-photo {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-    border-radius: 20px;
-    background: url('profile.jpg') lightgray 50% / cover no-repeat; /* Replace with actual path if needed */
-}
-
-/* Mobile Menu Toggle Button (Initially Hidden) */
-.nav-toggle {
-    display: none; /* Hidden by default */
-    flex-direction: column;
-    justify-content: space-around;
-    width: 30px;
-    height: 30px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.nav-toggle span {
-    width: 100%;
-    height: 2px;
-    background: #0D141C;
-    transition: all 0.3s linear;
     position: relative;
-    transform-origin: center;
-}
-
-/* Responsive Styles */
-@media (max-width: 1024px) {
-    .main-header {
-        padding: 0 12px; /* Further reduce padding */
-    }
-
-    .nav-bar {
-        gap: 12px; /* Reduce gap further */
-    }
-
-    .header-right {
-        gap: 12px; /* Reduce gap further */
-    }
-
-    .search-box {
-        min-width: 100px; /* Adjust minimum width */
-    }
-
-    .search-box input {
-        width: 60px; /* Adjust input width */
-    }
-}
-
-@media (max-width: 768px) {
-    .nav-bar {
-        display: none; /* Hide navigation links */
-        position: absolute; /* Position it absolutely */
-        top: 65px; /* Below the header */
-        left: 0;
-        right: 0;
-        background: #fff;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Add shadow */
-        z-index: 999; /* Below header */
-    }
-
-    .nav-bar.active {
-        display: flex; /* Show when active */
-    }
-
-    .nav-bar a {
-        padding: 10px 0;
-        display: block;
-        width: 100%;
-    }
-
-    .header-right {
-        gap: 10px; /* Reduce gap */
-    }
-
-    .search-box {
-        min-width: 80px; /* Adjust for mobile */
-        flex: 0 0 auto; /* Prevent growing */
-    }
-
-    .search-box input {
-        width: 50px; /* Adjust for mobile */
-        font-size: 12px; /* Smaller font */
-    }
-
-    /* Show the hamburger menu */
-    .nav-toggle {
-        display: flex;
-    }
-
-    .notification-icon, .profile-photo {
-        width: 36px; /* Slightly smaller */
-        height: 36px;
-    }
-}
-
-@media (max-width: 480px) {
-    .main-header {
-        padding: 0 8px; /* Minimal padding */
-    }
-
-    .header-right {
-        gap: 8px; /* Minimal gap */
-    }
-
-    .logo img {
-        max-width: 80px; /* Smaller logo */
-    }
-
-    .search-box {
-        min-width: 60px; /* Even smaller */
-    }
-
-    .search-box input {
-        width: 40px; /* Even smaller input */
-        font-size: 11px; /* Smaller font */
-    }
-
-    .notification-icon, .profile-photo {
-        width: 32px; /* Smaller icons */
-        height: 32px;
-    }
-}
-
-.header-btn {
     display: flex;
-    width: 86px;
-    height: 26px;
+    height: 40px;
+    width: 40px;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    border-radius: var(--Corner-Large, 16px);
-    background: var(--Schemes-Primary-Container, #EADDFF);
-    box-shadow: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.30);
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: #0D141C;
-    border: none;
+    border-radius: 10px;
+    background: #f3f4f6;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
 }
 
-.header-btn:hover {
-    transform: translateY(-2px);
+.notification-icon:hover {
+    background: #e5e7eb;
+    transform: scale(1.05);
 }
 
-/* Optional: differentiate login and signup */
-.signup-btn {
-    background: #a073e6; /* just example, you can use same background */
-    color: #fff;
-}
-
-/* Search Button (Small Icon Only) */
-.search-btn {
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: #E8EDF5;
-    transition: background 0.2s ease;
-}
-
-.search-btn:hover {
-    background: #D0D9E7;
-}
-
-.search-btn img {
+.notification-icon svg {
     width: 20px;
     height: 20px;
 }
@@ -326,49 +228,231 @@ body {
     display: inline-block;
 }
 
-/* Profile Photo (Same as before) */
+/* MODERN PROFILE PHOTO WITH GRADIENT */
 .profile-photo {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     flex-shrink: 0;
-    border-radius: 20px;
-    background: url('profile.jpg') lightgray 50% / cover no-repeat;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+    border: 2px solid #ffffff;
 }
 
 .profile-photo:hover {
-    transform: scale(1.05);
+    transform: scale(1.1) rotate(-5deg);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-/* Profile Dropdown Menu */
+.profile-initials {
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    user-select: none;
+    letter-spacing: 0.5px;
+}
+
+/* FIXED PROFILE DROPDOWN */
 .profile-dropdown {
     display: none;
     position: absolute;
     right: 0;
-    top: 50px; /* Position below profile photo */
+    top: 52px;
     background: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border-radius: 8px;
-    min-width: 160px;
-    z-index: 1000;
-    padding: 8px 0;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    border-radius: 16px;
+    min-width: 200px;
+    z-index: 1001;
+    overflow: hidden;
+    animation: dropdownSlide 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #e5e7eb;
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .profile-dropdown a {
-    display: block;
-    padding: 8px 16px;
-    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    color: #374151;
     text-decoration: none;
     font-size: 14px;
-    transition: background 0.2s ease;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
 }
 
 .profile-dropdown a:hover {
-    background: #f8f9fa;
+    background: #f9fafb;
+    color: #6366f1;
+    border-left-color: #6366f1;
+    padding-left: 20px;
 }
 
-/* Show dropdown when active */
+.profile-dropdown a svg {
+    flex-shrink: 0;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.profile-dropdown a:hover svg {
+    opacity: 1;
+}
+
+.profile-dropdown a:last-child {
+    color: #ef4444;
+    border-top: 1px solid #f3f4f6;
+}
+
+.profile-dropdown a:last-child:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-left-color: #ef4444;
+}
+
 .profile-dropdown.active {
     display: block;
+}
+
+/* Mobile Menu Toggle */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.nav-toggle span {
+    width: 100%;
+    height: 3px;
+    background: #374151;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .main-header {
+        padding: 0 16px;
+    }
+
+    .nav-bar {
+        gap: 16px;
+    }
+
+    .search-box-expanded {
+        min-width: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-bar {
+        display: none;
+        position: absolute;
+        top: 65px;
+        left: 0;
+        right: 0;
+        background: #fff;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        z-index: 999;
+    }
+
+    .nav-bar.active {
+        display: flex;
+    }
+
+    .nav-bar a {
+        padding: 12px 16px;
+        display: block;
+        width: 100%;
+    }
+
+    .header-right {
+        gap: 8px;
+    }
+
+    .search-box-expanded {
+        min-width: 220px;
+        max-width: 280px;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+    .notification-icon, .search-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .profile-photo {
+        width: 38px;
+        height: 38px;
+    }
+
+    .profile-initials {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-header {
+        padding: 0 12px;
+    }
+
+    .header-right {
+        gap: 6px;
+    }
+
+    .logo img {
+        max-width: 70px;
+    }
+
+    .search-box-expanded {
+        min-width: 180px;
+        max-width: 220px;
+        padding: 8px 12px;
+    }
+
+    .search-box-expanded input {
+        font-size: 13px;
+    }
+
+    .notification-icon, .search-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .profile-photo {
+        width: 36px;
+        height: 36px;
+    }
+
+    .profile-initials {
+        font-size: 12px;
+    }
 }
