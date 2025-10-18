@@ -8,42 +8,52 @@
 body {
     font-family: "Plus Jakarta Sans", sans-serif;
     background: #f5f5f5;
+    /* Add padding-top to body to account for fixed header */
+    padding-top: 65px; /* Same as header height */
 }
 
 /* Main Header */
 .main-header {
-    width: 1512px;
+    position: fixed; /* Make header fixed */
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 65px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #fff;
     background: #fff;
-    padding: 0 32px;
-    margin: 0 auto;
+    padding: 0 16px; /* Reduced padding for smaller screens */
+    z-index: 1000; /* Ensure header stays on top */
+    box-sizing: border-box; /* Include padding in width */
 }
 
 .logo {
     display: flex;
-    width: 119px;
+    width: auto; /* Let it size based on content */
     height: 44px;
     justify-content: center;
     align-items: center;
 }
 
 .logo img {
-    width: 100%;
+    width: auto; /* Let it size based on content */
     height: auto;
     max-height: 44px;
+    max-width: 100px; /* Adjust as needed */
     object-fit: contain;
 }
-
 
 /* Navigation Bar */
 .nav-bar {
     display: flex;
     align-items: center;
-    gap: 36px;
+    gap: 16px; /* Reduced gap for smaller screens */
+    overflow-x: auto; /* Allow horizontal scrolling if needed on very small screens */
+    padding: 0 10px; /* Add some padding inside the scrollable area */
+    scrollbar-width: thin; /* For Firefox */
+    -ms-overflow-style: -ms-autohiding-scrollbar; /* For IE/Edge */
 }
 
 .nav-bar a {
@@ -53,15 +63,32 @@ body {
     font-size: 14px;
     font-weight: 500;
     line-height: 21px;
+    white-space: nowrap; /* Prevent text wrapping */
+    padding: 4px 8px; /* Add some padding around links */
+}
+
+/* Hide scrollbar for Webkit browsers (Chrome, Safari, Edge) */
+.nav-bar::-webkit-scrollbar {
+    height: 4px;
+}
+
+.nav-bar::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 2px;
+}
+
+.nav-bar::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 
 /* Right Section */
 .header-right {
     display: flex;
-    width: 342px;
+    width: auto; /* Let it size based on content */
     justify-content: flex-end;
     align-items: center;
-    gap: 32px;
+    gap: 16px; /* Reduced gap */
+    flex-shrink: 0; /* Prevent it from shrinking */
 }
 
 /* Search Box */
@@ -69,11 +96,11 @@ body {
     display: flex;
     padding: 8px 8px 8px 8px;
     align-items: center;
-    flex: 1 0 0;
+    flex: 0 0 auto; /* Don't grow or shrink, size based on content */
     background: #E8EDF5;
     border-radius: 12px;
+    min-width: 120px; /* Minimum width to prevent it from getting too small */
 }
-
 
 .search-icon {
     display: flex;
@@ -88,7 +115,8 @@ body {
     outline: none;
     margin-left: 8px;
     font-size: 14px;
-
+    width: 80px; /* Set a fixed width or use flex-grow: 1; if you want it to fill available space */
+    min-width: 0; /* Allows flex item to shrink below content size */
 }
 
 /* Notification Icon */
@@ -98,6 +126,7 @@ body {
     padding: 0 10px;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0; /* Prevent it from shrinking */
     border-radius: 12px;
     background: #E8EDF5;
     font-size: 18px;
@@ -110,7 +139,131 @@ body {
     height: 40px;
     flex-shrink: 0;
     border-radius: 20px;
-    background: url('profile.jpg') lightgray 50% / cover no-repeat;
+    background: url('profile.jpg') lightgray 50% / cover no-repeat; /* Replace with actual path if needed */
+}
+
+/* Mobile Menu Toggle Button (Initially Hidden) */
+.nav-toggle {
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.nav-toggle span {
+    width: 100%;
+    height: 2px;
+    background: #0D141C;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: center;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .main-header {
+        padding: 0 12px; /* Further reduce padding */
+    }
+
+    .nav-bar {
+        gap: 12px; /* Reduce gap further */
+    }
+
+    .header-right {
+        gap: 12px; /* Reduce gap further */
+    }
+
+    .search-box {
+        min-width: 100px; /* Adjust minimum width */
+    }
+
+    .search-box input {
+        width: 60px; /* Adjust input width */
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-bar {
+        display: none; /* Hide navigation links */
+        position: absolute; /* Position it absolutely */
+        top: 65px; /* Below the header */
+        left: 0;
+        right: 0;
+        background: #fff;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Add shadow */
+        z-index: 999; /* Below header */
+    }
+
+    .nav-bar.active {
+        display: flex; /* Show when active */
+    }
+
+    .nav-bar a {
+        padding: 10px 0;
+        display: block;
+        width: 100%;
+    }
+
+    .header-right {
+        gap: 10px; /* Reduce gap */
+    }
+
+    .search-box {
+        min-width: 80px; /* Adjust for mobile */
+        flex: 0 0 auto; /* Prevent growing */
+    }
+
+    .search-box input {
+        width: 50px; /* Adjust for mobile */
+        font-size: 12px; /* Smaller font */
+    }
+
+    /* Show the hamburger menu */
+    .nav-toggle {
+        display: flex;
+    }
+
+    .notification-icon, .profile-photo {
+        width: 36px; /* Slightly smaller */
+        height: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-header {
+        padding: 0 8px; /* Minimal padding */
+    }
+
+    .header-right {
+        gap: 8px; /* Minimal gap */
+    }
+
+    .logo img {
+        max-width: 80px; /* Smaller logo */
+    }
+
+    .search-box {
+        min-width: 60px; /* Even smaller */
+    }
+
+    .search-box input {
+        width: 40px; /* Even smaller input */
+        font-size: 11px; /* Smaller font */
+    }
+
+    .notification-icon, .profile-photo {
+        width: 32px; /* Smaller icons */
+        height: 32px;
+    }
 }
 
 .header-btn {
@@ -140,4 +293,82 @@ body {
 .signup-btn {
     background: #a073e6; /* just example, you can use same background */
     color: #fff;
+}
+
+/* Search Button (Small Icon Only) */
+.search-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #E8EDF5;
+    transition: background 0.2s ease;
+}
+
+.search-btn:hover {
+    background: #D0D9E7;
+}
+
+.search-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Profile Dropdown Container */
+.profile-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Profile Photo (Same as before) */
+.profile-photo {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 20px;
+    background: url('profile.jpg') lightgray 50% / cover no-repeat;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.profile-photo:hover {
+    transform: scale(1.05);
+}
+
+/* Profile Dropdown Menu */
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50px; /* Position below profile photo */
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    min-width: 160px;
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.profile-dropdown a {
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.profile-dropdown a:hover {
+    background: #f8f9fa;
+}
+
+/* Show dropdown when active */
+.profile-dropdown.active {
+    display: block;
 }

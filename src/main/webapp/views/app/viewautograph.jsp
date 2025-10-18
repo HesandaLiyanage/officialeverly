@@ -3,7 +3,7 @@
     String autographId = request.getParameter("id");
     // TODO: Fetch autograph details from database using this ID
 %>
-
+<jsp:include page="../public/header2.jsp" />
 
 <main class="main-content">
     <!-- Intro Section -->
@@ -50,3 +50,4 @@
     </section>
 </main>
 
+<jsp:include page="../public/footer.jsp" />

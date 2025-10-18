@@ -1,5 +1,6 @@
 <%--<%@ page contentType="text/html;charset=UTF-8" language="java" %>--%>
 
+<jsp:include page="../public/header2.jsp" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/signup.css">
 
 <main class="signup-container">
@@ -30,3 +31,4 @@
         <a href="${pageContext.request.contextPath}/view?page=login.jsp">Already have an account? Log in</a>
     </div>
 </main>
+<jsp:include page="../public/footer.jsp" />

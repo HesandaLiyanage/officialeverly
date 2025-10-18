@@ -24,7 +24,7 @@
 <link rel="stylesheet" type="text/css" href="../../resources/login.css">
 <main class="login-container">
   <h1>Log in to Everly</h1>
-  <p>Don't have an account? <a href="${pageContext.request.contextPath}/signup">Create one.</a></p>
+
 
   <form action="${pageContext.request.contextPath}/loginservlet" method="POST" class="login-form">
     <label for="email">Email address</label>

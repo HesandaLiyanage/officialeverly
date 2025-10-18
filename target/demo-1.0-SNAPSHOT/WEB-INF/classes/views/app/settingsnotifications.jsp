@@ -6,16 +6,16 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/settings.css">
 </head>
 <body>
-<jsp:include page="/fragments/header2.jsp" />
+<jsp:include page="../public/header2.jsp" />
 <div class="settings-container">
     <h2>Settings</h2>
 
     <div class="settings-tabs">
-        <button class="tab" onclick="navigateTo('settingsaccount')">Account</button>
-        <button class="tab" onclick="navigateTo('settingsprivacy')">Privacy & Security</button>
-        <button class="tab" onclick="navigateTo('storagesense')">Storage Sense</button>
-        <button class="tab active">Notifications</button>
-        <button class="tab" onclick="navigateTo('settingsappearance')">Appearance</button>
+        <a href="/settingsaccount" class="tab">Account</a>
+        <a href="/settingsprivacy" class="tab">Privacy & Security</a>
+        <a href="/storagesense" class="tab">Storage Sense</a>
+        <a href="#" class="tab active">Notifications</a>
+        <a href="/settingsappearance" class="tab">Appearance</a>
     </div>
 
     <div class="account-section">
@@ -84,6 +84,6 @@
         window.location.href = page + ".jsp";
     }
 </script>
-<jsp:include page="/fragments/footer.jsp" />
+<jsp:include page="../public/footer.jsp" />
 </body>
 </html>

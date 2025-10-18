@@ -41,7 +41,8 @@ public class AuthenticationFilter implements Filter {
                 "/signupthankyou",
                 "/whyeverly",
                 "/youcantaccessthis",
-                "/emailsentreset"
+                "/emailsentreset",
+                "/privacy"
         ));
     }
 

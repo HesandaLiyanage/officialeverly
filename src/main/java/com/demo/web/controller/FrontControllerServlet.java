@@ -40,6 +40,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/signupthankyou", "/views/public/signupThankyou.jsp");
         routeToJsp.put("/whyeverly", "/views/public/whyeverly.jsp");
         routeToJsp.put("/youcantaccessthis", "/views/public/youcantaccessthis.jsp");
+        routeToJsp.put("/privacy", "/views/public/privacy.jsp");
+        routeToJsp.put("/aboutus", "/views/public/aboutus.jsp");
 
 
 
@@ -55,10 +57,18 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/settingsprivacy", "/views/app/settingsprivacy.jsp");
         routeToJsp.put("/storagesense", "/views/app/storagesense.jsp");
         routeToJsp.put("/vaultForgotPassword", "/views/app/vaultForgotPassword.jsp");
-        routeToJsp.put("/vaultMemories", "/views/app/vaultMemories.jsp");
+        routeToJsp.put("/vaultmemories", "/views/app/vaultMemories.jsp");
         routeToJsp.put("/vaultPassword", "/views/app/vaultPassword.jsp");
         routeToJsp.put("/vaultSetup", "/views/app/vaultSetup.jsp");
         routeToJsp.put("/viewautograph", "/views/app/viewautograph.jsp");
+        routeToJsp.put("/addautograph", "/views/app/addautograph.jsp");
+        routeToJsp.put("/duplicatefinder", "/views/app/duplicatefinder.jsp");
+        routeToJsp.put("/morethemes", "/views/app/morethemes.jsp");
+        routeToJsp.put("/sharedlinks", "/views/app/sharedlinks.jsp");
+        routeToJsp.put("/trashmgt", "/views/app/trashmgt.jsp");
+        routeToJsp.put("/editprofile", "/views/app/settingsaccounteditprofile.jsp");
+        routeToJsp.put("/linkeddevices", "/views/app/linkeddevices.jsp");
+
 
 
 

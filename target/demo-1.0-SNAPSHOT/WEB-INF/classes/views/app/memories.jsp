@@ -3,14 +3,19 @@
 <%--<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>--%>
 
 <!-- Memories Page Content -->
-
+<jsp:include page="../public/header2.jsp" />
+<html>
+<body>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/memories.css">
-<div class="container">
+
+<!-- Wrap everything after header -->
+<div class="page-wrapper">
   <main class="main-content">
     <!-- Tab Navigation -->
     <div class="tab-nav">
       <button class="active" data-tab="memories">Memories</button>
       <button data-tab="collab">Collab Memories</button>
+      <button data-tab="recap">Memory Recap</button>
     </div>
 
     <!-- Search and Filters -->
@@ -153,10 +158,10 @@
         <c:choose>
           <c:when test="${not empty favorites}">
             <c:forEach var="favorite" items="${favorites}">
-              <li class="favorite-item">
-                <div class="favorite-icon ${favorite.iconClass}">${favorite.icon}</div>
-                <span class="favorite-name">${favorite.name}</span>
-              </li>
+              <%--              <li class="favorite-item">--%>
+              <%--                <div class="favorite-icon ${favorite.iconClass}">${favorite.icon}</div>--%>
+              <%--                <span class="favorite-name">${favorite.name}</span>--%>
+              <%--              </li>--%>
             </c:forEach>
           </c:when>
           <c:otherwise>
@@ -187,63 +192,21 @@
     </div>
 
     <!-- Storage Section -->
-    <div class="sidebar-section expandable-section" data-section="storage">
-      <h3 class="sidebar-title">Storage</h3>
-      <div class="expandable-content">
-        <div class="storage-info">
-          <div class="storage-text">
-            <span>${not empty storageUsedPercent ? storageUsedPercent : '75'}% used</span>
-          </div>
-          <div class="storage-bar">
-            <div class="storage-fill" style="width: ${not empty storageUsedPercent ? storageUsedPercent : '75'}%"></div>
-          </div>
-          <div class="storage-text" style="margin-top: 8px;">
-            <span>${not empty storageUsed ? storageUsed : '150'} GB of ${not empty storageTotal ? storageTotal : '200'} GB</span>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Recycle Bin Section -->
-    <div class="sidebar-section expandable-section" data-section="recycle">
-      <h3 class="sidebar-title">Recycle Bin</h3>
-      <div class="expandable-content">
-        <c:choose>
-          <c:when test="${not empty recycleBinItems}">
-            <ul>
-              <c:forEach var="item" items="${recycleBinItems}">
-                <li>${item.name}</li>
-              </c:forEach>
-            </ul>
-          </c:when>
-          <c:otherwise>
-            <p style="color: #6c757d; font-size: 14px;">No items in recycle bin</p>
-          </c:otherwise>
-        </c:choose>
-      </div>
-    </div>
 
-    <!-- Vault Section -->
-    <div class="sidebar-section expandable-section" data-section="vault">
-      <h3 class="sidebar-title">Vault</h3>
-      <div class="expandable-content">
-        <c:choose>
-          <c:when test="${not empty vaultItems}">
-            <ul>
-              <c:forEach var="item" items="${vaultItems}">
-                <li>${item.name}</li>
-              </c:forEach>
-            </ul>
-          </c:when>
-          <c:otherwise>
-            <p style="color: #6c757d; font-size: 14px;">Vault is empty</p>
-          </c:otherwise>
-        </c:choose>
-      </div>
-    </div>
+
+
   </aside>
+</div> <!-- End of .page-wrapper -->
+
+<!-- Floating Action Buttons (Moved outside .page-wrapper, before footer) -->
+<div class="floating-buttons">
+  <a href="/memoryview" class="floating-btn" id="addMemoryBtn">Add a Memory</a>
+  <a href="/vaultmemories" class="floating-btn" id="vaultBtn">Vault</a>
 </div>
 
+<jsp:include page="../public/footer.jsp" />
 <script>
   // TypeScript-compatible JavaScript for JSP
   class MemoriesApp {
@@ -532,3 +495,5 @@
     new MemoriesApp();
   });
 </script>
+</body>
+</html>
