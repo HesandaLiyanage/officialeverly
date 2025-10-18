@@ -1,0 +1,176 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #fafafa;
+    color: #333;
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    min-height: calc(100vh - 300px);
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.header-section h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.add-btn {
+    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+}
+
+/* Groups List */
+.groups-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.group-item {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.group-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.group-info {
+    flex: 1;
+}
+
+.group-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.group-meta {
+    color: #a78bfa;
+    font-size: 0.95rem;
+}
+
+.group-images {
+    display: flex;
+    gap: 1rem;
+}
+
+.group-images.single {
+    width: 350px;
+}
+
+.image-card,
+.image-placeholder {
+    border-radius: 12px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+.image-placeholder {
+    width: 100px;
+    height: 150px;
+}
+
+.image-placeholder.peach {
+    background-color: #ffd4c4;
+}
+
+.image-placeholder.beige {
+    background-color: #ffe4d4;
+}
+
+.image-card {
+    width: 150px;
+    height: 150px;
+}
+
+.group-images.single .image-card {
+    width: 350px;
+    height: 150px;
+}
+
+.family-photo {
+    background: linear-gradient(135deg, #a8e6cf 0%, #7dd3c0 100%);
+    position: relative;
+}
+
+.family-photo::after {
+    content: '👨‍👩‍👧';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+}
+
+.beach-photo {
+    background: linear-gradient(180deg, #87ceeb 0%, #4682b4 50%, #2e5c7a 100%);
+}
+
+.balloons-photo {
+    background: linear-gradient(135deg, #fff9e6 0%, #ffedb3 100%);
+}
+
+.roomies-photo {
+    background: linear-gradient(180deg, #6b8e23 0%, #4a6b3a 50%, #2d4a25 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .group-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .group-images {
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .group-images.single .image-card {
+        width: 100%;
+    }
+}
+

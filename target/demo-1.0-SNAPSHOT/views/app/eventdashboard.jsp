@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="header.jsp" %>
+<jsp:include page="../public/header2.jsp"/>
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/events.css">
 <div class="events-container">
@@ -90,8 +90,8 @@
 
     <!-- Create New Event Button -->
     <div class="create-event-btn-wrapper">
-        <a href="create-event.jsp" class="create-event-btn">Create New Event</a>
+        <a href="createevent.jsp" class="create-event-btn">Create New Event</a>
     </div>
 </div>
 
-<%@ include file="footer.jsp" %>
+<jsp:include page="../public/footer.jsp"/>
