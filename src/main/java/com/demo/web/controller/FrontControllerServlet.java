@@ -61,7 +61,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/vaultmemories", "/views/app/vaultMemories.jsp");
         routeToJsp.put("/vaultPassword", "/views/app/vaultPassword.jsp");
         routeToJsp.put("/vaultSetup", "/views/app/vaultSetup.jsp");
-        routeToJsp.put("/viewautograph", "/views/app/viewautograph.jsp");
+        routeToJsp.put("/autographview", "/views/app/viewautograph.jsp");
         routeToJsp.put("/addautograph", "/views/app/addautograph.jsp");
         routeToJsp.put("/duplicatefinder", "/views/app/duplicatefinder.jsp");
         routeToJsp.put("/morethemes", "/views/app/morethemes.jsp");
@@ -78,6 +78,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/groupmembers", "/views/app/groupmembers.jsp");
         routeToJsp.put("/groupannouncement", "/views/app/groupannouncement.jsp");
         routeToJsp.put("/events", "/views/app/eventinfo.jsp");
+        routeToJsp.put("/writeautograph", "/views/app/writeautograph.jsp");
+
 
 
 
