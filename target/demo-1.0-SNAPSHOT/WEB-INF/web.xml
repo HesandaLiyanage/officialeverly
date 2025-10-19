@@ -111,7 +111,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name>
-        <url-pattern>*.eot</url-pattern>
+        <url-pattern>*.mp4</url-pattern>
     </servlet-mapping>
 
     <!-- Database Connection Context Parameters -->

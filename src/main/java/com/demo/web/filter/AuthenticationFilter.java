@@ -42,7 +42,8 @@ public class AuthenticationFilter implements Filter {
                 "/whyeverly",
                 "/youcantaccessthis",
                 "/emailsentreset",
-                "/privacy"
+                "/privacy",
+                "/resources/assets/landing.mp4"
         ));
     }
 
