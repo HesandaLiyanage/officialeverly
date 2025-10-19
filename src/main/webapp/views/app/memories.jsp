@@ -28,131 +28,124 @@
           </svg>
         </button>
       </div>
-      <button class="filter-btn" id="dateFilter">Date</button>
-      <button class="filter-btn" id="locationFilter">Location</button>
+      <button class="filter-btn" id="dateFilter">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+        Date
+      </button>
+      <button class="filter-btn" id="locationFilter">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        Location
+      </button>
     </div>
+<%--    <a href="/memoryview"/>--%>
 
     <!-- Memories Grid -->
     <div class="memories-grid" id="memoriesGrid">
-      <!-- JSP Memory cards - can be populated from server-side data -->
-      <c:choose>
-        <c:when test="${not empty memories}">
-          <c:forEach var="memory" items="${memories}">
-            <div class="memory-card ${memory.type}" data-id="${memory.id}">
-              <div class="memory-image"
-                      <c:if test="${not empty memory.imageUrl}">
-                        style="background-image: url('${memory.imageUrl}')"
-                      </c:if>>
-              </div>
-              <div class="memory-content">
-                <h3 class="memory-title">${memory.title}</h3>
-                <p class="memory-date">
-                  <fmt:formatDate value="${memory.date}" pattern="MMMM d, yyyy"/>
-                </p>
-              </div>
-            </div>
-          </c:forEach>
-        </c:when>
-        <c:otherwise>
-          <!-- Fallback static content if no server data available -->
-          <div class="memory-card family-vacation" data-id="1">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Family Vacation 2023</h3>
-              <p class="memory-date">July 15, 2023</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Beach Sunset Adventure" id="sunset">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Beach Sunset Adventure</h3>
+          <p class="memory-date">July 15, 2024</p>
+        </div>
+      </div>
 
-          <div class="memory-card birthday-party" data-id="2">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Sarah's Birthday Party</h3>
-              <p class="memory-date">May 20, 2023</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Mountain Hiking Trip">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Mountain Hiking Trip</h3>
+          <p class="memory-date">June 22, 2024</p>
+        </div>
+      </div>
 
-          <div class="memory-card getaway" data-id="3">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Weekend Getaway</h3>
-              <p class="memory-date">April 8, 2023</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Family Reunion Dinner">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Family Reunion Dinner</h3>
+          <p class="memory-date">May 10, 2024</p>
+        </div>
+      </div>
 
-          <div class="memory-card graduation" data-id="4">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Graduation Ceremony</h3>
-              <p class="memory-date">June 10, 2023</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Adventure in the Wild">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Adventure in the Wild</h3>
+          <p class="memory-date">April 5, 2024</p>
+        </div>
+      </div>
 
-          <div class="memory-card bbq" data-id="5">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Summer BBQ</h3>
-              <p class="memory-date">August 5, 2023</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="City Lights Exploration">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">City Lights Exploration</h3>
+          <p class="memory-date">March 18, 2024</p>
+        </div>
+      </div>
 
-          <div class="memory-card hiking" data-id="6">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Hiking Trip</h3>
-              <p class="memory-date">September 22, 2023</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Art Exhibition Visit">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Art Exhibition Visit</h3>
+          <p class="memory-date">February 2, 2024</p>
+        </div>
+      </div>
 
-          <div class="memory-card concert" data-id="7">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Concert Night</h3>
-              <p class="memory-date">October 14, 2023</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Weekend Getaway">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Weekend Getaway</h3>
+          <p class="memory-date">January 20, 2024</p>
+        </div>
+      </div>
 
-          <div class="memory-card art-exhibition" data-id="8">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Art Exhibition</h3>
-              <p class="memory-date">November 3, 2023</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Coffee Shop Hangout">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Coffee Shop Hangout</h3>
+          <p class="memory-date">December 15, 2023</p>
+        </div>
+      </div>
 
-          <div class="memory-card beach" data-id="9">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Beach Day</h3>
-              <p class="memory-date">December 25, 2023</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Birthday Celebration">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Birthday Celebration</h3>
+          <p class="memory-date">November 8, 2023</p>
+        </div>
+      </div>
 
-          <div class="memory-card city" data-id="10">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">City Exploration</h3>
-              <p class="memory-date">January 12, 2024</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Graduation Day">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Graduation Day</h3>
+          <p class="memory-date">October 10, 2023</p>
+        </div>
+      </div>
 
-          <div class="memory-card holiday" data-id="11">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Holiday Celebration</h3>
-              <p class="memory-date">February 18, 2024</p>
-            </div>
-          </div>
+      <div class="memory-card" data-title="Summer BBQ Party">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Summer BBQ Party</h3>
+          <p class="memory-date">September 5, 2023</p>
+        </div>
+      </div>
 
-          <div class="memory-card road-trip" data-id="12">
-            <div class="memory-image"></div>
-            <div class="memory-content">
-              <h3 class="memory-title">Road Trip</h3>
-              <p class="memory-date">March 7, 2024</p>
-            </div>
-          </div>
-        </c:otherwise>
-      </c:choose>
+      <div class="memory-card" data-title="Road Trip to Coast">
+        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800')"></div>
+        <div class="memory-content">
+          <h3 class="memory-title">Road Trip to Coast</h3>
+          <p class="memory-date">August 12, 2023</p>
+        </div>
+      </div>
     </div>
+
+    <!-- Empty state container for minimum height -->
+    <div id="emptyStateContainer" style="display: none; min-height: 600px;"></div>
   </main>
 
   <aside class="sidebar">
@@ -160,41 +153,32 @@
     <div class="sidebar-section">
       <h3 class="sidebar-title">Favourites</h3>
       <ul class="favorites-list">
-        <c:choose>
-          <c:when test="${not empty favorites}">
-            <c:forEach var="favorite" items="${favorites}">
-            </c:forEach>
-          </c:when>
-          <c:otherwise>
-            <!-- Default favorites -->
-            <li class="favorite-item">
-              <div class="favorite-icon graduation">  </div>
-              <span class="favorite-name">Graduation Ceremony</span>
-            </li>
-            <li class="favorite-item">
-              <div class="favorite-icon bbq"> </div>
-              <span class="favorite-name">Summer BBQ</span>
-            </li>
-            <li class="favorite-item">
-              <div class="favorite-icon city"> </div>
-              <span class="favorite-name">City Exploration</span>
-            </li>
-            <li class="favorite-item">
-              <div class="favorite-icon art">  </div>
-              <span class="favorite-name">Art Exhibition</span>
-            </li>
-            <li class="favorite-item">
-              <div class="favorite-icon road">  </div>
-              <span class="favorite-name">Road Trip</span>
-            </li>
-          </c:otherwise>
-        </c:choose>
+        <li class="favorite-item">
+          <div class="favorite-icon graduation">  </div>
+          <span class="favorite-name">Graduation Day</span>
+        </li>
+        <li class="favorite-item">
+          <div class="favorite-icon bbq"> </div>
+          <span class="favorite-name">Summer BBQ Party</span>
+        </li>
+        <li class="favorite-item">
+          <div class="favorite-icon city"> </div>
+          <span class="favorite-name">City Lights Exploration</span>
+        </li>
+        <li class="favorite-item">
+          <div class="favorite-icon art">  </div>
+          <span class="favorite-name">Art Exhibition Visit</span>
+        </li>
+        <li class="favorite-item">
+          <div class="favorite-icon road">  </div>
+          <span class="favorite-name">Road Trip to Coast</span>
+        </li>
       </ul>
     </div>
 
     <!-- Floating Action Buttons - Now in sidebar -->
     <div class="floating-buttons" id="floatingButtons">
-      <a href="/memoryview" class="floating-btn">
+      <a href="/creatememory" class="floating-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -215,6 +199,12 @@
 <jsp:include page="../public/footer.jsp" />
 
 <script>
+
+  const card = document.getElementById('sunset');
+
+  car.addEventListener('click', function() {
+    window.location.href = '/memoryview';
+  })
   // Modern Search Functionality for Memories Page
   document.addEventListener('DOMContentLoaded', function() {
     const memoriesSearchBtn = document.getElementById('memoriesSearchBtn');
@@ -278,197 +268,90 @@
           input.focus();
         });
 
-        // Search functionality
+        // Search functionality - FIXED: Now works properly
         input.addEventListener('input', function(e) {
           const query = e.target.value.toLowerCase();
           const memoryCards = document.querySelectorAll('.memory-card');
           memoryCards.forEach(card => {
-            const title = card.querySelector('.memory-title')?.textContent?.toLowerCase() || '';
+            const title = card.getAttribute('data-title')?.toLowerCase() || '';
             card.style.display = title.includes(query) ? 'block' : 'none';
           });
         });
       });
     }
 
-    // Handle floating buttons position on scroll
+    // Tab switching functionality
+    const tabButtons = document.querySelectorAll('.tab-nav button');
+    const memoriesGrid = document.getElementById('memoriesGrid');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const tab = this.getAttribute('data-tab');
+
+        // Update active button
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+
+        // Update content based on tab
+        if (tab === 'memories') {
+          // Show all memories
+          const memoryCards = document.querySelectorAll('.memory-card');
+          memoryCards.forEach(card => card.style.display = 'block');
+        } else if (tab === 'collab') {
+          // Show no collab memories message
+          memoriesGrid.innerHTML = '<p style="text-align: center; color: #6c757d; grid-column: 1 / -1; margin: 40px 0; font-size: 16px;">No collab memories yet</p>';
+        } else if (tab === 'recap') {
+          // Show no memory recap message
+          memoriesGrid.innerHTML = '<p style="text-align: center; color: #6c757d; grid-column: 1 / -1; margin: 40px 0; font-size: 16px;">No memory recaps yet</p>';
+        }
+      });
+    });
+
+    // Handle floating buttons position on scroll - FIXED
     function handleFloatingButtons() {
       const footer = document.querySelector('footer');
       const floatingButtons = document.getElementById('floatingButtons');
+      const sidebar = document.querySelector('.sidebar');
+      const pageWrapper = document.querySelector('.page-wrapper');
 
-      if (!footer || !floatingButtons) return;
+      if (!footer || !floatingButtons || !sidebar || !pageWrapper) return;
 
-      const footerRect = footer.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       const buttonHeight = floatingButtons.offsetHeight;
+      const scrollY = window.scrollY;
+      const sidebarRect = sidebar.getBoundingClientRect();
 
-      // When footer enters viewport from bottom
-      if (footerRect.top < windowHeight - buttonHeight - 40) {
-        // Stop buttons above footer
-        const stopPosition = footer.offsetTop - buttonHeight - 40;
+      // Get positions relative to document
+      const footerTop = footer.offsetTop;
+      const pageWrapperRect = pageWrapper.getBoundingClientRect();
+      const sidebarLeft = sidebar.offsetLeft + pageWrapper.offsetLeft;
+
+      // Calculate stop position (above footer)
+      const stopPosition = footerTop - buttonHeight - 40;
+      const currentScrollBottom = scrollY + windowHeight;
+
+      // Check if we need to stop before footer
+      if (currentScrollBottom >= footerTop + 100) {
+        // Stop before footer - use absolute positioning
         floatingButtons.style.position = 'absolute';
         floatingButtons.style.bottom = 'auto';
         floatingButtons.style.top = stopPosition + 'px';
+        floatingButtons.style.left = sidebarLeft + 'px';
+        floatingButtons.style.width = sidebar.offsetWidth + 'px';
       } else {
-        // Keep buttons fixed at bottom
+        // Float normally - use fixed positioning
         floatingButtons.style.position = 'fixed';
         floatingButtons.style.bottom = '40px';
         floatingButtons.style.top = 'auto';
+        floatingButtons.style.left = (sidebarRect.left) + 'px';
+        floatingButtons.style.width = sidebarRect.width + 'px';
       }
     }
 
+    // Call immediately and on scroll/resize
+    handleFloatingButtons();
     window.addEventListener('scroll', handleFloatingButtons);
     window.addEventListener('resize', handleFloatingButtons);
-    handleFloatingButtons();
-  });
-
-  // TypeScript-compatible JavaScript for JSP
-  class MemoriesApp {
-    constructor() {
-      this.serverMemories = ${not empty memoriesJson ? memoriesJson : 'null'};
-      this.memories = this.serverMemories || this.getDefaultMemories();
-      this.currentTab = 'memories';
-      this.searchQuery = '';
-      this.dateFilter = '';
-      this.locationFilter = '';
-
-      this.initializeEventListeners();
-
-      if (!this.serverMemories) {
-        this.renderMemories();
-      } else {
-        this.attachEventListeners();
-      }
-    }
-
-    getDefaultMemories() {
-      return [
-        { id: 1, title: "Family Vacation 2023", date: "July 15, 2023", type: "family-vacation", isFavorite: false },
-        { id: 2, title: "Sarah's Birthday Party", date: "May 20, 2023", type: "birthday-party", isFavorite: false },
-        { id: 3, title: "Weekend Getaway", date: "April 8, 2023", type: "getaway", isFavorite: false },
-        { id: 4, title: "Graduation Ceremony", date: "June 10, 2023", type: "graduation", isFavorite: true },
-        { id: 5, title: "Summer BBQ", date: "August 5, 2023", type: "bbq", isFavorite: true },
-        { id: 6, title: "Hiking Trip", date: "September 22, 2023", type: "hiking", isFavorite: false },
-        { id: 7, title: "Concert Night", date: "October 14, 2023", type: "concert", isFavorite: false },
-        { id: 8, title: "Art Exhibition", date: "November 3, 2023", type: "art-exhibition", isFavorite: true },
-        { id: 9, title: "Beach Day", date: "December 25, 2023", type: "beach", isFavorite: false },
-        { id: 10, title: "City Exploration", date: "January 12, 2024", type: "city", isFavorite: true },
-        { id: 11, title: "Holiday Celebration", date: "February 18, 2024", type: "holiday", isFavorite: false },
-        { id: 12, title: "Road Trip", date: "March 7, 2024", type: "road-trip", isFavorite: true }
-      ];
-    }
-
-    initializeEventListeners() {
-      const tabButtons = document.querySelectorAll('.tab-nav button');
-      tabButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-          const target = e.target;
-          const tab = target.getAttribute('data-tab');
-          this.switchTab(tab);
-        });
-      });
-
-      const dateFilter = document.getElementById('dateFilter');
-      const locationFilter = document.getElementById('locationFilter');
-
-      if (dateFilter) {
-        dateFilter.addEventListener('click', () => this.toggleDateFilter());
-      }
-
-      if (locationFilter) {
-        locationFilter.addEventListener('click', () => this.toggleLocationFilter());
-      }
-
-      const favoriteItems = document.querySelectorAll('.favorite-item');
-      favoriteItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-          const target = e.currentTarget;
-          this.selectFavorite(target);
-        });
-      });
-    }
-
-    attachEventListeners() {
-      const memoryCards = document.querySelectorAll('.memory-card');
-      memoryCards.forEach(card => {
-        card.addEventListener('click', (e) => {
-          const target = e.currentTarget;
-          const memoryId = parseInt(target.getAttribute('data-id') || '0');
-          this.openMemory(memoryId);
-        });
-      });
-    }
-
-    switchTab(tab) {
-      this.currentTab = tab;
-      const tabButtons = document.querySelectorAll('.tab-nav button');
-      tabButtons.forEach(button => {
-        button.classList.remove('active');
-        if (button.getAttribute('data-tab') === tab) {
-          button.classList.add('active');
-        }
-      });
-
-      if (!this.serverMemories) {
-        this.renderMemories();
-      }
-    }
-
-    toggleDateFilter() {
-      console.log('Date filter clicked');
-    }
-
-    toggleLocationFilter() {
-      console.log('Location filter clicked');
-    }
-
-    selectFavorite(element) {
-      const favoriteItems = document.querySelectorAll('.favorite-item');
-      favoriteItems.forEach(item => item.classList.remove('selected'));
-      element.classList.add('selected');
-    }
-
-    filterMemories() {
-      return this.memories.filter(memory => {
-        const matchesSearch = !this.searchQuery || memory.title.toLowerCase().includes(this.searchQuery);
-        const matchesTab = this.currentTab === 'memories' || (this.currentTab === 'collab' && memory.isCollab);
-        return matchesSearch && matchesTab;
-      });
-    }
-
-    createMemoryCard(memory) {
-      return `
-        <div class="memory-card ${memory.type}" data-id="${memory.id}">
-          <div class="memory-image"></div>
-          <div class="memory-content">
-            <h3 class="memory-title">${memory.title}</h3>
-            <p class="memory-date">${memory.date}</p>
-          </div>
-        </div>
-      `;
-    }
-
-    renderMemories() {
-      const grid = document.getElementById('memoriesGrid');
-      if (!grid) return;
-
-      const filteredMemories = this.filterMemories();
-
-      if (filteredMemories.length === 0) {
-        grid.innerHTML = '<p style="text-align: center; color: #6c757d; grid-column: 1 / -1; margin: 40px 0;">No memories found</p>';
-        return;
-      }
-
-      grid.innerHTML = filteredMemories.map(memory => this.createMemoryCard(memory)).join('');
-      this.attachEventListeners();
-    }
-
-    openMemory(memoryId) {
-      console.log('Opening memory with ID:', memoryId);
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    new MemoriesApp();
   });
 </script>
 </body>

@@ -86,9 +86,10 @@
     const notificationIcon = document.getElementById('notificationIcon');
     if (notificationIcon) {
       notificationIcon.addEventListener('click', function() {
-        window.location.href = '${pageContext.request.contextPath}/settingsnotifications';
+        window.location.href = '${pageContext.request.contextPath}/notifications';
       });
     }
+
 
     // Mobile Menu
     const navToggle = document.getElementById('navToggle');

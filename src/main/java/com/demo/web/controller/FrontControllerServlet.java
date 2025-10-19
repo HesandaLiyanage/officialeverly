@@ -42,6 +42,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/youcantaccessthis", "/views/public/youcantaccessthis.jsp");
         routeToJsp.put("/privacy", "/views/public/privacy.jsp");
         routeToJsp.put("/aboutus", "/views/public/aboutus.jsp");
+        routeToJsp.put("/resources/assets/landing.mp4", "/resources/assets/landing.mp4");
 
 
 
@@ -49,7 +50,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/memories", "/views/app/memories.jsp");
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
         routeToJsp.put("/profile", "/views/app/profile.jsp");
-        routeToJsp.put("/autographcontent", "/views/app/autographcontent.jsp");
+        routeToJsp.put("/autographs", "/views/app/autographcontent.jsp");
         routeToJsp.put("/journals", "/views/app/journals.jsp");
         routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp");
         routeToJsp.put("/settingsappearance", "/views/app/settingsappearance.jsp");
@@ -68,6 +69,20 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/trashmgt", "/views/app/trashmgt.jsp");
         routeToJsp.put("/editprofile", "/views/app/settingsaccounteditprofile.jsp");
         routeToJsp.put("/linkeddevices", "/views/app/linkeddevices.jsp");
+        routeToJsp.put("/memoryview", "/views/app/memoryview.jsp");
+        routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
+        routeToJsp.put("/notifications", "/views/app/notifications.jsp");
+        routeToJsp.put("/groups", "/views/app/groupdashboard.jsp");
+        routeToJsp.put("/groupprofile", "/views/app/groupprofile.jsp");
+        routeToJsp.put("/groupmemories", "/views/app/groupmemories.jsp");
+        routeToJsp.put("/groupmembers", "/views/app/groupmembers.jsp");
+        routeToJsp.put("/groupannouncement", "/views/app/groupannouncement.jsp");
+        routeToJsp.put("/events", "/views/app/eventinfo.jsp");
+
+
+
+
+
 
 
 
