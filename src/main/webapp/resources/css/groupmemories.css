@@ -1,46 +1,4 @@
-/* CSS Variables */
-:root {
-    /* Colors */
-    --primary: #9B51E0;
-    --primary-dark: #8a4cc9;
-    --text-dark: #120D1C;
-    --text-muted: #614F96;
-    --text-light: #666B87;
-    --border-color: #e9ecef;
-    --bg-white: #fff;
-    --bg-light: #F8F9FA;
-    --bg-hover: #F1EAFE;
-    --danger: #dc3545;
-    --danger-dark: #c82333;
-
-    /* Shadows */
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-
-    /* Border Radius */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-full: 50%;
-
-    /* Spacing */
-    --space-xs: 4px;
-    --space-sm: 8px;
-    --space-md: 16px;
-    --space-lg: 24px;
-    --space-xl: 32px;
-
-    /* Typography */
-    --font-sm: 12px;
-    --font-base: 14px;
-    --font-lg: 16px;
-    --font-xl: 18px;
-    --font-2xl: 24px;
-    --font-3xl: 32px;
-}
-
-/* Reset & Base Styles */
+/* Group Memories Page Styles */
 * {
     margin: 0;
     padding: 0;
@@ -48,105 +6,215 @@
 }
 
 body {
-    margin: 0;
-    font-family: 'Epilogue', sans-serif;
-    background: var(--bg-white);
-    color: var(--text-dark);
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f5;
 }
 
-/* Utility Classes */
-.card-base {
-    background: var(--bg-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-}
-
-.card-base:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.btn {
-    border: none;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background: var(--primary);
-    color: var(--bg-white);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.btn-primary:hover {
-    background: var(--primary-dark);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-}
-
-.btn-danger {
-    background: var(--danger);
-    color: var(--bg-white);
-}
-
-.btn-danger:hover {
-    background: var(--danger-dark);
-}
-
-/* Main Container */
-.container {
+/* Page Wrapper */
+.page-wrapper {
+    position: relative;
+    width: 90%;
     max-width: 1400px;
-    margin: var(--space-xl) auto;
-    padding: var(--space-md) 80px;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
+    margin: 0 auto;
+    padding: 20px 40px;
+    box-sizing: border-box;
+}
+
+.main-content {
+    width: 100%;
+    min-width: 0;
 }
 
 /* Page Header */
-.page-header h1 {
-    font-size: var(--font-3xl);
-    font-weight: 700;
-    line-height: 40px;
-    margin-bottom: var(--space-sm);
-    color: var(--text-dark);
+.page-header {
+    margin-bottom: 30px;
 }
 
-.page-header p {
-    font-size: var(--font-base);
-    color: var(--text-light);
-    font-weight: 400;
-    margin: 0;
+.group-name {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.group-creator {
+    font-size: 15px;
+    color: #6b7280;
+    font-weight: 500;
 }
 
 /* Tab Navigation */
 .tab-nav {
     display: flex;
-    margin-bottom: var(--space-xl);
-    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e9ecef;
+    gap: 8px;
 }
 
-.tab-nav button {
+.tab-link {
     background: none;
     border: none;
-    padding: 15px var(--space-md);
-    font-size: var(--font-lg);
+    padding: 15px 20px;
+    font-size: 18px;
     font-weight: 600;
-    color: var(--text-light);
+    color: #6c757d;
     cursor: pointer;
     transition: all 0.3s ease;
     border-bottom: 3px solid transparent;
+    text-decoration: none;
+    font-family: "Plus Jakarta Sans", sans-serif;
 }
 
-.tab-nav button.active {
-    color: var(--text-dark);
-    border-bottom-color: var(--primary);
+.tab-link.active {
+    color: #333;
+    border-bottom-color: #9A74D8;
 }
 
-.tab-nav button:hover {
-    color: var(--primary);
+.tab-link:hover {
+    color: #9A74D8;
+}
+
+/* Search and Filters */
+.search-filters {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Modern Search Container */
+.memories-search-container {
+    flex: 1;
+    min-width: 300px;
+}
+
+.memories-search-btn {
+    background: #f3f4f6;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.memories-search-btn:hover {
+    background: #e5e7eb;
+    transform: scale(1.05);
+}
+
+.memories-search-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #6b7280;
+}
+
+/* Modern Expanded Search Box */
+.memories-search-expanded {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 2px solid #6366f1;
+    border-radius: 16px;
+    padding: 10px 16px;
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+    animation: expandMemoriesSearch 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes expandMemoriesSearch {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.memories-search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.memories-search-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.memories-search-expanded input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 15px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 500;
+    color: #1f2937;
+    flex: 1;
+    min-width: 0;
+}
+
+.memories-search-expanded input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.memories-search-close {
+    background: #f3f4f6;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.memories-search-close:hover {
+    background: #e5e7eb;
+    transform: rotate(90deg);
+}
+
+.memories-search-close svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Filter Buttons */
+.filter-btn {
+    padding: 10px 18px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.filter-btn:hover {
+    border-color: #6366f1;
+    color: #6366f1;
+    background: #f0f9ff;
 }
 
 /* Memories Grid */
@@ -154,26 +222,27 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 100px;
 }
 
-/* Memory Card */
 .memory-card {
     height: 300px;
+    background: white;
+    border-radius: 16px;
     overflow: hidden;
-    background: var(--bg-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
 .memory-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-/* Memory Image */
 .memory-image {
     width: 100%;
     height: 180px;
@@ -182,940 +251,488 @@ body {
     position: relative;
 }
 
-/* Memory Content */
+/* Memory Image Backgrounds */
+.summer-beach {
+    background: linear-gradient(180deg, #87ceeb 0%, #4682b4 50%, #f4a460 100%);
+}
+
+.holiday-dinner {
+    background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+}
+
+.safe-vacation {
+    background: linear-gradient(135deg, #a8e6cf 0%, #7dd3c0 100%);
+}
+
+.beach-walk {
+    background: linear-gradient(180deg, #87ceeb 0%, #4682b4 100%);
+}
+
+.photo-shoot {
+    background: linear-gradient(135deg, #fff9e6 0%, #ffedb3 100%);
+}
+
+.picnic {
+    background: linear-gradient(135deg, #a8e6cf 0%, #7dd3c0 100%);
+}
+
+.mountain-hike {
+    background: linear-gradient(180deg, #6b8e23 0%, #4a6b3a 50%, #2d4a25 100%);
+}
+
+.reunion {
+    background: linear-gradient(135deg, #ffd4c4 0%, #ffb4a2 100%);
+}
+
+.wedding {
+    background: linear-gradient(135deg, #ffe4d4 0%, #ffd4b2 100%);
+}
+
+.road-trip {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+.camping {
+    background: linear-gradient(180deg, #6b8e23 0%, #2d4a25 100%);
+}
+
+.birthday {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+}
+
 .memory-content {
-    padding: var(--space-md);
+    padding: 20px;
 }
 
 .memory-title {
-    font-size: var(--font-xl);
+    font-size: 18px;
     font-weight: 700;
-    margin-bottom: var(--space-sm);
-    color: var(--text-dark);
+    margin-bottom: 8px;
+    color: #333;
 }
 
 .memory-date {
-    font-size: var(--font-base);
-    color: var(--text-muted);
+    font-size: 14px;
+    color: #6c757d;
     font-weight: 500;
 }
 
-/* Add Memory Button */
-.add-memory-btn {
-    padding: 12px 24px;
-    font-size: var(--font-lg);
-    border-radius: var(--radius-md);
-    align-self: flex-end;
-    background: var(--primary);
-    color: var(--bg-white);
+/* Floating Add Memory Button */
+.floating-buttons {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 100;
+}
+
+.floating-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px;
     border: none;
-    font-weight: 500;
+    border-radius: 24px;
+    background: #9A74D8;
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    white-space: nowrap;
 }
 
-.add-memory-btn:hover {
-    background: var(--primary-dark);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+.floating-btn:hover {
+    background: #8a64c8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
 }
 
-/* Responsive Design */
-
-@media (max-width: 1024px) {
-    .container {
-        padding: var(--space-md) 40px;
-    }
-
-    .memories-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    }
+.floating-btn:active {
+    transform: translateY(0);
 }
 
-@media (max-width: 768px) {
-    .container {
-        padding: var(--space-md) var(--space-md);
-    }
-
-    .tab-nav {
-        flex-wrap: wrap;
-    }
-
-    .memories-grid {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    }
-
-    .add-memory-btn {
-        width: 100%;
-        align-self: stretch;
-    }
+.floating-btn svg {
+    flex-shrink: 0;
 }
 
-@media (max-width: 480px) {
-    .container {
-        padding: var(--space-md) var(--space-md);
-    }
-
-    .memories-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    }
-
-    .memory-card {
-        height: 280px;
-    }
-
-    .memory-image {
-        height: 160px;
-    }
-
-    .memory-title {
-        font-size: var(--font-lg);
-    }
-
-    .memory-date {
-        font-size: var(--font-sm);
-    }
-}
-
-/* ===== Existing Styles (from previous page) ===== */
-/* Keep all your existing .container, .page-header, .tab-nav, .memory-card etc. styles here */
-
-/* ===== New: Announcements List ===== */
-
+/* Announcements List */
 .announcements-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-lg);
-    margin-bottom: var(--space-xl);
+    gap: 20px;
+    margin-bottom: 100px;
 }
 
 .announcement-card {
-    padding: var(--space-md);
-    background: var(--bg-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
 }
 
 .announcement-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .announcement-title {
-    font-size: var(--font-xl);
+    font-size: 20px;
     font-weight: 700;
-    margin-bottom: var(--space-sm);
-    color: var(--text-dark);
+    margin-bottom: 12px;
+    color: #1f2937;
 }
 
 .announcement-content {
-    font-size: var(--font-base);
-    color: var(--text-muted);
-    line-height: 21px;
-    margin-bottom: var(--space-sm);
-}
-
-.announcement-meta {
-    font-size: var(--font-sm);
-    color: var(--text-light);
-    font-weight: 500;
+    font-size: 15px;
+    color: #6b7280;
+    line-height: 1.7;
+    margin-bottom: 12px;
 }
 
 .more-info-link {
-    color: var(--primary);
+    color: #9A74D8;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
     transition: color 0.2s ease;
 }
 
 .more-info-link:hover {
-    color: var(--primary-dark);
+    color: #8a64c8;
     text-decoration: underline;
 }
 
-/* ===== Responsive Design ===== */
-
-@media (max-width: 768px) {
-    .announcements-list {
-        gap: 16px;
-    }
-
-    .announcement-card {
-        padding: 16px;
-    }
-
-    .announcement-title {
-        font-size: 16px;
-    }
-
-    .announcement-content {
-        font-size: 13px;
-    }
-
-    .announcement-meta {
-        font-size: 11px;
-    }
+.announcement-meta {
+    font-size: 13px;
+    color: #9ca3af;
+    font-weight: 500;
 }
 
-@media (max-width: 480px) {
-    .announcements-list {
-        gap: 12px;
-    }
-
-    .announcement-card {
-        padding: 12px;
-    }
-
-    .announcement-title {
-        font-size: 14px;
-    }
-
-    .announcement-content {
-        font-size: 12px;
-    }
-
-    .announcement-meta {
-        font-size: 10px;
-    }
+.announcement-meta span {
+    font-weight: 600;
 }
 
-/* ===== Existing Styles (from previous pages) ===== */
-/* Keep all your existing .container, .page-header, .tab-nav, .memory-card, .announcements-list etc. styles here */
-
-/* ===== New: Members List ===== */
-
+/* Members List */
 .members-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
-    margin-bottom: var(--space-xl);
+    gap: 16px;
+    margin-bottom: 100px;
 }
 
 .member-card {
     display: flex;
     align-items: center;
-    padding: var(--space-md);
-    background: var(--bg-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    padding: 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    text-decoration: none;
+    color: inherit;
 }
 
 .member-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.member-avatar img {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-full);
-    object-fit: cover;
-    margin-right: var(--space-sm);
+.member-avatar {
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.avatar-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.admin-avatar {
+    background: linear-gradient(135deg, #9A74D8 0%, #8a64c8 100%);
+}
+
+.member-avatar-1 {
+    background: linear-gradient(135deg, #a8e6cf 0%, #7dd3c0 100%);
+}
+
+.member-avatar-2 {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+.member-avatar-3 {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+}
+
+.member-avatar-4 {
+    background: linear-gradient(135deg, #ffedb3 0%, #ffd89b 100%);
+}
+
+.member-avatar-5 {
+    background: linear-gradient(135deg, #87ceeb 0%, #4682b4 100%);
+}
+
+.member-avatar-6 {
+    background: linear-gradient(135deg, #ffd4c4 0%, #ffb4a2 100%);
+}
+
+.member-avatar-7 {
+    background: linear-gradient(135deg, #d4ffe4 0%, #b2ffd4 100%);
 }
 
 .member-info {
+    flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 4px;
+}
+
+.member-name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .member-name {
-    font-size: var(--font-lg);
+    font-size: 18px;
     font-weight: 700;
-    color: var(--text-dark);
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
+    color: #1f2937;
 }
 
 .edit-icon {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    border-radius: var(--radius-full);
-    background: url('pen.svg') center/16px no-repeat;
-    cursor: pointer;
+    stroke: #9ca3af;
+    flex-shrink: 0;
     transition: all 0.2s ease;
-    opacity: 0.7;
 }
 
-.edit-icon:hover {
-    opacity: 1;
-    background-color: var(--bg-hover);
+.member-card:hover .edit-icon {
+    stroke: #9A74D8;
     transform: scale(1.1);
 }
 
 .member-role {
-    font-size: var(--font-base);
-    color: var(--text-muted);
+    font-size: 14px;
+    color: #6b7280;
     font-weight: 500;
-    margin-top: var(--space-xs);
 }
 
-/* ===== Responsive Design ===== */
+.admin-role {
+    color: #9A74D8;
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .page-wrapper {
+        padding: 20px 30px;
+    }
+}
 
 @media (max-width: 768px) {
-    .members-list {
-        gap: 12px;
+    .page-wrapper {
+        padding: 15px 20px;
+        width: 95%;
     }
 
-    .member-card {
-        padding: 12px;
+    .group-name {
+        font-size: 28px;
     }
 
-    .member-avatar img {
-        width: 36px;
-        height: 36px;
-    }
-
-    .member-name {
+    .group-creator {
         font-size: 14px;
     }
 
-    .member-role {
-        font-size: 12px;
+    .tab-link {
+        font-size: 16px;
+        padding: 12px 16px;
     }
-}
 
-@media (max-width: 480px) {
+    .search-filters {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .memories-search-container {
+        min-width: 100%;
+    }
+
+    .memories-search-expanded {
+        max-width: 100%;
+    }
+
+    .memories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+        margin-bottom: 80px;
+    }
+
     .members-list {
-        gap: 8px;
+        gap: 14px;
+        margin-bottom: 80px;
     }
 
     .member-card {
-        padding: 10px;
+        padding: 16px;
     }
 
-    .member-avatar img {
-        width: 32px;
-        height: 32px;
+    .avatar-circle {
+        width: 44px;
+        height: 44px;
+        font-size: 15px;
     }
 
     .member-name {
+        font-size: 17px;
+    }
+
+    .member-role {
         font-size: 13px;
     }
 
-    .member-role {
-        font-size: 11px;
-    }
-
     .edit-icon {
-        font-size: 12px;
+        width: 15px;
+        height: 15px;
     }
-}
 
-/* ===== Existing Styles (from previous pages) ===== */
-/* Keep all your existing .container, .page-header, .tab-nav, .memory-card, .announcements-list, .members-list etc. styles here */
-
-/* ===== New: Member Profile ===== */
-
-.member-profile {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: var(--space-xl) var(--space-md);
-    background: var(--bg-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    max-width: 600px;
-    margin: 0 auto;
-    gap: var(--space-lg);
-}
-
-/* Back Button */
-.back-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: color 0.2s ease;
-    align-self: flex-start;
-    padding: var(--space-sm);
-}
-
-.back-btn:hover {
-    color: var(--primary);
-}
-
-/* Avatar */
-.profile-avatar img {
-    width: 100px;
-    height: 100px;
-    border-radius: var(--radius-full);
-    object-fit: cover;
-    margin-bottom: var(--space-md);
-}
-
-/* Profile Info */
-.profile-info h2 {
-    font-size: var(--font-2xl);
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-bottom: var(--space-xs);
-}
-
-.profile-role {
-    font-size: var(--font-base);
-    color: var(--text-muted);
-    font-weight: 500;
-    margin-bottom: var(--space-xs);
-}
-
-.profile-joined {
-    font-size: var(--font-base);
-    color: var(--text-light);
-    font-weight: 400;
-    margin: 0;
-}
-
-/* Divider */
-.divider {
-    width: 100%;
-    height: 1px;
-    background: var(--border-color);
-    margin: var(--space-md) 0;
-}
-
-/* Profile Detail */
-.profile-detail {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-}
-
-.profile-detail label {
-    font-size: var(--font-base);
-    color: var(--text-light);
-    font-weight: 500;
-}
-
-.profile-detail p {
-    font-size: var(--font-base);
-    color: var(--text-dark);
-    font-weight: 400;
-    margin: 0;
-}
-
-/* Permissions Dropdown */
-.permissions-dropdown {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) var(--space-md);
-    background: var(--bg-light);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    font-size: var(--font-base);
-    color: var(--text-dark);
-    font-weight: 500;
-}
-
-.permissions-dropdown:hover {
-    background: var(--bg-hover);
-}
-
-.permissions-dropdown svg {
-    width: 16px;
-    height: 16px;
-    stroke-width: 2;
-    color: var(--text-muted);
-}
-
-/* Remove Button */
-.remove-btn {
-    background: var(--danger);
-    color: var(--bg-white);
-    border: none;
-    padding: var(--space-sm) var(--space-md);
-    font-size: var(--font-base);
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    align-self: flex-start;
-    box-shadow: var(--shadow-sm);
-}
-
-.remove-btn:hover {
-    background: var(--danger-dark);
-    box-shadow: var(--shadow-md);
-}
-
-/* ===== Responsive Design ===== */
-
-@media (max-width: 768px) {
-    .member-profile {
-        padding: 30px 16px;
+    .announcements-list {
         gap: 16px;
+        margin-bottom: 80px;
     }
 
-    .profile-avatar img {
-        width: 80px;
-        height: 80px;
+    .announcement-card {
+        padding: 20px;
     }
 
-    .profile-info h2 {
-        font-size: 20px;
-    }
-
-    .profile-role,
-    .profile-joined {
-        font-size: 12px;
-    }
-
-    .remove-btn {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-@media (max-width: 480px) {
-    .member-profile {
-        padding: 20px 12px;
-        gap: 12px;
-    }
-
-    .profile-avatar img {
-        width: 70px;
-        height: 70px;
-    }
-
-    .profile-info h2 {
+    .announcement-title {
         font-size: 18px;
     }
 
-    .profile-detail label {
+    .announcement-content {
+        font-size: 14px;
+    }
+
+    .announcement-meta {
         font-size: 12px;
     }
 
-    .profile-detail p {
-        font-size: 12px;
-    }
-
-    .permissions-dropdown {
-        padding: 6px 10px;
-        font-size: 12px;
-    }
-}
-
-/* ===== Existing Styles (from previous pages) ===== */
-/* Keep all your existing .container, .page-header, .tab-nav, .memory-card, .announcements-list, .members-list etc. styles here */
-
-/* ===== New: Groups List ===== */
-
-.groups-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-    margin-bottom: var(--space-xl);
-}
-
-.group-card {
-    display: flex;
-    height: 171px;
-    padding: 85px 10px 46px 146px;
-    justify-content: flex-end;
-    align-items: center;
-    flex: 1 0 0;
-    border-radius: var(--radius-md);
-    background: lightgray 50% / cover no-repeat;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: var(--shadow-sm);
-}
-
-.group-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-/* Group Info Box (Inner Content) */
-.group-info {
-    position: absolute;
-    left: 146px;
-    bottom: 46px;
-    text-align: left;
-    z-index: 1;
-}
-
-.group-info h2 {
-    font-size: var(--font-xl);
-    font-weight: 700;
-    line-height: 24px;
-    margin-bottom: var(--space-xs);
-    color: var(--text-dark);
-}
-
-.group-info p {
-    font-size: var(--font-base);
-    font-weight: 400;
-    color: var(--text-muted);
-    line-height: 21px;
-    margin: 0;
-}
-
-/* Add Memory Button (Only on last group) */
-.add-memory-btn {
-    position: absolute;
-    bottom: var(--space-md);
-    right: var(--space-md);
-    background: var(--primary);
-    color: var(--bg-white);
-    border: none;
-    padding: var(--space-sm) var(--space-md);
-    font-size: var(--font-base);
-    font-weight: 500;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow-sm);
-    z-index: 2;
-}
-
-.add-memory-btn:hover {
-    background: var(--primary-dark);
-    box-shadow: var(--shadow-md);
-}
-
-/* ===== Responsive Design ===== */
-
-@media (max-width: 1024px) {
-    .groups-list {
-        gap: 20px;
-    }
-
-    .group-card {
-        height: 150px;
-        padding: 60px 10px 30px 120px;
-    }
-
-    .group-info {
-        left: 120px;
-        bottom: 30px;
-    }
-
-    .group-info h2 {
-        font-size: 16px;
-    }
-
-    .group-info p {
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 768px) {
-    .groups-list {
-        gap: 16px;
-    }
-
-    .group-card {
-        height: 130px;
-        padding: 50px 10px 20px 100px;
-    }
-
-    .group-info {
-        left: 100px;
+    .floating-buttons {
         bottom: 20px;
+        right: 20px;
     }
 
-    .add-memory-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-        bottom: 12px;
-        right: 12px;
+    .floating-btn {
+        padding: 12px 24px;
+        font-size: 14px;
     }
 }
 
 @media (max-width: 480px) {
-    .groups-list {
+    .page-wrapper {
+        padding: 12px 16px;
+        width: 100%;
+    }
+
+    .group-name {
+        font-size: 24px;
+    }
+
+    .group-creator {
+        font-size: 13px;
+    }
+
+    .tab-link {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .memories-grid {
+        grid-template-columns: 1fr;
+        margin-bottom: 70px;
+    }
+
+    .members-list {
         gap: 12px;
+        margin-bottom: 70px;
     }
 
-    .group-card {
-        height: 120px;
-        padding: 40px 10px 15px 80px;
+    .member-card {
+        padding: 14px;
     }
 
-    .group-info {
-        left: 80px;
-        bottom: 15px;
+    .member-avatar {
+        margin-right: 12px;
     }
 
-    .group-info h2 {
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
         font-size: 14px;
     }
 
-    .group-info p {
-        font-size: 11px;
+    .member-name {
+        font-size: 15px;
     }
 
-    .add-memory-btn {
-        padding: 6px 10px;
-        font-size: 11px;
-        bottom: 10px;
-        right: 10px;
-    }
-}
-
-/* ===== Existing Styles (from previous pages) ===== */
-/* Keep all your existing .container, .page-header, .tab-nav, .memory-card, .announcements-list, .members-list etc. styles here */
-
-/* ===== New: Groups List ===== */
-
-.groups-list {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    margin-bottom: 40px;
-}
-
-.group-card {
-    display: flex;
-    height: 171px;
-    padding: 85px 10px 46px 146px;
-    justify-content: flex-end;
-    align-items: center;
-    flex: 1 0 0;
-    border-radius: 12px;
-    background: lightgray 50% / cover no-repeat;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.group-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-/* Group Info Box (Inner Content) */
-.group-info {
-    position: absolute;
-    left: 146px;
-    bottom: 46px;
-    text-align: left;
-    z-index: 1;
-}
-
-.group-info h2 {
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 24px;
-    margin-bottom: 4px;
-    color: #120D1C;
-}
-
-.group-info p {
-    font-size: 14px;
-    font-weight: 400;
-    color: #614F96;
-    line-height: 21px;
-    margin: 0;
-}
-
-/* Add Memory Button (Only on last group) */
-.add-memory-btn {
-    position: absolute;
-    bottom: 16px;
-    right: 16px;
-    background: #9B51E0;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    z-index: 2;
-}
-
-.add-memory-btn:hover {
-    background: #8a4cc9;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-/* ===== Responsive Design ===== */
-
-@media (max-width: 1024px) {
-    .groups-list {
-        gap: 20px;
+    .member-role {
+        font-size: 12px;
     }
 
-    .group-card {
-        height: 150px;
-        padding: 60px 10px 30px 120px;
+    .edit-icon {
+        width: 14px;
+        height: 14px;
     }
 
-    .group-info {
-        left: 120px;
-        bottom: 30px;
+    .announcements-list {
+        gap: 14px;
+        margin-bottom: 70px;
     }
 
-    .group-info h2 {
+    .announcement-card {
+        padding: 18px;
+    }
+
+    .announcement-title {
         font-size: 16px;
     }
 
-    .group-info p {
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 768px) {
-    .groups-list {
-        gap: 16px;
+    .announcement-content {
+        font-size: 13px;
     }
 
-    .group-card {
-        height: 130px;
-        padding: 50px 10px 20px 100px;
-    }
-
-    .group-info {
-        left: 100px;
-        bottom: 20px;
-    }
-
-    .add-memory-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-        bottom: 12px;
-        right: 12px;
-    }
-}
-
-@media (max-width: 480px) {
-    .groups-list {
-        gap: 12px;
-    }
-
-    .group-card {
-        height: 120px;
-        padding: 40px 10px 15px 80px;
-    }
-
-    .group-info {
-        left: 80px;
-        bottom: 15px;
-    }
-
-    .group-info h2 {
-        font-size: 14px;
-    }
-
-    .group-info p {
+    .announcement-meta {
         font-size: 11px;
     }
 
-    .add-memory-btn {
-        padding: 6px 10px;
-        font-size: 11px;
-        bottom: 10px;
-        right: 10px;
+    .floating-buttons {
+        bottom: 16px;
+        right: 16px;
     }
-}
-/* Tab Navigation */
-.tab-nav {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 30px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
 
-.tab-btn {
-    padding: 8px 16px;
-    font-weight: 600;
-    color: #666;
-    text-decoration: none;
-    border-bottom: 3px solid transparent;
-    transition: all 0.2s;
-}
+    .floating-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+        gap: 8px;
+    }
 
-.tab-btn:hover {
-    color: #a67cfa;
-}
-
-.tab-btn.active {
-    color: #a67cfa;
-    border-bottom-color: #a67cfa;
-}
-
-/* Memory Cards */
-.memories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-.memory-card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    transition: transform 0.2s;
-}
-
-.memory-card-link:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.memory-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.memory-image {
-    height: 200px;
-    background-size: cover;
-    background-position: center;
-}
-
-.memory-content {
-    padding: 15px;
-}
-
-.memory-title {
-    font-size: 16px;
-    margin: 0 0 5px;
-    font-weight: bold;
-}
-
-.memory-date {
-    font-size: 14px;
-    color: #888;
-    margin: 0;
-}
-
-/* Add Memory Button */
-.add-memory-btn {
-    background-color: #a67cfa;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-family: 'Epilogue', sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-    transition: background-color 0.2s;
-    margin-top: 20px;
-    display: block;
-    width: fit-content;
-    margin-left: auto;
-}
-
-.add-memory-btn:hover {
-    background-color: #8f5de8;
+    .floating-btn svg {
+        width: 16px;
+        height: 16px;
+    }
 }

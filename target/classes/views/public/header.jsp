@@ -21,7 +21,10 @@
 <header class="main-header">
   <!-- Logo -->
   <div class="logo">
+    <a href="/" target="_blank" style="text-decoration:none;">
+
     <img src="${pageContext.request.contextPath}/resources/assets/everlylogo.png" alt="Everly">
+    </a>
   </div>
 
   <!-- Navigation Bar -->

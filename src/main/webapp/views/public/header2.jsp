@@ -111,7 +111,9 @@
 
 <header class="main-header">
   <div class="logo">
+    <a href="/" target="_blank" style="text-decoration:none;">
     <img src="${pageContext.request.contextPath}/resources/assets/everlylogo.png" alt="Everly">
+    </a>
   </div>
 
   <nav class="nav-bar" id="navBar">
