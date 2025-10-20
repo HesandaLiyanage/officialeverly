@@ -19,7 +19,7 @@
     </div>
 
     <!-- Search and Filters -->
-    <div class="search-filters">
+    <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
       <div class="memories-search-container">
         <button class="memories-search-btn" id="memoriesSearchBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -43,10 +43,10 @@
         Location
       </button>
     </div>
-<%--    <a href="/memoryview"/>--%>
+    <%--    <a href="/memoryview"/>--%>
 
     <!-- Memories Grid -->
-    <div class="memories-grid" id="memoriesGrid">
+    <div class="memories-grid" id="memoriesGrid" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
       <div class="memory-card" data-title="Beach Sunset Adventure" id="sunset">
         <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800')"></div>
         <div class="memory-content">
@@ -176,8 +176,8 @@
       </ul>
     </div>
 
-    <!-- Floating Action Buttons - Now in sidebar -->
-    <div class="floating-buttons" id="floatingButtons">
+    <!-- Floating Action Buttons - Now fixed below sidebar -->
+    <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
       <a href="/creatememory" class="floating-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -193,6 +193,9 @@
         Vault
       </a>
     </div>
+
+    <!-- Floating Action Buttons - Now in sidebar -->
+
   </aside>
 </div>
 
@@ -202,7 +205,7 @@
 
   const card = document.getElementById('sunset');
 
-  car.addEventListener('click', function() {
+  card.addEventListener('click', function() {
     window.location.href = '/memoryview';
   })
   // Modern Search Functionality for Memories Page
@@ -306,52 +309,6 @@
         }
       });
     });
-
-    // Handle floating buttons position on scroll - FIXED
-    function handleFloatingButtons() {
-      const footer = document.querySelector('footer');
-      const floatingButtons = document.getElementById('floatingButtons');
-      const sidebar = document.querySelector('.sidebar');
-      const pageWrapper = document.querySelector('.page-wrapper');
-
-      if (!footer || !floatingButtons || !sidebar || !pageWrapper) return;
-
-      const windowHeight = window.innerHeight;
-      const buttonHeight = floatingButtons.offsetHeight;
-      const scrollY = window.scrollY;
-      const sidebarRect = sidebar.getBoundingClientRect();
-
-      // Get positions relative to document
-      const footerTop = footer.offsetTop;
-      const pageWrapperRect = pageWrapper.getBoundingClientRect();
-      const sidebarLeft = sidebar.offsetLeft + pageWrapper.offsetLeft;
-
-      // Calculate stop position (above footer)
-      const stopPosition = footerTop - buttonHeight - 40;
-      const currentScrollBottom = scrollY + windowHeight;
-
-      // Check if we need to stop before footer
-      if (currentScrollBottom >= footerTop + 100) {
-        // Stop before footer - use absolute positioning
-        floatingButtons.style.position = 'absolute';
-        floatingButtons.style.bottom = 'auto';
-        floatingButtons.style.top = stopPosition + 'px';
-        floatingButtons.style.left = sidebarLeft + 'px';
-        floatingButtons.style.width = sidebar.offsetWidth + 'px';
-      } else {
-        // Float normally - use fixed positioning
-        floatingButtons.style.position = 'fixed';
-        floatingButtons.style.bottom = '40px';
-        floatingButtons.style.top = 'auto';
-        floatingButtons.style.left = (sidebarRect.left) + 'px';
-        floatingButtons.style.width = sidebarRect.width + 'px';
-      }
-    }
-
-    // Call immediately and on scroll/resize
-    handleFloatingButtons();
-    window.addEventListener('scroll', handleFloatingButtons);
-    window.addEventListener('resize', handleFloatingButtons);
   });
 </script>
 </body>
