@@ -22,7 +22,7 @@
         </div>
 
         <!-- Search Bar -->
-        <div class="search-filters">
+        <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
             <div class="autographs-search-container">
                 <button class="autographs-search-btn" id="autographsSearchBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -34,7 +34,7 @@
         </div>
 
         <!-- Autographs Grid -->
-        <div class="autographs-grid" id="autographsGrid">
+        <div class="autographs-grid" id="autographsGrid" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
 
             <div class="autograph-card" data-title="Junior School 2015">
                 <div class="autograph-image" style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800')"></div>
@@ -233,8 +233,8 @@
             </div>
         </div>
 
-        <!-- Floating Action Button -->
-        <div class="floating-buttons" id="floatingButtons">
+        <!-- Floating Action Button - Now static below sidebar -->
+        <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
             <a href="/addautograph" class="floating-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -251,36 +251,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-
-        // Handle floating buttons position on scroll
-        function handleFloatingButtons() {
-            const footer = document.querySelector('footer');
-            const floatingButtons = document.getElementById('floatingButtons');
-
-            if (!footer || !floatingButtons) return;
-
-            const footerRect = footer.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-            const buttonHeight = floatingButtons.offsetHeight;
-
-            // When footer enters viewport from bottom
-            if (footerRect.top < windowHeight - buttonHeight - 40) {
-                // Stop buttons above footer
-                const stopPosition = footer.offsetTop - buttonHeight - 40;
-                floatingButtons.style.position = 'absolute';
-                floatingButtons.style.bottom = 'auto';
-                floatingButtons.style.top = stopPosition + 'px';
-            } else {
-                // Keep buttons fixed at bottom
-                floatingButtons.style.position = 'fixed';
-                floatingButtons.style.bottom = '40px';
-                floatingButtons.style.top = 'auto';
-            }
-        }
-
-        window.addEventListener('scroll', handleFloatingButtons);
-        window.addEventListener('resize', handleFloatingButtons);
-        handleFloatingButtons();
 
         // Modern Search Functionality
         const autographsSearchBtn = document.getElementById('autographsSearchBtn');

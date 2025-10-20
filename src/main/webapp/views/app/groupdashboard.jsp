@@ -27,8 +27,8 @@
       <button class="filter-btn" id="activityFilter">Activity</button>
     </div>
 
-    <!-- Groups List -->
-    <div class="groups-list" id="groupsList">
+    <!-- Groups List with Scrolling -->
+    <div class="groups-list" id="groupsList" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
       <!-- Group Card 1 -->
       <a href="${pageContext.request.contextPath}/groupmemories?groupId=1" class="group-card">
         <div class="group-images">
@@ -212,8 +212,8 @@
       </div>
     </div>
 
-    <!-- Floating Create Button -->
-    <div class="floating-buttons" id="floatingButtons">
+    <!-- Floating Create Button - Now static below sidebar -->
+    <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
       <a href="${pageContext.request.contextPath}/creategroup" class="floating-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -303,16 +303,30 @@
       });
     }
 
-    // Tab switching
-    const tabButtons = document.querySelectorAll('.tab-nav button');
-    tabButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
+    // Filter button handlers
+    const memberFilter = document.getElementById('memberFilter');
+    const activityFilter = document.getElementById('activityFilter');
 
-        const tab = this.getAttribute('data-tab');
-        console.log('Switched to tab:', tab);
-        // Add tab switching logic here
+    if (memberFilter) {
+      memberFilter.addEventListener('click', function() {
+        console.log('Filter by members clicked');
+        // Implement member filtering logic here
+      });
+    }
+
+    if (activityFilter) {
+      activityFilter.addEventListener('click', function() {
+        console.log('Filter by activity clicked');
+        // Implement activity filtering logic here
+      });
+    }
+
+    // Announcement item interactions
+    const announcementItems = document.querySelectorAll('.announcement-item');
+    announcementItems.forEach(item => {
+      item.addEventListener('click', function() {
+        announcementItems.forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
       });
     });
   });

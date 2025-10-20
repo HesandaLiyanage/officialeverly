@@ -47,7 +47,7 @@
     <h1 class="page-title">Journals</h1>
 
     <!-- Search and Filters -->
-    <div class="search-filters">
+    <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
       <div class="journals-search-container">
         <button class="journals-search-btn" id="journalsSearchBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -72,13 +72,8 @@
       </button>
     </div>
 
-    <!-- Section Header -->
-    <div class="section-header">
-      <h2 class="section-title">Pinned Journals</h2>
-    </div>
-
-    <!-- Pinned Journals Grid -->
-    <div class="journals-grid" id="pinnedJournalsGrid">
+    <!-- All Journals Grid -->
+    <div class="journals-grid" id="allJournalsGrid" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
       <%
         List<Journal> journalList = (List<Journal>) request.getAttribute("journals");
         if (journalList != null) {
@@ -98,15 +93,6 @@
           }
         }
       %>
-    </div>
-
-    <!-- All Journals Section -->
-    <div class="section-header" style="margin-top: 50px;">
-      <h2 class="section-title">All Journals</h2>
-    </div>
-
-    <!-- All Journals Grid -->
-    <div class="journals-grid" id="allJournalsGrid">
       <%
         List<Journal> allJournalsList = (List<Journal>) request.getAttribute("allJournals");
         if (allJournalsList != null) {
@@ -143,49 +129,49 @@
     </div>
 
     <!-- Milestones Section -->
-    <div class="sidebar-section">
-      <h3 class="sidebar-title">Milestones</h3>
-      <ul class="milestones-list">
-        <li class="milestone-item">
-          <div class="milestone-icon">📅</div>
-          <span class="milestone-name">Two Weeks</span>
-        </li>
-        <li class="milestone-item">
-          <div class="milestone-icon">📅</div>
-          <span class="milestone-name">One Month</span>
-        </li>
-        <li class="milestone-item">
-          <div class="milestone-icon">📅</div>
-          <span class="milestone-name">Three Months</span>
-        </li>
-        <li class="milestone-item">
-          <div class="milestone-icon">📅</div>
-          <span class="milestone-name">Six Months</span>
-        </li>
-        <li class="milestone-item">
-          <div class="milestone-icon">📅</div>
-          <span class="milestone-name">One Year</span>
-        </li>
-      </ul>
-    </div>
+<%--    <div class="sidebar-section">--%>
+<%--      <h3 class="sidebar-title">Milestones</h3>--%>
+<%--      <ul class="milestones-list">--%>
+<%--        <li class="milestone-item">--%>
+<%--          <div class="milestone-icon">📅</div>--%>
+<%--          <span class="milestone-name">Two Weeks</span>--%>
+<%--        </li>--%>
+<%--        <li class="milestone-item">--%>
+<%--          <div class="milestone-icon">📅</div>--%>
+<%--          <span class="milestone-name">One Month</span>--%>
+<%--        </li>--%>
+<%--        <li class="milestone-item">--%>
+<%--          <div class="milestone-icon">📅</div>--%>
+<%--          <span class="milestone-name">Three Months</span>--%>
+<%--        </li>--%>
+<%--        <li class="milestone-item">--%>
+<%--          <div class="milestone-icon">📅</div>--%>
+<%--          <span class="milestone-name">Six Months</span>--%>
+<%--        </li>--%>
+<%--        <li class="milestone-item">--%>
+<%--          <div class="milestone-icon">📅</div>--%>
+<%--          <span class="milestone-name">One Year</span>--%>
+<%--        </li>--%>
+<%--      </ul>--%>
+<%--    </div>--%>
 
     <!-- Favourites Section -->
     <div class="sidebar-section">
       <h3 class="sidebar-title">Favourites</h3>
       <ul class="favourites-list">
-        <li class="favourite-item">
-          <div class="favourite-icon">📘</div>
-          <div class="favourite-info">
-            <span class="favourite-name">July 6th</span>
-            <span class="favourite-days">36 days</span>
-          </div>
-        </li>
-        <li class="favourite-item">
-          <div class="favourite-icon">📘</div>
-          <div class="favourite-info">
-            <span class="favourite-name">Two Weeks</span>
-          </div>
-        </li>
+<%--        <li class="favourite-item">--%>
+<%--          <div class="favourite-icon">📘</div>--%>
+<%--          <div class="favourite-info">--%>
+<%--            <span class="favourite-name">July 6th</span>--%>
+<%--            <span class="favourite-days">36 days</span>--%>
+<%--          </div>--%>
+<%--        </li>--%>
+<%--        <li class="favourite-item">--%>
+<%--          <div class="favourite-icon">📘</div>--%>
+<%--          <div class="favourite-info">--%>
+<%--            <span class="favourite-name">Two Weeks</span>--%>
+<%--          </div>--%>
+<%--        </li>--%>
         <li class="favourite-item">
           <div class="favourite-icon">📘</div>
           <div class="favourite-info">
@@ -201,8 +187,8 @@
       </ul>
     </div>
 
-    <!-- Floating Action Buttons -->
-    <div class="floating-buttons" id="floatingButtons">
+    <!-- Floating Action Buttons - Now static below sidebar -->
+    <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
       <a href="/createjournal" class="floating-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -330,13 +316,13 @@
     });
 
     // Milestone and favourite item interactions
-    const milestoneItems = document.querySelectorAll('.milestone-item');
-    milestoneItems.forEach(item => {
-      item.addEventListener('click', function() {
-        milestoneItems.forEach(i => i.classList.remove('selected'));
-        this.classList.add('selected');
-      });
-    });
+    // const milestoneItems = document.querySelectorAll('.milestone-item');
+    // milestoneItems.forEach(item => {
+    //   item.addEventListener('click', function() {
+    //     milestoneItems.forEach(i => i.classList.remove('selected'));
+    //     this.classList.add('selected');
+    //   });
+    // });
 
     const favouriteItems = document.querySelectorAll('.favourite-item');
     favouriteItems.forEach(item => {
@@ -345,52 +331,6 @@
         this.classList.add('selected');
       });
     });
-
-    // Handle floating buttons position on scroll - FIXED FOR JOURNALS
-    function handleFloatingButtons() {
-      const footer = document.querySelector('footer');
-      const floatingButtons = document.getElementById('floatingButtons');
-      const sidebar = document.querySelector('.sidebar');
-      const pageWrapper = document.querySelector('.page-wrapper');
-
-      if (!footer || !floatingButtons || !sidebar || !pageWrapper) return;
-
-      const windowHeight = window.innerHeight;
-      const buttonHeight = floatingButtons.offsetHeight;
-      const scrollY = window.scrollY;
-      const sidebarRect = sidebar.getBoundingClientRect();
-
-      // Get positions relative to document
-      const footerTop = footer.offsetTop;
-      const pageWrapperRect = pageWrapper.getBoundingClientRect();
-      const sidebarLeft = sidebar.offsetLeft + pageWrapper.offsetLeft;
-
-      // Calculate stop position (above footer)
-      const stopPosition = footerTop - buttonHeight - 40;
-      const currentScrollBottom = scrollY + windowHeight;
-
-      // Check if we need to stop before footer
-      if (currentScrollBottom >= footerTop + 100) {
-        // Stop before footer - use absolute positioning
-        floatingButtons.style.position = 'absolute';
-        floatingButtons.style.bottom = 'auto';
-        floatingButtons.style.top = stopPosition + 'px';
-        floatingButtons.style.left = sidebarLeft + 'px';
-        floatingButtons.style.width = sidebar.offsetWidth + 'px';
-      } else {
-        // Float normally - use fixed positioning
-        floatingButtons.style.position = 'fixed';
-        floatingButtons.style.bottom = '40px';
-        floatingButtons.style.top = 'auto';
-        floatingButtons.style.left = (sidebarRect.left) + 'px';
-        floatingButtons.style.width = sidebarRect.width + 'px';
-      }
-    }
-
-    // Call immediately and on scroll/resize
-    handleFloatingButtons();
-    window.addEventListener('scroll', handleFloatingButtons);
-    window.addEventListener('resize', handleFloatingButtons);
   });
 </script>
 </body>
