@@ -65,6 +65,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/resources/assets/landing.mp4", "/resources/assets/landing.mp4");
 
 
+
         // Protected pages (some need specific logic)
         routeToJsp.put("/memories", "/views/app/memories.jsp");
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
@@ -97,6 +98,16 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/eventinfo", "/views/app/eventinfo.jsp");
         routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
         routeToJsp.put("/editautograph", "/views/app/Autographs/editautograph.jsp");
+        routeToJsp.put("/publicfeed", "/views/app/publicfeed.jsp");
+        routeToJsp.put("/userprofile", "/views/app/userprofile.jsp");
+        routeToJsp.put("/followers", "/views/app/followers.jsp");
+        routeToJsp.put("/following", "/views/app/following.jsp");
+        routeToJsp.put("/followerprofile", "/views/app/followerprofile.jsp");
+        routeToJsp.put("/followingprofile", "/views/app/followingprofile.jsp");
+        routeToJsp.put("/memoryview", "/views/app/memoryview.jsp");
+        routeToJsp.put("/vaultjournals", "/views/app/vaultjournals.jsp");
+
+
 
         // Pages that require business logic before showing the JSP
         routeToLogic.put("/linkeddevices", new LinkedDevicesLogicHandler());
