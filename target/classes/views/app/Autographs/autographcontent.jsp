@@ -46,7 +46,8 @@
                         // Format the date (assuming you have a way to format it, or use a simple toString)
                         String formattedDate = ag.getCreatedAt() != null ? ag.getCreatedAt().toString().substring(0, 10) : "Unknown Date";
             %>
-            <div class="autograph-card" data-title="<%= ag.getTitle() %>">
+            <!-- Added data-autograph-id attribute -->
+            <div class="autograph-card" data-autograph-id="<%= ag.getAutographId() %>" data-title="<%= ag.getTitle() %>">
                 <div class="autograph-image" style="background-image: url('<%= request.getContextPath() %>/dbimages/<%= ag.getAutographPicUrl() != null ? ag.getAutographPicUrl() : "default.jpg" %>')"></div>
                 <div class="autograph-content">
                     <h3 class="autograph-title"><%= ag.getTitle() %></h3>
@@ -235,11 +236,14 @@
         autographCards.forEach(card => {
             card.addEventListener('click', function() {
                 console.log('Autograph book clicked:', this.querySelector('.autograph-title').textContent);
-                // Redirect to autograph detail page
-                // IMPORTANT: You need to pass the autograph ID here, e.g., /autographview?id=123
-                // window.location.href = '/autographview?id=' + this.getAttribute('data-autograph-id');
-                // For now, keeping the old link as an example
-                window.location.href = '/autographview';
+                // Get the autograph ID from the data-autograph-id attribute added in JSP
+                const autographId = this.getAttribute('data-autograph-id');
+                if (autographId) {
+                    // Redirect to autograph detail page with the ID as a parameter
+                    window.location.href = '/autographview?id=' + encodeURIComponent(autographId);
+                } else {
+                    console.error('Autograph ID not found for this card.');
+                }
             });
         });
 

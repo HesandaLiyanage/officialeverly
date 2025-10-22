@@ -210,7 +210,7 @@
 
         editEvent() {
             console.log('Edit event:', this.events[this.currentEventIndex].title);
-            window.location.href = '/createevent';
+            window.location.href = '/editevent';
         }
 
         deleteEvent() {
