@@ -1,4 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.util.concurrent.TimeUnit" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="com.demo.web.model.Group" %>
+<%@ page import="com.demo.web.dao.GroupDAO" %>
 
 <jsp:include page="../public/header2.jsp" />
 <html>
@@ -29,99 +35,73 @@
 
     <!-- Groups List with Scrolling -->
     <div class="groups-list" id="groupsList" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
-      <!-- Group Card 1 -->
-      <a href="${pageContext.request.contextPath}/groupmemories?groupId=1" class="group-card">
-        <div class="group-images">
-          <div class="image-placeholder peach"></div>
-          <div class="image-card family-photo"></div>
+      <%
+        List<Group> groups = (List<Group>) request.getAttribute("groups");
+        GroupDAO groupDAO = (GroupDAO) request.getAttribute("groupDAO");
+
+        if (groups == null || groups.isEmpty()) {
+      %>
+      <div style="text-align: center; padding: 40px; color: #6b7280;">
+        <p>No groups yet. Create your first group to get started!</p>
+      </div>
+      <%
+      } else {
+        for (Group group : groups) {
+          // Calculate time ago
+          java.sql.Timestamp createdAt = group.getCreatedAt();
+          long diffInMillies = Math.abs(new Date().getTime() - createdAt.getTime());
+          long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+          String timeAgo;
+          if (diffInDays == 0) {
+            long diffInHours = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+            if (diffInHours == 0) {
+              long diffInMinutes = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+              timeAgo = diffInMinutes + " minutes ago";
+            } else {
+              timeAgo = diffInHours + " hours ago";
+            }
+          } else if (diffInDays == 1) {
+            timeAgo = "Yesterday";
+          } else if (diffInDays < 7) {
+            timeAgo = diffInDays + " days ago";
+          } else if (diffInDays < 30) {
+            long weeks = diffInDays / 7;
+            timeAgo = weeks + " week" + (weeks > 1 ? "s" : "") + " ago";
+          } else if (diffInDays < 365) {
+            long months = diffInDays / 30;
+            timeAgo = months + " month" + (months > 1 ? "s" : "") + " ago";
+          } else {
+            long years = diffInDays / 365;
+            timeAgo = years + " year" + (years > 1 ? "s" : "") + " ago";
+          }
+
+          // Get member count
+          int memberCount = groupDAO.getMemberCount(group.getGroupId());
+      %>
+
+      <a href="<%= request.getContextPath() %>/groupmemories?groupId=<%= group.getGroupId() %>" class="group-card" data-group-title="<%= group.getName().toLowerCase() %>">
+        <div class="group-images single">
+          <% if (group.getGroupPicUrl() != null && !group.getGroupPicUrl().isEmpty()) { %>
+          <div class="image-card" style="background-image: url('<%= group.getGroupPicUrl() %>'); background-size: cover; background-position: center;"></div>
+          <% } else { %>
           <div class="image-placeholder beige"></div>
+          <% } %>
         </div>
         <div class="group-info">
-          <h3 class="group-title">Family Memories</h3>
+          <h3 class="group-title"><%= group.getName() %></h3>
           <p class="group-meta">
-            <span class="members-count">5 members</span>
+            <span class="members-count"><%= memberCount %> member<%= memberCount != 1 ? "s" : "" %></span>
             <span class="separator">•</span>
-            <span class="last-activity">2 weeks ago</span>
+            <span class="last-activity"><%= timeAgo %></span>
           </p>
         </div>
       </a>
 
-      <!-- Group Card 2 -->
-      <a href="${pageContext.request.contextPath}/groupmemories?groupId=2" class="group-card">
-        <div class="group-images single">
-          <div class="image-card beach-photo"></div>
-        </div>
-        <div class="group-info">
-          <h3 class="group-title">Highschool Friends</h3>
-          <p class="group-meta">
-            <span class="members-count">22 members</span>
-            <span class="separator">•</span>
-            <span class="last-activity">1 week ago</span>
-          </p>
-        </div>
-      </a>
-
-      <!-- Group Card 3 -->
-      <a href="${pageContext.request.contextPath}/groupmemories?groupId=3" class="group-card">
-        <div class="group-images single">
-          <div class="image-card balloons-photo"></div>
-        </div>
-        <div class="group-info">
-          <h3 class="group-title">Uni Friends</h3>
-          <p class="group-meta">
-            <span class="members-count">25 members</span>
-            <span class="separator">•</span>
-            <span class="last-activity">3 days ago</span>
-          </p>
-        </div>
-      </a>
-
-      <!-- Group Card 4 -->
-      <a href="${pageContext.request.contextPath}/groupmemories?groupId=4" class="group-card">
-        <div class="group-images single">
-          <div class="image-card roomies-photo"></div>
-        </div>
-        <div class="group-info">
-          <h3 class="group-title">Roomies</h3>
-          <p class="group-meta">
-            <span class="members-count">10 members</span>
-            <span class="separator">•</span>
-            <span class="last-activity">1 month ago</span>
-          </p>
-        </div>
-      </a>
-
-      <!-- Group Card 5 -->
-      <a href="${pageContext.request.contextPath}/groupmemories?groupId=5" class="group-card">
-        <div class="group-images">
-          <div class="image-placeholder mint"></div>
-          <div class="image-card travel-photo"></div>
-          <div class="image-placeholder lavender"></div>
-        </div>
-        <div class="group-info">
-          <h3 class="group-title">Travel Buddies</h3>
-          <p class="group-meta">
-            <span class="members-count">8 members</span>
-            <span class="separator">•</span>
-            <span class="last-activity">5 days ago</span>
-          </p>
-        </div>
-      </a>
-
-      <!-- Group Card 6 -->
-      <a href="${pageContext.request.contextPath}/groupmemories?groupId=6" class="group-card">
-        <div class="group-images single">
-          <div class="image-card gaming-photo"></div>
-        </div>
-        <div class="group-info">
-          <h3 class="group-title">Gaming Squad</h3>
-          <p class="group-meta">
-            <span class="members-count">15 members</span>
-            <span class="separator">•</span>
-            <span class="last-activity">Yesterday</span>
-          </p>
-        </div>
-      </a>
+      <%
+          }
+        }
+      %>
     </div>
   </main>
 
@@ -130,7 +110,37 @@
     <div class="sidebar-section">
       <h3 class="sidebar-title">Group Announcements</h3>
       <div class="announcements-list">
-        <!-- Announcement 1 -->
+        <%
+          // Display recent groups as announcements
+          if (groups != null && !groups.isEmpty()) {
+            int announcementCount = 0;
+            for (Group group : groups) {
+              if (announcementCount >= 5) break; // Show max 5 announcements
+
+              // Calculate time ago for announcement
+              java.sql.Timestamp createdAt = group.getCreatedAt();
+              long diffInMillies = Math.abs(new Date().getTime() - createdAt.getTime());
+              long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+              String timeAgo;
+              if (diffInDays == 0) {
+                long diffInHours = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                if (diffInHours == 0) {
+                  timeAgo = "Just now";
+                } else {
+                  timeAgo = diffInHours + " hours ago";
+                }
+              } else if (diffInDays == 1) {
+                timeAgo = "1 day ago";
+              } else if (diffInDays < 7) {
+                timeAgo = diffInDays + " days ago";
+              } else {
+                long weeks = diffInDays / 7;
+                timeAgo = weeks + " week" + (weeks > 1 ? "s" : "") + " ago";
+              }
+        %>
+
+        <!-- Announcement <%= announcementCount + 1 %> -->
         <div class="announcement-item">
           <div class="announcement-icon family">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -141,80 +151,29 @@
             </svg>
           </div>
           <div class="announcement-content">
-            <h4 class="announcement-title">Family Memories</h4>
-            <p class="announcement-text">Reunion planned for next month! 🎉</p>
-            <span class="announcement-time">2 hours ago</span>
+            <h4 class="announcement-title"><%= group.getName() %></h4>
+            <p class="announcement-text"><%= group.getDescription() != null && !group.getDescription().isEmpty() ? group.getDescription() : "New group created!" %></p>
+            <span class="announcement-time"><%= timeAgo %></span>
           </div>
         </div>
 
-        <!-- Announcement 2 -->
-        <div class="announcement-item">
-          <div class="announcement-icon highschool">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              <path d="M2 17l10 5 10-5"></path>
-              <path d="M2 12l10 5 10-5"></path>
-            </svg>
-          </div>
-          <div class="announcement-content">
-            <h4 class="announcement-title">Highschool Friends</h4>
-            <p class="announcement-text">10 year reunion this weekend!</p>
-            <span class="announcement-time">1 day ago</span>
-          </div>
+        <%
+            announcementCount++;
+          }
+        } else {
+        %>
+        <div style="text-align: center; padding: 20px; color: #6b7280;">
+          <p>No announcements yet</p>
         </div>
-
-        <!-- Announcement 3 -->
-        <div class="announcement-item">
-          <div class="announcement-icon uni">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          </div>
-          <div class="announcement-content">
-            <h4 class="announcement-title">Uni Friends</h4>
-            <p class="announcement-text">Game night this Friday at 8 PM</p>
-            <span class="announcement-time">2 days ago</span>
-          </div>
-        </div>
-
-        <!-- Announcement 4 -->
-        <div class="announcement-item">
-          <div class="announcement-icon roomies">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-          </div>
-          <div class="announcement-content">
-            <h4 class="announcement-title">Roomies</h4>
-            <p class="announcement-text">House cleaning day tomorrow!</p>
-            <span class="announcement-time">3 days ago</span>
-          </div>
-        </div>
-
-        <!-- Announcement 5 -->
-        <div class="announcement-item">
-          <div class="announcement-icon travel">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
-          </div>
-          <div class="announcement-content">
-            <h4 class="announcement-title">Travel Buddies</h4>
-            <p class="announcement-text">Beach trip confirmed! ☀️🏖️</p>
-            <span class="announcement-time">1 week ago</span>
-          </div>
-        </div>
+        <%
+          }
+        %>
       </div>
     </div>
 
     <!-- Floating Create Button - Now static below sidebar -->
     <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
-      <a href="${pageContext.request.contextPath}/creategroup" class="floating-btn">
+      <a href="<%= request.getContextPath() %>/creategroup" class="floating-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -296,7 +255,7 @@
           const query = e.target.value.toLowerCase();
           const groupCards = document.querySelectorAll('.group-card');
           groupCards.forEach(card => {
-            const title = card.querySelector('.group-title')?.textContent?.toLowerCase() || '';
+            const title = card.getAttribute('data-group-title') || '';
             card.style.display = title.includes(query) ? 'flex' : 'none';
           });
         });
