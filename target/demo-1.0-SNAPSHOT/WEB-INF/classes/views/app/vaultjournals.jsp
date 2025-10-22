@@ -22,8 +22,8 @@
 
         <!-- Tab Navigation -->
         <div class="tab-nav">
-            <button class="active" data-tab="memories">Memories</button>
-            <button data-tab="journals">Journals</button>
+            <button data-tab="memories">Memories</button>
+            <button class="active" data-tab="journals">Journals</button>
         </div>
 
         <!-- Search and Filters -->
@@ -43,62 +43,148 @@
                 </svg>
                 Date
             </button>
-            <button class="filter-btn" id="locationFilter">
+            <button class="filter-btn" id="moodFilter">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
                 </svg>
-                Location
+                Mood
             </button>
         </div>
 
-        <!-- Memories Grid -->
-        <div class="memories-grid" id="memoriesGrid" style="max-height: calc(100vh - 400px); overflow-y: auto; padding-right: 10px;">
-            <div class="memory-card private-birthday" data-title="Private Birthday">
-                <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800')"></div>
-                <div class="memory-content">
-                    <h3 class="memory-title">Private Birthday</h3>
-                    <p class="memory-date">March 12, 2024</p>
+        <!-- Journals Grid -->
+        <div class="journals-grid" id="journalsGrid" style="max-height: calc(100vh - 400px); overflow-y: auto; padding-right: 10px;">
+            <div class="journal-card" data-title="Reflection on Growth">
+                <div class="journal-header">
+                    <div class="journal-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="journal-lock">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="journal-content">
+                    <h3 class="journal-title">Reflection on Growth</h3>
+                    <p class="journal-date">March 10, 2024</p>
+                    <p class="journal-excerpt">Today I realized how far I've come. The challenges I faced last year shaped me in ways I never expected...</p>
                 </div>
             </div>
 
-            <div class="memory-card secret-getaway" data-title="Secret Getaway">
-                <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800')"></div>
-                <div class="memory-content">
-                    <h3 class="memory-title">Secret Getaway</h3>
-                    <p class="memory-date">February 8, 2024</p>
+            <div class="journal-card" data-title="Private Thoughts">
+                <div class="journal-header">
+                    <div class="journal-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="journal-lock">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="journal-content">
+                    <h3 class="journal-title">Private Thoughts</h3>
+                    <p class="journal-date">February 22, 2024</p>
+                    <p class="journal-excerpt">Sometimes silence speaks louder than words. I've been thinking about the people who truly matter...</p>
                 </div>
             </div>
 
-            <div class="memory-card confidential-meeting" data-title="Confidential Meeting">
-                <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800')"></div>
-                <div class="memory-content">
-                    <h3 class="memory-title">Confidential Meeting</h3>
-                    <p class="memory-date">January 22, 2024</p>
+            <div class="journal-card" data-title="Dreams & Goals">
+                <div class="journal-header">
+                    <div class="journal-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="journal-lock">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="journal-content">
+                    <h3 class="journal-title">Dreams & Goals</h3>
+                    <p class="journal-date">January 15, 2024</p>
+                    <p class="journal-excerpt">I want to travel more, write a book, and learn to play the piano. This year is about turning dreams into plans...</p>
                 </div>
             </div>
 
-            <div class="memory-card hidden-adventure" data-title="Hidden Adventure">
-                <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800')"></div>
-                <div class="memory-content">
-                    <h3 class="memory-title">Hidden Adventure</h3>
-                    <p class="memory-date">December 5, 2023</p>
+            <div class="journal-card" data-title="Gratitude List">
+                <div class="journal-header">
+                    <div class="journal-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="journal-lock">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="journal-content">
+                    <h3 class="journal-title">Gratitude List</h3>
+                    <p class="journal-date">December 30, 2023</p>
+                    <p class="journal-excerpt">I'm grateful for my health, my family, and the small moments of joy that made this year special...</p>
                 </div>
             </div>
 
-            <div class="memory-card personal-moment" data-title="Personal Moment">
-                <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800')"></div>
-                <div class="memory-content">
-                    <h3 class="memory-title">Personal Moment</h3>
-                    <p class="memory-date">November 18, 2023</p>
+            <div class="journal-card" data-title="Midnight Musings">
+                <div class="journal-header">
+                    <div class="journal-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="journal-lock">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="journal-content">
+                    <h3 class="journal-title">Midnight Musings</h3>
+                    <p class="journal-date">November 5, 2023</p>
+                    <p class="journal-excerpt">The quiet of the night brings clarity. I find myself reflecting on choices made and paths not taken...</p>
                 </div>
             </div>
 
-            <div class="memory-card private-celebration" data-title="Private Celebration">
-                <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800')"></div>
-                <div class="memory-content">
-                    <h3 class="memory-title">Private Celebration</h3>
-                    <p class="memory-date">October 3, 2023</p>
+            <div class="journal-card" data-title="Self Discovery">
+                <div class="journal-header">
+                    <div class="journal-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="journal-lock">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="journal-content">
+                    <h3 class="journal-title">Self Discovery</h3>
+                    <p class="journal-date">October 18, 2023</p>
+                    <p class="journal-excerpt">Learning to be comfortable with who I am, not who others expect me to be. This journey is mine alone...</p>
                 </div>
             </div>
         </div>
@@ -191,7 +277,7 @@
               <path d="m21 21-4.35-4.35"></path>
             </svg>
           </div>
-          <input type="text" id="searchInput" placeholder="Search vault memories..." autofocus>
+          <input type="text" id="searchInput" placeholder="Search vault journals..." autofocus>
           <button class="memories-search-close">
             <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -237,8 +323,8 @@
                 // Search functionality
                 input.addEventListener('input', function(e) {
                     const query = e.target.value.toLowerCase();
-                    const memoryCards = document.querySelectorAll('.memory-card');
-                    memoryCards.forEach(card => {
+                    const journalCards = document.querySelectorAll('.journal-card');
+                    journalCards.forEach(card => {
                         const title = card.getAttribute('data-title')?.toLowerCase() || '';
                         card.style.display = title.includes(query) ? 'block' : 'none';
                     });
@@ -248,7 +334,6 @@
 
         // Tab switching functionality
         const tabButtons = document.querySelectorAll('.tab-nav button');
-        const memoriesGrid = document.getElementById('memoriesGrid');
 
         tabButtons.forEach(button => {
             button.addEventListener('click', function() {
@@ -258,14 +343,9 @@
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
 
-                // Update content based on tab
+                // Navigate to appropriate page
                 if (tab === 'memories') {
-                    // Show all memories
-                    const memoryCards = document.querySelectorAll('.memory-card');
-                    memoryCards.forEach(card => card.style.display = 'block');
-                } else if (tab === 'journals') {
-                    // Show no journals message
-                    memoriesGrid.innerHTML = '<p style="text-align: center; color: #6c757d; grid-column: 1 / -1; margin: 40px 0; font-size: 16px;">No private journals yet</p>';
+                    window.location.href = '/vaultmemories';
                 }
             });
         });

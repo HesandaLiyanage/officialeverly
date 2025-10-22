@@ -478,4 +478,466 @@
         height: 16px;
     }
 }
+/* Import base memories styles */
+@import url('memories.css');
 
+/* Vault Header Styling */
+.vault-header {
+    margin-bottom: 20px;
+}
+
+.vault-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 12px 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.vault-title svg {
+    stroke: #6f42c1;
+}
+
+.vault-desc {
+    font-size: 15px;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.6;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* Settings List */
+.settings-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.setting-item {
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    transition: all 0.3s ease;
+}
+
+.setting-link:hover {
+    color: #6f42c1;
+    padding-left: 8px;
+}
+
+.setting-link svg {
+    flex-shrink: 0;
+    stroke: #6c757d;
+    transition: stroke 0.3s ease;
+}
+
+.setting-link:hover svg {
+    stroke: #6f42c1;
+}
+
+/* Expandable Sections */
+.expandable-section {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.expand-icon {
+    stroke: #6c757d;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.expandable-section.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+.expandable-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.expandable-section.expanded .expandable-content {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 12px;
+}
+
+/* Storage Info */
+.storage-info {
+    padding: 8px 0;
+}
+
+.storage-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #6c757d;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.storage-bar {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.storage-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6f42c1 0%, #9A74D8 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Empty Text */
+.empty-text {
+    color: #6c757d;
+    font-size: 14px;
+    margin: 8px 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* Vault-specific Memory Card Styles */
+.memory-card.private-birthday .memory-image,
+.memory-card.secret-getaway .memory-image,
+.memory-card.confidential-meeting .memory-image,
+.memory-card.hidden-adventure .memory-image,
+.memory-card.personal-moment .memory-image,
+.memory-card.private-celebration .memory-image {
+    position: relative;
+}
+
+/* Add a lock icon overlay for vault memories */
+.memory-card.private-birthday .memory-image::after,
+.memory-card.secret-getaway .memory-image::after,
+.memory-card.confidential-meeting .memory-image::after,
+.memory-card.hidden-adventure .memory-image::after,
+.memory-card.personal-moment .memory-image::after,
+.memory-card.private-celebration .memory-image::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    background: rgba(111, 66, 193, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .vault-title {
+        font-size: 28px;
+    }
+
+    .vault-desc {
+        font-size: 14px;
+    }
+
+    .expandable-section.expanded .expandable-content {
+        max-height: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    .vault-title {
+        font-size: 24px;
+        gap: 8px;
+    }
+
+    .vault-title svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .vault-desc {
+        font-size: 13px;
+    }
+
+    .setting-link {
+        font-size: 13px;
+        padding: 12px 0;
+    }
+
+    .storage-text {
+        font-size: 12px;
+    }
+}
+
+/* Journals Grid */
+.journals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Journal Card - Text-based design */
+.journal-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+}
+
+.journal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Journal Header */
+.journal-header {
+    background: linear-gradient(135deg, #6f42c1 0%, #9A74D8 100%);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 60px;
+}
+
+.journal-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.journal-icon svg {
+    stroke: white;
+}
+
+.journal-lock {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.journal-lock svg {
+    stroke: white;
+}
+
+/* Journal Content */
+.journal-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.journal-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #333;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    line-height: 1.3;
+}
+
+.journal-date {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 500;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    margin: 0 0 12px 0;
+}
+
+.journal-excerpt {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.6;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    margin: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+}
+
+/* Alternative Journal Card Gradients */
+.journal-card:nth-child(2) .journal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.journal-card:nth-child(3) .journal-header {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.journal-card:nth-child(4) .journal-header {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.journal-card:nth-child(5) .journal-header {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.journal-card:nth-child(6) .journal-header {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Scrollbar for journals grid */
+.journals-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.journals-grid::-webkit-scrollbar-track {
+    background: #f1f3f4;
+    border-radius: 10px;
+}
+
+.journals-grid::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 10px;
+}
+
+.journals-grid::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .journals-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+    }
+
+    .journal-card {
+        min-height: 200px;
+    }
+
+    .journal-header {
+        padding: 14px 18px;
+        min-height: 55px;
+    }
+
+    .journal-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .journal-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .journal-lock {
+        width: 28px;
+        height: 28px;
+    }
+
+    .journal-lock svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .journal-content {
+        padding: 18px;
+    }
+
+    .journal-title {
+        font-size: 17px;
+    }
+
+    .journal-date {
+        font-size: 12px;
+    }
+
+    .journal-excerpt {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .journals-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .journal-card {
+        min-height: 180px;
+    }
+
+    .journal-header {
+        padding: 12px 16px;
+    }
+
+    .journal-content {
+        padding: 16px;
+    }
+
+    .journal-title {
+        font-size: 16px;
+    }
+
+    .journal-excerpt {
+        font-size: 13px;
+        -webkit-line-clamp: 2;
+    }
+}
+
+/* Animation for cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.journal-card {
+    animation: fadeInUp 0.4s ease;
+}
+
+.journal-card:nth-child(1) { animation-delay: 0s; }
+.journal-card:nth-child(2) { animation-delay: 0.05s; }
+.journal-card:nth-child(3) { animation-delay: 0.1s; }
+.journal-card:nth-child(4) { animation-delay: 0.15s; }
+.journal-card:nth-child(5) { animation-delay: 0.2s; }
+.journal-card:nth-child(6) { animation-delay: 0.25s; }
