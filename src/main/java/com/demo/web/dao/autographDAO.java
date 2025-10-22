@@ -13,7 +13,8 @@ public class autographDAO {
      * Create a new autograph
      */
     public boolean createAutograph(autograph autograph) {
-        String sql = "INSERT INTO autograph (a_title, a_description, created_at, user_id) VALUES (?, ?, ?, ?)";
+        // Include autograph_pic_url in the INSERT statement
+        String sql = "INSERT INTO autograph (a_title, a_description, created_at, user_id, autograph_pic_url) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -21,6 +22,7 @@ public class autographDAO {
             stmt.setString(2, autograph.getDescription());
             stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
             stmt.setInt(4, autograph.getUserId());
+            stmt.setString(5, autograph.getAutographPicUrl()); // Set the picture URL
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
@@ -35,7 +37,8 @@ public class autographDAO {
      * Get autograph by ID
      */
     public autograph findById(int autographId) {
-        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id FROM autograph WHERE autograph_id = ?";
+        // Include autograph_pic_url in the SELECT statement
+        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url FROM autograph WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -57,7 +60,8 @@ public class autographDAO {
      * Get all autographs by a specific user
      */
     public List<autograph> findByUserId(int userId) {
-        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id FROM autograph WHERE user_id = ?";
+        // Include autograph_pic_url in the SELECT statement
+        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url FROM autograph WHERE user_id = ?";
         List<autograph> autographs = new ArrayList<>();
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -81,13 +85,15 @@ public class autographDAO {
      * Update an existing autograph
      */
     public boolean updateAutograph(autograph autograph) {
-        String sql = "UPDATE autograph SET a_title = ?, a_description = ? WHERE autograph_id = ?";
+        // Include autograph_pic_url in the UPDATE statement
+        String sql = "UPDATE autograph SET a_title = ?, a_description = ?, autograph_pic_url = ? WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, autograph.getTitle());
             stmt.setString(2, autograph.getDescription());
-            stmt.setInt(3, autograph.getAutographId());
+            stmt.setString(3, autograph.getAutographPicUrl()); // Update the picture URL
+            stmt.setInt(4, autograph.getAutographId());
 
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
@@ -126,6 +132,7 @@ public class autographDAO {
         autograph.setDescription(rs.getString("a_description"));
         autograph.setCreatedAt(rs.getTimestamp("created_at"));
         autograph.setUserId(rs.getInt("user_id"));
+        autograph.setAutographPicUrl(rs.getString("autograph_pic_url")); // Map the picture URL from the result set
         return autograph;
     }
 }
