@@ -4,6 +4,88 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/autographviewer.css">
+    <style>
+        /* Floating Action Buttons - Positioned at bottom right */
+        .floating-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+        }
+        .floating-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 24px;
+            background: #9A74D8;
+            box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            white-space: nowrap;
+            min-width: 140px;
+        }
+        .floating-btn:hover {
+            background: #8a64c8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
+        }
+        .floating-btn:active {
+            transform: translateY(0);
+        }
+        .floating-btn svg {
+            flex-shrink: 0;
+        }
+        .floating-btn.delete-btn {
+            background: #EADDFF;
+            color: #9A74D8;
+            box-shadow: 0 4px 14px rgba(234, 221, 255, 0.5);
+        }
+        .floating-btn.delete-btn:hover {
+            background: #FFFFFF;
+            color: #8a64c8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(234, 221, 255, 0.6);
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .floating-buttons {
+                bottom: 20px;
+                right: 20px;
+            }
+            .floating-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                min-width: 120px;
+            }
+            .floating-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .floating-buttons {
+                bottom: 15px;
+                right: 15px;
+            }
+            .floating-btn {
+                padding: 9px 18px;
+                font-size: 13px;
+                gap: 8px;
+                min-width: 110px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -66,6 +148,31 @@
             <p class="page-date" id="pageDate">Written on October 5, 2025</p>
         </div>
     </div>
+</div>
+
+<!-- Hidden form for deletion -->
+<form id="deleteAutographForm" action="${pageContext.request.contextPath}/deleteautograph" method="post" style="display: none;">
+    <input type="hidden" name="autographId" id="autographIdInput" value="">
+</form>
+
+<!-- Floating Action Buttons -->
+<div class="floating-buttons">
+    <a href="/editautograph" class="floating-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        Edit
+    </a>
+    <button class="floating-btn delete-btn" id="deleteBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+        Delete
+    </button>
 </div>
 
 <jsp:include page="../../public/footer.jsp" />
@@ -276,6 +383,23 @@
 
             // Favorite button
             this.favoriteBtn.addEventListener('click', () => this.toggleFavorite());
+
+            // Delete button
+            const deleteBtn = document.getElementById('deleteBtn');
+            const deleteForm = document.getElementById('deleteAutographForm');
+            const autographIdInput = document.getElementById('autographIdInput');
+
+            if (deleteBtn && deleteForm && autographIdInput) {
+                deleteBtn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const confirmDelete = confirm('Are you sure you want to delete this autograph book? This action cannot be undone.');
+                    if (confirmDelete) {
+                        // Set the autograph ID - you can get this from server-side
+                        autographIdInput.value = this.books[this.currentBookIndex].id;
+                        deleteForm.submit();
+                    }
+                });
+            }
         }
 
         loadBook(index) {

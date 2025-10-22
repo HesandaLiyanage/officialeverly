@@ -4,7 +4,6 @@ import com.demo.web.dao.userDAO; // Import your userDAO
 import com.demo.web.dao.userSessionDAO; // Import your userSessionDAO if needed elsewhere
 import com.demo.web.model.UserSession; // Import your UserSession model
 import com.demo.web.model.user; // Import your user model
-import com.demo.web.util.SessionUtil; // Import SessionUtil if needed in handlers
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -12,12 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 // Interface for logic handlers
 interface LogicHandler {
@@ -80,6 +74,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/vaultPassword", "/views/app/vaultPassword.jsp");
         routeToJsp.put("/vaultSetup", "/views/app/vaultSetup.jsp");
         routeToJsp.put("/autographview", "/views/app/Autographs/viewautograph.jsp");
+        routeToJsp.put("/journalview", "/views/app/journalview.jsp");
         routeToJsp.put("/addautograph", "/views/app/Autographs/addautograph.jsp");
         routeToJsp.put("/duplicatefinder", "/views/app/duplicatefinder.jsp");
         routeToJsp.put("/morethemes", "/views/app/morethemes.jsp");
@@ -93,9 +88,11 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/groupannouncement", "/views/app/groupannouncement.jsp");
         routeToJsp.put("/events", "/views/app/eventdashboard.jsp");
         routeToJsp.put("/writeautograph", "/views/app/writeautograph.jsp");
+        routeToJsp.put("/writejournal", "/views/app/writejournal.jsp");
         routeToJsp.put("/eventinfo", "/views/app/eventinfo.jsp");
         routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
-
+        routeToJsp.put("/creategroup", "/views/app/creategroup.jsp");
+        routeToJsp.put("/createevent", "/views/app/createevent.jsp");
         // Pages that require business logic before showing the JSP
         routeToLogic.put("/linkeddevices", new LinkedDevicesLogicHandler());
         routeToLogic.put("/editprofile", new EditProfileLogicHandler()); // Add this line
