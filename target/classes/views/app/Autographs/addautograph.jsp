@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<jsp:include page="../public/header2.jsp" />
+<jsp:include page="../../public/header2.jsp" />
 
 <div class="page-wrapper">
     <div class="create-autograph-container">
@@ -139,7 +139,7 @@
     </div>
 </div>
 
-<jsp:include page="../public/footer.jsp" />
+<jsp:include page="../../public/footer.jsp" />
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

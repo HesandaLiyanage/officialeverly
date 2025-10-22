@@ -36,6 +36,28 @@
         <url-pattern>/signupservlet</url-pattern>  <!-- or /process-login if you want different URL -->
     </servlet-mapping>
 
+
+    <servlet>
+        <servlet-name>googlecallback</servlet-name>
+        <servlet-class>com.demo.web.controller.GoogleCallback</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>googlecallback</servlet-name>
+        <url-pattern>/googlecallback</url-pattern>  <!-- or /process-login if you want different URL -->
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>googlelogin</servlet-name>
+        <servlet-class>com.demo.web.controller.GoogleLoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>googlelogin</servlet-name>
+        <url-pattern>/googlelogin</url-pattern>  <!-- or /process-login if you want different URL -->
+    </servlet-mapping>
+
+
+
     <servlet>
         <servlet-name>editprofileservlet</servlet-name>
         <servlet-class>com.demo.web.controller.editprofileservlet</servlet-class>
@@ -44,6 +66,16 @@
         <servlet-name>editprofileservlet</servlet-name>
         <url-pattern>/editprofileservlet</url-pattern>  <!-- or /process-login if you want different URL -->
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LinkedDevicesServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.LinkedDevicesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LinkedDevicesServlet</servlet-name>
+        <url-pattern>/linkeddevicesservlet</url-pattern>
+    </servlet-mapping>
+
     <!-- Authentication Filter -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>

@@ -1,5 +1,7 @@
 package com.demo.web.filter;
 
+import com.demo.web.util.SessionUtil;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
@@ -21,6 +23,8 @@ public class AuthenticationFilter implements Filter {
                 "/aboutus",
                 "/contact",
                 "/loginservlet",
+                "linkeddevicesservlet",
+                "editprofileservlet",
                 "/signup",
                 "/signup2",
                 "/signupservlet",
@@ -31,7 +35,8 @@ public class AuthenticationFilter implements Filter {
                 "/footer",
                 "/forgotpassword",
                 "/header",
-                "/header2",
+                "/googlelogin",
+                "/googlecallback",
                 "/index",
                 "/layout",
                 "/layout2",
@@ -62,17 +67,14 @@ public class AuthenticationFilter implements Filter {
             return;
         }
 
-        HttpSession session = req.getSession(false);
-        boolean loggedIn = (session != null && session.getAttribute("user_id") != null);
-
         // If path is public, continue
         if (publicPaths.contains(path)) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Protected path: if logged in, continue
-        if (loggedIn) {
+        // Check if user is logged in (validates against database)
+        if (SessionUtil.isValidSession(req)) {
             chain.doFilter(request, response);
             return;
         }

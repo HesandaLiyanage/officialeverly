@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Setup - Everly</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/signup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<jsp:include page="header.jsp" />
 <body>
+
+<jsp:include page="header.jsp" />
 
 <main class="profile-container">
     <h1 class="profile-title">Tell us about Yourself</h1>
@@ -18,22 +20,27 @@
     <div class="error"><%= errorMessage %></div>
     <% } %>
 
-    <form class="profile-form" action="/signupservlet" method="post">
+    <form class="profile-form" action="/signupservlet" method="post" id="profileForm">
         <input type="hidden" name="step" value="2">
 
-        <label for="name" class="profile-label">Name</label>
-        <input type="text" id="name" name="name" class="profile-input" placeholder="Enter your name" required>
+        <div class="form-group">
+            <label for="name" class="profile-label">Name(This will be your username)</label>
+            <input type="text" id="name" name="name" class="profile-input" placeholder="Enter your full name" required>
+        </div>
 
-        <label for="bio" class="profile-label">Bio</label>
-        <textarea id="bio" name="bio" class="profile-textarea" placeholder="Write a short bio..." rows="4"></textarea>
+        <div class="form-group">
+            <label for="bio" class="profile-label">Bio (Optional)</label>
+            <textarea id="bio" name="bio" class="profile-textarea" placeholder="Tell us a bit about yourself..." rows="4"></textarea>
+        </div>
 
         <div class="profile-actions">
-            <button type="submit" class="btn btn-primary">Finish Signup</button>
             <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/signup'" class="btn btn-secondary">Back</button>
+            <button type="submit" class="btn btn-primary">Finish Signup</button>
         </div>
     </form>
 </main>
 
 <jsp:include page="footer.jsp" />
+
 </body>
 </html>

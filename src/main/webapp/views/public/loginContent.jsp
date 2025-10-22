@@ -38,7 +38,7 @@
 
   <div class="divider"><span>OR</span></div>
 
-  <form action="/google-login" method="post">
+  <form action="/googlelogin" method="post">
     <button type="submit" class="google-login-btn">
       <img src="${pageContext.request.contextPath}/resources/assets/googleicon.png" alt="Google" />
       Continue with Google
