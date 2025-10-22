@@ -252,6 +252,10 @@
                 </svg>
                 Add Memory
             </a>
+            <a href="${pageContext.request.contextPath}/editgroup?groupId=1" class="floating-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></svg>
+                Edit group
+            </a>
         </div>
     </main>
 </div>

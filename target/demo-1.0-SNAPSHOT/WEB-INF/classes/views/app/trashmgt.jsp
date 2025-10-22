@@ -18,8 +18,9 @@
 
   if (trashFiles == null) {
     trashFiles = new ArrayList<>();
-    trashFiles.add(new TrashFile("Family Trip Photo", "family_trip_photo.jpg", "2024-02-15", "images/trash1.jpg"));
-    trashFiles.add(new TrashFile("Group Photo", "group_photo.jpg", "2024-02-05", "images/trash2.jpg"));
+    trashFiles.add(new TrashFile("Family Trip Photo", "family_trip_photo.jpg", "2024-02-15", "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e"));
+    trashFiles.add(new TrashFile("Group Photo", "group_photo.jpg", "2024-02-05", "https://images.unsplash.com/photo-1494790108377-be9c29b29330"));
+    trashFiles.add(new TrashFile("Old Sunset Shot", "sunset_2022.jpg", "2023-12-18", "https://images.unsplash.com/photo-1501973801540-537f08ccae7b"));
     session.setAttribute("trashFiles", trashFiles);
   }
 
@@ -62,9 +63,141 @@
   <meta charset="UTF-8">
   <title>Trash Management | Everly</title>
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/settings.css">
+  <style>
+    /* --- Consistent Styling with Duplicate Finder --- */
+    .trash-list {
+      margin-top: 20px;
+    }
+
+    .trash-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding: 15px 0;
+    }
+
+    .trash-item-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .trash-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+      background-color: #f0f0f0;
+    }
+
+    .trash-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .trash-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: #222;
+      margin: 0 0 4px 0;
+    }
+
+    .trash-meta {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .trash-delete-btn {
+      background-color: #d00000;
+      border: none;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border-color: #d00000;
+    }
+
+    .trash-delete-btn:hover {
+      background-color: #e60000;
+    }
+
+    .empty-trash-message {
+      text-align: center;
+      color: #777;
+      font-style: italic;
+      margin-top: 25px;
+    }
+
+    .trash-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .restore-all-btn,
+    .empty-trash-btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .restore-all-btn {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    .restore-all-btn:hover {
+      background-color: #ddd;
+    }
+
+    .empty-trash-btn {
+      background-color: #d00000;
+      color: white;
+    }
+
+    .empty-trash-btn:hover {
+      background-color: #b00000;
+    }
+
+    /* back button + tab consistency */
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      transition: all 0.3s ease;
+      width: auto;
+    }
+
+    .filter-btn:hover {
+      border-color: #6366f1;
+      color: #6366f1;
+      background: #f0f9ff;
+    }
+
+    .tab {
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
 <jsp:include page="../public/header2.jsp" />
+
 <div class="settings-container">
   <h2>Settings</h2>
 
@@ -76,15 +209,15 @@
     <a href="/settingsappearance" class="tab">Appearance</a>
   </div>
 
-  <!-- Back Option -->
-  <div class="back-option">
-    <a href="${pageContext.request.contextPath}/storagesense" class="back-link">&#8592; Back</a>
-  </div>
+  <button class="filter-btn">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    <a href="${pageContext.request.contextPath}/storagesense" class="back-link">Back</a>
+  </button>
 
-  <!-- Trash Management Header -->
-  <h3 class="trash-management-header">Trash Management</h3>
+  <h2>Trash Management</h2>
 
-  <!-- Trash List -->
   <div class="trash-list">
     <%
       if (trashFiles.isEmpty()) {
@@ -96,18 +229,20 @@
     %>
     <div class="trash-item">
       <div class="trash-item-left">
-        <img src="<%= file.imagePath %>" alt="<%= file.title %>" class="trash-icon">
+        <img src="<%= file.imagePath %>?auto=format&fit=crop&w=80&h=80&q=60"
+             alt="<%= file.title %>"
+             class="trash-icon">
         <div class="trash-details">
-          <div class="trash-title"><%= file.title %></div>
-          <div class="trash-meta">
+          <p class="trash-title"><%= file.title %></p>
+          <p class="trash-meta">
             File Name: <%= file.fileName %><br>
             Deleted: <%= file.deletedDate %>
-          </div>
+          </p>
         </div>
       </div>
-      <form method="post" action="trashManagement.jsp" class="trash-delete-form">
+      <form method="post" action="trashManagement.jsp">
         <input type="hidden" name="deleteTitle" value="<%= file.title %>">
-        <button type="submit" class="trash-delete-btn" aria-label="Delete <%= file.title %>">&#128465;</button>
+        <button type="submit" class="trash-delete-btn">Delete</button>
       </form>
     </div>
     <%
@@ -116,23 +251,16 @@
     %>
   </div>
 
-  <!-- Action Buttons -->
   <div class="trash-actions">
-    <form method="post" action="trashManagement.jsp" style="display:inline;">
+    <form method="post" action="trashManagement.jsp">
       <button type="submit" name="restoreAll" class="restore-all-btn">Restore All</button>
     </form>
-
-    <form method="post" action="trashManagement.jsp" style="display:inline;">
+    <form method="post" action="trashManagement.jsp">
       <button type="submit" name="emptyTrash" class="empty-trash-btn">Empty Trash</button>
     </form>
   </div>
 </div>
 
-<script>
-  function navigateTo(tab) {
-    window.location.href = tab + ".jsp";
-  }
-</script>
 <jsp:include page="../public/footer.jsp" />
 </body>
 </html>

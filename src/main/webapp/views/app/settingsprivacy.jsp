@@ -58,7 +58,7 @@
     }
 
     function openSharedLinks() {
-        window.location.href = "sharedLinks.jsp";
+        window.location.href = "/sharedlinks";
     }
 
     function openBlockedUsers() {

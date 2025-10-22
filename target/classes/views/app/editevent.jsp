@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Event</title>
+    <title>Edit Event</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/editevent.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -116,7 +116,7 @@
 
             <!-- Submit Buttons -->
             <div class="form-actions">
-                <button type="button" class="cancel-btn" onclick="window.location.href='/events'">
+                <button type="button" class="cancel-btn" onclick="window.location.href='/eventinfo'">
                     Cancel
                 </button>
                 <button type="submit" class="submit-btn">
