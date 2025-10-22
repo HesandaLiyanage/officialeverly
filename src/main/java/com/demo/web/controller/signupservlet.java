@@ -54,10 +54,21 @@ public class signupservlet extends HttpServlet {
     private void handleStep1(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String email = req.getParameter("email").trim();
-        String password = req.getParameter("password").trim();
-        String confirmPassword = req.getParameter("confirmPassword").trim();
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+        String confirmPassword = req.getParameter("confirmPassword");
         String terms = req.getParameter("terms");
+
+        // Add null checks
+        if (email == null || password == null || confirmPassword == null) {
+            req.setAttribute("errorMessage", "Please fill in all required fields.");
+            req.getRequestDispatcher("/signup").forward(req, resp);
+            return;
+        }
+
+        email = email.trim();
+        password = password.trim();
+        confirmPassword = confirmPassword.trim();
 
         List<String> errors = new ArrayList<>();
 
@@ -92,9 +103,25 @@ public class signupservlet extends HttpServlet {
         }
 
         String email = (String) session.getAttribute("temp_email");
-        String password = (String) session.getAttribute("temp_password"); // Raw password
-        String name = req.getParameter("name").trim();
-        String bio = req.getParameter("bio").trim();
+        String password = (String) session.getAttribute("temp_password");
+        String name = req.getParameter("name");
+        String bio = req.getParameter("bio");
+
+        // Add null check for name
+        if (name == null) {
+            req.setAttribute("errorMessage", "Name is required.");
+            req.getRequestDispatcher("/signup2").forward(req, resp);
+            return;
+        }
+
+        name = name.trim();
+
+        // Bio is optional
+        if (bio == null) {
+            bio = "";
+        } else {
+            bio = bio.trim();
+        }
 
         List<String> errors = new ArrayList<>();
         if (name.length() < 2 || name.length() > 50) errors.add("Name invalid.");
@@ -102,7 +129,7 @@ public class signupservlet extends HttpServlet {
 
         if (!errors.isEmpty()) {
             req.setAttribute("errorMessage", String.join(" ", errors));
-            req.getRequestDispatcher("/signup2.jsp").forward(req, resp);
+            req.getRequestDispatcher("/signup2").forward(req, resp);
             return;
         }
 
@@ -112,6 +139,8 @@ public class signupservlet extends HttpServlet {
             newUser.setEmail(email);
             newUser.setPassword(password); // Raw password - DAO will hash it
             newUser.setBio(bio);
+            // Set a default profile picture or empty string if column doesn't allow null
+            newUser.setProfilePictureUrl("/resources/assets/everlylogo.png"); // or use a default avatar URL
 
             boolean created = userDAO.createUser(newUser);
 
@@ -125,15 +154,13 @@ public class signupservlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/memories");
             } else {
                 req.setAttribute("errorMessage", "Failed to create account.");
-                req.getRequestDispatcher("/views/public/signup2.jsp").forward(req, resp);
+                req.getRequestDispatcher("/signup2").forward(req, resp);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             req.setAttribute("errorMessage", "Unexpected error.");
-            req.getRequestDispatcher("/views/public/signup2.jsp").forward(req, resp);
+            req.getRequestDispatcher("/signup2").forward(req, resp);
         }
     }
-    }
-
-    // Remove the custom hashPassword method since you're using PasswordUtil directly
+}

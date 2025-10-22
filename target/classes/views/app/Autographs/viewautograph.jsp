@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<jsp:include page="../public/header2.jsp" />
+<jsp:include page="../../public/header2.jsp" />
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/autographviewer.css">
@@ -68,7 +68,7 @@
     </div>
 </div>
 
-<jsp:include page="../public/footer.jsp" />
+<jsp:include page="../../public/footer.jsp" />
 
 <script>
     // Autograph Viewer Application
