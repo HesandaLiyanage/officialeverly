@@ -1,7 +1,8 @@
+// File: com/demo/web/controller/FrontControllerServlet.java (Complete, Final Version with EditAutographLogicHandler)
 package com.demo.web.controller;
 
 import com.demo.web.dao.userDAO; // Import your userDAO
-import com.demo.web.dao.autographDAO; // Import your userDAO
+import com.demo.web.dao.autographDAO; // Import your autographDAO
 import com.demo.web.dao.userSessionDAO; // Import your userSessionDAO if needed elsewhere
 import com.demo.web.model.UserSession; // Import your UserSession model
 import com.demo.web.model.autograph;
@@ -14,12 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 // Interface for logic handlers
 interface LogicHandler {
@@ -30,7 +26,6 @@ public class FrontControllerServlet extends HttpServlet {
 
     private Map<String, String> routeToJsp; // Path -> JSP
     private Map<String, LogicHandler> routeToLogic; // Path -> Business Logic Handler
-
     private static final Logger logger = Logger.getLogger(FrontControllerServlet.class.getName());
 
     @Override
@@ -66,14 +61,13 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/privacy", "/views/public/privacy.jsp");
         routeToJsp.put("/resources/assets/landing.mp4", "/resources/assets/landing.mp4");
 
-
-        // Protected pages (some need specific logic)
+        // Protected pages (some need specific logic, others are static JSPs)
         routeToJsp.put("/memories", "/views/app/memories.jsp");
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
         routeToJsp.put("/profile", "/views/app/profile.jsp");
-        routeToJsp.put("/autographs", "/views/app/Autographs/autographcontent.jsp");
+        routeToJsp.put("/autographs", "/views/app/Autographs/autographcontent.jsp"); // Static JSP, logic handled by AutographListLogicHandler
         routeToJsp.put("/journals", "/views/app/journals.jsp");
-        routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp"); // No specific logic needed here, just the static page
+        routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp"); // Static JSP, logic handled by ... maybe later?
         routeToJsp.put("/settingsnotifications", "/views/app/settingsnotifications.jsp");
         routeToJsp.put("/settingsprivacy", "/views/app/settingsprivacy.jsp");
         routeToJsp.put("/storagesense", "/views/app/storagesense.jsp");
@@ -82,8 +76,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/vaultmemories", "/views/app/vaultMemories.jsp");
         routeToJsp.put("/vaultPassword", "/views/app/vaultPassword.jsp");
         routeToJsp.put("/vaultSetup", "/views/app/vaultSetup.jsp");
-        routeToJsp.put("/autographview", "/views/app/Autographs/viewautograph.jsp");
-        routeToJsp.put("/addautograph", "/views/app/Autographs/addautograph.jsp");
+        routeToJsp.put("/autographview", "/views/app/Autographs/viewautograph.jsp"); // Static JSP, logic handled by AutographViewLogicHandler
+        routeToJsp.put("/addautograph", "/views/app/Autographs/addautograph.jsp"); // Assuming this is static for now
         routeToJsp.put("/duplicatefinder", "/views/app/duplicatefinder.jsp");
         routeToJsp.put("/morethemes", "/views/app/morethemes.jsp");
         routeToJsp.put("/sharedlinks", "/views/app/sharedlinks.jsp");
@@ -98,12 +92,14 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/writeautograph", "/views/app/writeautograph.jsp");
         routeToJsp.put("/eventinfo", "/views/app/eventinfo.jsp");
         routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
-        routeToJsp.put("/editautograph", "/views/app/Autographs/editautograph.jsp");
+        // routeToJsp.put("/editautograph", "/views/app/Autographs/editautograph.jsp"); // REMOVED THIS LINE - CRITICAL
 
         // Pages that require business logic before showing the JSP
         routeToLogic.put("/linkeddevices", new LinkedDevicesLogicHandler());
-        routeToLogic.put("/editprofile", new EditProfileLogicHandler()); // Add this line
-        routeToLogic.put("/autographs", new AutographListLogicHandler());
+        routeToLogic.put("/editprofile", new EditProfileLogicHandler());
+        routeToLogic.put("/autographs", new AutographListLogicHandler()); // Handles fetching list for autographcontent.jsp
+        routeToLogic.put("/autographview", new AutographViewLogicHandler()); // Handles fetching specific autograph for viewautograph.jsp
+        routeToLogic.put("/editautograph", new EditAutographLogicHandler()); // NEW: Handles fetching specific autograph for editautograph.jsp
 
         // Add other protected pages that don't need specific logic here if not already in routeToJsp
         // e.g., routeToJsp.put("/someotherpage", "/views/app/someotherpage.jsp");
@@ -270,6 +266,122 @@ public class FrontControllerServlet extends HttpServlet {
 
             // Forward to the JSP
             request.getRequestDispatcher("/views/app/Autographs/autographcontent.jsp").forward(request, response);
+        }
+    }
+
+    // Inner class implementing the logic for /autographview
+    private static class AutographViewLogicHandler implements LogicHandler {
+        private autographDAO autographDAO; // Assuming this DAO is available or can be instantiated
+
+        public AutographViewLogicHandler() {
+            // Initialize the DAO here if needed, or inject it somehow
+            // For simplicity, just instantiate it here if no DI framework is used
+            this.autographDAO = new autographDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            // Check if user is logged in (you might want to centralize this check too)
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                // Should ideally not happen if AuthenticationFilter works correctly, but good to check
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            // Get user ID from the request session
+            Integer userId = (Integer) session.getAttribute("user_id");
+
+            // Get the autograph ID from the request parameter
+            String autographIdParam = request.getParameter("id"); // Expecting /autographview?id=123
+            if (autographIdParam == null || autographIdParam.trim().isEmpty()) {
+                // If no ID is provided, redirect to the list page
+                response.sendRedirect(request.getContextPath() + "/autographs");
+                return;
+            }
+
+            int autographId;
+            try {
+                autographId = Integer.parseInt(autographIdParam);
+            } catch (NumberFormatException e) {
+                // If ID is not a valid number, redirect to the list page
+                response.sendRedirect(request.getContextPath() + "/autographs");
+                return;
+            }
+
+            // Fetch the specific autograph from the database using the validated user_id and autograph_id
+            autograph autographDetail = autographDAO.findById(autographId);
+
+            // Optional: Verify the autograph belongs to the current user for security
+            if (autographDetail == null || autographDetail.getUserId() != userId) {
+                // If the autograph doesn't exist or doesn't belong to the user, redirect to the list page
+                response.sendRedirect(request.getContextPath() + "/autographs");
+                return;
+            }
+
+            // Set the autograph detail as a request attribute for the JSP to use
+            request.setAttribute("autograph", autographDetail);
+
+            // Forward to the JSP
+            request.getRequestDispatcher("/views/app/Autographs/viewautograph.jsp").forward(request, response);
+        }
+    }
+
+    // Inner class implementing the logic for /editautograph
+    private static class EditAutographLogicHandler implements LogicHandler {
+        private autographDAO autographDAO; // Assuming this DAO is available or can be instantiated
+
+        public EditAutographLogicHandler() {
+            // Initialize the DAO here if needed, or inject it somehow
+            // For simplicity, just instantiate it here if no DI framework is used
+            this.autographDAO = new autographDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            // Check if user is logged in (you might want to centralize this check too)
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                // Should ideally not happen if AuthenticationFilter works correctly, but good to check
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            // Get user ID from the request session
+            Integer userId = (Integer) session.getAttribute("user_id");
+
+            // Get the autograph ID from the request parameter
+            String autographIdParam = request.getParameter("id"); // Expecting /editautograph?id=123
+            if (autographIdParam == null || autographIdParam.trim().isEmpty()) {
+                // If no ID is provided, redirect to the list page
+                response.sendRedirect(request.getContextPath() + "/autographs");
+                return;
+            }
+
+            int autographId;
+            try {
+                autographId = Integer.parseInt(autographIdParam);
+            } catch (NumberFormatException e) {
+                // If ID is not a valid number, redirect to the list page
+                response.sendRedirect(request.getContextPath() + "/autographs");
+                return;
+            }
+
+            // Fetch the specific autograph from the database using the validated user_id and autograph_id
+            autograph autographToEdit = autographDAO.findById(autographId);
+
+            // Optional: Verify the autograph belongs to the current user for security
+            if (autographToEdit == null || autographToEdit.getUserId() != userId) {
+                // If the autograph doesn't exist or doesn't belong to the user, redirect to the list page
+                response.sendRedirect(request.getContextPath() + "/autographs");
+                return;
+            }
+
+            // Set the autograph detail as a request attribute for the JSP to use
+            request.setAttribute("autograph", autographToEdit);
+
+            // Forward to the JSP
+            request.getRequestDispatcher("/views/app/Autographs/editautograph.jsp").forward(request, response);
         }
     }
 
