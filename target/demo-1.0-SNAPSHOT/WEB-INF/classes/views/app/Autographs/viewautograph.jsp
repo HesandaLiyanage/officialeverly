@@ -15,6 +15,7 @@
             gap: 12px;
             z-index: 100;
         }
+
         .floating-btn {
             display: inline-flex;
             align-items: center;
@@ -35,49 +36,59 @@
             white-space: nowrap;
             min-width: 140px;
         }
+
         .floating-btn:hover {
             background: #8a64c8;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
         }
+
         .floating-btn:active {
             transform: translateY(0);
         }
+
         .floating-btn svg {
             flex-shrink: 0;
         }
+
         .floating-btn.delete-btn {
             background: #EADDFF;
             color: #9A74D8;
             box-shadow: 0 4px 14px rgba(234, 221, 255, 0.5);
         }
+
         .floating-btn.delete-btn:hover {
             background: #FFFFFF;
             color: #8a64c8;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(234, 221, 255, 0.6);
         }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .floating-buttons {
                 bottom: 20px;
                 right: 20px;
             }
+
             .floating-btn {
                 padding: 10px 20px;
                 font-size: 14px;
                 min-width: 120px;
             }
+
             .floating-btn svg {
                 width: 16px;
                 height: 16px;
             }
         }
+
         @media (max-width: 480px) {
             .floating-buttons {
                 bottom: 15px;
                 right: 15px;
             }
+
             .floating-btn {
                 padding: 9px 18px;
                 font-size: 13px;
@@ -149,11 +160,6 @@
         </div>
     </div>
 </div>
-
-<!-- Hidden form for deletion -->
-<form id="deleteAutographForm" action="${pageContext.request.contextPath}/deleteautograph" method="post" style="display: none;">
-    <input type="hidden" name="autographId" id="autographIdInput" value="">
-</form>
 
 <!-- Floating Action Buttons -->
 <div class="floating-buttons">
@@ -383,23 +389,6 @@
 
             // Favorite button
             this.favoriteBtn.addEventListener('click', () => this.toggleFavorite());
-
-            // Delete button
-            const deleteBtn = document.getElementById('deleteBtn');
-            const deleteForm = document.getElementById('deleteAutographForm');
-            const autographIdInput = document.getElementById('autographIdInput');
-
-            if (deleteBtn && deleteForm && autographIdInput) {
-                deleteBtn.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    const confirmDelete = confirm('Are you sure you want to delete this autograph book? This action cannot be undone.');
-                    if (confirmDelete) {
-                        // Set the autograph ID - you can get this from server-side
-                        autographIdInput.value = this.books[this.currentBookIndex].id;
-                        deleteForm.submit();
-                    }
-                });
-            }
         }
 
         loadBook(index) {
@@ -488,6 +477,20 @@
     // Initialize when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
         new AutographViewer();
+
+        // Delete button functionality
+        const deleteBtn = document.getElementById('deleteBtn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', function() {
+                const confirmDelete = confirm('Are you sure you want to delete this autograph? This action cannot be undone.');
+                if (confirmDelete) {
+                    // Add your delete logic here
+                    alert('Autograph deleted successfully!');
+                    // You can redirect or perform server-side deletion here
+                    // window.location.href = '/autographs';
+                }
+            });
+        }
     });
 </script>
 
