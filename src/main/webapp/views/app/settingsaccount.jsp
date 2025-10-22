@@ -43,8 +43,9 @@
             <div class="icon">📱</div>
             <div>
                 <a href="/linkeddevices" />
-                <p class="title"><a href="${pageContext.request.contextPath}/WEB-INF/views/app/linkeddevices.jspices.jsp" style="text-decoration: none;">Linked Devices</a></p>
+                <p class="title"><a href="${pageContext.request.contextPath}/linkeddevices" style="text-decoration: none;">Linked Devices</a></p>
                 <p class="desc">Manage devices logged into your account</p>
+
             </div>
         </div>
 
