@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Autograph Book</title>
+    <title>Edit Autograph Book</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/autograph.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -17,7 +17,9 @@
         <h1 class="page-title">Edit Autograph Book</h1>
         <p class="page-subtitle">Update the details below to edit your book and keep your memories up to date.</p>
 
-        <form class="autograph-form" id="autographForm" action="saveBook.jsp" method="post" enctype="multipart/form-data">
+        <form class="autograph-form" id="autographForm" action="${pageContext.request.contextPath}/updateautograph" method="post" enctype="multipart/form-data">
+            <!-- FIXED: Use EL to get ID from the autograph object in request scope -->
+            <input type="hidden" name="autographId" value="${autograph.autographId}" />
 
             <!-- Book Title Input -->
             <div class="form-group">
@@ -28,6 +30,7 @@
                         name="bookTitle"
                         id="bookTitle"
                         placeholder="e.g., Graduation 2024, Summer Vacation"
+                        value="${autograph.title}"
                         required
                 />
             </div>
@@ -41,7 +44,7 @@
                         id="description"
                         placeholder="A short description of your book's theme"
                         rows="4"
-                ></textarea>
+                >${autograph.description}</textarea>
             </div>
 
             <!-- Cover Image Upload Area -->
@@ -69,7 +72,22 @@
                                 hidden
                         />
                     </div>
-                    <div class="preview-container" id="previewContainer"></div>
+                    <div class="preview-container" id="previewContainer">
+                        <!-- Pre-populate preview if an image exists -->
+                        <% if (request.getAttribute("autograph") != null && ((com.demo.web.model.autograph)request.getAttribute("autograph")).getAutographPicUrl() != null) {
+                            String picUrl = ((com.demo.web.model.autograph)request.getAttribute("autograph")).getAutographPicUrl();
+                        %>
+                        <div class="file-preview">
+                            <img src="${pageContext.request.contextPath}/dbimages/<%= picUrl %>" alt="Current Cover Preview">
+                            <button type="button" class="remove-file" onclick="removeFile()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <% } %>
+                    </div>
                 </div>
             </div>
 
@@ -84,6 +102,7 @@
                             name="customLink"
                             id="customLink"
                             placeholder="yourname"
+                            value="${autograph.title}"
                             required
                     />
                     <button type="button" class="copy-btn" id="copyBtn" title="Copy link">
@@ -93,12 +112,12 @@
                         </svg>
                     </button>
                 </div>
-                <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/username/name your auto!!!</p>
+                <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/<span id="linkDisplayValue">${autograph.title}</span></p>
             </div>
 
             <!-- Submit Buttons -->
             <div class="form-actions">
-                <button type="button" class="cancel-btn" onclick="window.location.href='/autographbooks'">
+                <button type="button" class="cancel-btn" onclick="window.location.href='/autographs'">
                     Cancel
                 </button>
                 <button type="submit" class="submit-btn">
@@ -123,7 +142,13 @@
         const fileInput = document.getElementById('fileInput');
         const browseBtn = document.getElementById('browseBtn');
         const previewContainer = document.getElementById('previewContainer');
-        const autographForm = document.getElementById('autographForm');
+        const customLinkInput = document.getElementById('customLink');
+        const linkDisplayValue = document.getElementById('linkDisplayValue');
+
+        // Update link display when customLink input changes
+        customLinkInput.addEventListener('input', function() {
+            linkDisplayValue.textContent = this.value;
+        });
 
         // Browse button click
         browseBtn.addEventListener('click', function(e) {
@@ -164,7 +189,7 @@
         function handleFiles(files) {
             if (files.length === 0) return;
 
-            const file = files[0]; // Only take first file for cover image
+            const file = files[0];
 
             if (!file.type.startsWith('image/')) {
                 alert('Please upload an image file');
@@ -198,37 +223,6 @@
             uploadArea.classList.remove('has-files');
             fileInput.value = '';
         };
-
-        // Tag removal
-        const tagRemoveButtons = document.querySelectorAll('.tag-remove');
-        tagRemoveButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                this.closest('.tag').remove();
-            });
-        });
-
-        // Memory button interactions
-        const memoryButtons = document.querySelectorAll('.memory-btn');
-        memoryButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                this.classList.toggle('active');
-            });
-        });
-
-        // Form submission
-        autographForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(autographForm);
-
-            console.log('Form submitted');
-            console.log('Book Title:', formData.get('bookTitle'));
-            console.log('Description:', formData.get('description'));
-            console.log('Cover Image:', fileInput.files[0]);
-
-            // Redirect
-            window.location.href = '/autographbooks';
-        });
     });
 </script>
 
