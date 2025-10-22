@@ -1,8 +1,10 @@
 package com.demo.web.controller;
 
 import com.demo.web.dao.userDAO; // Import your userDAO
+import com.demo.web.dao.autographDAO; // Import your userDAO
 import com.demo.web.dao.userSessionDAO; // Import your userSessionDAO if needed elsewhere
 import com.demo.web.model.UserSession; // Import your UserSession model
+import com.demo.web.model.autograph;
 import com.demo.web.model.user; // Import your user model
 import com.demo.web.util.SessionUtil; // Import SessionUtil if needed in handlers
 
@@ -112,6 +114,7 @@ public class FrontControllerServlet extends HttpServlet {
         // Pages that require business logic before showing the JSP
         routeToLogic.put("/linkeddevices", new LinkedDevicesLogicHandler());
         routeToLogic.put("/editprofile", new EditProfileLogicHandler()); // Add this line
+        routeToLogic.put("/autographs", new AutographListLogicHandler());
 
         // Add other protected pages that don't need specific logic here if not already in routeToJsp
         // e.g., routeToJsp.put("/someotherpage", "/views/app/someotherpage.jsp");
@@ -244,6 +247,40 @@ public class FrontControllerServlet extends HttpServlet {
 
             // Forward to the JSP
             request.getRequestDispatcher("/views/app/settingsaccounteditprofile.jsp").forward(request, response);
+        }
+    }
+
+    // Inner class implementing the logic for /autographs
+    private static class AutographListLogicHandler implements LogicHandler {
+        private autographDAO autographDAO; // Assuming this DAO is available or can be instantiated
+
+        public AutographListLogicHandler() {
+            // Initialize the DAO here if needed, or inject it somehow
+            // For simplicity, just instantiate it here if no DI framework is used
+            this.autographDAO = new autographDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            // Check if user is logged in (you might want to centralize this check too)
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                // Should ideally not happen if AuthenticationFilter works correctly, but good to check
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            // Get user ID from the request session
+            Integer userId = (Integer) session.getAttribute("user_id");
+
+            // Fetch the list of autographs for the current user from the database using the validated user_id
+            List<autograph> autographs = autographDAO.findByUserId(userId);
+
+            // Set the list of autographs as a request attribute for the JSP to use
+            request.setAttribute("autographs", autographs);
+
+            // Forward to the JSP
+            request.getRequestDispatcher("/views/app/Autographs/autographcontent.jsp").forward(request, response);
         }
     }
 

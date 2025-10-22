@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %> <!-- Add this import -->
+<%@ page import="com.demo.web.model.autograph" %> <!-- Add this import -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,11 +38,19 @@
         <!-- Autographs Grid -->
         <div class="autographs-grid" id="autographsGrid" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
 
-            <div class="autograph-card" data-title="Junior School 2015">
-                <div class="autograph-image" style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800')"></div>
+            <%-- Check if the 'autographs' attribute exists and is not empty --%>
+            <%
+                List<autograph> autographs = (List<autograph>) request.getAttribute("autographs");
+                if (autographs != null && !autographs.isEmpty()) {
+                    for (autograph ag : autographs) {
+                        // Format the date (assuming you have a way to format it, or use a simple toString)
+                        String formattedDate = ag.getCreatedAt() != null ? ag.getCreatedAt().toString().substring(0, 10) : "Unknown Date";
+            %>
+            <div class="autograph-card" data-title="<%= ag.getTitle() %>">
+                <div class="autograph-image" style="background-image: url('<%= request.getContextPath() %>/dbimages/<%= ag.getAutographPicUrl() != null ? ag.getAutographPicUrl() : "default.jpg" %>')"></div>
                 <div class="autograph-content">
-                    <h3 class="autograph-title">Junior School 2015</h3>
-                    <p class="autograph-date">July 15, 2015</p>
+                    <h3 class="autograph-title"><%= ag.getTitle() %></h3>
+                    <p class="autograph-date"><%= formattedDate %></p>
                     <div class="autograph-meta">
                         <span class="autograph-count">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -49,125 +59,19 @@
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                             </svg>
-                            24 signatures
+                            <%= "N/A" %> signatures <!-- You might need to calculate the signature count from another table -->
                         </span>
                     </div>
                 </div>
             </div>
-
-            <div class="autograph-card" data-title="Cool Gang">
-                <div class="autograph-image" style="background-image: url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800')"></div>
-                <div class="autograph-content">
-                    <h3 class="autograph-title">Cool Gang</h3>
-                    <p class="autograph-date">June 18, 2016</p>
-                    <div class="autograph-meta">
-                        <span class="autograph-count">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            12 signatures
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="autograph-card" data-title="High School 2020">
-                <div class="autograph-image" style="background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800')"></div>
-                <div class="autograph-content">
-                    <h3 class="autograph-title">High School 2020</h3>
-                    <p class="autograph-date">July 01, 2020</p>
-                    <div class="autograph-meta">
-                        <span class="autograph-count">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            35 signatures
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="autograph-card" data-title="Sunday School 2022">
-                <div class="autograph-image" style="background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800')"></div>
-                <div class="autograph-content">
-                    <h3 class="autograph-title">Sunday School 2022</h3>
-                    <p class="autograph-date">September 09, 2022</p>
-                    <div class="autograph-meta">
-                        <span class="autograph-count">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            18 signatures
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="autograph-card" data-title="US">
-                <div class="autograph-image" style="background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800')"></div>
-                <div class="autograph-content">
-                    <h3 class="autograph-title">US</h3>
-                    <p class="autograph-date">July 10, 2023</p>
-                    <div class="autograph-meta">
-                        <span class="autograph-count">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            8 signatures
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="autograph-card" data-title="Interact Club">
-                <div class="autograph-image" style="background-image: url('https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=800')"></div>
-                <div class="autograph-content">
-                    <h3 class="autograph-title">Interact Club</h3>
-                    <p class="autograph-date">July 15, 2024</p>
-                    <div class="autograph-meta">
-                        <span class="autograph-count">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            42 signatures
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="autograph-card" data-title="University 2025">
-                <div class="autograph-image" style="background-image: url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=800')"></div>
-                <div class="autograph-content">
-                    <h3 class="autograph-title">University 2025</h3>
-                    <p class="autograph-date">October 05, 2025</p>
-                    <div class="autograph-meta">
-                        <span class="autograph-count">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            15 signatures
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <%
+                }
+            } else {
+            %>
+            <p>No autograph books found.</p>
+            <%
+                }
+            %>
 
         </div>
 
@@ -332,6 +236,9 @@
             card.addEventListener('click', function() {
                 console.log('Autograph book clicked:', this.querySelector('.autograph-title').textContent);
                 // Redirect to autograph detail page
+                // IMPORTANT: You need to pass the autograph ID here, e.g., /autographview?id=123
+                // window.location.href = '/autographview?id=' + this.getAttribute('data-autograph-id');
+                // For now, keeping the old link as an example
                 window.location.href = '/autographview';
             });
         });
