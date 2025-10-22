@@ -17,7 +17,17 @@
         <h1 class="page-title">Create a New Autograph Book</h1>
         <p class="page-subtitle">Fill in the details to create your new book and start collecting memories.</p>
 
-        <form class="autograph-form" id="autographForm" action="saveBook.jsp" method="post" enctype="multipart/form-data">
+        <%-- Display error message if it exists --%>
+        <%
+            String errorMsg = (String) request.getAttribute("error");
+            if (errorMsg != null) {
+        %>
+        <div style="background-color: #fee; border: 1px solid #fcc; padding: 10px; border-radius: 6px; margin-bottom: 20px; color: #c00;">
+            <%= errorMsg %>
+        </div>
+        <% } %>
+
+        <form class="autograph-form" id="autographForm" action="/addautographservlet" method="post" enctype="multipart/form-data">
 
             <!-- Book Title Input -->
             <div class="form-group">
@@ -122,7 +132,7 @@
 
             <!-- Submit Buttons -->
             <div class="form-actions">
-                <button type="button" class="cancel-btn" onclick="window.location.href='/autographbooks'">
+                <button type="button" class="cancel-btn" >
                     Cancel
                 </button>
                 <button type="submit" class="submit-btn">
@@ -147,7 +157,7 @@
         const fileInput = document.getElementById('fileInput');
         const browseBtn = document.getElementById('browseBtn');
         const previewContainer = document.getElementById('previewContainer');
-        const autographForm = document.getElementById('autographForm');
+        // const autographForm = document.getElementById('autographForm'); // We don't need this listener anymore
 
         // Browse button click
         browseBtn.addEventListener('click', function(e) {
@@ -239,20 +249,8 @@
             });
         });
 
-        // Form submission
-        autographForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(autographForm);
-
-            console.log('Form submitted');
-            console.log('Book Title:', formData.get('bookTitle'));
-            console.log('Description:', formData.get('description'));
-            console.log('Cover Image:', fileInput.files[0]);
-
-            // Redirect
-            window.location.href = '/autographbooks';
-        });
+        // REMOVED the form submission listener that prevented default submission
+        // The form will now submit normally to the action="/addautographservlet" URL.
     });
 </script>
 

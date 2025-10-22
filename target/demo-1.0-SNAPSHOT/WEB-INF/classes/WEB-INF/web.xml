@@ -56,7 +56,34 @@
         <url-pattern>/googlelogin</url-pattern>  <!-- or /process-login if you want different URL -->
     </servlet-mapping>
 
+    <!-- Add Autograph Servlet -->
+    <servlet>
+        <servlet-name>AddAutographServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.AddAutographServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddAutographServlet</servlet-name>
+        <url-pattern>/addautographservlet</url-pattern> <!-- This matches the form action in addautograph.jsp -->
+    </servlet-mapping>
 
+    <servlet>
+        <servlet-name>DeleteAutographServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.DeleteAutographServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteAutographServlet</servlet-name>
+        <url-pattern>/deleteautograph</url-pattern>
+    </servlet-mapping>
+
+    <!-- Servlet for updating autographs -->
+    <servlet>
+        <servlet-name>UpdateAutographServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.UpdateAutographServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateAutographServlet</servlet-name>
+        <url-pattern>/updateautograph</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>editprofileservlet</servlet-name>
