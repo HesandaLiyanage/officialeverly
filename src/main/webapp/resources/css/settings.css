@@ -1040,3 +1040,145 @@ body.dark-theme {
         gap: 20px;
     }
 }
+
+/* ... (keep all your existing CSS) ... */
+
+/* ========== EDIT PROFILE SPECIFIC UPDATES ========== */
+
+/* Input wrapper for password fields (similar to login page) */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 500px; /* Match form input width */
+}
+
+.form-input-password {
+    width: 100%;
+    padding: 12px 48px 12px 12px; /* Adjusted padding for toggle button */
+    border: 2px solid #e5e7eb; /* Updated border */
+    border-radius: 12px; /* Updated border radius */
+    font-size: 14px;
+    background-color: #f9fafb; /* Updated background */
+    font-family: "Plus Jakarta Sans", sans-serif; /* Updated font */
+    transition: all 0.2s ease; /* Added transition */
+    outline: none; /* Added outline reset */
+}
+
+.form-input-password:focus {
+    outline: none; /* Ensure outline is reset */
+    border-color: #9A74D8; /* Updated focus color */
+    background-color: #ffffff; /* Updated focus background */
+}
+
+/* Toggle password button (similar to login page) */
+.toggle-password {
+    position: absolute;
+    right: 12px; /* Adjusted position */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280; /* Updated color */
+    transition: color 0.2s ease; /* Added transition */
+    z-index: 1; /* Ensure it's above input */
+}
+
+.toggle-password:hover {
+    color: #9A74D8; /* Updated hover color */
+}
+
+.toggle-password svg {
+    width: 18px; /* Slightly smaller icons */
+    height: 18px;
+}
+
+/* Updated Save Changes Button to match login button style */
+.save-changes-btn.btn-primary {
+    padding: 12px 20px; /* Smaller padding than login button */
+    border: none;
+    border-radius: 16px; /* Match login button radius */
+    font-family: "Plus Jakarta Sans", sans-serif; /* Match font */
+    font-size: 14px; /* Smaller font than login button */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Match transition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #9A74D8; /* Match login button color */
+    color: white;
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35); /* Match login button shadow */
+    border: none; /* Ensure no border overrides */
+    min-width: 120px; /* Optional: give it a minimum width */
+}
+
+.save-changes-btn.btn-primary:hover {
+    background: #8a64c8; /* Match login button hover */
+    transform: translateY(-2px); /* Match login button hover effect */
+    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45); /* Match login button hover shadow */
+}
+
+.save-changes-btn.btn-primary:active {
+    transform: translateY(0); /* Match login button active effect */
+}
+
+.save-changes-btn.btn-primary:disabled {
+    background: #d1d5db; /* Match login button disabled state */
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Password Constraints Display */
+.password-constraints {
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #374151;
+    display: none; /* Initially hidden */
+}
+
+.password-constraints p {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.password-constraints ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.password-constraints li {
+    margin-bottom: 4px;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+/* Ensure other buttons don't get affected by btn-primary */
+.cancel-btn {
+    /* Keep your existing styles for the cancel button */
+    /* Make sure it doesn't inherit .btn-primary styles */
+    padding: 10px 25px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    color: #222;
+    transition: background-color 0.3s;
+    font-family: Arial, sans-serif; /* Explicitly set for contrast */
+}
+
+.cancel-btn:hover {
+    background-color: #f5f5f5;
+}

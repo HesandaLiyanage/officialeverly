@@ -89,8 +89,8 @@
                     <div class="theme-thumb premium"></div>
                     <p class="theme-name">Premium Theme 1</p>
                 </div>
-
-                <button class="more-btn">More</button>
+                <a href="/plans">
+                <button class="more-btn">More</button></a>
             </div>
         </div>
     </div>
