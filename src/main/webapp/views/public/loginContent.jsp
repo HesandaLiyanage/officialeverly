@@ -27,7 +27,7 @@
 
 
   <form action="${pageContext.request.contextPath}/loginservlet" method="POST" class="login-form">
-    <label for="email">Email address</label>
+    <label for="email">Username </label>
     <input id="email" name="username" required>
 
     <label for="password">Password</label>

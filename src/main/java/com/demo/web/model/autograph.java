@@ -8,6 +8,7 @@ public class autograph {
     private String a_description;
     private Timestamp created_at;
     private int user_id;
+    private String autograph_pic_url; // New field for the picture URL
 
     // Default constructor
     public autograph() {
@@ -54,6 +55,15 @@ public class autograph {
         this.user_id = user_id;
     }
 
+    // Getter and Setter for the new picture URL field
+    public String getAutographPicUrl() {
+        return autograph_pic_url;
+    }
+
+    public void setAutographPicUrl(String autograph_pic_url) {
+        this.autograph_pic_url = autograph_pic_url;
+    }
+
     // Optional: toString method for debugging
     @Override
     public String toString() {
@@ -63,6 +73,7 @@ public class autograph {
                 ", description='" + a_description + '\'' +
                 ", created_at=" + created_at +
                 ", user_id=" + user_id +
+                ", autograph_pic_url='" + autograph_pic_url + '\'' +
                 '}';
     }
 }
