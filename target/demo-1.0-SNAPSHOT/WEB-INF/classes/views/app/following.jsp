@@ -58,7 +58,7 @@
                 <h3 class="follower-name">Olivia Davis</h3>
                 <p class="follower-status">Following</p>
             </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
+            <a href="/followingprofile" class="view-profile-btn">View Profile</a>
         </div>
 
         <!-- Follower Item 4 -->

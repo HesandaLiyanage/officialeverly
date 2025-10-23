@@ -100,7 +100,7 @@
                 <!-- Action Buttons -->
                 <div class="action-buttons">
                     <button class="action-btn cancel-btn" id="cancelBtn">Cancel</button>
-                    <button class="action-btn submit-btn" id="submitBtn">Add to Journal</button>
+                    <a href="/journals" class="action-btn submit-btn" style="text-decoration: none; display: inline-block; text-align: center;">Add to Journal</a>
                 </div>
             </div>
         </div>

@@ -32,7 +32,7 @@
                 <h3 class="follower-name">Ethan Carter</h3>
                 <p class="follower-status">Follows you</p>
             </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
+            <a href="/followerprofile" class="view-profile-btn">View Profile</a>
         </div>
 
         <!-- Follower Item 3 -->
@@ -44,7 +44,7 @@
                 <h3 class="follower-name">Olivia Davis</h3>
                 <p class="follower-status">Follows you</p>
             </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
+            <a href="/followerprofile" class="view-profile-btn">View Profile</a>
         </div>
 
         <!-- Follower Item 4 -->
