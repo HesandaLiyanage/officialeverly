@@ -88,7 +88,7 @@
     </form>
 
     <div class="extra-links">
-        <a href="${pageContext.request.contextPath}/login">Already have an account? Sign in</a>
+        <a href="${pageContext.request.contextPath}/login">Already have an account? Log in</a>
     </div>
 </main>
 
