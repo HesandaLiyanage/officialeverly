@@ -122,7 +122,7 @@
     <a href="${pageContext.request.contextPath}/autographs">Autographs</a>
     <a href="${pageContext.request.contextPath}/groups">Groups</a>
     <a href="${pageContext.request.contextPath}/events">Events</a>
-    <a href="${pageContext.request.contextPath}/publicfeed">Feed</a>
+    <a href="${pageContext.request.contextPath}/feed">Feed</a>
   </nav>
 
   <div class="header-right">
