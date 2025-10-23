@@ -112,14 +112,9 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/editevent", "/views/app/editevent.jsp");
         routeToJsp.put("/memoryview", "/views/app/memoryview.jsp");
         routeToJsp.put("/memoryrecap", "/views/app/memoryrecap.jsp");
-        routeToJsp.put("/writejournal", "/views/app/writejournal.jsp");
-        routeToJsp.put("/vaultjournals", "/views/app/vaultjournals.jsp");
-        routeToJsp.put("/feed", "/views/app/publicfeed.jsp");
-        routeToJsp.put("/userprofile", "/views/app/userprofile.jsp");
-        routeToJsp.put("/followers", "/views/app/followers.jsp");
-        routeToJsp.put("/following", "/views/app/following.jsp");
-        routeToJsp.put("/followerprofile", "/views/app/followerprofile.jsp");
-        routeToJsp.put("/followingprofile", "/views/app/followingprofile.jsp");
+
+
+
 
 
 
@@ -235,26 +230,55 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("user_id") == null) {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+            System.out.println("=== EditProfileLogicHandler START ===");
+
+            // Use SessionUtil to validate session
+            if (!SessionUtil.isValidSession(request)) {
+                System.out.println("Session validation failed, redirecting to login");
                 response.sendRedirect(request.getContextPath() + "/login");
                 return;
             }
 
-            Integer userId = (Integer) session.getAttribute("user_id");
+            // Get the session (should exist and be valid now)
+            HttpSession session = request.getSession(false);
+            if (session == null) {
+                // Should not happen if SessionUtil.isValidSession returned true, but good safety check
+                System.out.println("Session is unexpectedly null, redirecting to login");
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
 
+            // Retrieve the user ID using the correct attribute name ("user_id")
+            Integer userId = (Integer) session.getAttribute("user_id");
+            System.out.println("User ID from session: " + userId);
+
+            // Fetch fresh user data from database
             user currentUser = userDAO.findById(userId);
             if (currentUser == null) {
+                System.out.println("User not found in database for ID: " + userId);
                 response.sendRedirect(request.getContextPath() + "/login");
                 return;
             }
 
-            session.setAttribute("user", currentUser);
+            System.out.println("Fetched user from DB: " + currentUser.getUsername());
+            System.out.println("User email: " + currentUser.getEmail());
+            System.out.println("User bio: " + currentUser.getBio());
 
-            request.getRequestDispatcher("/views/app/settingsaccounteditprofile.jsp").forward(request, response);
+            // Update the user object in session with fresh data from DB
+            session.setAttribute("user", currentUser);
+            System.out.println("Updated session with fresh user data");
+
+            // Forward to the edit profile JSP
+            System.out.println("Forwarding to settingsaccounteditprofile.jsp");
+            request.getRequestDispatcher("/views/app/settingsaccounteditprofile.jsp")
+                    .forward(request, response);
+
+            System.out.println("=== EditProfileLogicHandler END ===");
         }
     }
+
 
     // Inner class implementing the logic for /autographs
     private static class AutographListLogicHandler implements LogicHandler {

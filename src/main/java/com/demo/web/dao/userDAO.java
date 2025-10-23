@@ -60,7 +60,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at,is_active, last_login, profile_picture_url" +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at,is_active, last_login, profile_picture_url " +
                     "FROM users WHERE user_id = ?";
 
             stmt = conn.prepareStatement(sql);
