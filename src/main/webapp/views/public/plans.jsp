@@ -32,7 +32,6 @@
             <ul>
                 <li>250GB storage</li>
                 <li>Themes</li>
-                <li>Advanced Privacy Features</li>
                 <li>No Ads</li>
                 <li>Smart journaling</li>
             </ul>
@@ -46,7 +45,6 @@
             <ul>
                 <li>1TB storage</li>
                 <li>Themes</li>
-                <li>Advanced Privacy Features</li>
                 <li>No Ads</li>
                 <li>AI features</li>
                 <li>Beta Testing</li>
