@@ -111,6 +111,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/editgroup", "/views/app/editgroup.jsp");
         routeToJsp.put("/editevent", "/views/app/editevent.jsp");
         routeToJsp.put("/memoryview", "/views/app/memoryview.jsp");
+        routeToJsp.put("/memoryrecap", "/views/app/memoryrecap.jsp");
 
 
 

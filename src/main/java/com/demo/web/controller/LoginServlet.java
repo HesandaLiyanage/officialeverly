@@ -59,7 +59,7 @@ public class LoginServlet extends HttpServlet {
 
         // Validate input
         if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
-            request.setAttribute("error", "Username and password required");
+            request.setAttribute("errorMessage", "Username and password are required");
             request.getRequestDispatcher("/login").forward(request, response);
             return;
         }
@@ -84,7 +84,7 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/memories");
             }
         } else {
-            request.setAttribute("error", "Invalid username or password");
+            request.setAttribute("errorMessage", "Invalid username or password");
             request.getRequestDispatcher("/login").forward(request, response);
         }
     }
