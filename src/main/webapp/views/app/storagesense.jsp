@@ -70,7 +70,7 @@
             </div>
         </div>
 
-        <a href="/plans" class="upgrade-btn" onclick="upgradeStorage(); return false;">Upgrade Storage</a>    </div>
+        <a href="/plans" class="upgrade-btn" style="text-decoration: none; margin-top: 24px; display: inline-block; onclick="upgradeStorage(); return false;">Upgrade Storage</a>    </div>
 </div>
 
 <script>

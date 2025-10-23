@@ -109,16 +109,16 @@
         </div>
 
         <!-- Journal Content Viewer -->
-        <div class="journal-content-viewer">
-            <button class="arrow-btn left-arrow" id="prevEntry">
+        <div class="page-viewer">
+            <button class="arrow-btn left-arrow" id="prevPage">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
             </button>
 
-            <div class="entry-container" id="entryContainer">
-                <!-- Journal Entry Content -->
-                <div class="journal-entry">
+            <div class="page-container" id="pageContainer">
+                <!-- Journal P Content -->
+                <div class="journal-page">
                     <!-- Favorite Heart -->
                     <button class="favorite-heart" id="favoriteHeart">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -127,16 +127,16 @@
                     </button>
 
                     <!-- Entry Content -->
-                    <div class="entry-content" id="entryContent">
+                    <div class="page-content" id="pageContent">
                         <!-- Content will be dynamically loaded -->
                     </div>
 
                     <!-- Entry Date -->
-                    <div class="entry-date" id="entryDate">July 15, 2024</div>
+                    <div class="page-date" id="pageDate">July 15, 2024</div>
                 </div>
             </div>
 
-            <button class="arrow-btn right-arrow" id="nextEntry">
+            <button class="arrow-btn right-arrow" id="nextPage">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
@@ -144,8 +144,8 @@
         </div>
 
         <!-- Entry Info -->
-        <div class="entry-info">
-            <p class="entry-tag" id="entryTag">#vacation</p>
+        <div class="page-info">
+            <p class="page-tag" id="pageTag">#vacation</p>
         </div>
     </div>
 </div>
@@ -183,7 +183,7 @@
         constructor() {
             this.journals = this.getJournals();
             this.currentJournalIndex = 0;
-            this.currentEntryIndex = 0;
+            this.currentPageIndex = 0;
             this.favorites = new Set();
 
             this.initializeElements();
@@ -201,13 +201,13 @@
                         {
                             date: "July 15, 2024",
                             content: `
-                                <div class="entry-text">
-                                    <h2 class="entry-heading">An Unforgettable Day</h2>
+                                <div class="page-text">
+                                    <h2 class="page-heading">An Unforgettable Day</h2>
                                     <p>Today was absolutely magical! The birthday celebration exceeded all expectations. Friends and family gathered to make this day truly special.</p>
                                     <p>The decorations were stunning - pastel balloons everywhere, a beautiful cake, and the atmosphere was filled with love and laughter. Every moment felt like a precious memory being created.</p>
                                     <p>I'm so grateful for everyone who made this day possible. These are the moments that remind me how blessed I am to have such amazing people in my life.</p>
                                 </div>
-                                <div class="entry-image" style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800'); height: 300px; background-size: cover; background-position: center; border-radius: 12px; margin-top: 20px;"></div>
+                                <div class="page-image" style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800'); height: 300px; background-size: cover; background-position: center; border-radius: 12px; margin-top: 20px;"></div>
                             `
                         }
                     ]
@@ -220,13 +220,13 @@
                         {
                             date: "June 22, 2024",
                             content: `
-                                <div class="entry-text">
-                                    <h2 class="entry-heading">Travel Adventures</h2>
+                                <div class="page-text">
+                                    <h2 class="page-heading">Travel Adventures</h2>
                                     <p>Exploring new places always fills my heart with joy. Today's journey took me to breathtaking landscapes that words can barely describe.</p>
                                     <p>The mountains stood tall against the azure sky, and the air was crisp and refreshing. Every step felt like walking into a postcard.</p>
                                     <p>Traveling teaches us so much about ourselves and the world. I'm grateful for these experiences that shape who I am.</p>
                                 </div>
-                                <div class="entry-image" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800'); height: 300px; background-size: cover; background-position: center; border-radius: 12px; margin-top: 20px;"></div>
+                                <div class="page-image" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800'); height: 300px; background-size: cover; background-position: center; border-radius: 12px; margin-top: 20px;"></div>
                             `
                         }
                     ]
@@ -239,13 +239,13 @@
                         {
                             date: "May 10, 2024",
                             content: `
-                                <div class="entry-text">
-                                    <h2 class="entry-heading">Family Time</h2>
+                                <div class="page-text">
+                                    <h2 class="page-heading">Family Time</h2>
                                     <p>Spent quality time with family today. These moments are priceless and remind me of what truly matters in life.</p>
                                     <p>We shared stories, laughter, and created new memories together. The warmth of family love is something that nothing else can replace.</p>
                                     <p>Grateful for these beautiful souls who make life meaningful.</p>
                                 </div>
-                                <div class="entry-image" style="background-image: url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800'); height: 300px; background-size: cover; background-position: center; border-radius: 12px; margin-top: 20px;"></div>
+                                <div class="page-image" style="background-image: url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800'); height: 300px; background-size: cover; background-position: center; border-radius: 12px; margin-top: 20px;"></div>
                             `
                         }
                     ]

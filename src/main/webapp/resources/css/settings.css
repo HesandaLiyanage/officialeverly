@@ -943,3 +943,100 @@ body.dark-theme {
     font-size: 12px;
     font-weight: 500;
 }
+
+.filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.3s ease;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    width: auto; /* key line */
+    margin-bottom: 24px;
+}
+
+.filter-btn:hover {
+    border-color: #6366f1;
+    color: #6366f1;
+    background: #f0f9ff;
+}
+.tab {
+    text-decoration: none;  /* removes underline */
+}
+.shared-link-item {
+    display: flex;
+    justify-content: space-between;
+    width: 650px;
+    padding: 15px 20px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    transition: background-color 0.3s;
+}
+
+.shared-link-item:hover {
+    background-color: #f7f7f7;
+}
+
+.shared-info {
+    flex-grow: 1;
+}
+
+.shared-title {
+    font-weight: 600;
+    margin: 0;
+}
+
+.shared-desc {
+    font-size: 13px;
+    margin: 4px 0 0 0;
+    color: #777;
+}
+
+.revoke-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.revoke-btn:hover {
+    background-color: #d00000;
+}
+
+.shared-links-container {
+    display: flex;
+    gap: 30px;
+    width: 80%;
+    margin: 30px auto;
+    justify-content: space-between;   /* better column spacing */
+}
+
+.links-column {
+    flex: 1;
+    min-width: 300px;                 /* prevents collapse */
+}
+
+.link-item {
+    margin: 10px 0;
+    padding: 12px 14px;               /* slightly more readable */
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+@media (max-width: 768px) {          /* makes mobile responsive */
+    .shared-links-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+}

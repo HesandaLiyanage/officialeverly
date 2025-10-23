@@ -41,6 +41,7 @@ body {
     margin: 0 0 20px 0;
     letter-spacing: -0.5px;
     font-family: "Plus Jakarta Sans", sans-serif;
+    text-align: center;
 }
 
 /* Search and Filters */
