@@ -1,10 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.demo.web.model.Group" %>
+<%@ page import="com.demo.web.model.Event" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Event</title>
+    <title>Edit Event</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/editevent.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -12,22 +16,68 @@
 
 <jsp:include page="../public/header2.jsp" />
 
+<%
+    Event event = (Event) request.getAttribute("event");
+    List<Group> userGroups = (List<Group>) request.getAttribute("userGroups");
+    String errorMessage = (String) request.getAttribute("error");
+
+    // Check for error message in session
+    if (errorMessage == null) {
+        errorMessage = (String) session.getAttribute("errorMessage");
+        if (errorMessage != null) {
+            session.removeAttribute("errorMessage");
+        }
+    }
+
+    if (event == null) {
+        response.sendRedirect(request.getContextPath() + "/events");
+        return;
+    }
+
+    // Format date for input field (yyyy-MM-dd)
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    String formattedDate = dateFormat.format(event.getEventDate());
+
+    // Get existing image URL
+    String existingImageUrl = event.getEventPicUrl();
+    String displayImageUrl = null;
+    if (existingImageUrl != null && !existingImageUrl.isEmpty()) {
+        displayImageUrl = request.getContextPath() + "/" + existingImageUrl;
+    }
+%>
+
 <div class="page-wrapper">
     <div class="create-event-container">
         <h1 class="page-title">Edit Event</h1>
         <p class="page-subtitle">Update your event details and information.</p>
 
-        <form class="event-form" id="eventForm" action="saveEvent.jsp" method="post" enctype="multipart/form-data">
+        <%-- Display Error Message --%>
+        <% if (errorMessage != null) { %>
+        <div class="alert alert-error" style="background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #c00;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <%= errorMessage %>
+        </div>
+        <% } %>
+
+        <form class="event-form" id="eventForm" action="${pageContext.request.contextPath}/updateEvent" method="post" enctype="multipart/form-data">
+
+            <!-- Hidden Event ID -->
+            <input type="hidden" name="event_id" value="<%= event.getEventId() %>" />
 
             <!-- Event Title Input -->
             <div class="form-group">
-                <label class="form-label">Event Title</label>
+                <label class="form-label">Event Title <span style="color: #ef4444;">*</span></label>
                 <input
                         type="text"
                         class="form-input"
                         name="e_title"
                         id="e_title"
                         placeholder="e.g., Birthday Party, Family Reunion"
+                        value="<%= event.getTitle() %>"
                         required
                 />
             </div>
@@ -41,43 +91,54 @@
                         id="e_description"
                         placeholder="Describe the event and what makes it special"
                         rows="4"
-                ></textarea>
+                ><%= event.getDescription() != null ? event.getDescription() : "" %></textarea>
             </div>
 
             <!-- Event Date -->
             <div class="form-group">
-                <label class="form-label">Event Date</label>
+                <label class="form-label">Event Date <span style="color: #ef4444;">*</span></label>
                 <input
                         type="date"
                         class="form-input"
                         name="e_date"
                         id="e_date"
+                        value="<%= formattedDate %>"
                         required
                 />
             </div>
 
             <!-- Select Group -->
             <div class="form-group">
-                <label class="form-label">Select Group</label>
+                <label class="form-label">Select Group <span style="color: #ef4444;">*</span></label>
                 <select
                         class="form-input form-select"
                         name="group_id"
                         id="group_id"
                         required
                 >
-                    <option value="" disabled selected>Choose a group</option>
-                    <!-- Groups will be populated dynamically -->
-                    <option value="1">Smith Family</option>
-                    <option value="2">College Friends</option>
-                    <option value="3">Work Team</option>
+                    <option value="" disabled>Choose a group</option>
+                    <%
+                        if (userGroups != null && !userGroups.isEmpty()) {
+                            for (Group group : userGroups) {
+                                boolean isSelected = group.getGroupId() == event.getGroupId();
+                    %>
+                    <option value="<%= group.getGroupId() %>" <%= isSelected ? "selected" : "" %>>
+                        <%= group.getName() %>
+                    </option>
+                    <%
+                        }
+                    } else {
+                    %>
+                    <option value="" disabled>No groups available</option>
+                    <% } %>
                 </select>
             </div>
 
             <!-- Event Picture Upload Area -->
             <div class="form-group">
                 <label class="form-label">Event Picture</label>
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-content">
+                <div class="upload-area" id="uploadArea" <%= displayImageUrl != null ? "class='has-files'" : "" %>>
+                    <div class="upload-content" <%= displayImageUrl != null ? "style='display: none;'" : "" %>>
                         <div class="upload-icon">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -98,28 +159,31 @@
                                 hidden
                         />
                     </div>
-                    <div class="preview-container" id="previewContainer"></div>
+                    <div class="preview-container" id="previewContainer">
+                        <% if (displayImageUrl != null) { %>
+                        <div class="file-preview">
+                            <img src="<%= displayImageUrl %>" alt="Current Event Picture">
+                            <button type="button" class="remove-file" onclick="removeFile()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <% } %>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Event Location (Optional) -->
-            <div class="form-group">
-                <label class="form-label">Location (Optional)</label>
-                <input
-                        type="text"
-                        class="form-input"
-                        name="e_location"
-                        id="e_location"
-                        placeholder="e.g., Central Park, 123 Main Street"
-                />
+                <p style="font-size: 0.875rem; color: #6b7280; margin-top: 8px;">
+                    Leave empty to keep the current picture
+                </p>
             </div>
 
             <!-- Submit Buttons -->
             <div class="form-actions">
-                <button type="button" class="cancel-btn" onclick="window.location.href='/events'">
+                <button type="button" class="cancel-btn" onclick="window.location.href='${pageContext.request.contextPath}/events'">
                     Cancel
                 </button>
-                <button type="submit" class="submit-btn">
+                <button type="submit" class="submit-btn" id="submitBtn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12" />
@@ -141,6 +205,7 @@
         const browseBtn = document.getElementById('browseBtn');
         const previewContainer = document.getElementById('previewContainer');
         const eventForm = document.getElementById('eventForm');
+        const submitBtn = document.getElementById('submitBtn');
 
         // File upload functionality
         browseBtn.addEventListener('click', function(e) {
@@ -179,13 +244,24 @@
 
             const file = files[0];
 
+            // Validate file type
             if (!file.type.startsWith('image/')) {
-                alert('Please upload an image file');
+                alert('Please upload an image file (PNG, JPG, or GIF)');
+                fileInput.value = '';
+                return;
+            }
+
+            // Validate file size (10MB)
+            const maxSize = 10 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('File size must be less than 10MB');
+                fileInput.value = '';
                 return;
             }
 
             previewContainer.innerHTML = '';
             uploadArea.classList.add('has-files');
+            document.querySelector('.upload-content').style.display = 'none';
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -208,33 +284,54 @@
         window.removeFile = function() {
             previewContainer.innerHTML = '';
             uploadArea.classList.remove('has-files');
+            document.querySelector('.upload-content').style.display = 'block';
             fileInput.value = '';
         };
 
-        // Set minimum date to today
-        const dateInput = document.getElementById('e_date');
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.setAttribute('min', today);
-
-        // Form submission
+        // Form validation and submission
         eventForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+            const title = document.getElementById('e_title').value.trim();
+            const date = document.getElementById('e_date').value;
+            const groupId = document.getElementById('group_id').value;
 
-            const formData = new FormData(eventForm);
+            if (!title) {
+                e.preventDefault();
+                alert('Please enter an event title');
+                return false;
+            }
 
-            console.log('Form submitted');
-            console.log('Event Title:', formData.get('e_title'));
-            console.log('Description:', formData.get('e_description'));
-            console.log('Event Date:', formData.get('e_date'));
-            console.log('Group ID:', formData.get('group_id'));
-            console.log('Event Picture:', fileInput.files[0]);
+            if (!date) {
+                e.preventDefault();
+                alert('Please select an event date');
+                return false;
+            }
 
-            // TODO: Submit to server
-            // For now, redirect
-            window.location.href = '/events';
+            if (!groupId) {
+                e.preventDefault();
+                alert('Please select a group');
+                return false;
+            }
+
+            // Disable submit button to prevent double submission
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+                Updating...
+            `;
+
+            return true;
         });
     });
 </script>
+
+<style>
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
 
 </body>
 </html>

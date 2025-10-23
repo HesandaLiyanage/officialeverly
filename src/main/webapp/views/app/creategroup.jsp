@@ -12,13 +12,12 @@
 
 <jsp:include page="../public/header2.jsp" />
 
-
 <div class="page-wrapper">
     <div class="create-group-container">
         <h1 class="page-title">Create a New Group</h1>
         <p class="page-subtitle">Bring your family and friends together to share and preserve memories collectively.</p>
 
-        <form class="group-form" id="groupForm" action="saveGroup.jsp" method="post" enctype="multipart/form-data">
+        <form class="group-form" id="groupForm" action="/creategroupservlet" method="post" enctype="multipart/form-data">
 
             <!-- Group Name Input -->
             <div class="form-group">
@@ -75,109 +74,27 @@
                 </div>
             </div>
 
-            <!-- Privacy Settings -->
+            <!-- Link Input -->
             <div class="form-group">
-                <label class="form-label">Privacy Settings</label>
-                <div class="privacy-options">
-                    <label class="privacy-option">
-                        <input type="radio" name="privacy" value="private" checked>
-                        <div class="privacy-card">
-                            <div class="privacy-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                                </svg>
-                            </div>
-                            <div class="privacy-info">
-                                <h4>Private</h4>
-                                <p>Only invited members can view and contribute</p>
-                            </div>
-                        </div>
-                    </label>
-                    <label class="privacy-option">
-                        <input type="radio" name="privacy" value="public">
-                        <div class="privacy-card">
-                            <div class="privacy-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <path d="M2 12h20"></path>
-                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                                </svg>
-                            </div>
-                            <div class="privacy-info">
-                                <h4>Public</h4>
-                                <p>Anyone can discover and join this group</p>
-                            </div>
-                        </div>
-                    </label>
+                <label class="form-label">Group Link</label>
+                <div class="link-input-wrapper">
+                    <span class="link-prefix">everly.com/groups/</span>
+                    <input
+                            type="text"
+                            class="form-input link-input"
+                            name="customLink"
+                            id="customLink"
+                            placeholder="your-group-name"
+                            required
+                    />
+                    <button type="button" class="copy-btn" id="copyBtn" title="Copy link">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
                 </div>
-            </div>
-
-            <!-- Member Roles Section -->
-            <div class="form-group">
-                <label class="form-label">Invite Members (Optional)</label>
-                <p class="form-hint">You can invite members now or add them later from the group settings.</p>
-                <div class="invite-section">
-                    <div class="invite-input-wrapper">
-                        <input
-                                type="email"
-                                class="form-input"
-                                id="inviteEmail"
-                                placeholder="Enter email address"
-                        />
-                        <select class="role-select" id="roleSelect">
-                            <option value="viewer">Viewer</option>
-                            <option value="editor">Editor</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                        <button type="button" class="add-member-btn" id="addMemberBtn">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                            Add
-                        </button>
-                    </div>
-                    <div class="invited-members-list" id="invitedMembersList">
-                        <!-- Invited members will be added here dynamically -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Group Features -->
-            <div class="form-group">
-                <label class="form-label">Group Features</label>
-                <p class="form-hint">Select features you want to enable for this group.</p>
-                <div class="features-grid">
-                    <label class="feature-option">
-                        <input type="checkbox" name="features" value="shared_calendar" checked>
-                        <div class="feature-card">
-                            <span class="feature-icon">📅</span>
-                            <span class="feature-name">Shared Calendar</span>
-                        </div>
-                    </label>
-                    <label class="feature-option">
-                        <input type="checkbox" name="features" value="event_planning" checked>
-                        <div class="feature-card">
-                            <span class="feature-icon">🎉</span>
-                            <span class="feature-name">Event Planning</span>
-                        </div>
-                    </label>
-                    <label class="feature-option">
-                        <input type="checkbox" name="features" value="group_chat">
-                        <div class="feature-card">
-                            <span class="feature-icon">💬</span>
-                            <span class="feature-name">Group Chat</span>
-                        </div>
-                    </label>
-                    <label class="feature-option">
-                        <input type="checkbox" name="features" value="shared_albums" checked>
-                        <div class="feature-card">
-                            <span class="feature-icon">📸</span>
-                            <span class="feature-name">Shared Albums</span>
-                        </div>
-                    </label>
-                </div>
+                <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/groups/your-group-name</p>
             </div>
 
             <!-- Submit Buttons -->
@@ -208,13 +125,9 @@
         const fileInput = document.getElementById('fileInput');
         const browseBtn = document.getElementById('browseBtn');
         const previewContainer = document.getElementById('previewContainer');
-        const groupForm = document.getElementById('groupForm');
-        const addMemberBtn = document.getElementById('addMemberBtn');
-        const inviteEmail = document.getElementById('inviteEmail');
-        const roleSelect = document.getElementById('roleSelect');
-        const invitedMembersList = document.getElementById('invitedMembersList');
-
-        let invitedMembers = [];
+        const customLink = document.getElementById('customLink');
+        const fullLinkDisplay = document.getElementById('fullLinkDisplay');
+        const copyBtn = document.getElementById('copyBtn');
 
         // File upload functionality
         browseBtn.addEventListener('click', function(e) {
@@ -285,79 +198,39 @@
             fileInput.value = '';
         };
 
-        // Add member functionality
-        addMemberBtn.addEventListener('click', function() {
-            const email = inviteEmail.value.trim();
-            const role = roleSelect.value;
-
-            if (!email) {
-                alert('Please enter an email address');
-                return;
-            }
-
-            if (!isValidEmail(email)) {
-                alert('Please enter a valid email address');
-                return;
-            }
-
-            if (invitedMembers.some(m => m.email === email)) {
-                alert('This member has already been invited');
-                return;
-            }
-
-            const member = { email, role };
-            invitedMembers.push(member);
-            renderInvitedMembers();
-            inviteEmail.value = '';
+        // Link input functionality
+        customLink.addEventListener('input', function() {
+            const linkValue = this.value.trim() || 'your-group-name';
+            fullLinkDisplay.textContent = `Full link: everly.com/groups/${linkValue}`;
         });
 
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
+        // Copy link functionality
+        copyBtn.addEventListener('click', function() {
+            const linkValue = customLink.value.trim() || 'your-group-name';
+            const fullLink = `everly.com/groups/${linkValue}`;
 
-        function renderInvitedMembers() {
-            if (invitedMembers.length === 0) {
-                invitedMembersList.innerHTML = '';
-                return;
-            }
+            navigator.clipboard.writeText(fullLink).then(function() {
+                // Visual feedback
+                copyBtn.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                `;
+                copyBtn.style.color = '#10b981';
 
-            invitedMembersList.innerHTML = invitedMembers.map((member, index) => `
-                <div class="invited-member-item">
-                    <div class="member-info">
-                        <span class="member-email">${member.email}</span>
-                        <span class="member-role-badge ${member.role}">${member.role}</span>
-                    </div>
-                    <button type="button" class="remove-member-btn" onclick="removeMember(${index})">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                setTimeout(function() {
+                    copyBtn.innerHTML = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        window.removeMember = function(index) {
-            invitedMembers.splice(index, 1);
-            renderInvitedMembers();
-        };
-
-        // Form submission
-        groupForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(groupForm);
-            formData.append('invitedMembers', JSON.stringify(invitedMembers));
-
-            console.log('Form submitted');
-            console.log('Group Name:', formData.get('g_name'));
-            console.log('Description:', formData.get('g_description'));
-            console.log('Group Picture:', fileInput.files[0]);
-            console.log('Invited Members:', invitedMembers);
-
-            // TODO: Submit to server
-            // For now, redirect
-            window.location.href = '/groups';
+                    `;
+                    copyBtn.style.color = '';
+                }, 2000);
+            }).catch(function(err) {
+                alert('Failed to copy link');
+                console.error('Copy failed:', err);
+            });
         });
     });
 </script>

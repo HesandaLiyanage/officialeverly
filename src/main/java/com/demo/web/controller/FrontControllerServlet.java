@@ -5,11 +5,13 @@ import com.demo.web.dao.userDAO;
 import com.demo.web.dao.autographDAO;
 import com.demo.web.dao.userSessionDAO;
 import com.demo.web.dao.GroupDAO;
+import com.demo.web.model.*;
+import com.demo.web.util.SessionUtil;
+import com.demo.web.dao.EventDAO;
+import com.demo.web.dao.JournalDAO;
+import com.demo.web.model.Event;
 import com.demo.web.model.UserSession;
 import com.demo.web.model.autograph;
-import com.demo.web.model.user;
-import com.demo.web.model.Group;
-import com.demo.web.util.SessionUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -91,10 +93,19 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/groupmemories", "/views/app/groupmemories.jsp");
         routeToJsp.put("/groupmembers", "/views/app/groupmembers.jsp");
         routeToJsp.put("/groupannouncement", "/views/app/groupannouncement.jsp");
-        routeToJsp.put("/events", "/views/app/eventdashboard.jsp");
         routeToJsp.put("/writeautograph", "/views/app/writeautograph.jsp");
         routeToJsp.put("/eventinfo", "/views/app/eventinfo.jsp");
         routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
+        routeToJsp.put("/creategroup", "/views/app/creategroup.jsp");
+        routeToJsp.put("/editgroup", "/views/app/editgroup.jsp");
+        routeToJsp.put("/editevent", "/views/app/editevent.jsp");
+        routeToJsp.put("/memoryview", "/views/app/memoryview.jsp");
+
+
+
+
+
+
 
         // Pages that require business logic before showing the JSP
         routeToLogic.put("/linkeddevices", new LinkedDevicesLogicHandler());
@@ -104,6 +115,17 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/editautograph", new EditAutographLogicHandler());
         routeToLogic.put("/groups", new GroupListLogicHandler());
         routeToLogic.put("/groupmemories", new GroupViewLogicHandler());
+        routeToLogic.put("/editgroup", new EditGroupLogicHandler());
+        routeToLogic.put("/events", new EventListLogicHandler());
+        routeToLogic.put("/createevent", new CreateEventLogicHandler());
+        routeToLogic.put("/editevent", new EditEventLogicHandler());  // ADD THIS LINE
+        routeToLogic.put("/journals", new JournalListLogicHandler());  // ADD THIS LINE
+
+
+        // Remove this if using servlet
+
+
+
     }
 
     @Override
@@ -367,6 +389,7 @@ public class FrontControllerServlet extends HttpServlet {
     }
 
     // Inner class implementing the logic for /groupmemories (viewing a specific group)
+// Inner class implementing the logic for /groupmemories (viewing a specific group)
     private static class GroupViewLogicHandler implements LogicHandler {
         private GroupDAO groupDAO;
 
@@ -411,4 +434,321 @@ public class FrontControllerServlet extends HttpServlet {
             request.getRequestDispatcher("/views/app/groupmemories.jsp").forward(request, response);
         }
     }
+
+    // Inner class implementing the logic for /editgroup
+    private static class EditGroupLogicHandler implements LogicHandler {
+        private GroupDAO groupDAO;
+
+        public EditGroupLogicHandler() {
+            this.groupDAO = new GroupDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            Integer userId = (Integer) session.getAttribute("user_id");
+
+            String groupIdParam = request.getParameter("groupId");
+            if (groupIdParam == null || groupIdParam.trim().isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/groups");
+                return;
+            }
+
+            int groupId;
+            try {
+                groupId = Integer.parseInt(groupIdParam);
+            } catch (NumberFormatException e) {
+                response.sendRedirect(request.getContextPath() + "/groups");
+                return;
+            }
+
+            Group groupToEdit = groupDAO.findById(groupId);
+
+            if (groupToEdit == null || groupToEdit.getUserId() != userId) {
+                response.sendRedirect(request.getContextPath() + "/groups");
+                return;
+            }
+
+            request.setAttribute("group", groupToEdit);
+
+            request.getRequestDispatcher("/views/app/editgroup.jsp").forward(request, response);
+        }
+    }
+    private static class EventListLogicHandler implements LogicHandler {
+        private EventDAO eventDAO;
+
+        public EventListLogicHandler() {
+            this.eventDAO = new EventDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+            System.out.println("[DEBUG EventListLogicHandler] Starting to handle /events request");
+
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                System.out.println("[DEBUG EventListLogicHandler] No session or user_id, redirecting to login");
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            Integer userId = (Integer) session.getAttribute("user_id");
+            System.out.println("[DEBUG EventListLogicHandler] Fetching events for user ID: " + userId);
+
+            try {
+                // Check if user is a group admin (has created at least one group)
+                boolean isGroupAdmin = eventDAO.isUserGroupAdmin(userId);
+                System.out.println("[DEBUG EventListLogicHandler] User is group admin: " + isGroupAdmin);
+
+                request.setAttribute("isGroupAdmin", isGroupAdmin);
+
+                // Get all events for the user (only from groups they created)
+                List<Event> allEvents = eventDAO.findByUserId(userId);
+                System.out.println("[DEBUG EventListLogicHandler] Total events found: " + allEvents.size());
+
+                // Get upcoming events
+                List<Event> upcomingEvents = eventDAO.findUpcomingEventsByUserId(userId);
+                System.out.println("[DEBUG EventListLogicHandler] Upcoming events: " + upcomingEvents.size());
+
+                // Get past events
+                List<Event> pastEvents = eventDAO.findPastEventsByUserId(userId);
+                System.out.println("[DEBUG EventListLogicHandler] Past events: " + pastEvents.size());
+
+                // Set attributes for JSP
+                request.setAttribute("allEvents", allEvents);
+                request.setAttribute("upcomingEvents", upcomingEvents);
+                request.setAttribute("pastEvents", pastEvents);
+                request.setAttribute("upcomingCount", upcomingEvents.size());
+                request.setAttribute("pastCount", pastEvents.size());
+                request.setAttribute("totalCount", allEvents.size());
+
+                System.out.println("[DEBUG EventListLogicHandler] Forwarding to eventdashboard.jsp");
+                request.getRequestDispatcher("/views/app/eventdashboard.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                System.out.println("[DEBUG EventListLogicHandler] Error occurred: " + e.getMessage());
+                e.printStackTrace();
+                request.setAttribute("error", "An error occurred while fetching events: " + e.getMessage());
+                request.getRequestDispatcher("/views/app/eventdashboard.jsp").forward(request, response);
+            }
+        }
+    }
+
+    private static class CreateEventLogicHandler implements LogicHandler {
+        private GroupDAO groupDAO;
+
+        public CreateEventLogicHandler() {
+            this.groupDAO = new GroupDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            System.out.println("[DEBUG CreateEventLogicHandler] Handling /createevent request");
+
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                System.out.println("[DEBUG CreateEventLogicHandler] No session, redirecting to login");
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            Integer userId = (Integer) session.getAttribute("user_id");
+            System.out.println("[DEBUG CreateEventLogicHandler] User ID: " + userId);
+
+            try {
+                // Get all groups created by this user (only creators can create events)
+                List<Group> userGroups = groupDAO.findByUserId(userId);
+                System.out.println("[DEBUG CreateEventLogicHandler] Found " + userGroups.size() + " groups for user");
+
+                // Check if user has at least one group
+                if (userGroups.isEmpty()) {
+                    System.out.println("[DEBUG CreateEventLogicHandler] User has no groups");
+                    request.setAttribute("error", "You need to create a group first before creating events.");
+                    request.setAttribute("noGroups", true);
+                }
+
+                // Set groups as request attribute
+                request.setAttribute("userGroups", userGroups);
+
+                // Forward to create event JSP
+                request.getRequestDispatcher("/views/app/createevent.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                System.out.println("[DEBUG CreateEventLogicHandler] Error: " + e.getMessage());
+                e.printStackTrace();
+                request.setAttribute("error", "An error occurred while loading groups: " + e.getMessage());
+                request.getRequestDispatcher("/views/app/createevent.jsp").forward(request, response);
+            }
+        }
+    }
+
+    private static class EditEventLogicHandler implements LogicHandler {
+        private EventDAO eventDAO;
+        private GroupDAO groupDAO;
+
+        public EditEventLogicHandler() {
+            this.eventDAO = new EventDAO();
+            this.groupDAO = new GroupDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            System.out.println("[DEBUG EditEventLogicHandler] Handling /editevent request");
+
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                System.out.println("[DEBUG EditEventLogicHandler] No session, redirecting to login");
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            Integer userId = (Integer) session.getAttribute("user_id");
+            String eventIdStr = request.getParameter("event_id");
+
+            System.out.println("[DEBUG EditEventLogicHandler] User ID: " + userId + ", Event ID: " + eventIdStr);
+
+            try {
+                // Validation
+                if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
+                    System.out.println("[DEBUG EditEventLogicHandler] Event ID is missing");
+                    session.setAttribute("errorMessage", "Event ID is required");
+                    response.sendRedirect(request.getContextPath() + "/events");
+                    return;
+                }
+
+                int eventId = Integer.parseInt(eventIdStr);
+
+                // Get the event
+                Event event = eventDAO.findById(eventId);
+
+                if (event == null) {
+                    System.out.println("[DEBUG EditEventLogicHandler] Event not found: " + eventId);
+                    session.setAttribute("errorMessage", "Event not found");
+                    response.sendRedirect(request.getContextPath() + "/events");
+                    return;
+                }
+
+                System.out.println("[DEBUG EditEventLogicHandler] Event found: " + event.getTitle());
+
+                // Get the group information
+                Group eventGroup = groupDAO.findById(event.getGroupId());
+
+                if (eventGroup == null) {
+                    System.out.println("[DEBUG EditEventLogicHandler] Group not found for event: " + eventId);
+                    session.setAttribute("errorMessage", "Group not found for this event");
+                    response.sendRedirect(request.getContextPath() + "/events");
+                    return;
+                }
+
+                // Security check: Verify the group belongs to this user
+                if (eventGroup.getUserId() != userId) {
+                    System.out.println("[DEBUG EditEventLogicHandler] Security violation: User " + userId +
+                            " attempted to edit event " + eventId + " from group " + eventGroup.getGroupId());
+                    session.setAttribute("errorMessage", "You don't have permission to edit this event");
+                    response.sendRedirect(request.getContextPath() + "/events");
+                    return;
+                }
+
+                // Get all user's groups for the dropdown
+                List<Group> userGroups = groupDAO.findByUserId(userId);
+                System.out.println("[DEBUG EditEventLogicHandler] Found " + userGroups.size() + " groups for user");
+
+                // Set attributes for JSP
+                request.setAttribute("event", event);
+                request.setAttribute("userGroups", userGroups);
+
+                System.out.println("[DEBUG EditEventLogicHandler] Forwarding to editevent.jsp");
+
+                // Forward to edit event JSP
+                request.getRequestDispatcher("/views/app/editevent.jsp").forward(request, response);
+
+            } catch (NumberFormatException e) {
+                System.out.println("[DEBUG EditEventLogicHandler] Invalid event ID format: " + e.getMessage());
+                session.setAttribute("errorMessage", "Invalid event ID");
+                response.sendRedirect(request.getContextPath() + "/events");
+
+            } catch (Exception e) {
+                System.out.println("[DEBUG EditEventLogicHandler] Error loading event for edit: " + e.getMessage());
+                e.printStackTrace();
+                session.setAttribute("errorMessage", "An error occurred while loading the event");
+                response.sendRedirect(request.getContextPath() + "/events");
+            }
+        }
+    }
+    private static class JournalListLogicHandler implements LogicHandler {
+        private JournalDAO journalDAO;
+
+        public JournalListLogicHandler() {
+            this.journalDAO = new JournalDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            System.out.println("[DEBUG JournalListLogicHandler] Handling /journals request");
+
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                System.out.println("[DEBUG JournalListLogicHandler] No session, redirecting to login");
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            Integer userId = (Integer) session.getAttribute("user_id");
+            System.out.println("[DEBUG JournalListLogicHandler] User ID: " + userId);
+
+            try {
+                // Get all journals for this user
+                List<Journal> journals = journalDAO.findByUserId(userId);
+                System.out.println("[DEBUG JournalListLogicHandler] Found " + journals.size() + " journals");
+
+                // Get total count
+                int totalCount = journalDAO.getJournalCount(userId);
+                System.out.println("[DEBUG JournalListLogicHandler] Total journal count: " + totalCount);
+
+                // Calculate streak (placeholder - you can implement actual streak logic later)
+                int streakDays = calculateStreak(journals);
+
+                // Set attributes for JSP
+                request.setAttribute("journals", journals);
+                request.setAttribute("totalCount", totalCount);
+                request.setAttribute("streakDays", streakDays);
+
+                System.out.println("[DEBUG JournalListLogicHandler] Forwarding to journals.jsp");
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                System.out.println("[DEBUG JournalListLogicHandler] Error: " + e.getMessage());
+                e.printStackTrace();
+                request.setAttribute("error", "An error occurred while loading journals: " + e.getMessage());
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
+            }
+        }
+
+        /**
+         * Calculate journal streak (consecutive days with entries)
+         * This is a simple implementation - you can enhance it later
+         */
+        private int calculateStreak(List<Journal> journals) {
+            if (journals == null || journals.isEmpty()) {
+                return 0;
+            }
+
+            // For now, just return a placeholder
+            // You can implement proper streak calculation based on created_at dates
+            return journals.size() > 0 ? 7 : 0; // Placeholder: 7 days if they have any journals
+        }
+    }
+
 }

@@ -1,9 +1,47 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.demo.web.model.Event" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
 
 <jsp:include page="../public/header2.jsp" />
 <html>
+<head>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/events.css">
+    <%
+        String successMessage = (String) session.getAttribute("successMessage");
+        if (successMessage != null) {
+            session.removeAttribute("successMessage");
+    %>
+    <div class="alert alert-success" style="background: #d1fae5; border: 1px solid #6ee7b7; padding: 12px; border-radius: 8px; margin: 20px; color: #065f46;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <%= successMessage %>
+    </div>
+    <% } %>
+
+
+</head>
 <body>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/events.css">
+
+<%
+    List<Event> upcomingEvents = (List<Event>) request.getAttribute("upcomingEvents");
+    List<Event> pastEvents = (List<Event>) request.getAttribute("pastEvents");
+    Integer upcomingCount = (Integer) request.getAttribute("upcomingCount");
+    Integer pastCount = (Integer) request.getAttribute("pastCount");
+    Integer totalCount = (Integer) request.getAttribute("totalCount");
+    Boolean isGroupAdmin = (Boolean) request.getAttribute("isGroupAdmin");
+
+    // Set defaults if null
+    if (upcomingCount == null) upcomingCount = 0;
+    if (pastCount == null) pastCount = 0;
+    if (totalCount == null) totalCount = 0;
+    if (isGroupAdmin == null) isGroupAdmin = false;
+
+    SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy");
+%>
 
 <!-- Wrap everything after header -->
 <div class="page-wrapper">
@@ -42,89 +80,83 @@
 
         <!-- Events Grid -->
         <div class="events-grid" id="eventsGrid" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
-            <!-- Upcoming Events -->
-            <div class="event-card upcoming" data-title="Family Reunion" data-tab="upcoming">
-                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800')"></div>
-                <div class="event-content">
 
+            <%-- Display message if user is not a group admin --%>
+            <% if (!isGroupAdmin) { %>
+            <div style="text-align: center; padding: 40px; color: #6b7280; background: #fef3c7; border: 2px solid #fbbf24; border-radius: 12px; margin: 20px;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" style="margin: 0 auto 20px;">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <h3 style="margin: 0 0 10px; color: #92400e;">You're Not a Group Admin</h3>
+                <p style="margin: 0; color: #78350f;">Only group admins can create and view events. Please create a group first to access event features.</p>
+                <a href="${pageContext.request.contextPath}/creategroup" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #f59e0b; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    Create Your First Group
+                </a>
+            </div>
+            <% } else if ((upcomingEvents == null || upcomingEvents.isEmpty()) &&
+                    (pastEvents == null || pastEvents.isEmpty())) { %>
+            <%-- Display message if no events exist but user is admin --%>
+            <div style="text-align: center; padding: 40px; color: #6b7280;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 20px; opacity: 0.5;">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <h3 style="margin: 0 0 10px; color: #374151;">No Events Yet</h3>
+                <p style="margin: 0;">Create your first event to get started!</p>
+            </div>
+            <% } %>
+
+            <%-- Upcoming Events --%>
+            <% if (upcomingEvents != null && !upcomingEvents.isEmpty()) {
+                for (Event event : upcomingEvents) {
+                    String imageUrl = event.getEventPicUrl() != null && !event.getEventPicUrl().isEmpty()
+                            ? request.getContextPath() + "/" + event.getEventPicUrl()
+                            : "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800";
+                    String formattedDate = displayFormat.format(new Date(event.getEventDate().getTime()));
+            %>
+            <div class="event-card upcoming" data-title="<%= event.getTitle() %>" data-tab="upcoming" data-event-id="<%= event.getEventId() %>">
+                <div class="event-image" style="background-image: url('<%= imageUrl %>')"></div>
+                <div class="event-content">
                     <span class="event-status upcoming-status">Upcoming</span>
-                    <h3 class="event-title">Family Reunion</h3>
-                    <p class="event-date">July 15, 2024</p>
+                    <h3 class="event-title"><%= event.getTitle() %></h3>
+                    <p class="event-date"><%= formattedDate %></p>
+                    <% if (event.getDescription() != null && !event.getDescription().isEmpty()) { %>
+                    <p class="event-description" style="font-size: 0.875rem; color: #6b7280; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                        <%= event.getDescription() %>
+                    </p>
+                    <% } %>
                 </div>
             </div>
+            <% }
+            } %>
 
-            <div class="event-card upcoming" data-title="Summer Vacation" data-tab="upcoming">
-                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800')"></div>
-                <div class="event-content">
-                    <span class="event-status upcoming-status">Upcoming</span>
-                    <h3 class="event-title">Summer Vacation</h3>
-                    <p class="event-date">August 5, 2024</p>
-                </div>
-            </div>
-
-            <div class="event-card upcoming" data-title="Beach Party" data-tab="upcoming">
-                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800')"></div>
-                <div class="event-content">
-                    <span class="event-status upcoming-status">Upcoming</span>
-                    <h3 class="event-title">Beach Party</h3>
-                    <p class="event-date">August 20, 2024</p>
-                </div>
-            </div>
-
-            <!-- Past Events -->
-            <div class="event-card past" data-title="Sarah's Birthday" data-tab="past" style="display: none;">
-                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800')"></div>
+            <%-- Past Events --%>
+            <% if (pastEvents != null && !pastEvents.isEmpty()) {
+                for (Event event : pastEvents) {
+                    String imageUrl = event.getEventPicUrl() != null && !event.getEventPicUrl().isEmpty()
+                            ? request.getContextPath() + "/" + event.getEventPicUrl()
+                            : "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800";
+                    String formattedDate = displayFormat.format(new Date(event.getEventDate().getTime()));
+            %>
+            <div class="event-card past" data-title="<%= event.getTitle() %>" data-tab="past" data-event-id="<%= event.getEventId() %>" style="display: none;">
+                <div class="event-image" style="background-image: url('<%= imageUrl %>')"></div>
                 <div class="event-content">
                     <span class="event-status past-status">Past</span>
-                    <h3 class="event-title">Sarah's Birthday</h3>
-                    <p class="event-date">June 20, 2024</p>
+                    <h3 class="event-title"><%= event.getTitle() %></h3>
+                    <p class="event-date"><%= formattedDate %></p>
+                    <% if (event.getDescription() != null && !event.getDescription().isEmpty()) { %>
+                    <p class="event-description" style="font-size: 0.875rem; color: #6b7280; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                        <%= event.getDescription() %>
+                    </p>
+                    <% } %>
                 </div>
             </div>
-
-            <div class="event-card past" data-title="Anniversary" data-tab="past" style="display: none;">
-                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800')"></div>
-                <div class="event-content">
-                    <span class="event-status past-status">Past</span>
-                    <h3 class="event-title">Anniversary</h3>
-                    <p class="event-date">May 10, 2024</p>
-                </div>
-            </div>
-
-            <div class="event-card past" data-title="Graduation Day" data-tab="past" style="display: none;">
-                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800')"></div>
-                <div class="event-content">
-                    <span class="event-status past-status">Past</span>
-                    <h3 class="event-title">Graduation Day</h3>
-                    <p class="event-date">April 15, 2024</p>
-                </div>
-            </div>
-
-            <div class="event-card past" data-title="Concert Night" data-tab="past" style="display: none;">
-                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800')"></div>
-                <div class="event-content">
-                    <span class="event-status past-status">Past</span>
-                    <h3 class="event-title">Concert Night</h3>
-                    <p class="event-date">March 25, 2024</p>
-                </div>
-            </div>
-
-            <div class="event-card past" data-title="Holiday Dinner" data-tab="past" style="display: none;">
-                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800')"></div>
-                <div class="event-content">
-                    <span class="event-status past-status">Past</span>
-                    <h3 class="event-title">Holiday Dinner</h3>
-                    <p class="event-date">December 25, 2023</p>
-                </div>
-            </div>
-
-            <div class="event-card past" data-title="Road Trip" data-tab="past" style="display: none;">
-                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800')"></div>
-                <div class="event-content">
-                    <span class="event-status past-status">Past</span>
-                    <h3 class="event-title">Road Trip</h3>
-                    <p class="event-date">November 10, 2023</p>
-                </div>
-            </div>
+            <% }
+            } %>
         </div>
     </main>
 
@@ -137,21 +169,21 @@
                     <div class="stat-icon upcoming">📅</div>
                     <div class="stat-info">
                         <span class="stat-label">Upcoming</span>
-                        <span class="stat-value">3 Events</span>
+                        <span class="stat-value"><%= upcomingCount %> Event<%= upcomingCount != 1 ? "s" : "" %></span>
                     </div>
                 </li>
                 <li class="stat-item">
                     <div class="stat-icon past">📋</div>
                     <div class="stat-info">
                         <span class="stat-label">Past</span>
-                        <span class="stat-value">6 Events</span>
+                        <span class="stat-value"><%= pastCount %> Event<%= pastCount != 1 ? "s" : "" %></span>
                     </div>
                 </li>
                 <li class="stat-item">
                     <div class="stat-icon total">📊</div>
                     <div class="stat-info">
                         <span class="stat-label">Total</span>
-                        <span class="stat-value">9 Events</span>
+                        <span class="stat-value"><%= totalCount %> Event<%= totalCount != 1 ? "s" : "" %></span>
                     </div>
                 </li>
             </ul>
@@ -159,13 +191,23 @@
 
         <!-- Floating Action Buttons -->
         <div class="floating-buttons" style="position: static; margin-top: 20px;">
-            <a href="/createevent" class="floating-btn">
+            <% if (isGroupAdmin) { %>
+            <a href="${pageContext.request.contextPath}/createevent" class="floating-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 Create Event
             </a>
+            <% } else { %>
+            <a href="${pageContext.request.contextPath}/creategroup" class="floating-btn" style="background: #f59e0b;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Create Group First
+            </a>
+            <% } %>
         </div>
     </aside>
 </div>
@@ -173,16 +215,21 @@
 <jsp:include page="../public/footer.jsp" />
 
 <script>
-    const eventCard = document.querySelector('.event-card.upcoming');
+    // Event card click handler - now works for all event cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const eventCards = document.querySelectorAll('.event-card');
 
-    // Add a click event listener
-    eventCard.addEventListener('click', () => {
-        // Redirect to desired path
-        window.location.href = '/eventinfo';
+        eventCards.forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event-id');
+                if (eventId) {
+                    window.location.href = '${pageContext.request.contextPath}/eventinfo?id=' + eventId;
+                }
+            });
+        });
     });
 
-    // Optional: make it look clickable
-    eventCard.style.cursor = 'pointer';
     // Modern Search Functionality
     document.addEventListener('DOMContentLoaded', function() {
         const eventsSearchBtn = document.getElementById('eventsSearchBtn');
@@ -250,9 +297,18 @@
                 input.addEventListener('input', function(e) {
                     const query = e.target.value.toLowerCase();
                     const eventCards = document.querySelectorAll('.event-card');
+                    const activeTab = document.querySelector('.tab-nav button.active').getAttribute('data-tab');
+
                     eventCards.forEach(card => {
                         const title = card.getAttribute('data-title')?.toLowerCase() || '';
-                        card.style.display = title.includes(query) ? 'block' : 'none';
+                        const cardTab = card.getAttribute('data-tab');
+
+                        // Only show cards that match both the search and the active tab
+                        if (cardTab === activeTab && title.includes(query)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
                     });
                 });
             });
