@@ -43,7 +43,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/", "/views/public/landing.jsp");
         routeToJsp.put("/login", "/views/public/loginContent.jsp");
         routeToJsp.put("/register", "/views/public/register.jsp");
-        routeToJsp.put("/aboutus", "/views/public/about.jsp");
+        routeToJsp.put("/aboutus", "/views/public/aboutus.jsp");
         routeToJsp.put("/contact", "/views/public/contact.jsp");
         routeToJsp.put("/signup", "/views/public/signup.jsp");
         routeToJsp.put("/signup2", "/views/public/signup2.jsp");

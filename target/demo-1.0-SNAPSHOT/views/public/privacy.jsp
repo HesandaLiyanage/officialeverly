@@ -7,10 +7,168 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy - Everly</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/headercomponents.css"> <!-- Reuse your existing CSS -->
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/headercomponents.css">
   <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="header.css">
   <link rel="stylesheet" href="footer.css">
+  <style>
+    /* Modern Privacy Page Specific Styles */
+    body {
+      font-family: 'Epilogue', Arial, sans-serif; /* Use the imported font */
+      background-color: #f9fafb; /* Light grey background */
+      color: #1f2937; /* Darker text for better contrast */
+    }
+
+    .container {
+      max-width: 1000px; /* Limit content width */
+      margin: 0 auto; /* Center content */
+      padding: 0 20px; /* Add side padding */
+    }
+
+    /* Modern Hero Section */
+    .hero {
+      position: relative;
+      text-align: center;
+      margin: 40px 0; /* Consistent top/bottom margin */
+      width: 100%; /* Full width container */
+      border-radius: 16px; /* More modern rounded corners */
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+      background-color: #e0e7ff; /* Light blue background */
+    }
+
+    .hero-img {
+      width: 100%; /* Make image full width */
+      height: 250px; /* Fixed height for consistency */
+      object-fit: cover; /* Cover the area */
+      display: block; /* Remove inline spacing */
+    }
+
+    .hero-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); /* Center text */
+      color: #1e3a8a; /* Darker blue text */
+      text-align: center; /* Center text */
+      padding: 20px; /* Add padding */
+      background: rgba(255, 255, 255, 0.85); /* Semi-transparent white background */
+      border-radius: 12px; /* Match container */
+      backdrop-filter: blur(5px); /* Frosted glass effect */
+    }
+
+    .hero-text h1 {
+      font-size: 2.5rem; /* Larger, modern heading */
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-text p {
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin: 0; /* Remove default margin */
+    }
+
+    /* Modern Section Styling */
+    .differentiators {
+      width: 100%; /* Full width */
+      margin: 40px 0; /* Consistent vertical spacing */
+      text-align: left; /* Left align text */
+      padding: 30px; /* Add padding inside */
+      background-color: #ffffff; /* White background */
+      border-radius: 16px; /* Modern rounded corners */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Soft shadow */
+    }
+
+    .differentiators h2 {
+      font-size: 1.6rem; /* Modern heading size */
+      font-weight: 600;
+      color: #1e40af; /* Blue heading */
+      margin-top: 0; /* Remove top margin */
+      margin-bottom: 1.2rem; /* Space below heading */
+      padding-bottom: 0.8rem; /* Space under heading */
+      border-bottom: 2px solid #e0e7ff; /* Light blue border */
+    }
+
+    .desc {
+      color: #4b5563; /* Muted text color */
+      font-size: 1rem;
+      line-height: 1.7; /* Better readability */
+    }
+
+    .desc ul {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+
+    .desc li {
+      margin-bottom: 0.5rem; /* Space between list items */
+    }
+
+    .desc strong {
+      color: #1f2937; /* Darker color for emphasis */
+    }
+
+    /* Modern CTA Section */
+    .cta {
+      text-align: center;
+      background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); /* Gradient background */
+      padding: 40px 20px;
+      border-radius: 16px;
+      margin: 40px 0; /* Consistent spacing */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Soft shadow */
+    }
+
+    .cta h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1e40af;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta p {
+      font-size: 1rem;
+      color: #4b5563;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta a {
+      display: inline-block; /* Make link block-like */
+      text-decoration: none;
+      background-color: #6366f1; /* Modern purple button */
+      color: white;
+      padding: 12px 30px;
+      border-radius: 8px; /* Slightly less rounded */
+      font-size: 1rem;
+      font-weight: 500;
+      transition: background-color 0.2s ease, transform 0.2s ease; /* Smooth hover */
+      box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3); /* Button shadow */
+    }
+
+    .cta a:hover {
+      background-color: #4f46e5; /* Darker purple on hover */
+      transform: translateY(-2px); /* Lift effect */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero-text h1 {
+        font-size: 2rem; /* Smaller heading on mobile */
+      }
+
+      .hero-text p {
+        font-size: 1rem;
+      }
+
+      .differentiators {
+        padding: 20px; /* Less padding on mobile */
+      }
+
+      .differentiators h2 {
+        font-size: 1.4rem; /* Smaller heading */
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -101,9 +259,7 @@
   </div>
 
   <!-- Download PDF Link -->
-  <div class="cta">
-    <a href="#" style="color: #555; text-decoration: none; font-size: 14px;">Download Privacy Policy (PDF)</a>
-  </div>
+
 
 </main>
 
