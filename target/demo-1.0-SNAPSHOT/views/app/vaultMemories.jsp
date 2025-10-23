@@ -110,7 +110,7 @@
             <h3 class="sidebar-title">Settings</h3>
             <ul class="settings-list">
                 <li class="setting-item">
-                    <a href="#" class="setting-link">
+                    <a href="vaultpassword" class="setting-link">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>

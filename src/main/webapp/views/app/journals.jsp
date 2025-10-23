@@ -2,31 +2,27 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.demo.web.model.Journal" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-
 <%
   List<Journal> journals = (List<Journal>) request.getAttribute("journals");
   Integer totalCount = (Integer) request.getAttribute("totalCount");
   Integer streakDays = (Integer) request.getAttribute("streakDays");
   String errorMessage = (String) request.getAttribute("error");
-
   // Set defaults
   if (totalCount == null) totalCount = 0;
   if (streakDays == null) streakDays = 0;
-
-  SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy");
+  // We don't have created_at anymore, so we'll use the title for display
+  // If titles were purely dates, you could parse them, but for now, we just display the title
+  // SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy"); // Not used now
 %>
-
 <jsp:include page="../public/header2.jsp" />
 <html>
 <body>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/journal.css">
-
 <!-- Wrap everything after header -->
 <div class="page-wrapper">
   <main class="main-content">
     <!-- Page Title -->
     <h1 class="page-title">Journals</h1>
-
     <!-- Search and Filters -->
     <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
       <div class="journals-search-container">
@@ -45,7 +41,6 @@
         Sort: Date
       </button>
     </div>
-
     <%-- Display Error Message --%>
     <% if (errorMessage != null) { %>
     <div class="alert alert-error" style="background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #c00;">
@@ -57,7 +52,6 @@
       <%= errorMessage %>
     </div>
     <% } %>
-
     <!-- All Journals Grid -->
     <div class="journals-grid" id="allJournalsGrid" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
       <%
@@ -73,29 +67,36 @@
       <%
       } else {
         for (Journal journal : journals) {
-          String formattedDate = displayFormat.format(journal.getCreatedAt());
-
-          // Get journal image or use placeholder
-          String imageUrl = journal.getJournalPic();
-          if (imageUrl != null && !imageUrl.isEmpty()) {
-            imageUrl = request.getContextPath() + "/" + imageUrl;
-          } else {
-            // Use a default journal placeholder image
-            imageUrl = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800";
-          }
+          // Use the title as the date representation (e.g., "24th October 2025")
+          String displayDate = journal.getTitle(); // Assuming title is the formatted date
 
           // Truncate content for preview (first 100 characters)
           String contentPreview = journal.getContent();
           if (contentPreview != null && contentPreview.length() > 100) {
-            contentPreview = contentPreview.substring(0, 100) + "...";
+            // Find the last space within the limit to avoid cutting words
+            int lastSpace = contentPreview.substring(0, 100).lastIndexOf(' ');
+            if (lastSpace != -1) {
+              contentPreview = contentPreview.substring(0, lastSpace) + "...";
+            } else {
+              contentPreview = contentPreview.substring(0, 100) + "...";
+            }
           }
       %>
       <div class="journal-card" data-title="<%= journal.getTitle() %>" data-journal-id="<%= journal.getJournalId() %>">
-        <div class="journal-image" style="background-image: url('<%= imageUrl %>')"></div>
+        <!-- Placeholder for image - using a default icon -->
+        <div class="journal-image-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
         <div class="journal-content">
           <h3 class="journal-title"><%= journal.getTitle() %></h3>
           <div class="journal-meta">
-            <span class="journal-date"><%= formattedDate %></span>
+            <span class="journal-date"><%= displayDate %></span>
           </div>
           <% if (contentPreview != null && !contentPreview.isEmpty()) { %>
           <p class="journal-preview" style="font-size: 0.875rem; color: #6b7280; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
@@ -110,7 +111,6 @@
       %>
     </div>
   </main>
-
   <aside class="sidebar">
     <!-- Streak Section -->
     <div class="sidebar-section streak-section">
@@ -123,7 +123,6 @@
         </div>
       </div>
     </div>
-
     <!-- Journal Stats Section -->
     <div class="sidebar-section">
       <h3 class="sidebar-title">Statistics</h3>
@@ -144,7 +143,6 @@
         </li>
       </ul>
     </div>
-
     <!-- Floating Action Buttons - Now static below sidebar -->
     <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
       <a href="/writejournal" class="floating-btn">
@@ -164,21 +162,16 @@
     </div>
   </aside>
 </div>
-
 <jsp:include page="../public/footer.jsp" />
-
 <script>
   // Modern Search Functionality for Journals Page
   document.addEventListener('DOMContentLoaded', function() {
     const journalsSearchBtn = document.getElementById('journalsSearchBtn');
-
     if (journalsSearchBtn) {
       journalsSearchBtn.addEventListener('click', function(event) {
         event.stopPropagation();
-
         const searchBtnElement = this;
         const searchContainer = searchBtnElement.parentElement;
-
         const searchBox = document.createElement('div');
         searchBox.className = 'journals-search-expanded';
         searchBox.innerHTML = `
@@ -196,12 +189,9 @@
             </svg>
           </button>
         `;
-
         searchContainer.replaceChild(searchBox, searchBtnElement);
-
         const input = searchBox.querySelector('input');
         input.focus();
-
         const closeSearch = () => {
           const newSearchBtn = document.createElement('button');
           newSearchBtn.className = 'journals-search-btn';
@@ -215,9 +205,7 @@
           searchContainer.replaceChild(newSearchBtn, searchBox);
           newSearchBtn.addEventListener('click', arguments.callee);
         };
-
         searchBox.querySelector('.journals-search-close').addEventListener('click', closeSearch);
-
         input.addEventListener('blur', function() {
           setTimeout(() => {
             if (!document.activeElement.closest('.journals-search-expanded')) {
@@ -225,12 +213,10 @@
             }
           }, 150);
         });
-
         searchBox.addEventListener('mousedown', function(e) {
           e.preventDefault();
           input.focus();
         });
-
         // Search functionality
         input.addEventListener('input', function(e) {
           const query = e.target.value.toLowerCase();
@@ -243,17 +229,15 @@
         });
       });
     }
-
     // Filter button handlers
     const dateSort = document.getElementById('dateSort');
-
     if (dateSort) {
       dateSort.addEventListener('click', function() {
         console.log('Sort by date clicked');
-        // Implement sorting logic here
+        // Implement sorting logic here (e.g., sort journals array by title/date)
+        // This might require more complex JavaScript or a server-side sort request
       });
     }
-
     // Journal card click handlers - redirect to journal view
     const journalCards = document.querySelectorAll('.journal-card');
     journalCards.forEach(card => {

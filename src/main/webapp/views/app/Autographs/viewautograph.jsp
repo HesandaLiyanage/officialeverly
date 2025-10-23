@@ -1,4 +1,4 @@
-// File: viewautograph.jsp (Updated Edit Link and Delete Form)
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="../../public/header2.jsp" />
 <html>

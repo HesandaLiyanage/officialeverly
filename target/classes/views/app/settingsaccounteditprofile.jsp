@@ -69,22 +69,22 @@
         <textarea name="bio" class="form-textarea" placeholder="Tell us about yourself"><%= currentUser.getBio() != null ? currentUser.getBio() : "" %></textarea>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Profile Picture</label>
-        <div class="profile-picture-preview">
-          <%
-            String profilePic = currentUser.getProfilePictureUrl();
-            if (profilePic != null && !profilePic.isEmpty()) {
-          %>
-          <img src="${pageContext.request.contextPath}/uploads/<%= profilePic %>"
-               alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
-          <% } else { %>
-          <div class="profile-avatar"></div>
-          <% } %>
-        </div>
-        <label for="profilePic" class="upload-picture-btn">Upload New Picture</label>
-        <input type="file" id="profilePic" name="profilePicture" accept="image/*" style="display: none;">
-      </div>
+<%--      <div class="form-group">--%>
+<%--        <label class="form-label">Profile Picture</label>--%>
+<%--        <div class="profile-picture-preview">--%>
+<%--          <%--%>
+<%--            String profilePic = currentUser.getProfilePictureUrl();--%>
+<%--            if (profilePic != null && !profilePic.isEmpty()) {--%>
+<%--          %>--%>
+<%--          <img src="${pageContext.request.contextPath}/uploads/<%= profilePic %>"--%>
+<%--               alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">--%>
+<%--          <% } else { %>--%>
+<%--          <div class="profile-avatar"></div>--%>
+<%--          <% } %>--%>
+<%--        </div>--%>
+<%--        <label for="profilePic" class="upload-picture-btn">Upload New Picture</label>--%>
+<%--        <input type="file" id="profilePic" name="profilePicture" accept="image/*" style="display: none;">--%>
+<%--      </div>--%>
 
       <div class="form-group">
         <label class="form-label-section">Password</label>

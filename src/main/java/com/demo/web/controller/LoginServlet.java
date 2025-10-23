@@ -76,6 +76,12 @@ public class LoginServlet extends HttpServlet {
                 handleRememberMe(user.getId(), response);
             }
 
+            // Check if admin user and redirect to admin page
+            if ("admin".equals(username)) {
+                response.sendRedirect(request.getContextPath() + "/admin");
+                return;
+            }
+
             // Redirect to original page or /memories
             String returnUrl = request.getParameter("return");
             if (returnUrl != null && !returnUrl.isEmpty()) {

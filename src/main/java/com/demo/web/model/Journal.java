@@ -1,6 +1,5 @@
+// File: com/demo/web/model/Journal.java
 package com.demo.web.model;
-
-import java.sql.Timestamp;
 
 public class Journal {
     private int journalId;
@@ -8,22 +7,17 @@ public class Journal {
     private String content;
     private int userId;
     private String journalPic;  // Optional picture for the journal entry
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
 
     // Constructors
     public Journal() {
     }
 
-    public Journal(int journalId, String title, String content, int userId, String journalPic,
-                   Timestamp createdAt, Timestamp updatedAt) {
+    public Journal(int journalId, String title, String content, int userId, String journalPic) {
         this.journalId = journalId;
         this.title = title;
         this.content = content;
         this.userId = userId;
         this.journalPic = journalPic;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     // Getters and Setters
@@ -67,22 +61,6 @@ public class Journal {
         this.journalPic = journalPic;
     }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     @Override
     public String toString() {
         return "Journal{" +
@@ -91,8 +69,6 @@ public class Journal {
                 ", content='" + content + '\'' +
                 ", userId=" + userId +
                 ", journalPic='" + journalPic + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

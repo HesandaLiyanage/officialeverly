@@ -3,7 +3,7 @@
 <jsp:include page="../public/header2.jsp" />
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/publicfeed.css">
 </head>
 <body>
 
@@ -23,7 +23,7 @@
                     </div>
 
                 </div>
-                <a href="/userprofile" class="profile-link">
+                <a href="publicprofile.jsp" class="profile-link">
                     <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face"
                          alt="Profile" class="profile-pic">
                 </a>
@@ -219,11 +219,11 @@
                             </svg>
                         </button>
                     </div>
-                    <button class="action-btn bookmark-btn">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                    </button>
+<%--                    <button class="action-btn bookmark-btn">--%>
+<%--                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">--%>
+<%--                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>--%>
+<%--                        </svg>--%>
+<%--                    </button>--%>
                 </div>
 
                 <div class="post-info">
@@ -497,6 +497,10 @@
                 }
             });
         });
+    });
+
+    document.querySelector(".view-comments").addEventListener("click", function() {
+        window.open("/comments");
     });
 </script>
 </body>

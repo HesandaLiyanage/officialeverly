@@ -112,6 +112,24 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/editevent", "/views/app/editevent.jsp");
         routeToJsp.put("/memoryview", "/views/app/memoryview.jsp");
         routeToJsp.put("/memoryrecap", "/views/app/memoryrecap.jsp");
+        routeToJsp.put("/writejournal", "/views/app/writejournal.jsp");
+        routeToJsp.put("/vaultjournals", "/views/app/vaultjournals.jsp");
+        routeToJsp.put("/feed", "/views/app/publicfeed.jsp");
+        routeToJsp.put("/userprofile", "/views/app/userprofile.jsp");
+        routeToJsp.put("/followers", "/views/app/followers.jsp");
+        routeToJsp.put("/following", "/views/app/following.jsp");
+        routeToJsp.put("/followerprofile", "/views/app/followerprofile.jsp");
+        routeToJsp.put("/followingprofile", "/views/app/followingprofile.jsp");
+        routeToJsp.put("/feedcomment", "/views/app/feedcomment.jsp");
+        routeToJsp.put("/vaultpassword", "/views/app/vaultpassword.jsp");
+        routeToJsp.put("/comments", "/views/app/feedcomment.jsp");
+        routeToJsp.put("/publicprofile", "/views/app/userprofile.jsp");
+        routeToJsp.put("/feededitprofile", "/views/app/editpublicprofile.jsp");
+        routeToJsp.put("/blockedusers", "/views/app/blockedusers.jsp");
+
+
+        routeToJsp.put("/admin", "/views/app/Admin/adminuser.jsp");
+
 
 
 
@@ -132,7 +150,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/createevent", new CreateEventLogicHandler());
         routeToLogic.put("/editevent", new EditEventLogicHandler());  // ADD THIS LINE
         routeToLogic.put("/journals", new JournalListLogicHandler());  // ADD THIS LINE
-
+        routeToLogic.put("/journalview", new JournalViewLogicHandler());  // ADD THIS LINE
+        routeToLogic.put("/editjournal", new EditJournalLogicHandler());
 
         // Remove this if using servlet
 
@@ -726,6 +745,7 @@ public class FrontControllerServlet extends HttpServlet {
             }
         }
     }
+    // Inner class implementing the logic for /journals
     private static class JournalListLogicHandler implements LogicHandler {
         private JournalDAO journalDAO;
 
@@ -736,16 +756,13 @@ public class FrontControllerServlet extends HttpServlet {
         @Override
         public void execute(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
-
             System.out.println("[DEBUG JournalListLogicHandler] Handling /journals request");
-
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
                 System.out.println("[DEBUG JournalListLogicHandler] No session, redirecting to login");
                 response.sendRedirect(request.getContextPath() + "/login");
                 return;
             }
-
             Integer userId = (Integer) session.getAttribute("user_id");
             System.out.println("[DEBUG JournalListLogicHandler] User ID: " + userId);
 
@@ -768,7 +785,6 @@ public class FrontControllerServlet extends HttpServlet {
 
                 System.out.println("[DEBUG JournalListLogicHandler] Forwarding to journals.jsp");
                 request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
-
             } catch (Exception e) {
                 System.out.println("[DEBUG JournalListLogicHandler] Error: " + e.getMessage());
                 e.printStackTrace();
@@ -780,16 +796,176 @@ public class FrontControllerServlet extends HttpServlet {
         /**
          * Calculate journal streak (consecutive days with entries)
          * This is a simple implementation - you can enhance it later
+         * Note: Since we don't have timestamps, this is a placeholder.
+         * You could potentially parse the date from the title string if needed.
          */
         private int calculateStreak(List<Journal> journals) {
             if (journals == null || journals.isEmpty()) {
                 return 0;
             }
+            // Placeholder: Return a fixed number or a count-based number
+            // For a real streak, you'd need actual date information
+            // You could parse the title string "24th October 2025" to determine dates
+            // For now, just return a simple placeholder
+            return journals.size() > 0 ? 7 : 0; // Example: assume 7 days if they have entries
+        }
 
-            // For now, just return a placeholder
-            // You can implement proper streak calculation based on created_at dates
-            return journals.size() > 0 ? 7 : 0; // Placeholder: 7 days if they have any journals
+
+    }
+
+    // Inner class implementing the logic for /journalview
+    // Inner class implementing the logic for /journalview
+    private static class JournalViewLogicHandler implements LogicHandler {
+        private JournalDAO journalDAO;
+
+        public JournalViewLogicHandler() {
+            this.journalDAO = new JournalDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            System.out.println("[DEBUG JournalViewLogicHandler] Handling /journalview request");
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                System.out.println("[DEBUG JournalViewLogicHandler] No session, redirecting to login");
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+            Integer userId = (Integer) session.getAttribute("user_id");
+
+            // Get journal ID from request parameter
+            String journalIdParam = request.getParameter("id");
+            if (journalIdParam == null || journalIdParam.trim().isEmpty()) {
+                System.out.println("[DEBUG JournalViewLogicHandler] Journal ID parameter is missing");
+                request.setAttribute("error", "Journal ID is required.");
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to journals list
+                return;
+            }
+
+            int journalId;
+            try {
+                journalId = Integer.parseInt(journalIdParam);
+            } catch (NumberFormatException e) {
+                System.out.println("[DEBUG JournalViewLogicHandler] Invalid journal ID format: " + journalIdParam);
+                request.setAttribute("error", "Invalid Journal ID.");
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to journals list
+                return;
+            }
+
+            System.out.println("[DEBUG JournalViewLogicHandler] User ID: " + userId + ", Requested Journal ID: " + journalId);
+
+            try {
+                // Fetch the specific journal
+                Journal journal = journalDAO.findById(journalId);
+
+                if (journal == null) {
+                    System.out.println("[DEBUG JournalViewLogicHandler] Journal not found with ID: " + journalId);
+                    request.setAttribute("error", "Journal entry not found.");
+                    request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to journals list
+                    return;
+                }
+
+                // Security check: Ensure the journal belongs to the current user
+                if (journal.getUserId() != userId) {
+                    System.out.println("[DEBUG JournalViewLogicHandler] User " + userId + " tried to access journal " + journalId + " which belongs to user " + journal.getUserId());
+                    request.setAttribute("error", "You do not have permission to view this journal entry.");
+                    request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to journals list
+                    return;
+                }
+
+                System.out.println("[DEBUG JournalViewLogicHandler] Found journal: " + journal.getTitle());
+
+                // Set the journal object as a request attribute for the JSP
+                request.setAttribute("journal", journal);
+
+                // Forward to the view JSP
+                System.out.println("[DEBUG JournalViewLogicHandler] Forwarding to journalview.jsp");
+                request.getRequestDispatcher("/views/app/journalview.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                System.out.println("[DEBUG JournalViewLogicHandler] Error fetching journal: " + e.getMessage());
+                e.printStackTrace();
+                request.setAttribute("error", "An error occurred while loading the journal entry: " + e.getMessage());
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or show a specific error page
+            }
         }
     }
 
+    // Inner class implementing the logic for /editjournal
+    // Inner class implementing the logic for /editjournal
+    private static class EditJournalLogicHandler implements LogicHandler {
+        private JournalDAO journalDAO;
+
+        public EditJournalLogicHandler() {
+            this.journalDAO = new JournalDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            System.out.println("[DEBUG EditJournalLogicHandler] Handling /editjournal request");
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                System.out.println("[DEBUG EditJournalLogicHandler] No session, redirecting to login");
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+            Integer userId = (Integer) session.getAttribute("user_id");
+
+            // Get journal ID from request parameter
+            String journalIdParam = request.getParameter("id"); // Use 'id' as the parameter name for consistency
+            if (journalIdParam == null || journalIdParam.trim().isEmpty()) {
+                System.out.println("[DEBUG EditJournalLogicHandler] Journal ID parameter is missing");
+                request.setAttribute("error", "Journal ID is required.");
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
+                return;
+            }
+
+            int journalId;
+            try {
+                journalId = Integer.parseInt(journalIdParam);
+            } catch (NumberFormatException e) {
+                System.out.println("[DEBUG EditJournalLogicHandler] Invalid journal ID format: " + journalIdParam);
+                request.setAttribute("error", "Invalid Journal ID.");
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
+                return;
+            }
+
+            System.out.println("[DEBUG EditJournalLogicHandler] User ID: " + userId + ", Requested Journal ID: " + journalId);
+
+            try {
+                // Fetch the specific journal
+                Journal journal = journalDAO.findById(journalId);
+
+                if (journal == null) {
+                    System.out.println("[DEBUG EditJournalLogicHandler] Journal not found with ID: " + journalId);
+                    request.setAttribute("error", "Journal entry not found.");
+                    request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
+                    return;
+                }
+
+                // Security check: Ensure the journal belongs to the current user
+                if (journal.getUserId() != userId) {
+                    System.out.println("[DEBUG EditJournalLogicHandler] User " + userId + " tried to access journal " + journalId + " which belongs to user " + journal.getUserId());
+                    request.setAttribute("error", "You do not have permission to edit this journal entry.");
+                    request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
+                    return;
+                }
+
+                System.out.println("[DEBUG EditJournalLogicHandler] Found journal: " + journal.getTitle());
+
+                // Set the journal object as a request attribute for the JSP
+                request.setAttribute("journal", journal);
+
+                // Forward to the edit JSP
+                System.out.println("[DEBUG EditJournalLogicHandler] Forwarding to editjournal.jsp");
+                request.getRequestDispatcher("/views/app/editjournal.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                System.out.println("[DEBUG EditJournalLogicHandler] Error fetching journal: " + e.getMessage());
+                e.printStackTrace();
+                request.setAttribute("error", "An error occurred while loading the journal entry: " + e.getMessage());
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
+            }
+        }
+    }
 }

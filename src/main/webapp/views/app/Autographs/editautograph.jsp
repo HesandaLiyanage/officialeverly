@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
+
     <title>Create Autograph Book</title>
-=======
+
     <title>Edit Autograph Book</title>
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/autograph.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -19,17 +19,17 @@
 <div class="page-wrapper">
     <div class="create-autograph-container">
         <h1 class="page-title">Edit Autograph Book</h1>
-<<<<<<< HEAD
+
         <p class="page-subtitle">Update your book details and keep your cherished memories alive.</p>
 
-        <form class="autograph-form" id="autographForm" action="saveBook.jsp" method="post" enctype="multipart/form-data">
-=======
+        <form class="autograph-form" id="autographForm" action="/updateautograph" method="post" enctype="multipart/form-data">
+
         <p class="page-subtitle">Update the details below to edit your book and keep your memories up to date.</p>
 
         <form class="autograph-form" id="autographForm" action="${pageContext.request.contextPath}/updateautograph" method="post" enctype="multipart/form-data">
             <!-- FIXED: Use EL to get ID from the autograph object in request scope -->
             <input type="hidden" name="autographId" value="${autograph.autographId}" />
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
 
             <!-- Book Title Input -->
             <div class="form-group">
@@ -40,11 +40,9 @@
                         name="bookTitle"
                         id="bookTitle"
                         placeholder="e.g., Graduation 2024, Summer Vacation"
-<<<<<<< HEAD
-=======
                         value="${autograph.title}"
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
-                        required
+
+
                 />
             </div>
 
@@ -57,11 +55,11 @@
                         id="description"
                         placeholder="A short description of your book's theme"
                         rows="4"
-<<<<<<< HEAD
-                ></textarea>
-=======
-                >${autograph.description}</textarea>
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
+                </textarea>
+
+                ${autograph.description} </textarea>
+
             </div>
 
             <!-- Cover Image Upload Area -->
@@ -89,9 +87,9 @@
                                 hidden
                         />
                     </div>
-<<<<<<< HEAD
+
                     <div class="preview-container" id="previewContainer"></div>
-=======
+
                     <div class="preview-container" id="previewContainer">
                         <!-- Pre-populate preview if an image exists -->
                         <% if (request.getAttribute("autograph") != null && ((com.demo.web.model.autograph)request.getAttribute("autograph")).getAutographPicUrl() != null) {
@@ -108,7 +106,7 @@
                         </div>
                         <% } %>
                     </div>
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
                 </div>
             </div>
 
@@ -123,10 +121,9 @@
                             name="customLink"
                             id="customLink"
                             placeholder="yourname"
-<<<<<<< HEAD
-=======
+
                             value="${autograph.title}"
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
                             required
                     />
                     <button type="button" class="copy-btn" id="copyBtn" title="Copy link">
@@ -136,7 +133,7 @@
                         </svg>
                     </button>
                 </div>
-<<<<<<< HEAD
+
                 <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/username/name your auto!!!</p>
             </div>
 
@@ -162,14 +159,14 @@
                         Sticker
                     </button>
                 </div>
-=======
+
                 <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/<span id="linkDisplayValue">${autograph.title}</span></p>
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
             </div>
 
             <!-- Submit Buttons -->
             <div class="form-actions">
-<<<<<<< HEAD
+
                 <button type="button" class="cancel-btn" onclick="window.location.href='/autographbooks'">
                     Cancel
                 </button>
@@ -177,7 +174,7 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12" />
-=======
+
                 <button type="button" class="cancel-btn" onclick="window.location.href='/autographs'">
                     Cancel
                 </button>
@@ -186,14 +183,14 @@
                         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                         <polyline points="17 21 17 13 7 13 7 21"></polyline>
                         <polyline points="7 3 7 8 15 8"></polyline>
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
                     </svg>
                     Save Changes
                 </button>
             </div>
-
+        <svg/>
         </form>
-    </div>
+    <form/></div>
 </div>
 
 <jsp:include page="../../public/footer.jsp" />
@@ -204,9 +201,9 @@
         const fileInput = document.getElementById('fileInput');
         const browseBtn = document.getElementById('browseBtn');
         const previewContainer = document.getElementById('previewContainer');
-<<<<<<< HEAD
+
         const autographForm = document.getElementById('autographForm');
-=======
+
         const customLinkInput = document.getElementById('customLink');
         const linkDisplayValue = document.getElementById('linkDisplayValue');
 
@@ -214,7 +211,7 @@
         customLinkInput.addEventListener('input', function() {
             linkDisplayValue.textContent = this.value;
         });
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
 
         // Browse button click
         browseBtn.addEventListener('click', function(e) {
@@ -255,11 +252,10 @@
         function handleFiles(files) {
             if (files.length === 0) return;
 
-<<<<<<< HEAD
+
             const file = files[0]; // Only take first file for cover image
-=======
+
             const file = files[0];
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
 
             if (!file.type.startsWith('image/')) {
                 alert('Please upload an image file');
@@ -293,7 +289,7 @@
             uploadArea.classList.remove('has-files');
             fileInput.value = '';
         };
-<<<<<<< HEAD
+
 
         // Tag removal
         const tagRemoveButtons = document.querySelectorAll('.tag-remove');
@@ -325,8 +321,7 @@
             // Redirect
             window.location.href = '/autographbooks';
         });
-=======
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
     });
 </script>
 

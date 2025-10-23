@@ -108,6 +108,51 @@
         <servlet-name>DeleteEventServlet</servlet-name>
         <url-pattern>/deleteEvent</url-pattern>
     </servlet-mapping>
+    <!-- Add these three servlets -->
+    <servlet>
+        <servlet-name>CreateJournalServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.CreateJournalServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateJournalServlet</servlet-name>
+        <url-pattern>/createjournal</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DeleteJournalServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.DeleteJournalServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteJournalServlet</servlet-name>
+        <url-pattern>/deletejournal</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditJournalServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.EditJournalServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditJournalServlet</servlet-name>
+        <url-pattern>/editjournal</url-pattern> <!-- This handles the POST submission -->
+    </servlet-mapping>
+
+<!--    <servlet>-->
+<!--        <servlet-name>UpdateJournalServlet</servlet-name>-->
+<!--        <servlet-class>com.demo.web.controller.UpdateJournalServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>UpdateJournalServlet</servlet-name>-->
+<!--        <url-pattern>/updatejournal</url-pattern>-->
+<!--    </servlet-mapping>-->
+
+<!--    <servlet>-->
+<!--        <servlet-name>DeleteJournalServlet</servlet-name>-->
+<!--        <servlet-class>com.demo.web.controller.DeleteJournalServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>DeleteJournalServlet</servlet-name>-->
+<!--        <url-pattern>/deletejournal</url-pattern>-->
+<!--    </servlet-mapping>-->
 
     <!-- Servlet for updating autographs -->
     <servlet>
