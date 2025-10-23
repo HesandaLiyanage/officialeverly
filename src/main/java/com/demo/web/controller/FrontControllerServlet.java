@@ -73,12 +73,12 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/profile", "/views/app/profile.jsp");
         routeToJsp.put("/autographs", "/views/app/Autographs/autographcontent.jsp");
         routeToJsp.put("/journals", "/views/app/journals.jsp");
-<<<<<<< HEAD
+
         routeToJsp.put("/collabmemories", "/views/app/collabmemories.jsp");
         routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp"); // No specific logic needed here, just the static page
-=======
+
         routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp");
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
+
         routeToJsp.put("/settingsnotifications", "/views/app/settingsnotifications.jsp");
         routeToJsp.put("/settingsprivacy", "/views/app/settingsprivacy.jsp");
         routeToJsp.put("/storagesense", "/views/app/storagesense.jsp");
@@ -88,24 +88,18 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/vaultPassword", "/views/app/vaultPassword.jsp");
         routeToJsp.put("/vaultSetup", "/views/app/vaultSetup.jsp");
         routeToJsp.put("/autographview", "/views/app/Autographs/viewautograph.jsp");
-<<<<<<< HEAD
         routeToJsp.put("/journalview", "/views/app/journalview.jsp");
         routeToJsp.put("/memoryview", "/views/app/memoryview.jsp");
         routeToJsp.put("/collabmemoryview", "/views/app/collabmemoryview.jsp");
         routeToJsp.put("/editautograph", "/views/app/Autographs/editautograph.jsp");
-=======
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
         routeToJsp.put("/addautograph", "/views/app/Autographs/addautograph.jsp");
         routeToJsp.put("/duplicatefinder", "/views/app/duplicatefinder.jsp");
         routeToJsp.put("/morethemes", "/views/app/morethemes.jsp");
         routeToJsp.put("/sharedlinks", "/views/app/sharedlinks.jsp");
         routeToJsp.put("/trashmgt", "/views/app/trashmgt.jsp");
         routeToJsp.put("/notifications", "/views/app/notifications.jsp");
-<<<<<<< HEAD
         routeToJsp.put("/groups", "/views/app/groupdashboard.jsp");
         routeToJsp.put("/editgroup", "/views/app/editgroup.jsp");
-=======
->>>>>>> 4869b6cb515fbf26ecaf4e43940f83534fee86dc
         routeToJsp.put("/groupprofile", "/views/app/groupprofile.jsp");
         routeToJsp.put("/groupmemories", "/views/app/groupmemories.jsp");
         routeToJsp.put("/groupmembers", "/views/app/groupmembers.jsp");
