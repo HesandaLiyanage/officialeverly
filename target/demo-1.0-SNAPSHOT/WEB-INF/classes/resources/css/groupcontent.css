@@ -971,3 +971,33 @@ body {
         height: 16px;
     }
 }
+
+.floating-btn.edit-btn {
+    background: #EADDFF;
+    color: #9A74D8;
+    box-shadow: 0 4px 14px rgba(234, 221, 255, 0.5);
+}
+
+.floating-btn.edit-btn:hover {
+    background: #FFFFFF;
+    color: #8a64c8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(234, 221, 255, 0.6);
+}
+
+.floating-btn.delete-btn {
+    background: #fee2e2;
+    color: #dc2626;
+    box-shadow: 0 4px 14px rgba(254, 226, 226, 0.5);
+}
+
+.floating-btn.delete-btn:hover {
+    background: #fecaca;
+    color: #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(254, 202, 202, 0.6);
+}
+
+.floating-btn.delete-btn:active {
+    transform: translateY(0);
+}

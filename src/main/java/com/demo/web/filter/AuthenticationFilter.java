@@ -25,6 +25,7 @@ public class AuthenticationFilter implements Filter {
                 "/loginservlet",
                 "linkeddevicesservlet",
                 "editprofileservlet",
+                "/saveEvent",
                 "/signup",
                 "/signup2",
                 "/signupservlet",

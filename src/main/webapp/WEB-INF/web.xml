@@ -75,6 +75,31 @@
         <url-pattern>/deleteautograph</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>SaveEventServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.CreateEventServlet</servlet-class>
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>        <!-- 10MB -->
+            <max-request-size>52428800</max-request-size>   <!-- 50MB -->
+            <file-size-threshold>2097152</file-size-threshold> <!-- 2MB -->
+        </multipart-config>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SaveEventServlet</servlet-name>
+        <url-pattern>/saveEvent</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DeleteEventServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.DeleteEventServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DeleteEventServlet</servlet-name>
+        <url-pattern>/deleteEvent</url-pattern>
+    </servlet-mapping>
+
     <!-- Servlet for updating autographs -->
     <servlet>
         <servlet-name>UpdateAutographServlet</servlet-name>
@@ -83,6 +108,52 @@
     <servlet-mapping>
         <servlet-name>UpdateAutographServlet</servlet-name>
         <url-pattern>/updateautograph</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>creategroup</servlet-name>
+        <servlet-class>com.demo.web.controller.CreateGroupServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>creategroup</servlet-name>
+        <url-pattern>/creategroupservlet</url-pattern>  <!-- or /process-login if you want different URL -->
+    </servlet-mapping>
+
+
+
+    <servlet>
+        <servlet-name>deletegroupservlet</servlet-name>
+        <servlet-class>com.demo.web.controller.DeleteGroupServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deletegroupservlet</servlet-name>
+        <url-pattern>/deletegroupservlet</url-pattern>  <!-- or /process-login if you want different URL -->
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>editgroupservlet</servlet-name>
+        <servlet-class>com.demo.web.controller.EditGroupServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>editgroupservlet</servlet-name>
+        <url-pattern>/editgroupservlet</url-pattern>  <!-- or /process-login if you want different URL -->
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UpdateEventServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.UpdateEventServlet</servlet-class>
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>
+            <max-request-size>52428800</max-request-size>
+            <file-size-threshold>2097152</file-size-threshold>
+        </multipart-config>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UpdateEventServlet</servlet-name>
+        <url-pattern>/updateEvent</url-pattern>
     </servlet-mapping>
 
     <servlet>
