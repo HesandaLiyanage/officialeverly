@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.demo.web.model.Group" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,22 +14,62 @@
 
 <jsp:include page="../public/header2.jsp" />
 
+<%
+    List<Group> userGroups = (List<Group>) request.getAttribute("userGroups");
+    String errorMessage = (String) request.getAttribute("error");
+
+    // Check for error message in session (from redirect after failed submission)
+    if (errorMessage == null) {
+        errorMessage = (String) session.getAttribute("errorMessage");
+        if (errorMessage != null) {
+            session.removeAttribute("errorMessage");
+        }
+    }
+
+    // Get form data from session if validation failed (to preserve user input)
+    String savedTitle = (String) session.getAttribute("formData_e_title");
+    String savedDescription = (String) session.getAttribute("formData_e_description");
+    String savedDate = (String) session.getAttribute("formData_e_date");
+    String savedGroupId = (String) session.getAttribute("formData_group_id");
+
+    // Clear form data from session after reading
+    if (savedTitle != null) {
+        session.removeAttribute("formData_e_title");
+        session.removeAttribute("formData_e_description");
+        session.removeAttribute("formData_e_date");
+        session.removeAttribute("formData_group_id");
+    }
+%>
+
 <div class="page-wrapper">
     <div class="create-event-container">
         <h1 class="page-title">Create a New Event</h1>
         <p class="page-subtitle">Plan and share special moments with your group members.</p>
 
-        <form class="event-form" id="eventForm" action="saveEvent.jsp" method="post" enctype="multipart/form-data">
+        <%-- Display Error Message --%>
+        <% if (errorMessage != null) { %>
+        <div class="alert alert-error" style="background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #c00;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <%= errorMessage %>
+        </div>
+        <% } %>
+
+        <form class="event-form" id="eventForm" action="${pageContext.request.contextPath}/saveEvent" method="post" enctype="multipart/form-data">
 
             <!-- Event Title Input -->
             <div class="form-group">
-                <label class="form-label">Event Title</label>
+                <label class="form-label">Event Title <span style="color: #ef4444;">*</span></label>
                 <input
                         type="text"
                         class="form-input"
                         name="e_title"
                         id="e_title"
                         placeholder="e.g., Birthday Party, Family Reunion"
+                        value="<%= savedTitle != null ? savedTitle : "" %>"
                         required
                 />
             </div>
@@ -41,36 +83,56 @@
                         id="e_description"
                         placeholder="Describe the event and what makes it special"
                         rows="4"
-                ></textarea>
+                ><%= savedDescription != null ? savedDescription : "" %></textarea>
             </div>
 
             <!-- Event Date -->
             <div class="form-group">
-                <label class="form-label">Event Date</label>
+                <label class="form-label">Event Date <span style="color: #ef4444;">*</span></label>
                 <input
                         type="date"
                         class="form-input"
                         name="e_date"
                         id="e_date"
+                        value="<%= savedDate != null ? savedDate : "" %>"
                         required
                 />
             </div>
 
             <!-- Select Group -->
             <div class="form-group">
-                <label class="form-label">Select Group</label>
+                <label class="form-label">Select Group <span style="color: #ef4444;">*</span></label>
                 <select
                         class="form-input form-select"
                         name="group_id"
                         id="group_id"
                         required
                 >
-                    <option value="" disabled selected>Choose a group</option>
-                    <!-- Groups will be populated dynamically -->
-                    <option value="1">Smith Family</option>
-                    <option value="2">College Friends</option>
-                    <option value="3">Work Team</option>
+                    <option value="" disabled <%= (savedGroupId == null) ? "selected" : "" %>>Choose a group</option>
+                    <%
+                        if (userGroups != null && !userGroups.isEmpty()) {
+                            for (Group group : userGroups) {
+                                boolean isSelected = savedGroupId != null &&
+                                        savedGroupId.equals(String.valueOf(group.getGroupId()));
+                    %>
+                    <option value="<%= group.getGroupId() %>" <%= isSelected ? "selected" : "" %>>
+                        <%= group.getName() %>
+                    </option>
+                    <%
+                        }
+                    } else {
+                    %>
+                    <option value="" disabled>No groups available</option>
+                    <% } %>
                 </select>
+                <% if (userGroups == null || userGroups.isEmpty()) { %>
+                <p style="font-size: 0.875rem; color: #f59e0b; margin-top: 8px;">
+                    You don't have any groups yet.
+                    <a href="${pageContext.request.contextPath}/creategroup" style="color: #6366f1; text-decoration: underline;">
+                        Create a group first
+                    </a>
+                </p>
+                <% } %>
             </div>
 
             <!-- Event Picture Upload Area -->
@@ -102,24 +164,12 @@
                 </div>
             </div>
 
-            <!-- Event Location (Optional) -->
-            <div class="form-group">
-                <label class="form-label">Location (Optional)</label>
-                <input
-                        type="text"
-                        class="form-input"
-                        name="e_location"
-                        id="e_location"
-                        placeholder="e.g., Central Park, 123 Main Street"
-                />
-            </div>
-
             <!-- Submit Buttons -->
             <div class="form-actions">
-                <button type="button" class="cancel-btn" onclick="window.location.href='/events'">
+                <button type="button" class="cancel-btn" onclick="window.location.href='/saveEvent'">
                     Cancel
                 </button>
-                <button type="submit" class="submit-btn">
+                <button type="submit" class="submit-btn" id="submitBtn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 5v14M5 12h14"/>
                     </svg>
@@ -140,6 +190,7 @@
         const browseBtn = document.getElementById('browseBtn');
         const previewContainer = document.getElementById('previewContainer');
         const eventForm = document.getElementById('eventForm');
+        const submitBtn = document.getElementById('submitBtn');
 
         // File upload functionality
         browseBtn.addEventListener('click', function(e) {
@@ -178,8 +229,18 @@
 
             const file = files[0];
 
+            // Validate file type
             if (!file.type.startsWith('image/')) {
-                alert('Please upload an image file');
+                alert('Please upload an image file (PNG, JPG, or GIF)');
+                fileInput.value = '';
+                return;
+            }
+
+            // Validate file size (10MB)
+            const maxSize = 10 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('File size must be less than 10MB');
+                fileInput.value = '';
                 return;
             }
 
@@ -215,25 +276,51 @@
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);
 
-        // Form submission
+        // Form validation and submission
         eventForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+            const title = document.getElementById('e_title').value.trim();
+            const date = document.getElementById('e_date').value;
+            const groupId = document.getElementById('group_id').value;
 
-            const formData = new FormData(eventForm);
+            if (!title) {
+                e.preventDefault();
+                alert('Please enter an event title');
+                return false;
+            }
 
-            console.log('Form submitted');
-            console.log('Event Title:', formData.get('e_title'));
-            console.log('Description:', formData.get('e_description'));
-            console.log('Event Date:', formData.get('e_date'));
-            console.log('Group ID:', formData.get('group_id'));
-            console.log('Event Picture:', fileInput.files[0]);
+            if (!date) {
+                e.preventDefault();
+                alert('Please select an event date');
+                return false;
+            }
 
-            // TODO: Submit to server
-            // For now, redirect
-            window.location.href = '/events';
+            if (!groupId) {
+                e.preventDefault();
+                alert('Please select a group');
+                return false;
+            }
+
+            // Disable submit button to prevent double submission
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+                Creating...
+            `;
+
+            // Let the form submit naturally
+            return true;
         });
     });
 </script>
+
+<style>
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
 
 </body>
 </html>

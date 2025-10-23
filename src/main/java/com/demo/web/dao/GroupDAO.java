@@ -1,7 +1,7 @@
 package com.demo.web.dao;
 
 import com.demo.web.model.Group;
-import com.demo.web.model.GroupMember; // Assuming GroupMember model exists
+import com.demo.web.model.GroupMember;
 import com.demo.web.util.DatabaseUtil;
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class GroupDAO {
      * Create a new group
      */
     public boolean createGroup(Group group) {
-        String sql = "INSERT INTO \"group\" (g_name, g_description, created_at, user_id, group_pic) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO \"group\" (g_name, g_description, created_at, user_id, group_pic, group_url) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, group.getName());
@@ -28,6 +28,7 @@ public class GroupDAO {
             stmt.setTimestamp(3, group.getCreatedAt() != null ? group.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
             stmt.setInt(4, group.getUserId());
             stmt.setString(5, group.getGroupPicUrl());
+            stmt.setString(6, group.getGroupUrl());
             int rowsInserted = stmt.executeUpdate();
             System.out.println("[DEBUG GroupDAO] createGroup affected " + rowsInserted + " rows.");
             return rowsInserted > 0;
@@ -42,7 +43,7 @@ public class GroupDAO {
      * Get group by ID
      */
     public Group findById(int groupId) {
-        String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic FROM \"group\" WHERE group_id = ?";
+        String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE group_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);
@@ -66,7 +67,7 @@ public class GroupDAO {
      * Get all groups by a specific user
      */
     public List<Group> findByUserId(int userId) {
-        String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic FROM \"group\" WHERE user_id = ?";
+        String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE user_id = ?";
         List<Group> groups = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -82,6 +83,51 @@ public class GroupDAO {
             throw new RuntimeException("Error while fetching groups by user ID", e);
         }
         return groups;
+    }
+
+    /**
+     * Get group by URL
+     */
+    public Group findByUrl(String groupUrl) {
+        String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE group_url = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, groupUrl);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Group result = mapResultSetToGroup(rs);
+                System.out.println("[DEBUG GroupDAO] findByUrl('" + groupUrl + "') returned: " + result);
+                return result;
+            } else {
+                System.out.println("[DEBUG GroupDAO] findByUrl('" + groupUrl + "') returned null (record not found).");
+            }
+        } catch (SQLException e) {
+            System.out.println("[DEBUG GroupDAO] Error while fetching group by URL '" + groupUrl + "': " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error while fetching group by URL", e);
+        }
+        return null;
+    }
+
+    /**
+     * Check if group URL already exists
+     */
+    public boolean isUrlTaken(String groupUrl) {
+        String sql = "SELECT COUNT(*) as url_count FROM \"group\" WHERE group_url = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, groupUrl);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt("url_count");
+                System.out.println("[DEBUG GroupDAO] isUrlTaken('" + groupUrl + "') returned: " + (count > 0));
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("[DEBUG GroupDAO] Error while checking if URL is taken '" + groupUrl + "': " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -111,14 +157,15 @@ public class GroupDAO {
      * Update an existing group
      */
     public boolean updateGroup(Group group) {
-        String sql = "UPDATE \"group\" SET g_name = ?, g_description = ?, group_pic = ? WHERE group_id = ?";
+        String sql = "UPDATE \"group\" SET g_name = ?, g_description = ?, group_pic = ?, group_url = ? WHERE group_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, group.getName());
             stmt.setString(2, group.getDescription());
             stmt.setString(3, group.getGroupPicUrl());
-            stmt.setInt(4, group.getGroupId());
-            System.out.println("[DEBUG GroupDAO] updateGroup preparing statement with values - Name: '" + group.getName() + "', Description: '" + group.getDescription() + "', Pic URL: '" + group.getGroupPicUrl() + "', ID: " + group.getGroupId());
+            stmt.setString(4, group.getGroupUrl());
+            stmt.setInt(5, group.getGroupId());
+            System.out.println("[DEBUG GroupDAO] updateGroup preparing statement with values - Name: '" + group.getName() + "', Description: '" + group.getDescription() + "', Pic URL: '" + group.getGroupPicUrl() + "', Group URL: '" + group.getGroupUrl() + "', ID: " + group.getGroupId());
             int rowsUpdated = stmt.executeUpdate();
             System.out.println("[DEBUG GroupDAO] updateGroup executed. Rows affected: " + rowsUpdated + " for ID: " + group.getGroupId());
             return rowsUpdated > 0;
@@ -170,6 +217,7 @@ public class GroupDAO {
         group.setCreatedAt(rs.getTimestamp("created_at"));
         group.setUserId(rs.getInt("user_id"));
         group.setGroupPicUrl(rs.getString("group_pic"));
+        group.setGroupUrl(rs.getString("group_url"));
         return group;
     }
 }

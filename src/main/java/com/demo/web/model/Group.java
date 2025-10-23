@@ -1,6 +1,6 @@
 package com.demo.web.model;
 
-import java.sql.Timestamp; // Assuming created_at is a timestamp
+import java.sql.Timestamp;
 import java.util.List;
 
 public class Group {
@@ -10,6 +10,7 @@ public class Group {
     private Timestamp createdAt; // Maps to 'created_at' in DB
     private int userId; // Maps to 'user_id' in DB (creator)
     private String groupPicUrl; // Maps to 'group_pic' in DB
+    private String groupUrl; // Maps to 'group_url' in DB
     private List<GroupMember> members; // list of group members
 
     // Default constructor
@@ -17,13 +18,14 @@ public class Group {
     }
 
     // Constructor with parameters (excluding members list)
-    public Group(int groupId, String name, String description, Timestamp createdAt, int userId, String groupPicUrl) {
+    public Group(int groupId, String name, String description, Timestamp createdAt, int userId, String groupPicUrl, String groupUrl) {
         this.groupId = groupId;
         this.name = name;
         this.description = description;
         this.createdAt = createdAt;
         this.userId = userId;
         this.groupPicUrl = groupPicUrl;
+        this.groupUrl = groupUrl;
     }
 
     // Getters and Setters
@@ -75,6 +77,14 @@ public class Group {
         this.groupPicUrl = groupPicUrl;
     }
 
+    public String getGroupUrl() {
+        return groupUrl;
+    }
+
+    public void setGroupUrl(String groupUrl) {
+        this.groupUrl = groupUrl;
+    }
+
     public List<GroupMember> getMembers() {
         return members;
     }
@@ -92,6 +102,7 @@ public class Group {
                 ", createdAt=" + createdAt +
                 ", userId=" + userId +
                 ", groupPicUrl='" + groupPicUrl + '\'' +
+                ", groupUrl='" + groupUrl + '\'' +
                 ", members=" + members +
                 '}';
     }

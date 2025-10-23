@@ -1,38 +1,19 @@
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.demo.web.model.Journal" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+
 <%
-  // Simulated Journal Entries
-  class Journal {
-    String title, date, tag, image;
-    Journal(String title, String date, String tag, String image) {
-      this.title = title;
-      this.date = date;
-      this.tag = tag;
-      this.image = image;
-    }
-  }
+  List<Journal> journals = (List<Journal>) request.getAttribute("journals");
+  Integer totalCount = (Integer) request.getAttribute("totalCount");
+  Integer streakDays = (Integer) request.getAttribute("streakDays");
+  String errorMessage = (String) request.getAttribute("error");
 
-  List<Journal> journals = new ArrayList<>();
-  journals.add(new Journal("July 21st - Birthday party", "July 15, 2024", "#vacation", "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800"));
-  journals.add(new Journal("July 31st", "June 22, 2024", "#travel", "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800"));
-  journals.add(new Journal("June 30", "May 10, 2024", "#family", "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800"));
-  journals.add(new Journal("March 20", "April 5, 2024", "#adventure", "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"));
-  journals.add(new Journal("March 21st", "March 18, 2024", "#city", "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800"));
-  journals.add(new Journal("Art Exhibition", "February 2, 2024", "#art", "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800"));
+  // Set defaults
+  if (totalCount == null) totalCount = 0;
+  if (streakDays == null) streakDays = 0;
 
-  List<Journal> allJournals = new ArrayList<>();
-  allJournals.add(new Journal("Sunset Beach Walk", "January 20, 2024", "#nature", "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800"));
-  allJournals.add(new Journal("Coffee Morning", "January 15, 2024", "#daily", "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800"));
-  allJournals.add(new Journal("Mountain Peak", "January 10, 2024", "#adventure", "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800"));
-  allJournals.add(new Journal("Evening in the City", "January 5, 2024", "#urban", "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800"));
-  allJournals.add(new Journal("Gallery Visit", "December 28, 2023", "#culture", "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800"));
-  allJournals.add(new Journal("Winter Hike", "December 20, 2023", "#outdoor", "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"));
-  allJournals.add(new Journal("Holiday Dinner", "December 15, 2023", "#celebration", "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800"));
-  allJournals.add(new Journal("New Year Eve", "December 31, 2023", "#celebration", "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800"));
-
-  request.setAttribute("journals", journals);
-  request.setAttribute("allJournals", allJournals);
+  SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy");
 %>
 
 <jsp:include page="../public/header2.jsp" />
@@ -63,49 +44,64 @@
         </svg>
         Sort: Date
       </button>
-      <button class="filter-btn" id="tagFilter">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-          <line x1="7" y1="7" x2="7.01" y2="7"></line>
-        </svg>
-        Filter: Tags
-      </button>
     </div>
+
+    <%-- Display Error Message --%>
+    <% if (errorMessage != null) { %>
+    <div class="alert alert-error" style="background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #c00;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <%= errorMessage %>
+    </div>
+    <% } %>
 
     <!-- All Journals Grid -->
     <div class="journals-grid" id="allJournalsGrid" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
       <%
-        List<Journal> journalList = (List<Journal>) request.getAttribute("journals");
-        if (journalList != null) {
-          for (Journal journal : journalList) {
+        if (journals == null || journals.isEmpty()) {
       %>
-      <div class="journal-card" data-title="<%= journal.title %>" data-tag="<%= journal.tag %>">
-        <div class="journal-image" style="background-image: url('<%= journal.image %>')"></div>
-        <div class="journal-content">
-          <h3 class="journal-title"><%= journal.title %></h3>
-          <div class="journal-meta">
-            <span class="journal-date"><%= journal.date %></span>
-            <span class="journal-tag"><%= journal.tag %></span>
-          </div>
-        </div>
+      <div style="text-align: center; padding: 40px; color: #6b7280;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 20px; opacity: 0.5;">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <h3 style="margin: 0 0 10px; color: #374151;">No Journal Entries Yet</h3>
+        <p style="margin: 0;">Start documenting your thoughts and experiences!</p>
       </div>
       <%
+      } else {
+        for (Journal journal : journals) {
+          String formattedDate = displayFormat.format(journal.getCreatedAt());
+
+          // Get journal image or use placeholder
+          String imageUrl = journal.getJournalPic();
+          if (imageUrl != null && !imageUrl.isEmpty()) {
+            imageUrl = request.getContextPath() + "/" + imageUrl;
+          } else {
+            // Use a default journal placeholder image
+            imageUrl = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800";
           }
-        }
+
+          // Truncate content for preview (first 100 characters)
+          String contentPreview = journal.getContent();
+          if (contentPreview != null && contentPreview.length() > 100) {
+            contentPreview = contentPreview.substring(0, 100) + "...";
+          }
       %>
-      <%
-        List<Journal> allJournalsList = (List<Journal>) request.getAttribute("allJournals");
-        if (allJournalsList != null) {
-          for (Journal journal : allJournalsList) {
-      %>
-      <div class="journal-card" data-title="<%= journal.title %>" data-tag="<%= journal.tag %>">
-        <div class="journal-image" style="background-image: url('<%= journal.image %>')"></div>
+      <div class="journal-card" data-title="<%= journal.getTitle() %>" data-journal-id="<%= journal.getJournalId() %>">
+        <div class="journal-image" style="background-image: url('<%= imageUrl %>')"></div>
         <div class="journal-content">
-          <h3 class="journal-title"><%= journal.title %></h3>
+          <h3 class="journal-title"><%= journal.getTitle() %></h3>
           <div class="journal-meta">
-            <span class="journal-date"><%= journal.date %></span>
-            <span class="journal-tag"><%= journal.tag %></span>
+            <span class="journal-date"><%= formattedDate %></span>
           </div>
+          <% if (contentPreview != null && !contentPreview.isEmpty()) { %>
+          <p class="journal-preview" style="font-size: 0.875rem; color: #6b7280; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+            <%= contentPreview %>
+          </p>
+          <% } %>
         </div>
       </div>
       <%
@@ -123,65 +119,27 @@
         <div class="streak-icon">🔥</div>
         <div class="streak-info">
           <p class="streak-label">Journal</p>
-          <p class="streak-days">36 days</p>
+          <p class="streak-days"><%= streakDays %> days</p>
         </div>
       </div>
     </div>
 
-    <!-- Milestones Section -->
-<%--    <div class="sidebar-section">--%>
-<%--      <h3 class="sidebar-title">Milestones</h3>--%>
-<%--      <ul class="milestones-list">--%>
-<%--        <li class="milestone-item">--%>
-<%--          <div class="milestone-icon">📅</div>--%>
-<%--          <span class="milestone-name">Two Weeks</span>--%>
-<%--        </li>--%>
-<%--        <li class="milestone-item">--%>
-<%--          <div class="milestone-icon">📅</div>--%>
-<%--          <span class="milestone-name">One Month</span>--%>
-<%--        </li>--%>
-<%--        <li class="milestone-item">--%>
-<%--          <div class="milestone-icon">📅</div>--%>
-<%--          <span class="milestone-name">Three Months</span>--%>
-<%--        </li>--%>
-<%--        <li class="milestone-item">--%>
-<%--          <div class="milestone-icon">📅</div>--%>
-<%--          <span class="milestone-name">Six Months</span>--%>
-<%--        </li>--%>
-<%--        <li class="milestone-item">--%>
-<%--          <div class="milestone-icon">📅</div>--%>
-<%--          <span class="milestone-name">One Year</span>--%>
-<%--        </li>--%>
-<%--      </ul>--%>
-<%--    </div>--%>
-
-    <!-- Favourites Section -->
+    <!-- Journal Stats Section -->
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Favourites</h3>
+      <h3 class="sidebar-title">Statistics</h3>
       <ul class="favourites-list">
-<%--        <li class="favourite-item">--%>
-<%--          <div class="favourite-icon">📘</div>--%>
-<%--          <div class="favourite-info">--%>
-<%--            <span class="favourite-name">July 6th</span>--%>
-<%--            <span class="favourite-days">36 days</span>--%>
-<%--          </div>--%>
-<%--        </li>--%>
-<%--        <li class="favourite-item">--%>
-<%--          <div class="favourite-icon">📘</div>--%>
-<%--          <div class="favourite-info">--%>
-<%--            <span class="favourite-name">Two Weeks</span>--%>
-<%--          </div>--%>
-<%--        </li>--%>
         <li class="favourite-item">
-          <div class="favourite-icon">📘</div>
+          <div class="favourite-icon">📝</div>
           <div class="favourite-info">
-            <span class="favourite-name">One Month</span>
+            <span class="favourite-name">Total Entries</span>
+            <span class="favourite-days"><%= totalCount %></span>
           </div>
         </li>
         <li class="favourite-item">
-          <div class="favourite-icon">📘</div>
+          <div class="favourite-icon">📅</div>
           <div class="favourite-info">
-            <span class="favourite-name">Three Months</span>
+            <span class="favourite-name">This Month</span>
+            <span class="favourite-days">-</span>
           </div>
         </li>
       </ul>
@@ -189,14 +147,14 @@
 
     <!-- Floating Action Buttons - Now static below sidebar -->
     <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
-      <a href="/writejournal" class="floating-btn">
+      <a href="${pageContext.request.contextPath}/createjournal" class="floating-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
         Add Journal
       </a>
-      <a href="/vaultmemories" class="floating-btn vault-btn">
+      <a href="${pageContext.request.contextPath}/vaultjournals" class="floating-btn vault-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -279,8 +237,7 @@
           const journalCards = document.querySelectorAll('.journal-card');
           journalCards.forEach(card => {
             const title = card.getAttribute('data-title')?.toLowerCase() || '';
-            const tag = card.getAttribute('data-tag')?.toLowerCase() || '';
-            const matches = title.includes(query) || tag.includes(query);
+            const matches = title.includes(query);
             card.style.display = matches ? 'block' : 'none';
           });
         });
@@ -289,7 +246,6 @@
 
     // Filter button handlers
     const dateSort = document.getElementById('dateSort');
-    const tagFilter = document.getElementById('tagFilter');
 
     if (dateSort) {
       dateSort.addEventListener('click', function() {
@@ -298,37 +254,16 @@
       });
     }
 
-    if (tagFilter) {
-      tagFilter.addEventListener('click', function() {
-        console.log('Filter tags clicked');
-        // Implement tag filtering logic here
-      });
-    }
-
-    // Journal card click handlers
+    // Journal card click handlers - redirect to journal view
     const journalCards = document.querySelectorAll('.journal-card');
     journalCards.forEach(card => {
+      card.style.cursor = 'pointer';
       card.addEventListener('click', function() {
-        console.log('Journal clicked:', this.querySelector('.journal-title').textContent);
-        // Redirect to journal detail page
-        // window.location.href = '/journalview';
-      });
-    });
-
-    // Milestone and favourite item interactions
-    // const milestoneItems = document.querySelectorAll('.milestone-item');
-    // milestoneItems.forEach(item => {
-    //   item.addEventListener('click', function() {
-    //     milestoneItems.forEach(i => i.classList.remove('selected'));
-    //     this.classList.add('selected');
-    //   });
-    // });
-
-    const favouriteItems = document.querySelectorAll('.favourite-item');
-    favouriteItems.forEach(item => {
-      item.addEventListener('click', function() {
-        favouriteItems.forEach(i => i.classList.remove('selected'));
-        this.classList.add('selected');
+        const journalId = this.getAttribute('data-journal-id');
+        if (journalId) {
+          console.log('Navigating to journal:', journalId);
+          window.location.href = '${pageContext.request.contextPath}/journalview?id=' + journalId;
+        }
       });
     });
   });

@@ -1,4 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.demo.web.model.Group" %>
+<%
+    String groupId = request.getParameter("groupId");
+    Group group = (Group) request.getAttribute("group");
+
+    if (groupId == null || groupId.isEmpty() || group == null) {
+        response.sendRedirect(request.getContextPath() + "/groups");
+        return;
+    }
+%>
 
 <jsp:include page="../public/header2.jsp" />
 <html>
@@ -119,15 +129,16 @@
     <main class="main-content">
         <!-- Page Header -->
         <div class="page-header">
-            <h1 class="group-name">Family Memories</h1>
+            <h1 class="group-name"><%= group.getName()%>></h1>
             <p class="group-creator">Created by You</p>
         </div>
 
         <!-- Tab Navigation -->
+        <!-- Tab Navigation -->
         <div class="tab-nav">
-            <a href="${pageContext.request.contextPath}/groupmemories?groupId=1" class="tab-link active">Memories</a>
-            <a href="${pageContext.request.contextPath}/groupannouncement?groupId=1" class="tab-link">Announcements</a>
-            <a href="${pageContext.request.contextPath}/groupmembers?groupId=1" class="tab-link">Members</a>
+            <a href="${pageContext.request.contextPath}/groupmemories?groupId=<%= groupId %>" class="tab-link active">Memories</a>
+            <a href="${pageContext.request.contextPath}/groupannouncement?groupId=<%= groupId %>" class="tab-link">Announcements</a>
+            <a href="${pageContext.request.contextPath}/groupmembers?groupId=<%= groupId %>" class="tab-link">Members</a>
         </div>
 
         <!-- Search and Filters -->
@@ -245,20 +256,51 @@
 
         <!-- Floating Add Memory Button -->
         <div class="floating-buttons" id="floatingButtons">
-            <a href="${pageContext.request.contextPath}/creatememory?groupId=1" class="floating-btn">
+            <a href="${pageContext.request.contextPath}/creatememory?groupId=<%= groupId %>" class="floating-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 Add Memory
             </a>
-            <a href="${pageContext.request.contextPath}/editgroup?groupId=1" class="floating-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></svg>
-                Edit group
+            <a href="${pageContext.request.contextPath}/editgroup?groupId=<%= groupId %>" class="floating-btn edit-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+                Edit Group
             </a>
+            <button onclick="confirmDeleteGroup(<%= groupId %>)" class="floating-btn delete-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                Delete Group
+            </button>
         </div>
     </main>
 </div>
+
+<script>
+    function confirmDeleteGroup(groupId) {
+        if (confirm('Are you sure you want to delete this group? This action cannot be undone and will delete all memories, announcements, and members associated with this group.')) {
+            // Create a form dynamically to submit POST request
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/deletegroupservlet';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'groupId';
+            input.value = groupId;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
 
 <jsp:include page="../public/footer.jsp" />
 
