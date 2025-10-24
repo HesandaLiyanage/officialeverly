@@ -129,7 +129,7 @@
     <main class="main-content">
         <!-- Page Header -->
         <div class="page-header">
-            <h1 class="group-name"><%= group.getName()%>></h1>
+            <h1 class="group-name"><%= group.getName()%></h1>
             <p class="group-creator">Created by You</p>
         </div>
 

@@ -31,11 +31,11 @@
             <!-- Profile Header -->
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="Sophia Bennett">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop" alt="Sophia Bennett">
                 </div>
                 <div class="profile-info">
                     <div class="profile-name">
-                        <h1>Margaret Bennett</h1>
+                        <h1>Sophia Bennett</h1>
                         <a href="#" class="edit-profile-btn">Following</a>
                     </div>
                     <div class="profile-stats">

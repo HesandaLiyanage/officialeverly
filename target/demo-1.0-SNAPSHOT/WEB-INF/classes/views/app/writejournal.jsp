@@ -100,12 +100,18 @@
                 <!-- Action Buttons -->
                 <div class="action-buttons">
                     <button class="action-btn cancel-btn" id="cancelBtn">Cancel</button>
-                    <a href="/journals" class="action-btn submit-btn" style="text-decoration: none; display: inline-block; text-align: center;">Add to Journal</a>
+                    <button class="action-btn submit-btn" id="submitBtn">Add to Journal</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Hidden form for submission -->
+<form id="journalForm" action="${pageContext.request.contextPath}/createjournal" method="post" style="display: none;">
+    <input type="hidden" name="content" id="contentField">
+    <input type="hidden" name="decorations" id="decorationsField">
+</form>
 
 <jsp:include page="../public/footer.jsp" />
 
@@ -114,7 +120,9 @@
         constructor() {
             this.writingArea = document.getElementById('writingArea');
             this.decorationsContainer = document.getElementById('decorationsContainer');
-            this.authorInput = document.getElementById('authorInput');
+            this.journalForm = document.getElementById('journalForm');
+            this.contentField = document.getElementById('contentField');
+            this.decorationsField = document.getElementById('decorationsField');
             this.selectedElement = null;
 
             this.initializeFormatting();
@@ -245,26 +253,24 @@
             const submitBtn = document.getElementById('submitBtn');
 
             cancelBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to cancel? Your autograph will be lost.')) {
-                    window.history.back();
+                if (confirm('Are you sure you want to cancel? Your journal will be lost.')) {
+                    window.location.href = '${pageContext.request.contextPath}/journals';
                 }
             });
 
             submitBtn.addEventListener('click', () => {
-                this.submitAutograph();
+                this.submitJournal();
             });
         }
 
-        submitAutograph() {
+        submitJournal() {
             const message = this.writingArea.innerHTML.trim();
-            const author = this.authorInput.value.trim();
 
             if (!message || message === '<br>') {
                 alert('Please write a message!');
                 this.writingArea.focus();
                 return;
             }
-
 
             // Get all decorations
             const decorations = [];
@@ -277,21 +283,16 @@
                 });
             });
 
-            // Here you would send this data to your server
-            const autographData = {
-                message: message,
-                author: author,
-                decorations: decorations,
-                timestamp: new Date().toISOString()
-            };
+            // Set hidden form fields
+            this.contentField.value = message;
+            this.decorationsField.value = JSON.stringify(decorations);
 
-            console.log('Submitting autograph:', autographData);
+            console.log('Submitting journal...');
+            console.log('Content:', message);
+            console.log('Decorations:', decorations);
 
-            // Show success message
-            alert('Your autograph has been submitted! ✨');
-
-            // Redirect back or to confirmation page
-            // window.location.href = '/autographs';
+            // Submit the form
+            this.journalForm.submit();
         }
     }
 

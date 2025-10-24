@@ -54,7 +54,7 @@
     }
 
     function openVaultSettings() {
-        window.location.href = "vaultSettings.jsp";
+        window.location.href = "/vaultpassword";
     }
 
     function openSharedLinks() {
@@ -62,7 +62,7 @@
     }
 
     function openBlockedUsers() {
-        window.location.href = "blockedUsers.jsp";
+        window.location.href = "/blockedusers";
     }
 </script>
 <jsp:include page="../public/footer.jsp" />

@@ -1,3 +1,4 @@
+// File: com/demo/web/dao/JournalDAO.java
 package com.demo.web.dao;
 
 import com.demo.web.model.Journal;
@@ -13,7 +14,7 @@ public class JournalDAO {
      * Find all journals for a specific user
      */
     public List<Journal> findByUserId(int userId) {
-        String sql = "SELECT * FROM journal WHERE user_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT * FROM journal WHERE user_id = ? ORDER BY journal_id DESC"; // Changed to order by id since no created_at
         List<Journal> journals = new ArrayList<>();
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -67,8 +68,9 @@ public class JournalDAO {
      * Create a new journal entry
      */
     public boolean createJournal(Journal journal) {
-        String sql = "INSERT INTO journal (j_title, j_content, user_id, journal_pic, created_at, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        // ⚠️ IMPORTANT: Removed created_at and updated_at columns since they don't exist in DB
+        String sql = "INSERT INTO journal (j_title, j_content, user_id, journal_pic) " +
+                "VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -77,8 +79,6 @@ public class JournalDAO {
             pstmt.setString(2, journal.getContent());
             pstmt.setInt(3, journal.getUserId());
             pstmt.setString(4, journal.getJournalPic());
-            pstmt.setTimestamp(5, journal.getCreatedAt());
-            pstmt.setTimestamp(6, journal.getUpdatedAt());
 
             int rowsAffected = pstmt.executeUpdate();
 
@@ -104,7 +104,8 @@ public class JournalDAO {
      * Update an existing journal entry
      */
     public boolean updateJournal(Journal journal) {
-        String sql = "UPDATE journal SET j_title = ?, j_content = ?, journal_pic = ?, updated_at = ? " +
+        // ⚠️ IMPORTANT: Removed updated_at column since it doesn't exist in DB
+        String sql = "UPDATE journal SET j_title = ?, j_content = ?, journal_pic = ? " +
                 "WHERE journal_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -113,8 +114,7 @@ public class JournalDAO {
             pstmt.setString(1, journal.getTitle());
             pstmt.setString(2, journal.getContent());
             pstmt.setString(3, journal.getJournalPic());
-            pstmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-            pstmt.setInt(5, journal.getJournalId());
+            pstmt.setInt(4, journal.getJournalId());
 
             int rowsAffected = pstmt.executeUpdate();
             System.out.println("[DEBUG JournalDAO] updateJournal - Rows affected: " + rowsAffected);
@@ -186,8 +186,8 @@ public class JournalDAO {
         journal.setContent(rs.getString("j_content"));
         journal.setUserId(rs.getInt("user_id"));
         journal.setJournalPic(rs.getString("journal_pic"));
-        journal.setCreatedAt(rs.getTimestamp("created_at"));
-        journal.setUpdatedAt(rs.getTimestamp("updated_at"));
+
+        // No timestamps in model anymore
         return journal;
     }
 }
