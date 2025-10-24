@@ -148,7 +148,7 @@
             <li id="uppercase">At least one uppercase letter (A-Z)</li>
             <li id="lowercase">At least one lowercase letter (a-z)</li>
             <li id="number">At least one number (0-9)</li>
-            <li id="special">At least one special character (!@#$%^&*(),.?":{}|<>)</li>
+<%--            <li id="special">At least one special character (!@#$%^&*(),.?":{}|<>)</li>--%>
           </ul>
         </div>
 
