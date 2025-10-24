@@ -13,15 +13,12 @@
         <!-- Fixed Top Section: Tabs + Search -->
         <div class="fixed-top-section">
             <!-- Tab Navigation -->
-            <!-- Tab Navigation -->
-            <!-- Tab Navigation -->
             <div class="tab-nav">
                 <div class="tab-buttons">
                     <div>
                         <button class="active" data-tab="home">Home</button>
                         <button data-tab="explore">Explore</button>
                     </div>
-
                 </div>
                 <a href="/publicprofile" class="profile-link">
                     <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face"
@@ -76,7 +73,7 @@
                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                             </svg>
                         </button>
-                        <button class="action-btn">
+                        <button class="action-btn comment-btn" onclick="window.location.href='${pageContext.request.contextPath}/comments'">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                             </svg>
@@ -104,7 +101,7 @@
                         <span class="username">dave_wanderer</span>
                         Enjoying the sun, sand, and sea with friends. <span class="hashtag">#beachlife</span> <span class="hashtag">#summer</span>
                     </p>
-                    <button class="view-comments">View all 12 comments</button>
+                    <button class="view-comments" onclick="window.location.href='${pageContext.request.contextPath}/comments'">View all 12 comments</button>
                 </div>
             </div>
 
@@ -140,7 +137,7 @@
                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                             </svg>
                         </button>
-                        <button class="action-btn">
+                        <button class="action-btn comment-btn" onclick="window.location.href='${pageContext.request.contextPath}/comments'">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                             </svg>
@@ -168,7 +165,7 @@
                         <span class="username">city_explorer_jane</span>
                         Wandering through the streets of Paris, discovering hidden gems. <span class="hashtag">#travel</span> <span class="hashtag">#citylife</span>
                     </p>
-                    <button class="view-comments">View all 8 comments</button>
+                    <button class="view-comments" onclick="window.location.href='${pageContext.request.contextPath}/comments'">View all 8 comments</button>
                 </div>
             </div>
 
@@ -204,7 +201,7 @@
                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                             </svg>
                         </button>
-                        <button class="action-btn">
+                        <button class="action-btn comment-btn" onclick="window.location.href='${pageContext.request.contextPath}/comments'">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                             </svg>
@@ -219,11 +216,6 @@
                             </svg>
                         </button>
                     </div>
-<%--                    <button class="action-btn bookmark-btn">--%>
-<%--                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">--%>
-<%--                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>--%>
-<%--                        </svg>--%>
-<%--                    </button>--%>
                 </div>
 
                 <div class="post-info">
@@ -232,7 +224,7 @@
                         <span class="username">coffeeaddict_mark</span>
                         Starting the day with a perfect cup of coffee. <span class="hashtag">#coffee</span> <span class="hashtag">#morning</span>
                     </p>
-                    <button class="view-comments">View all 15 comments</button>
+                    <button class="view-comments" onclick="window.location.href='${pageContext.request.contextPath}/comments'">View all 15 comments</button>
                 </div>
             </div>
 
@@ -268,7 +260,7 @@
                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                             </svg>
                         </button>
-                        <button class="action-btn">
+                        <button class="action-btn comment-btn" onclick="window.location.href='${pageContext.request.contextPath}/comments'">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                             </svg>
@@ -296,7 +288,7 @@
                         <span class="username">nature_admirer</span>
                         The mountains are calling and I must go. <span class="hashtag">#nature</span> <span class="hashtag">#adventure</span>
                     </p>
-                    <button class="view-comments">View all 22 comments</button>
+                    <button class="view-comments" onclick="window.location.href='${pageContext.request.contextPath}/comments'">View all 22 comments</button>
                 </div>
             </div>
         </div>
@@ -497,10 +489,6 @@
                 }
             });
         });
-    });
-
-    document.querySelector(".view-comments").addEventListener("click", function() {
-        window.open("/comments");
     });
 </script>
 </body>

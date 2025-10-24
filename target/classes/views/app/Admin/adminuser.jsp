@@ -3,7 +3,7 @@
 <jsp:include page="../../public/header2.jsp" />
 <html>
 <body>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/admin.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/adminuser.css">
 
 <!-- Page Wrapper -->
 <div class="admin-page-wrapper">
