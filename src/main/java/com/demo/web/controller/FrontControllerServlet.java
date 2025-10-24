@@ -127,13 +127,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/feededitprofile", "/views/app/editpublicprofile.jsp");
         routeToJsp.put("/blockedusers", "/views/app/blockedusers.jsp");
         routeToJsp.put("/editmemory", "/views/app/editmemory.jsp");
-        routeToJsp.put("/admin", "/views/app/Admin/admindahboard.jsp");
-        routeToJsp.put("/adminuser", "/views/app/Admin/adminuser.jsp");
-        routeToJsp.put("/adminsettings", "/views/app/Admin/adminsettings.jsp");
-        routeToJsp.put("/adminanalytics", "/views/app/Admin/adminanalytics.jsp");
-        routeToJsp.put("/comments", "/views/app/feedcomment.jsp");
-        routeToJsp.put("/admincontent", "/views/app/Admin/admincontent.jsp");
-
+        routeToJsp.put("/vaultentries", "/views/app/vaultentries.jsp");
 
 
 
