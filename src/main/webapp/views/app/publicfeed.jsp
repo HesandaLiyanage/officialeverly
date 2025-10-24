@@ -23,7 +23,7 @@
                     </div>
 
                 </div>
-                <a href="publicprofile.jsp" class="profile-link">
+                <a href="/publicprofile" class="profile-link">
                     <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face"
                          alt="Profile" class="profile-pic">
                 </a>

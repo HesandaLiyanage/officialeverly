@@ -36,7 +36,7 @@
         <div class="profile-info">
           <div class="profile-name">
             <h1>Sophia Bennett</h1>
-            <a href="#" class="edit-profile-btn">Edit profile</a>
+            <a href="/feededitprofile" class="edit-profile-btn">Edit profile</a>
           </div>
           <div class="profile-stats">
             <span><strong>1,234</strong> posts</span>
