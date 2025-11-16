@@ -1,0 +1,1176 @@
+/* Groups Page Styles - Updated with Scrolling Effects */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f5;
+}
+
+/* Page Wrapper */
+.page-wrapper {
+    position: relative;
+    width: 90%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px 40px;
+    display: flex;
+    gap: 30px;
+    box-sizing: border-box;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+/* Page Title */
+.page-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 20px 0;
+    letter-spacing: -0.5px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    text-align: center;
+}
+
+/* Search and Filters */
+.search-filters {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Modern Search Container */
+.groups-search-container {
+    flex: 1;
+    min-width: 300px;
+}
+
+.groups-search-btn {
+    background: #f3f4f6;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.groups-search-btn:hover {
+    background: #e5e7eb;
+    transform: scale(1.05);
+}
+
+.groups-search-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #6b7280;
+}
+
+/* Modern Expanded Search Box */
+.groups-search-expanded {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 2px solid #6366f1;
+    border-radius: 16px;
+    padding: 10px 16px;
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+    animation: expandSearch 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes expandSearch {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.groups-search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.groups-search-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.groups-search-expanded input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 15px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 500;
+    color: #1f2937;
+    flex: 1;
+    min-width: 0;
+}
+
+.groups-search-expanded input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.groups-search-close {
+    background: #f3f4f6;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.groups-search-close:hover {
+    background: #e5e7eb;
+    transform: rotate(90deg);
+}
+
+.groups-search-close svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Filter Buttons */
+.filter-btn {
+    padding: 10px 18px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.filter-btn:hover {
+    border-color: #6366f1;
+    color: #6366f1;
+    background: #f0f9ff;
+}
+
+/* Groups List - With Scrolling */
+.groups-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Custom Scrollbar */
+.groups-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.groups-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.groups-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.groups-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.group-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.group-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.group-images {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    gap: 0;
+    background: #f3f4f6;
+}
+
+.group-images.single {
+    display: block;
+}
+
+.image-card,
+.image-placeholder {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+}
+
+.group-images.single .image-card {
+    width: 100%;
+    height: 100%;
+}
+
+/* Placeholder Colors */
+.image-placeholder.peach {
+    background: linear-gradient(135deg, #ffd4c4 0%, #ffb4a2 100%);
+}
+
+.image-placeholder.beige {
+    background: linear-gradient(135deg, #ffe4d4 0%, #ffd4b2 100%);
+}
+
+.image-placeholder.mint {
+    background: linear-gradient(135deg, #d4ffe4 0%, #b2ffd4 100%);
+}
+
+.image-placeholder.lavender {
+    background: linear-gradient(135deg, #e4d4ff 0%, #d2b2ff 100%);
+}
+
+/* Image Card Designs */
+.family-photo {
+    background: linear-gradient(135deg, #a8e6cf 0%, #7dd3c0 100%);
+}
+
+.beach-photo {
+    background: linear-gradient(180deg, #87ceeb 0%, #4682b4 50%, #2e5c7a 100%);
+}
+
+.balloons-photo {
+    background: linear-gradient(135deg, #fff9e6 0%, #ffedb3 100%);
+}
+
+.roomies-photo {
+    background: linear-gradient(180deg, #6b8e23 0%, #4a6b3a 50%, #2d4a25 100%);
+}
+
+.travel-photo {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+.gaming-photo {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+}
+
+/* Group Info */
+.group-info {
+    padding: 20px;
+}
+
+.group-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.group-meta {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.members-count,
+.last-activity {
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.separator {
+    margin: 0 6px;
+}
+
+/* Sidebar Styles */
+.sidebar-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* Announcements List */
+.announcements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.announcement-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.announcement-item:hover {
+    background: #f9fafb;
+}
+
+.announcement-item.selected {
+    background: #f0f9ff;
+    border-left: 3px solid #6366f1;
+}
+
+.announcement-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.announcement-icon.family {
+    background: linear-gradient(135deg, #a8e6cf 0%, #7dd3c0 100%);
+}
+
+.announcement-icon.highschool {
+    background: linear-gradient(135deg, #87ceeb 0%, #4682b4 100%);
+}
+
+.announcement-icon.uni {
+    background: linear-gradient(135deg, #fff9e6 0%, #ffedb3 100%);
+}
+
+.announcement-icon.roomies {
+    background: linear-gradient(135deg, #6b8e23 0%, #4a6b3a 100%);
+}
+
+.announcement-icon.travel {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+.announcement-icon svg {
+    stroke: white;
+}
+
+.announcement-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.announcement-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.announcement-text {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.announcement-time {
+    font-size: 12px;
+    color: #9ca3af;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* Floating Buttons - Now static like autograph page */
+.floating-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 100;
+}
+
+.floating-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 24px;
+    background: #9A74D8;
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.floating-btn:hover {
+    background: #8a64c8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
+}
+
+.floating-btn:active {
+    transform: translateY(0);
+}
+
+.floating-btn svg {
+    flex-shrink: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .page-wrapper {
+        flex-direction: column;
+        gap: 20px;
+        padding: 15px 20px;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .page-title {
+        font-size: 32px;
+    }
+
+    .search-filters {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .groups-search-container {
+        min-width: 100%;
+    }
+
+    .groups-search-expanded {
+        max-width: 100%;
+    }
+
+    .groups-list {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+    }
+
+    .floating-buttons {
+        margin-top: 20px;
+    }
+
+    .floating-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-wrapper {
+        padding: 12px 16px;
+    }
+
+    .page-title {
+        font-size: 28px;
+    }
+
+    .groups-list {
+        grid-template-columns: 1fr;
+    }
+
+    .group-card {
+        max-width: 100%;
+    }
+
+    .group-images {
+        height: 160px;
+    }
+
+    .group-info {
+        padding: 16px;
+    }
+
+    .group-title {
+        font-size: 16px;
+    }
+
+    .group-meta {
+        font-size: 13px;
+    }
+
+    .announcement-item {
+        padding: 10px;
+    }
+
+    .announcement-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .announcement-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .announcement-title {
+        font-size: 14px;
+    }
+
+    .announcement-text {
+        font-size: 13px;
+    }
+
+    .floating-btn {
+        padding: 9px 18px;
+        font-size: 13px;
+        gap: 8px;
+    }
+
+    .floating-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* ===== REFINED CREATE GROUP STYLES ===== */
+
+/* Create Group Container */
+.create-group-container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.page-subtitle {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #6c757d;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+/* Group Form */
+.group-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #0d141c;
+}
+
+.form-hint {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #6c757d;
+    margin: 0;
+}
+
+/* UPDATED: Form Input Styles with Rounded Corners */
+.form-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f9fafb;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #0d141c;
+    transition: all 0.2s ease;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    border-color: #9A74D8;
+    background: #ffffff;
+}
+
+.form-input::placeholder {
+    color: #9ca3af;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    border-radius: 12px;
+}
+
+/* Upload Area Styles */
+.upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 16px;
+    background: #f9fafb;
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 280px;
+}
+
+.upload-area:hover {
+    border-color: #9A74D8;
+    background: #faf9fc;
+}
+
+.upload-area.drag-over {
+    border-color: #9A74D8;
+    background: #f3f0f9;
+    transform: scale(1.02);
+}
+
+.upload-area.has-files {
+    padding: 24px;
+    min-height: auto;
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.upload-area.has-files .upload-content {
+    display: none;
+}
+
+.upload-icon {
+    color: #9A74D8;
+    opacity: 0.6;
+}
+
+.upload-title {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0d141c;
+    margin: 0;
+}
+
+.upload-description {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #6c757d;
+    margin: 0;
+}
+
+.upload-hint {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: #9ca3af;
+    margin: 0;
+}
+
+.browse-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    background: #EADDFF;
+    color: #9A74D8;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(154, 116, 216, 0.2);
+}
+
+.browse-btn:hover {
+    background: #daccef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(154, 116, 216, 0.3);
+}
+
+/* Preview Container */
+.preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-preview {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 250px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.file-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-file {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.9);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.remove-file:hover {
+    background: rgba(220, 38, 38, 1);
+    transform: scale(1.1);
+}
+
+/* Privacy Options */
+.privacy-options {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.privacy-option {
+    flex: 1;
+    cursor: pointer;
+}
+
+.privacy-option input[type="radio"] {
+    display: none;
+}
+
+.privacy-card {
+    padding: 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.privacy-option input[type="radio"]:checked + .privacy-card {
+    border-color: #9A74D8;
+    background: #faf9fc;
+}
+
+.privacy-card:hover {
+    border-color: #9A74D8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(154, 116, 216, 0.15);
+}
+
+.privacy-icon {
+    color: #9A74D8;
+    flex-shrink: 0;
+}
+
+.privacy-info h4 {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #0d141c;
+    margin: 0 0 4px 0;
+}
+
+.privacy-info p {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Invite Section */
+.invite-section {
+    margin-top: 12px;
+}
+
+.invite-input-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.invite-input-wrapper .form-input {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+/* UPDATED: Role Select with Rounded Corners */
+.role-select {
+    padding: 14px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f9fafb;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0d141c;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    min-width: 110px;
+}
+
+.role-select:focus {
+    border-color: #9A74D8;
+    background: #ffffff;
+}
+
+.add-member-btn {
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    background: #9A74D8;
+    color: white;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.add-member-btn:hover {
+    background: #8a64c8;
+    transform: translateY(-2px);
+}
+
+/* Invited Members List */
+.invited-members-list {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.invited-member-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.member-email {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0d141c;
+}
+
+.member-role-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.member-role-badge.admin {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.member-role-badge.editor {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.member-role-badge.viewer {
+    background: #e0e7ff;
+    color: #6366f1;
+}
+
+.remove-member-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fee2e2;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #dc2626;
+    transition: all 0.2s ease;
+}
+
+.remove-member-btn:hover {
+    background: #fecaca;
+    transform: scale(1.1);
+}
+
+/* Features Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.feature-option {
+    cursor: pointer;
+}
+
+.feature-option input[type="checkbox"] {
+    display: none;
+}
+
+.feature-card {
+    padding: 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.feature-option input[type="checkbox"]:checked + .feature-card {
+    border-color: #9A74D8;
+    background: #faf9fc;
+}
+
+.feature-card:hover {
+    border-color: #9A74D8;
+    transform: translateY(-2px);
+}
+
+.feature-icon {
+    font-size: 24px;
+}
+
+.feature-name {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0d141c;
+}
+
+/* ===== UPDATED BUTTON STYLES - MATCHING AUTOGRAPH PAGE ===== */
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.cancel-btn {
+    flex: 1;
+    padding: 12px 24px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    background: white;
+    color: #333;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.cancel-btn:hover {
+    border-color: #6366f1;
+    color: #6366f1;
+    background: #f0f9ff;
+}
+
+.submit-btn {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 24px;
+    background: #9A74D8;
+    color: white;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+}
+
+.submit-btn:hover {
+    background: #8a64c8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive for Create Group */
+@media (max-width: 768px) {
+    .create-group-container {
+        padding: 24px;
+    }
+
+    .upload-area {
+        padding: 32px 16px;
+        min-height: 240px;
+    }
+
+    .file-preview {
+        height: 200px;
+    }
+
+    .privacy-options {
+        flex-direction: column;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .create-group-container {
+        padding: 20px;
+    }
+
+    .upload-area {
+        padding: 24px 12px;
+        min-height: 220px;
+    }
+
+    .upload-title {
+        font-size: 18px;
+    }
+
+    .upload-description {
+        font-size: 13px;
+    }
+
+    .file-preview {
+        height: 180px;
+    }
+
+    .invite-input-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .role-select,
+    .add-member-btn {
+        width: 100%;
+    }
+
+    /* Mobile button styles */
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .cancel-btn,
+    .submit-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}

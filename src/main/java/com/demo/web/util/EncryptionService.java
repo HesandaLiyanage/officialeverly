@@ -15,29 +15,26 @@ public class EncryptionService {
     private static final int GCM_IV_LENGTH = 12;
     private static final int GCM_TAG_LENGTH = 16;
 
-    /**
-     * Generate a random AES key
-     */
+    //working on a 4th year project because our panel
+    //failed to understand us (they told us to add more features)
+
     public static SecretKey generateKey() throws Exception {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
         keyGenerator.init(256);
         return keyGenerator.generateKey();
     }
 
-    /**
-     * Generate a random key ID
-     */
+
     public static String generateKeyId() {
+
         return UUID.randomUUID().toString();
     }
 
-    /**
-     * Encrypt data with AES-GCM
-     */
+
     public static EncryptedData encrypt(byte[] data, SecretKey key) throws Exception {
         Cipher cipher = Cipher.getInstance(TRANSFORMATION);
 
-        // Generate random IV
+        // Generate initilization vector (same as salt hehe)
         byte[] iv = new byte[GCM_IV_LENGTH];
         new SecureRandom().nextBytes(iv);
 

@@ -1,0 +1,570 @@
+/* Signup and Profile Setup Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==================== SIGNUP PAGE (Step 1) ==================== */
+
+.signup-container {
+    max-width: 480px;
+    margin: 60px auto;
+    padding: 40px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.signup-container h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0d141c;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.signup-container > p {
+    font-size: 15px;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.signup-form input[type="email"],
+.signup-form input[type="password"],
+.signup-form input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f9fafb;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #0d141c;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.signup-form input[type="password"] {
+    padding-right: 48px;
+}
+
+.signup-form input:focus {
+    border-color: #9A74D8;
+    background: #ffffff;
+}
+
+.signup-form input::placeholder {
+    color: #9ca3af;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+.toggle-password:hover {
+    color: #9A74D8;
+}
+
+.toggle-password svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Password Constraints */
+.password-constraints {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.constraint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+.constraint.valid {
+    color: #10b981;
+}
+
+.constraint-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.constraint.valid .constraint-icon {
+    border-color: #10b981;
+    background: #10b981;
+}
+
+.constraint.valid .constraint-icon::after {
+    content: '✓';
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Terms Checkbox */
+.terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.terms input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: #9A74D8;
+}
+
+.terms label {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.terms a {
+    color: #9A74D8;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.terms a:hover {
+    text-decoration: underline;
+}
+
+/* Error Message */
+.error {
+    padding: 12px 16px;
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 12px;
+    color: #dc2626;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+/* Submit Button */
+.btn {
+    padding: 16px 24px;
+    border: none;
+    border-radius: 16px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    width: 100%;
+    background: #9A74D8;
+    color: white;
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+    margin-top: 12px;
+}
+
+.btn-primary:hover {
+    background: #8a64c8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    background: #d1d5db;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Extra Links */
+.extra-links {
+    margin-top: 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.extra-links a {
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.extra-links a:hover {
+    color: #9A74D8;
+}
+
+/* ==================== PROFILE SETUP PAGE (Step 2) ==================== */
+
+.profile-container {
+    max-width: 520px;
+    margin: 60px auto;
+    padding: 40px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.profile-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0d141c;
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.profile-input,
+.profile-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f9fafb;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #0d141c;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.profile-textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.6;
+}
+
+.profile-input:focus,
+.profile-textarea:focus {
+    border-color: #9A74D8;
+    background: #ffffff;
+}
+
+.profile-input::placeholder,
+.profile-textarea::placeholder {
+    color: #9ca3af;
+}
+
+/* Profile Picture Upload */
+.profile-picture-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.profile-picture-container {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #EADDFF 0%, #d8b4fe 100%);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-picture-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(154, 116, 216, 0.2);
+}
+
+.profile-picture-container.has-image {
+    background: #f3f4f6;
+}
+
+.upload-icon {
+    color: #9A74D8;
+    opacity: 0.8;
+}
+
+.upload-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #9A74D8;
+}
+
+.upload-subtext {
+    font-size: 13px;
+    color: #7c3aed;
+}
+
+.profile-preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.profile-picture-container.has-image .profile-preview-image {
+    display: block;
+}
+
+.profile-picture-container.has-image .upload-icon,
+.profile-picture-container.has-image .upload-text,
+.profile-picture-container.has-image .upload-subtext {
+    display: none;
+}
+
+.remove-picture {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.9);
+    border: none;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.profile-picture-container.has-image .remove-picture {
+    display: flex;
+}
+
+.remove-picture:hover {
+    background: rgba(220, 38, 38, 1);
+    transform: scale(1.1);
+}
+
+.profile-file-input {
+    display: none;
+}
+
+/* Profile Actions */
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.btn-secondary {
+    flex: 1;
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.btn-primary {
+    flex: 2;
+}
+
+/* ==================== THANK YOU PAGE ==================== */
+
+.thankyou-container {
+    max-width: 520px;
+    margin: 80px auto;
+    padding: 40px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.thank-you-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0d141c;
+    margin-bottom: 16px;
+}
+
+.thank-you-text {
+    font-size: 16px;
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.thankyou-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Loading Animation for Button */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.btn-primary:disabled::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s ease-in-out infinite;
+}
+
+.btn-primary.success {
+    background: #10b981;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+@media (max-width: 768px) {
+    .signup-container,
+    .profile-container,
+    .thankyou-container {
+        margin: 40px 20px;
+        padding: 32px 24px;
+    }
+
+    .signup-container h1,
+    .profile-title,
+    .thank-you-title {
+        font-size: 28px;
+    }
+
+    .profile-picture-container {
+        height: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .signup-container,
+    .profile-container,
+    .thankyou-container {
+        margin: 24px 16px;
+        padding: 24px 20px;
+    }
+
+    .signup-container h1,
+    .profile-title,
+    .thank-you-title {
+        font-size: 24px;
+    }
+
+    .signup-form input[type="email"],
+    .signup-form input[type="password"],
+    .signup-form input[type="text"],
+    .profile-input,
+    .profile-textarea {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .btn {
+        padding: 14px 20px;
+        font-size: 15px;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .profile-picture-container {
+        height: 160px;
+    }
+
+    .password-constraints {
+        gap: 6px;
+    }
+
+    .constraint {
+        font-size: 12px;
+    }
+}

@@ -1,0 +1,561 @@
+/* Write Autograph Page Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f8f9fa;
+    overflow-x: hidden;
+}
+
+.write-autograph-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.write-autograph-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.write-header {
+    padding: 28px 40px;
+    border-bottom: 2px solid #f3f4f6;
+    background: white;
+    text-align: center;
+}
+
+.book-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.book-subtitle {
+    font-size: 15px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Main Content */
+.write-content {
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+    min-height: calc(100vh - 200px);
+}
+
+/* Toolbar */
+.toolbar {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.toolbar-section {
+    background: #f9fafb;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.toolbar-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 14px;
+}
+
+/* Format Buttons */
+.format-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.format-btn {
+    width: 42px;
+    height: 42px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.format-btn:hover {
+    border-color: #9A74D8;
+    background: #f3f0ff;
+    transform: translateY(-2px);
+}
+
+.format-btn:active {
+    transform: translateY(0);
+}
+
+.format-btn svg {
+    stroke: #6b7280;
+    transition: stroke 0.2s;
+}
+
+.format-btn:hover svg {
+    stroke: #9A74D8;
+}
+
+/* Emoji Grid */
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.emoji-btn {
+    width: 42px;
+    height: 42px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.emoji-btn:hover {
+    border-color: #9A74D8;
+    background: #f3f0ff;
+    transform: scale(1.1);
+}
+
+.emoji-btn:active {
+    transform: scale(0.95);
+}
+
+/* Doodle Grid */
+.doodle-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.doodle-btn {
+    width: 52px;
+    height: 52px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.doodle-btn:hover {
+    border-color: #9A74D8;
+    background: #f3f0ff;
+    transform: scale(1.1);
+}
+
+.doodle-btn:active {
+    transform: scale(0.95);
+}
+
+/* Page Area */
+.page-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Autograph Page - dot bullets Paper */
+.autograph-page {
+    width: 100%;
+    min-height: 600px;
+    background: #fcfbf8;
+    background-image:
+            radial-gradient(circle, rgba(139, 69, 19, 0.15) 1px, transparent 1px);
+    background-size: 20px 20px;
+    border-radius: 4px;
+    box-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.1),
+            0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 40px 45px;
+    position: relative;
+    overflow: visible;
+}
+
+/* Red Margin Line */
+.margin-line {
+    position: absolute;
+    left: 45px;
+    top: 30px;
+    bottom: 30px;
+    width: 2px;
+    background: rgba(220, 38, 38, 0.3);
+}
+
+/* Writing Area */
+.writing-area {
+    position: relative;
+    min-height: 400px;
+    padding-left: 25px;
+    font-size: 16px;
+    line-height: 32px;
+    color: #374151;
+    outline: none;
+    z-index: 2;
+}
+
+.writing-area:empty:before {
+    content: attr(data-placeholder);
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* Decorations Container */
+.decorations-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.decoration {
+    position: absolute;
+    pointer-events: all;
+    user-select: none;
+    transition: transform 0.1s ease;
+}
+
+.decoration.emoji {
+    font-size: 28px;
+}
+
+.decoration.doodle {
+    font-size: 24px;
+    opacity: 0.5;
+}
+
+.decoration.doodle.heart {
+    color: #9A74D8;
+    font-size: 28px;
+}
+
+.decoration.doodle.star {
+    color: #fbbf24;
+    font-size: 22px;
+}
+
+.decoration.doodle.music {
+    color: #9A74D8;
+    font-size: 24px;
+}
+
+/* Author Input */
+.author-input-wrapper {
+    position: absolute;
+    bottom: 25px;
+    right: 45px;
+    z-index: 10;
+}
+
+.author-input {
+    border: none;
+    background: transparent;
+    font-size: 17px;
+    font-weight: 600;
+    color: #6b7280;
+    font-style: italic;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    outline: none;
+    text-align: right;
+    width: 200px;
+    padding: 4px 8px;
+    border-bottom: 2px dashed transparent;
+    transition: all 0.2s ease;
+}
+
+.author-input:focus {
+    border-bottom-color: #9A74D8;
+    color: #374151;
+}
+
+.author-input::placeholder {
+    color: #9ca3af;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    border-radius: 24px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    white-space: nowrap;
+}
+
+.cancel-btn {
+    background: #f3f4f6;
+    color: #6b7280;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.cancel-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.submit-btn {
+    background: #9A74D8;
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+}
+
+.submit-btn:hover {
+    background: #8a64c8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .write-content {
+        gap: 24px;
+        padding: 24px;
+    }
+
+    .toolbar {
+        width: 240px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .write-content {
+        flex-direction: column;
+    }
+
+    .toolbar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .toolbar-section {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .autograph-page {
+        min-height: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .write-autograph-wrapper {
+        padding: 12px;
+    }
+
+    .write-autograph-container {
+        border-radius: 16px;
+    }
+
+    .write-header {
+        padding: 20px 24px;
+    }
+
+    .book-title {
+        font-size: 24px;
+    }
+
+    .book-subtitle {
+        font-size: 14px;
+    }
+
+    .write-content {
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .toolbar {
+        flex-direction: column;
+    }
+
+    .toolbar-section {
+        min-width: 100%;
+    }
+
+    .emoji-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .autograph-page {
+        padding: 35px 40px;
+        min-height: 450px;
+    }
+
+    .margin-line {
+        left: 40px;
+        top: 28px;
+        bottom: 28px;
+    }
+
+    .writing-area {
+        padding-left: 20px;
+        font-size: 15px;
+        line-height: 30px;
+        min-height: 350px;
+    }
+
+    .author-input {
+        font-size: 16px;
+        width: 180px;
+        right: 40px;
+        bottom: 22px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+        padding: 14px 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .write-header {
+        padding: 18px 20px;
+    }
+
+    .book-title {
+        font-size: 20px;
+    }
+
+    .book-subtitle {
+        font-size: 13px;
+    }
+
+    .write-content {
+        padding: 16px;
+    }
+
+    .toolbar-title {
+        font-size: 15px;
+    }
+
+    .format-btn, .emoji-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .emoji-btn {
+        font-size: 20px;
+    }
+
+    .doodle-btn {
+        width: 46px;
+        height: 46px;
+        font-size: 24px;
+    }
+
+    .emoji-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+    }
+
+    .autograph-page {
+        padding: 30px 35px;
+        min-height: 400px;
+    }
+
+    .margin-line {
+        left: 35px;
+        top: 25px;
+        bottom: 25px;
+    }
+
+    .writing-area {
+        padding-left: 18px;
+        font-size: 14px;
+        line-height: 28px;
+        min-height: 300px;
+    }
+
+    .decoration.emoji {
+        font-size: 24px;
+    }
+
+    .decoration.doodle {
+        font-size: 20px;
+    }
+
+    .decoration.doodle.heart {
+        font-size: 24px;
+    }
+
+    .author-input {
+        font-size: 14px;
+        width: 160px;
+        right: 35px;
+        bottom: 20px;
+    }
+
+    .action-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+}

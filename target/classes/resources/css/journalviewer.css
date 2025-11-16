@@ -1,0 +1,577 @@
+/* Autograph Viewer Page Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f8f9fa;
+    overflow-x: hidden;
+}
+
+.autograph-viewer-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.autograph-viewer-container {
+    width: 100%;
+    max-width: 1200px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header Navigation */
+.viewer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 40px;
+    border-bottom: 2px solid #f3f4f6;
+    background: white;
+}
+
+.journal-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    flex: 1;
+    letter-spacing: -0.5px;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 2px solid #9A74D8;
+    border-radius: 12px;
+    background: white;
+    color: #9A74D8;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.nav-btn:hover {
+    background: #9A74D8;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(154, 116, 216, 0.3);
+}
+
+.nav-btn:active {
+    transform: translateY(0);
+}
+
+.nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.nav-btn:disabled:hover {
+    background: white;
+    color: #9A74D8;
+    transform: none;
+    box-shadow: none;
+}
+
+.nav-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Page Viewer */
+.page-viewer {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 200px);
+    max-height: 650px;
+    background: #e8e6e3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+}
+
+.page-container {
+    width: 100%;
+    max-width: 800px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Autograph Page - Lined Paper Look */
+.autograph-page {
+    width: 100%;
+    height: 100%;
+    background: #faf8f3;
+    background-image:
+            repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 31px,
+                    rgba(139, 69, 19, 0.1) 31px,
+                    rgba(139, 69, 19, 0.1) 32px
+            );
+    border-radius: 4px;
+    box-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.1),
+            0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 40px 45px;
+    position: relative;
+    transition: opacity 0.3s ease;
+    overflow: hidden;
+}
+
+/* Red Margin Line */
+.autograph-page::before {
+    content: '';
+    position: absolute;
+    left: 45px;
+    top: 30px;
+    bottom: 30px;
+    width: 2px;
+    background: rgba(220, 38, 38, 0.3);
+}
+
+/* Favorite Heart */
+.favorite-heart {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.favorite-heart svg {
+    width: 26px;
+    height: 26px;
+    stroke: #9A74D8;
+    fill: none;
+    transition: all 0.3s ease;
+}
+
+.favorite-heart:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(154, 116, 216, 0.3);
+}
+
+.favorite-heart.favorited svg {
+    fill: #ef4444;
+    stroke: #ef4444;
+    animation: heartPulse 0.5s ease;
+}
+
+@keyframes heartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* Page Content */
+.page-content {
+    position: relative;
+    height: 100%;
+    padding-left: 25px;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.message-text {
+    position: relative;
+    z-index: 2;
+}
+
+.main-message {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 16px;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+}
+
+.message-text p {
+    font-size: 15px;
+    line-height: 32px;
+    color: #374151;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+/* Decorations - Static (no animation) */
+.decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.emoji {
+    position: absolute;
+    font-size: 28px;
+}
+
+.doodle {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0.4;
+}
+
+.doodle.heart {
+    color: #9A74D8;
+    font-size: 28px;
+}
+
+.doodle.star {
+    color: #fbbf24;
+    font-size: 22px;
+}
+
+/* Small Photos */
+.small-photo {
+    position: absolute;
+}
+
+/* Author Name */
+.author-name {
+    position: absolute;
+    bottom: 25px;
+    right: 45px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* Page Number */
+.page-number {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: 500;
+    color: #9ca3af;
+}
+
+/* Arrow Buttons */
+.arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1f2937;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.arrow-btn:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.arrow-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.left-arrow {
+    left: 20px;
+}
+
+.right-arrow {
+    right: 20px;
+}
+
+.arrow-btn svg {
+    stroke-width: 2.5;
+}
+
+/* Page Info - Hidden */
+.page-info {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .viewer-header {
+        padding: 20px 30px;
+    }
+
+    .journal-title {
+        font-size: 24px;
+    }
+
+    .page-viewer {
+        height: calc(100vh - 180px);
+        max-height: 600px;
+        padding: 25px 15px;
+    }
+
+    .autograph-page {
+        padding: 35px 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .viewer-header {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px 20px;
+    }
+
+    .journal-title {
+        font-size: 22px;
+        order: -1;
+    }
+
+    .nav-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .nav-btn.prev-journal {
+        order: 1;
+    }
+
+    .nav-btn.next-journal {
+        order: 2;
+    }
+
+    .page-viewer {
+        height: calc(100vh - 200px);
+        max-height: 550px;
+        padding: 20px 10px;
+    }
+
+    .journal-page {
+        padding: 30px 35px;
+    }
+
+    .journal-page::before {
+        left: 35px;
+        top: 25px;
+        bottom: 25px;
+    }
+
+    .page-content {
+        padding-left: 20px;
+    }
+
+    .main-message {
+        font-size: 19px;
+        margin-bottom: 14px;
+    }
+
+    .message-text p {
+        font-size: 14px;
+        line-height: 28px;
+    }
+
+    .emoji {
+        font-size: 24px;
+    }
+
+    .arrow-btn {
+        width: 46px;
+        height: 46px;
+    }
+
+    .left-arrow {
+        left: 12px;
+    }
+
+    .right-arrow {
+        right: 12px;
+    }
+
+    .author-name {
+        font-size: 16px;
+        bottom: 22px;
+        right: 38px;
+    }
+
+    .small-photo div {
+        width: 65px !important;
+        height: 65px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .journal-viewer-wrapper {
+        padding: 12px;
+    }
+
+    .journal-viewer-container {
+        border-radius: 16px;
+    }
+
+    .viewer-header {
+        padding: 14px 16px;
+    }
+
+    .journal-title {
+        font-size: 19px;
+    }
+
+    .nav-btn {
+        padding: 11px;
+        font-size: 12px;
+    }
+
+    .nav-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .page-viewer {
+        height: calc(100vh - 190px);
+        max-height: 500px;
+        padding: 15px 8px;
+    }
+
+    .journal-page {
+        padding: 28px 30px;
+    }
+
+    .journal-page::before {
+        left: 30px;
+        top: 22px;
+        bottom: 22px;
+    }
+
+    .favorite-heart {
+        width: 38px;
+        height: 38px;
+        top: 12px;
+        right: 12px;
+    }
+
+    .favorite-heart svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .page-content {
+        padding-left: 15px;
+    }
+
+    .main-message {
+        font-size: 17px;
+        margin-bottom: 12px;
+    }
+
+    .message-text p {
+        font-size: 13px;
+        line-height: 26px;
+        margin-bottom: 10px;
+    }
+
+    .emoji {
+        font-size: 22px;
+    }
+
+    .doodle {
+        font-size: 20px;
+    }
+
+    .doodle.heart {
+        font-size: 24px;
+    }
+
+    .author-name {
+        font-size: 14px;
+        bottom: 20px;
+        right: 32px;
+    }
+
+    .page-number {
+        font-size: 11px;
+        bottom: 10px;
+    }
+
+    .arrow-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .arrow-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .left-arrow {
+        left: 8px;
+    }
+
+    .right-arrow {
+        right: 8px;
+    }
+
+    .small-photo div {
+        width: 55px !important;
+        height: 55px !important;
+        font-size: 18px !important;
+    }
+}
