@@ -56,6 +56,7 @@ public class LoginServlet extends HttpServlet {
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        String rememberMeToken = request.getParameter("rememberme");
 
         // Validate input
         if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
@@ -65,13 +66,13 @@ public class LoginServlet extends HttpServlet {
         }
 
         // Authenticate user
-        user user = userDAO.findByUsername(username);
+        user user = userDAO.findByemail(username);
         if (user != null && PasswordUtil.verifyPassword(password, user.getSalt(), user.getPassword())) {
             // Login success: create session (HTTP + Database)
             SessionUtil.createSession(request, user);
 
             // Handle "Remember Me" if checkbox is checked
-            String rememberMe = request.getParameter("remember_me");
+            String rememberMe = rememberMeToken;
             if ("true".equals(rememberMe) || "on".equals(rememberMe)) {
                 handleRememberMe(user.getId(), response);
             }

@@ -381,7 +381,8 @@ public class userSessionDAO {
             if (rs != null) rs.close();
             if (stmt != null) stmt.close();
             if (conn != null) conn.close();
-        } catch (SQLException e) {
+        } catch (SQLException e) {            String sql = "INSERT INTO remember_me_tokens (user_id, token, created_at, expires_at) VALUES (?, ?, ?, ?)";
+
             e.printStackTrace();
         }
     }
