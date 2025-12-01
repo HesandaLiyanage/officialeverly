@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Groups;
 
 import com.demo.web.dao.GroupDAO;
 import com.demo.web.model.Group;

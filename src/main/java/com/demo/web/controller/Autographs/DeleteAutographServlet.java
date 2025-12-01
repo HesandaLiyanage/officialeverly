@@ -1,8 +1,7 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Autographs;
 
 import com.demo.web.dao.autographDAO;
 import com.demo.web.model.autograph;
-import com.demo.web.util.DatabaseUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,9 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 public class DeleteAutographServlet extends HttpServlet {
 

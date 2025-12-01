@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Events;
 
 import com.demo.web.dao.EventDAO;
 import com.demo.web.dao.GroupDAO;
@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @MultipartConfig(

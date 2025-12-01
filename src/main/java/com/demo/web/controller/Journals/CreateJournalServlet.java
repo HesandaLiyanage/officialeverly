@@ -1,5 +1,5 @@
 // File: com/demo/web/controller/CreateJournalServlet.java
-package com.demo.web.controller;
+package com.demo.web.controller.Journals;
 
 import com.demo.web.dao.JournalDAO;
 import com.demo.web.model.Journal;
@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;

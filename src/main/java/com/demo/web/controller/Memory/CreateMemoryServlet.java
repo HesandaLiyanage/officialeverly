@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.dao.MediaDAO;
@@ -17,10 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.Collection;
 
 @WebServlet("/createMemory")

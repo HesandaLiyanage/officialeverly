@@ -68,7 +68,7 @@
     <!-- Add Autograph Servlet -->
     <servlet>
         <servlet-name>AddAutographServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.AddAutographServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.AddAutographServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AddAutographServlet</servlet-name>
@@ -77,7 +77,7 @@
 
     <servlet>
         <servlet-name>DeleteAutographServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.DeleteAutographServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.DeleteAutographServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DeleteAutographServlet</servlet-name>
@@ -86,7 +86,7 @@
 
     <servlet>
         <servlet-name>SaveEventServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.CreateEventServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Events.CreateEventServlet</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size>        <!-- 10MB -->
             <max-request-size>52428800</max-request-size>   <!-- 50MB -->
@@ -101,7 +101,7 @@
 
     <servlet>
         <servlet-name>DeleteEventServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.DeleteEventServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Events.DeleteEventServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -111,7 +111,7 @@
     <!-- Add these three servlets -->
     <servlet>
         <servlet-name>CreateJournalServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.CreateJournalServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Journals.CreateJournalServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CreateJournalServlet</servlet-name>
@@ -167,7 +167,7 @@
 
     <servlet>
         <servlet-name>creategroup</servlet-name>
-        <servlet-class>com.demo.web.controller.CreateGroupServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.CreateGroupServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>creategroup</servlet-name>
@@ -178,7 +178,7 @@
 
     <servlet>
         <servlet-name>deletegroupservlet</servlet-name>
-        <servlet-class>com.demo.web.controller.DeleteGroupServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.DeleteGroupServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>deletegroupservlet</servlet-name>
