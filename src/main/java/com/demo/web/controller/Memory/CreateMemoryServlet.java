@@ -156,9 +156,15 @@ public class CreateMemoryServlet extends HttpServlet {
 
             // Success response
             response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"success\": true, \"memoryId\": " + memoryId + ", \"filesUploaded\": " + uploadedCount + "}");
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_OK);
 
+            try (PrintWriter out = response.getWriter()) {
+                out.write(String.format(
+                        "{\"success\": true, \"memoryId\": %d, \"filesUploaded\": %d}",
+                        memoryId, uploadedCount
+                ));
+            }
 
 
         } catch (Exception e) {
