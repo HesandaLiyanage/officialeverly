@@ -76,6 +76,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>CreateMemoryServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.CreateMemoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateMemoryServlet</servlet-name>
+        <url-pattern>/createMemory</url-pattern> <!-- This matches the form action in addautograph.jsp -->
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>DeleteAutographServlet</servlet-name>
         <servlet-class>com.demo.web.controller.Autographs.DeleteAutographServlet</servlet-class>
     </servlet>
