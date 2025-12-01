@@ -34,11 +34,10 @@
                 <c:otherwise>
                     <c:forEach var="memory" items="${memories}">
                         <c:set var="coverUrl" value="${requestScope['cover_' += memory.memoryId]}" />
+                        <c:set var="finalCover" value="${not empty coverUrl ? coverUrl : pageContext.request.contextPath += '/resources/images/default-memory.jpg'}" />
+
                         <div class="memory-card" onclick="location.href='/memoryview?id=${memory.memoryId}'">
-                            <div class="memory-image"
-                                 style="background-image: url('${not empty coverUrl
-                                         ? coverUrl
-                                         : pageContext.request.contextPath += '/resources/images/default-memory.jpg'}')">
+                            <div class="memory-image" style="background-image: url('${finalCover}')">
                             </div>
                             <div class="memory-content">
                                 <h3 class="memory-title">${memory.title}</h3>
