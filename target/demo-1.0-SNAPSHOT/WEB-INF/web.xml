@@ -240,7 +240,7 @@
 
     <servlet>
         <servlet-name>FrontController</servlet-name>
-        <servlet-class>com.demo.web.controller.FrontControllerServlet</servlet-class>
+        <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FrontController</servlet-name>
