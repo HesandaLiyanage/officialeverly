@@ -67,7 +67,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/resources/assets/landing.mp4", "/resources/assets/landing.mp4");
 
         // Protected pages (some need specific logic, others are static JSPs)
-        routeToJsp.put("/memories", "/views/app/memories.jsp");
+//        routeToJsp.put("/memories", "/views/app/memories.jsp");
+        routeToJsp.put("/memories", "/memoriesServlet"); // routes to servlet, not JSP directly
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
         routeToJsp.put("/profile", "/views/app/profile.jsp");
         routeToJsp.put("/autographs", "/views/app/Autographs/autographcontent.jsp");
@@ -195,6 +196,10 @@ public class FrontControllerServlet extends HttpServlet {
                 case "/createMemory":
                     routeToCreateMemoryServlet(request, response);
                     return;
+                case "/memories":
+                    request.getRequestDispatcher("/memoriesServlet").forward(request, response);
+                    return;
+
                 // You can add more later:
                 // case "/uploadAvatar": routeToAvatarServlet(request, response); return;
             }
