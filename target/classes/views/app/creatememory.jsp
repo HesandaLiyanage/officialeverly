@@ -240,7 +240,7 @@
             console.log('Files:', fileInput.files.length);
 
             // Submit via AJAX
-            fetch('${pageContext.request.contextPath}/createMemory', {
+            fetch('${pageContext.request.contextPath}/createMemoryServlet', {
                 method: 'POST',
                 body: formData
             })

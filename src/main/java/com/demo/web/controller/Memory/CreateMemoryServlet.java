@@ -159,6 +159,9 @@ public class CreateMemoryServlet extends HttpServlet {
             response.setContentType("application/json");
             response.getWriter().write("{\"success\": true, \"memoryId\": " + memoryId + ", \"filesUploaded\": " + uploadedCount + "}");
 
+            response.sendRedirect(request.getContextPath() + "/memories");
+            return;
+
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
