@@ -3,6 +3,7 @@ package com.demo.web.dao;
 import com.demo.web.model.UserSession;
 import com.demo.web.util.DatabaseUtil;
 
+import javax.crypto.SecretKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,11 +12,23 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * IMPORTANT: Master keys are stored in memory (HTTP session or this cache)
+ * NEVER store master keys in the database!
+ */
 public class userSessionDAO {
+
+    // In-memory cache for master keys (as fallback if not using HTTP session)
+    // Key: sessionId, Value: SecretKey (master key)
+    // NOTE: In production, use Redis or similar for distributed systems
+    private static final Map<String, SecretKey> masterKeyCache = new ConcurrentHashMap<>();
 
     /**
      * Create a new user session with device information
+     * UNCHANGED - your existing session creation
      */
     public boolean createSession(int userId, String sessionId,
                                  String deviceName, String deviceType,
@@ -34,16 +47,15 @@ public class userSessionDAO {
             stmt.setInt(2, userId);
             stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
 
-            // Set expiration time (e.g., 24 hours from now)
+            // Set expiration time (24 hours from now)
             Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + (24L * 60 * 60 * 1000));
             stmt.setTimestamp(4, expiresAt);
 
-            // Device information
             stmt.setString(5, deviceName);
             stmt.setString(6, deviceType);
             stmt.setString(7, ipAddress);
             stmt.setString(8, userAgent);
-            stmt.setBoolean(9, true); // is_active
+            stmt.setBoolean(9, true);
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
@@ -57,14 +69,58 @@ public class userSessionDAO {
     }
 
     /**
-     * Create a new user session (backward compatibility)
+     * Create a new user session (backward compatibility) - UNCHANGED
      */
     public boolean createSession(int userId, String sessionId) {
         return createSession(userId, sessionId, "Unknown Device", "Unknown", "Unknown IP", "Unknown Browser");
     }
 
     /**
-     * Find session by session ID
+     * NEW METHOD: Create session WITH master key storage
+     * Use this after successful login with encryption unlocking
+     */
+    public boolean createSessionWithMasterKey(int userId, String sessionId, SecretKey masterKey,
+                                              String deviceName, String deviceType,
+                                              String ipAddress, String userAgent) {
+        // Create normal session in database
+        boolean sessionCreated = createSession(userId, sessionId, deviceName, deviceType, ipAddress, userAgent);
+
+        if (sessionCreated && masterKey != null) {
+            // Store master key in memory cache
+            storeMasterKeyInCache(sessionId, masterKey);
+        }
+
+        return sessionCreated;
+    }
+
+    /**
+     * NEW METHOD: Store master key in memory cache
+     * Call this after successful login
+     */
+    public void storeMasterKeyInCache(String sessionId, SecretKey masterKey) {
+        if (sessionId != null && masterKey != null) {
+            masterKeyCache.put(sessionId, masterKey);
+        }
+    }
+
+    /**
+     * NEW METHOD: Retrieve master key from cache
+     * Use this when user makes requests (already logged in)
+     */
+    public SecretKey getMasterKeyFromCache(String sessionId) {
+        return masterKeyCache.get(sessionId);
+    }
+
+    /**
+     * NEW METHOD: Remove master key from cache
+     * Call this on logout or session expiration
+     */
+    public void removeMasterKeyFromCache(String sessionId) {
+        masterKeyCache.remove(sessionId);
+    }
+
+    /**
+     * Find session by session ID - UNCHANGED
      */
     public UserSession findBySessionId(String sessionId) {
         Connection conn = null;
@@ -106,7 +162,7 @@ public class userSessionDAO {
     }
 
     /**
-     * Get all active sessions for a user
+     * Get all active sessions for a user - UNCHANGED
      */
     public List<UserSession> getUserSessions(int userId) {
         List<UserSession> sessions = new ArrayList<>();
@@ -151,7 +207,8 @@ public class userSessionDAO {
     }
 
     /**
-     * Revoke a specific session (logout device)
+     * UPDATED: Revoke a specific session (logout device)
+     * Now also removes master key from cache
      */
     public boolean revokeSession(String sessionId) {
         Connection conn = null;
@@ -165,7 +222,14 @@ public class userSessionDAO {
             stmt.setString(1, sessionId);
 
             int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
+
+            if (rowsUpdated > 0) {
+                // Remove master key from cache
+                removeMasterKeyFromCache(sessionId);
+                return true;
+            }
+
+            return false;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -176,34 +240,63 @@ public class userSessionDAO {
     }
 
     /**
-     * Revoke all sessions except current one
+     * UPDATED: Revoke all sessions except current one
+     * Now also removes master keys from cache
      */
     public int revokeAllSessionsExcept(int userId, String currentSessionId) {
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet rs = null;
 
         try {
+            // First, get all session IDs to revoke
             conn = DatabaseUtil.getConnection();
-            String sql = "UPDATE user_sessions SET is_active = FALSE " +
+            String selectSql = "SELECT session_id FROM user_sessions " +
                     "WHERE user_id = ? AND session_id != ? AND is_active = TRUE";
 
-            stmt = conn.prepareStatement(sql);
+            stmt = conn.prepareStatement(selectSql);
+            stmt.setInt(1, userId);
+            stmt.setString(2, currentSessionId);
+
+            rs = stmt.executeQuery();
+
+            List<String> sessionIdsToRevoke = new ArrayList<>();
+            while (rs.next()) {
+                sessionIdsToRevoke.add(rs.getString("session_id"));
+            }
+
+            // Close result set before next query
+            rs.close();
+            stmt.close();
+
+            // Now revoke the sessions
+            String updateSql = "UPDATE user_sessions SET is_active = FALSE " +
+                    "WHERE user_id = ? AND session_id != ? AND is_active = TRUE";
+
+            stmt = conn.prepareStatement(updateSql);
             stmt.setInt(1, userId);
             stmt.setString(2, currentSessionId);
 
             int rowsUpdated = stmt.executeUpdate();
+
+            // Remove master keys from cache for all revoked sessions
+            for (String sessionId : sessionIdsToRevoke) {
+                removeMasterKeyFromCache(sessionId);
+            }
+
             return rowsUpdated;
 
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
         } finally {
-            closeResources(null, stmt, conn);
+            closeResources(rs, stmt, conn);
         }
     }
 
     /**
-     * Delete user session (permanent deletion)
+     * UPDATED: Delete user session (permanent deletion)
+     * Now also removes master key from cache
      */
     public boolean deleteSession(String sessionId) {
         Connection conn = null;
@@ -217,7 +310,14 @@ public class userSessionDAO {
             stmt.setString(1, sessionId);
 
             int rowsDeleted = stmt.executeUpdate();
-            return rowsDeleted > 0;
+
+            if (rowsDeleted > 0) {
+                // Remove master key from cache
+                removeMasterKeyFromCache(sessionId);
+                return true;
+            }
+
+            return false;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -228,32 +328,56 @@ public class userSessionDAO {
     }
 
     /**
-     * Delete expired sessions
+     * UPDATED: Delete expired sessions
+     * Now also cleans up master keys from cache
      */
     public int deleteExpiredSessions() {
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet rs = null;
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "DELETE FROM user_sessions WHERE expires_at < ?";
 
-            stmt = conn.prepareStatement(sql);
+            // First, get expired session IDs
+            String selectSql = "SELECT session_id FROM user_sessions WHERE expires_at < ?";
+            stmt = conn.prepareStatement(selectSql);
+            stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+
+            rs = stmt.executeQuery();
+
+            List<String> expiredSessionIds = new ArrayList<>();
+            while (rs.next()) {
+                expiredSessionIds.add(rs.getString("session_id"));
+            }
+
+            rs.close();
+            stmt.close();
+
+            // Delete expired sessions
+            String deleteSql = "DELETE FROM user_sessions WHERE expires_at < ?";
+            stmt = conn.prepareStatement(deleteSql);
             stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
 
             int rowsDeleted = stmt.executeUpdate();
+
+            // Clean up master keys from cache
+            for (String sessionId : expiredSessionIds) {
+                removeMasterKeyFromCache(sessionId);
+            }
+
             return rowsDeleted;
 
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
         } finally {
-            closeResources(null, stmt, conn);
+            closeResources(rs, stmt, conn);
         }
     }
 
     /**
-     * Check if session exists and is valid
+     * Check if session exists and is valid - UNCHANGED
      */
     public boolean isValidSession(String sessionId) {
         Connection conn = null;
@@ -281,7 +405,15 @@ public class userSessionDAO {
     }
 
     /**
-     * Update session expiration time
+     * NEW METHOD: Check if session has master key in cache
+     * Use this to verify user can decrypt files
+     */
+    public boolean hasMasterKey(String sessionId) {
+        return masterKeyCache.containsKey(sessionId);
+    }
+
+    /**
+     * Update session expiration time - UNCHANGED
      */
     public boolean updateSessionExpiration(String sessionId) {
         Connection conn = null;
@@ -308,7 +440,7 @@ public class userSessionDAO {
     }
 
     /**
-     * Create remember me token
+     * Create remember me token - UNCHANGED
      */
     public String createRememberMeToken(int userId) {
         Connection conn = null;
@@ -324,7 +456,7 @@ public class userSessionDAO {
             stmt.setString(2, token);
             stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
 
-            // Set expiration time (e.g., 30 days from now)
+            // Set expiration time (30 days from now)
             Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000));
             stmt.setTimestamp(4, expiresAt);
 
@@ -343,7 +475,7 @@ public class userSessionDAO {
     }
 
     /**
-     * Get user ID by remember me token
+     * Get user ID by remember me token - UNCHANGED
      */
     public Integer getUserIdByToken(String token) {
         Connection conn = null;
@@ -374,15 +506,29 @@ public class userSessionDAO {
     }
 
     /**
-     * Close database resources
+     * NEW METHOD: Get cache statistics (for debugging)
+     */
+    public int getMasterKeyCacheSize() {
+        return masterKeyCache.size();
+    }
+
+    /**
+     * NEW METHOD: Clear entire master key cache (use with caution!)
+     * Useful for server restart or maintenance
+     */
+    public void clearAllMasterKeys() {
+        masterKeyCache.clear();
+    }
+
+    /**
+     * Close database resources - UNCHANGED
      */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
             if (rs != null) rs.close();
             if (stmt != null) stmt.close();
             if (conn != null) conn.close();
-        } catch (SQLException e) {            String sql = "INSERT INTO remember_me_tokens (user_id, token, created_at, expires_at) VALUES (?, ?, ?, ?)";
-
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
