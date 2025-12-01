@@ -174,7 +174,7 @@ public class CreateMemoryServlet extends HttpServlet {
         }
     }
 
-    /**
+    /*
      * Upload and encrypt media file
      */
     private int uploadEncryptedMedia(int userId, SecretKey userMasterKey,
