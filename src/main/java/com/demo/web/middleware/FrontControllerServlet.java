@@ -189,6 +189,11 @@ public class FrontControllerServlet extends HttpServlet {
             path = path.substring(0, path.length() - 1);
         }
 
+        if ("/memories".equals(path)) {
+            request.getRequestDispatcher("/memoriesServlet").forward(request, response);
+            return;
+        }
+
         logger.info("FrontController: Handling GET/POST request for path: " + path);
 
         if ("POST".equals(request.getMethod())) {
@@ -196,9 +201,7 @@ public class FrontControllerServlet extends HttpServlet {
                 case "/createMemory":
                     routeToCreateMemoryServlet(request, response);
                     return;
-                case "/memories":
-                    request.getRequestDispatcher("/memoriesServlet").forward(request, response);
-                    return;
+
 
                 // You can add more later:
                 // case "/uploadAvatar": routeToAvatarServlet(request, response); return;

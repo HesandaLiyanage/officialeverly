@@ -52,8 +52,9 @@ public class MemoriesListServlet extends HttpServlet {
                 request.setAttribute("cover_" + memory.getMemoryId(), coverUrl);
             }
 
+            // At the end of doGet()
             request.setAttribute("memories", memories);
-            request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
+            request.getRequestDispatcher("/memories.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
