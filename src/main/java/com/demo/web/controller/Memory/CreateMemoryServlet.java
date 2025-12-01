@@ -215,7 +215,7 @@ public class CreateMemoryServlet extends HttpServlet {
         mediaItem.setFileSize(encryptedFile.getEncryptedData().length);
         mediaItem.setOriginalFileSize(fileData.length);
         mediaItem.setMimeType(mimeType);
-        mediaItem.setMediaType(mimeType.startsWith("image/") ? "image" : "video");
+        mediaItem.setMediaType(mimeType.startsWith("image/") ? "photo" : "video");
         mediaItem.setTitle(originalFilename);
         mediaItem.setEncrypted(true);
         mediaItem.setEncryptionKeyId(keyId);
