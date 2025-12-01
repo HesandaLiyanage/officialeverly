@@ -116,6 +116,17 @@ public class Memory {
         isLinkShared = linkShared;
     }
 
+    // Add to Memory.java
+    private String coverUrl; // temporary for display
+
+    public String getCoverUrl() {
+        return coverUrl != null ? coverUrl : request.getContextPath() + "/resources/images/default-memory.jpg";
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
+
     @Override
     public String toString() {
         return "Memory{" +
