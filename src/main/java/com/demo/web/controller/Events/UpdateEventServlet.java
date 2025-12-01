@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Events;
 
 import com.demo.web.dao.EventDAO;
 import com.demo.web.dao.GroupDAO;
@@ -7,7 +7,6 @@ import com.demo.web.model.Group;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.File;
 import java.io.IOException;

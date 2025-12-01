@@ -1,5 +1,5 @@
 // File: com/demo/web/controller/EditJournalServlet.java
-package com.demo.web.controller;
+package com.demo.web.controller.Journals;
 
 import com.demo.web.dao.JournalDAO;
 import com.demo.web.model.Journal;

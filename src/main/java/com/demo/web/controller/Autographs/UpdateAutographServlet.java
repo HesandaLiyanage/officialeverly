@@ -1,9 +1,8 @@
 // File: com/demo/web/controller/UpdateAutographServlet.java (FIXED - Added @MultipartConfig)
-package com.demo.web.controller;
+package com.demo.web.controller.Autographs;
 
 import com.demo.web.dao.autographDAO;
 import com.demo.web.model.autograph;
-import com.demo.web.util.DatabaseUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -14,12 +13,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 // CRITICAL: This annotation is REQUIRED for multipart/form-data forms
 @MultipartConfig(
