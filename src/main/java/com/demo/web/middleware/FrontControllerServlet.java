@@ -1,5 +1,5 @@
 // File: com/demo/web/controller/FrontControllerServlet.java (Complete, Final Version with Group Handlers)
-package com.demo.web.controller.middleware;
+package com.demo.web.middleware;
 
 import com.demo.web.dao.userDAO;
 import com.demo.web.dao.autographDAO;
