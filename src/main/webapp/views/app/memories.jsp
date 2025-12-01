@@ -33,9 +33,12 @@
                 </c:when>
                 <c:otherwise>
                     <c:forEach var="memory" items="${memories}">
+                        <c:set var="coverUrl" value="${requestScope['cover_' += memory.memoryId]}" />
                         <div class="memory-card" onclick="location.href='/memoryview?id=${memory.memoryId}'">
                             <div class="memory-image"
-                                 style="background-image: url('${memory.coverUrl != null ? memory.coverUrl : pageContext.request.contextPath}/resources/images/default-memory.jpg')">
+                                 style="background-image: url('${not empty coverUrl
+                                         ? coverUrl
+                                         : pageContext.request.contextPath += '/resources/images/default-memory.jpg'}')">
                             </div>
                             <div class="memory-content">
                                 <h3 class="memory-title">${memory.title}</h3>
