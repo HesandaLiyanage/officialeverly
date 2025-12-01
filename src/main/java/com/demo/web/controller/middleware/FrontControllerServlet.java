@@ -1,5 +1,5 @@
 // File: com/demo/web/controller/FrontControllerServlet.java (Complete, Final Version with Group Handlers)
-package com.demo.web.controller;
+package com.demo.web.controller.middleware;
 
 import com.demo.web.dao.userDAO;
 import com.demo.web.dao.autographDAO;
@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.Date;
-import java.text.SimpleDateFormat;
 
 // Interface for logic handlers
 interface LogicHandler {
