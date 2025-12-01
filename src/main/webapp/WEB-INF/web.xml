@@ -81,7 +81,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CreateMemoryServlet</servlet-name>
-        <url-pattern>/createMemory</url-pattern> <!-- This matches the form action in addautograph.jsp -->
+        <url-pattern>/createMemoryServlet</url-pattern>  <!-- Hidden internal URL -->
     </servlet-mapping>
 
     <servlet>

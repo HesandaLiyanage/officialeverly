@@ -13,6 +13,7 @@ import com.demo.web.model.Event;
 import com.demo.web.model.UserSession;
 import com.demo.web.model.autograph;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
@@ -983,5 +984,12 @@ public class FrontControllerServlet extends HttpServlet {
                 request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
             }
         }
+    }
+
+    private void routeToCreateMemoryServlet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // This forwards the EXACT SAME request (with files, parts, everything) to your servlet
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/createMemoryServlet");
+        dispatcher.forward(request, response);
     }
 }
