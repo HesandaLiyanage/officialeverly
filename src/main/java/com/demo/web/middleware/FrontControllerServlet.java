@@ -189,6 +189,16 @@ public class FrontControllerServlet extends HttpServlet {
 
         logger.info("FrontController: Handling GET/POST request for path: " + path);
 
+        if ("POST".equals(request.getMethod())) {
+            switch (path) {
+                case "/createMemory":
+                    routeToCreateMemoryServlet(request, response);
+                    return;
+                // You can add more later:
+                // case "/uploadAvatar": routeToAvatarServlet(request, response); return;
+            }
+        }
+
         // Check if the path has specific business logic associated with it
         LogicHandler logicHandler = routeToLogic.get(path);
         if (logicHandler != null) {
