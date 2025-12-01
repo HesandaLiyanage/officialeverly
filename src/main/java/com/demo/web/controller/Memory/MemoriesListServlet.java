@@ -43,11 +43,13 @@ public class MemoriesListServlet extends HttpServlet {
             // For each memory, get cover image (first media item)
             for (Memory memory : memories) {
                 List<MediaItem> mediaList = mediaDAO.getMediaByMemoryId(memory.getMemoryId());
+                String coverUrl = null;
                 if (!mediaList.isEmpty()) {
                     MediaItem firstMedia = mediaList.get(0);
-                    String coverUrl = request.getContextPath() + "/viewmedia?id=" + firstMedia.getMediaId();
-                    memory.setCoverUrl(coverUrl); // we'll add this field temporarily
+                    coverUrl = request.getContextPath() + "/viewmedia?id=" + firstMedia.getMediaId();
                 }
+                // Store cover URL in a map or directly in request
+                request.setAttribute("cover_" + memory.getMemoryId(), coverUrl);
             }
 
             request.setAttribute("memories", memories);
