@@ -1,31 +1,28 @@
 package com.demo.web.model;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 public class Memory {
     private int memoryId;
-    private int userId;
     private String title;
     private String description;
-    private Integer coverMediaId;
+    private Timestamp updatedAt;
+    private int userId;
+    private Integer coverMediaId; // Can be null
     private Timestamp createdTimestamp;
     private boolean isPublic;
-    private List<MediaItem> mediaItems; // For convenience
-
-    // Sharing enhancements
-    private String shareKey; // For link sharing
-    private Timestamp expiresAt; // For time-limited sharing
-    private boolean isLinkShared; // Flag to indicate if shared via link
+    private String shareKey;
+    private Timestamp expiresAt;
+    private boolean isLinkShared;
 
     // Constructors
-    public Memory() {}
+    public Memory() {
+    }
 
-    public Memory(int userId, String title, String description) {
-        this.userId = userId;
+    public Memory(String title, String description, int userId) {
         this.title = title;
         this.description = description;
-        this.createdTimestamp = new Timestamp(System.currentTimeMillis());
+        this.userId = userId;
         this.isPublic = false;
         this.isLinkShared = false;
     }
@@ -37,14 +34,6 @@ public class Memory {
 
     public void setMemoryId(int memoryId) {
         this.memoryId = memoryId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public String getTitle() {
@@ -61,6 +50,22 @@ public class Memory {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public Integer getCoverMediaId() {
@@ -83,28 +88,16 @@ public class Memory {
         return isPublic;
     }
 
-    public void setPublic(boolean isPublic) {
-        this.isPublic = isPublic;
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
-    public List<MediaItem> getMediaItems() {
-        return mediaItems;
-    }
-
-    public void setMediaItems(List<MediaItem> mediaItems) {
-        this.mediaItems = mediaItems;
-    }
-
-    // Sharing enhancement getters and setters
     public String getShareKey() {
         return shareKey;
     }
 
     public void setShareKey(String shareKey) {
         this.shareKey = shareKey;
-        if (shareKey != null && !shareKey.isEmpty()) {
-            this.isLinkShared = true;
-        }
     }
 
     public Timestamp getExpiresAt() {
@@ -119,65 +112,19 @@ public class Memory {
         return isLinkShared;
     }
 
-    public void setLinkShared(boolean isLinkShared) {
-        this.isLinkShared = isLinkShared;
-    }
-
-    // Convenience methods
-    public boolean isShared() {
-        return isPublic || (isLinkShared && shareKey != null && !shareKey.isEmpty());
-    }
-
-    public boolean isExpired() {
-        return expiresAt != null && expiresAt.before(new Timestamp(System.currentTimeMillis()));
-    }
-
-    public boolean isValidShare() {
-        if (!isLinkShared || shareKey == null || shareKey.isEmpty()) {
-            return false;
-        }
-        return !isExpired();
-    }
-
-    public void enableLinkSharing() {
-        if (this.shareKey == null || this.shareKey.isEmpty()) {
-            this.shareKey = java.util.UUID.randomUUID().toString();
-        }
-        this.isLinkShared = true;
-    }
-
-    public void disableLinkSharing() {
-        this.shareKey = null;
-        this.isLinkShared = false;
-        this.expiresAt = null;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Memory memory = (Memory) o;
-
-        return memoryId == memory.memoryId;
-    }
-
-    @Override
-    public int hashCode() {
-        return memoryId;
+    public void setLinkShared(boolean linkShared) {
+        isLinkShared = linkShared;
     }
 
     @Override
     public String toString() {
         return "Memory{" +
                 "memoryId=" + memoryId +
-                ", userId=" + userId +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
+                ", userId=" + userId +
+                ", coverMediaId=" + coverMediaId +
                 ", isPublic=" + isPublic +
-                ", shareKey='" + (shareKey != null ? "[PROTECTED]" : "null") + '\'' +
-                ", isLinkShared=" + isLinkShared +
-                ", expiresAt=" + expiresAt +
                 ", createdTimestamp=" + createdTimestamp +
                 '}';
     }
