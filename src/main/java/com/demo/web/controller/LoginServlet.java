@@ -110,7 +110,7 @@ public class LoginServlet extends HttpServlet {
             }
 
             // Check if admin user and redirect to admin page
-            if ("admin".equals(username)) {
+            if ("admin".equals(user.getUsername())) {
                 response.sendRedirect(request.getContextPath() + "/admin");
                 return;
             }
