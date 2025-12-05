@@ -218,17 +218,10 @@
                                     <c:forEach var="media" items="${mediaItems}" varStatus="status">
                                         <div class="photo-item" onclick="openLightbox(${status.index})"
                                             data-media-id="${media.mediaId}">
-                                            <c:choose>
-                                                <c:when test="${media.encrypted}">
-                                                    <img src="${pageContext.request.contextPath}/viewmedia?id=${media.mediaId}"
-                                                        alt="${media.title}" loading="lazy"
-                                                        onerror="this.src='${pageContext.request.contextPath}/resources/images/default-memory.jpg'">
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <img src="${media.filePath}" alt="${media.title}" loading="lazy"
-                                                        onerror="this.src='${pageContext.request.contextPath}/resources/images/default-memory.jpg'">
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <!-- Debug: All media items should use viewmedia servlet -->
+                                            <img src="${pageContext.request.contextPath}/viewmedia?id=${media.mediaId}"
+                                                alt="${media.title}" loading="lazy"
+                                                onerror="console.error('Failed to load media ID: ${media.mediaId}'); this.style.background='#ffcccc';">
                                         </div>
                                     </c:forEach>
                                 </div>
