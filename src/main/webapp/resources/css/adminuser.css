@@ -1,3 +1,8 @@
+/*
+ * adminuser.css - Admin user management page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
+
 /* Page Header with Back Button */
 .page-header-nav {
     display: flex;
@@ -417,7 +422,9 @@
     .user-item-status {
         font-size: 12px;
     }
-}/* Admin Page Wrapper */
+}
+
+/* Admin Page Wrapper */
 .admin-page-wrapper {
     position: relative;
     width: 90%;
@@ -602,9 +609,12 @@
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.5;
     }
@@ -801,6 +811,7 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -811,8 +822,22 @@
     animation: fadeInUp 0.5s ease;
 }
 
-.admin-nav-card:nth-child(1) { animation-delay: 0s; }
-.admin-nav-card:nth-child(2) { animation-delay: 0.1s; }
-.admin-nav-card:nth-child(3) { animation-delay: 0.2s; }
-.admin-nav-card:nth-child(4) { animation-delay: 0.3s; }
-.admin-nav-card:nth-child(5) { animation-delay: 0.4s; }
+.admin-nav-card:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.admin-nav-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.admin-nav-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.admin-nav-card:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.admin-nav-card:nth-child(5) {
+    animation-delay: 0.4s;
+}

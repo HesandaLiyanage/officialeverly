@@ -1,10 +1,7 @@
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #faf8ff;
-    color: #333;
-}
+/*
+ * vault.css - Vault page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 
 .vault-container {
     display: flex;
@@ -17,7 +14,7 @@ body {
     background: #fff;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 360px;
     text-align: center;
 }
@@ -50,13 +47,15 @@ label {
 }
 
 input[type="password"],
-input[type="email"] {   /* <--- Added email input support */
+input[type="email"] {
+    /* <--- Added email input support */
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 14px;
-    background-color: #faf8ff; /* Matches screenshot subtle purple bg */
+    background-color: #faf8ff;
+    /* Matches screenshot subtle purple bg */
 }
 
 small {
@@ -75,7 +74,8 @@ small {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* subtle like screenshot */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    /* subtle like screenshot */
 }
 
 .btn-save:hover {
