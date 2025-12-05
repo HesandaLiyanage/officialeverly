@@ -1,4 +1,6 @@
 /* Groups Page Styles - Updated with Scrolling Effects */
+
+
 * {
     margin: 0;
     padding: 0;
@@ -25,6 +27,7 @@ body {
 .main-content {
     flex: 1;
     min-width: 0;
+    padding-bottom: 40px; /* space so footer doesn't overlap */
 }
 
 .sidebar {
