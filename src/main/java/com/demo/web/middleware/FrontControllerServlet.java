@@ -195,6 +195,34 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
+        // Route /memoryview to MemoryViewServlet
+        if ("/memoryview".equals(path)) {
+            logger.info("Routing /memoryview to MemoryViewServlet");
+            request.getRequestDispatcher("/memoryViewServlet").forward(request, response);
+            return;
+        }
+
+        // Route /editmemory to EditMemoryServlet
+        if ("/editmemory".equals(path)) {
+            logger.info("Routing /editmemory to EditMemoryServlet");
+            request.getRequestDispatcher("/editMemoryServlet").forward(request, response);
+            return;
+        }
+
+        // Route /updatememory to UpdateMemoryServlet (POST)
+        if ("/updatememory".equals(path)) {
+            logger.info("Routing /updatememory to UpdateMemoryServlet");
+            request.getRequestDispatcher("/updateMemoryServlet").forward(request, response);
+            return;
+        }
+
+        // Route /deletememory to DeleteMemoryServlet
+        if ("/deletememory".equals(path)) {
+            logger.info("Routing /deletememory to DeleteMemoryServlet");
+            request.getRequestDispatcher("/deleteMemoryServlet").forward(request, response);
+            return;
+        }
+
         // Route /viewMedia to ViewMediaServlet (GET requests)
         if ("/viewMedia".equals(path)) {
             logger.info("Routing /viewMedia to ViewMediaServlet");
