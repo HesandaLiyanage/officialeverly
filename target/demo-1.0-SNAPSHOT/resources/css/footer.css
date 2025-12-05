@@ -1,3 +1,8 @@
+.main-content {
+    flex: 1; /* This pushes footer to bottom */
+}
+
+
 * {
     margin: 0;
     padding: 0;

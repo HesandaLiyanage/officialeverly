@@ -68,7 +68,7 @@ public class FrontControllerServlet extends HttpServlet {
 
         // Protected pages (some need specific logic, others are static JSPs)
 //        routeToJsp.put("/memories", "/views/app/memories.jsp");
-        routeToJsp.put("/memories", "/memoriesServlet"); // routes to servlet, not JSP directly
+//        routeToJsp.put("/memories", "/memoriesServlet");  routes to servlet, not JSP directly
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
         routeToJsp.put("/profile", "/views/app/profile.jsp");
         routeToJsp.put("/autographs", "/views/app/Autographs/autographcontent.jsp");
@@ -160,11 +160,20 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/journals", new JournalListLogicHandler());  // ADD THIS LINE
         routeToLogic.put("/journalview", new JournalViewLogicHandler());  // ADD THIS LINE
         routeToLogic.put("/editjournal", new EditJournalLogicHandler());
+        routeToLogic.put("/memories" , new MemoryViewLogicHandler());
 
         // Remove this if using servlet
 
 
 
+    }
+
+    private static class MemoryViewLogicHandler implements LogicHandler {
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        }
     }
 
     @Override
