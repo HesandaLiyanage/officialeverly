@@ -67,15 +67,17 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/resources/assets/landing.mp4", "/resources/assets/landing.mp4");
 
         // Protected pages (some need specific logic, others are static JSPs)
-//        routeToJsp.put("/memories", "/views/app/memories.jsp");
-//        routeToJsp.put("/memories", "/memoriesServlet");  routes to servlet, not JSP directly
+        // routeToJsp.put("/memories", "/views/app/memories.jsp");
+        // routeToJsp.put("/memories", "/memoriesServlet"); routes to servlet, not JSP
+        // directly
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
         routeToJsp.put("/profile", "/views/app/profile.jsp");
         routeToJsp.put("/autographs", "/views/app/Autographs/autographcontent.jsp");
         routeToJsp.put("/journals", "/views/app/journals.jsp");
 
         routeToJsp.put("/collabmemories", "/views/app/collabmemories.jsp");
-        routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp"); // No specific logic needed here, just the static page
+        routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp"); // No specific logic needed here, just the
+                                                                              // static page
 
         routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp");
 
@@ -135,16 +137,6 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/comments", "/views/app/feedcomment.jsp");
         routeToJsp.put("/admincontent", "/views/app/Admin/admincontent.jsp");
 
-
-
-
-
-
-
-
-
-
-
         // Pages that require business logic before showing the JSP
         routeToLogic.put("/linkeddevices", new LinkedDevicesLogicHandler());
         routeToLogic.put("/editprofile", new EditProfileLogicHandler());
@@ -156,22 +148,21 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/editgroup", new EditGroupLogicHandler());
         routeToLogic.put("/events", new EventListLogicHandler());
         routeToLogic.put("/createevent", new CreateEventLogicHandler());
-        routeToLogic.put("/editevent", new EditEventLogicHandler());  // ADD THIS LINE
-        routeToLogic.put("/journals", new JournalListLogicHandler());  // ADD THIS LINE
-        routeToLogic.put("/journalview", new JournalViewLogicHandler());  // ADD THIS LINE
+        routeToLogic.put("/editevent", new EditEventLogicHandler()); // ADD THIS LINE
+        routeToLogic.put("/journals", new JournalListLogicHandler()); // ADD THIS LINE
+        routeToLogic.put("/journalview", new JournalViewLogicHandler()); // ADD THIS LINE
         routeToLogic.put("/editjournal", new EditJournalLogicHandler());
-        routeToLogic.put("/memories" , new MemoryViewLogicHandler());
+        routeToLogic.put("/memories", new MemoryViewLogicHandler());
 
         // Remove this if using servlet
-
-
 
     }
 
     private static class MemoryViewLogicHandler implements LogicHandler {
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
 
         }
     }
@@ -200,7 +191,7 @@ public class FrontControllerServlet extends HttpServlet {
 
         if ("/memories".equals(path)) {
             logger.info("Routing /memories to MemoriesServlet");
-            request.getRequestDispatcher("/memoriesServlet").forward(request, response);
+            request.getRequestDispatcher("/memoriesview").forward(request, response);
             return;
         }
 
@@ -218,7 +209,6 @@ public class FrontControllerServlet extends HttpServlet {
                 case "/createMemory":
                     routeToCreateMemoryServlet(request, response);
                     return;
-
 
                 // You can add more later:
                 // case "/uploadAvatar": routeToAvatarServlet(request, response); return;
@@ -255,7 +245,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
                 response.sendRedirect(request.getContextPath() + "/login");
@@ -271,7 +262,8 @@ public class FrontControllerServlet extends HttpServlet {
             for (UserSession device : devices) {
                 if (device.getSessionId().equals(currentSessionId)) {
                     device.setDeviceName(device.getDeviceName() + " (This device)");
-                    System.out.println("Session ID: " + device.getSessionId() + ", Device Name: " + device.getDeviceName() + ", Active: " + device.isActive());
+                    System.out.println("Session ID: " + device.getSessionId() + ", Device Name: "
+                            + device.getDeviceName() + ", Active: " + device.isActive());
                 }
             }
 
@@ -305,7 +297,8 @@ public class FrontControllerServlet extends HttpServlet {
             // Get the session (should exist and be valid now)
             HttpSession session = request.getSession(false);
             if (session == null) {
-                // Should not happen if SessionUtil.isValidSession returned true, but good safety check
+                // Should not happen if SessionUtil.isValidSession returned true, but good
+                // safety check
                 System.out.println("Session is unexpectedly null, redirecting to login");
                 response.sendRedirect(request.getContextPath() + "/login");
                 return;
@@ -340,7 +333,6 @@ public class FrontControllerServlet extends HttpServlet {
         }
     }
 
-
     // Inner class implementing the logic for /autographs
     private static class AutographListLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
@@ -350,7 +342,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
                 response.sendRedirect(request.getContextPath() + "/login");
@@ -376,7 +369,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
                 response.sendRedirect(request.getContextPath() + "/login");
@@ -421,7 +415,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
                 response.sendRedirect(request.getContextPath() + "/login");
@@ -466,7 +461,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
                 response.sendRedirect(request.getContextPath() + "/login");
@@ -490,8 +486,10 @@ public class FrontControllerServlet extends HttpServlet {
         }
     }
 
-    // Inner class implementing the logic for /groupmemories (viewing a specific group)
-// Inner class implementing the logic for /groupmemories (viewing a specific group)
+    // Inner class implementing the logic for /groupmemories (viewing a specific
+    // group)
+    // Inner class implementing the logic for /groupmemories (viewing a specific
+    // group)
     private static class GroupViewLogicHandler implements LogicHandler {
         private GroupDAO groupDAO;
 
@@ -500,7 +498,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
                 response.sendRedirect(request.getContextPath() + "/login");
@@ -546,7 +545,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
                 response.sendRedirect(request.getContextPath() + "/login");
@@ -581,6 +581,7 @@ public class FrontControllerServlet extends HttpServlet {
             request.getRequestDispatcher("/views/app/editgroup.jsp").forward(request, response);
         }
     }
+
     private static class EventListLogicHandler implements LogicHandler {
         private EventDAO eventDAO;
 
@@ -787,6 +788,7 @@ public class FrontControllerServlet extends HttpServlet {
             }
         }
     }
+
     // Inner class implementing the logic for /journals
     private static class JournalListLogicHandler implements LogicHandler {
         private JournalDAO journalDAO;
@@ -852,7 +854,6 @@ public class FrontControllerServlet extends HttpServlet {
             return journals.size() > 0 ? 7 : 0; // Example: assume 7 days if they have entries
         }
 
-
     }
 
     // Inner class implementing the logic for /journalview
@@ -865,7 +866,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             System.out.println("[DEBUG JournalViewLogicHandler] Handling /journalview request");
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
@@ -880,7 +882,8 @@ public class FrontControllerServlet extends HttpServlet {
             if (journalIdParam == null || journalIdParam.trim().isEmpty()) {
                 System.out.println("[DEBUG JournalViewLogicHandler] Journal ID parameter is missing");
                 request.setAttribute("error", "Journal ID is required.");
-                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to journals list
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to
+                                                                                                    // journals list
                 return;
             }
 
@@ -890,11 +893,13 @@ public class FrontControllerServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 System.out.println("[DEBUG JournalViewLogicHandler] Invalid journal ID format: " + journalIdParam);
                 request.setAttribute("error", "Invalid Journal ID.");
-                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to journals list
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to
+                                                                                                    // journals list
                 return;
             }
 
-            System.out.println("[DEBUG JournalViewLogicHandler] User ID: " + userId + ", Requested Journal ID: " + journalId);
+            System.out.println(
+                    "[DEBUG JournalViewLogicHandler] User ID: " + userId + ", Requested Journal ID: " + journalId);
 
             try {
                 // Fetch the specific journal
@@ -903,15 +908,20 @@ public class FrontControllerServlet extends HttpServlet {
                 if (journal == null) {
                     System.out.println("[DEBUG JournalViewLogicHandler] Journal not found with ID: " + journalId);
                     request.setAttribute("error", "Journal entry not found.");
-                    request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to journals list
+                    request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect
+                                                                                                        // to journals
+                                                                                                        // list
                     return;
                 }
 
                 // Security check: Ensure the journal belongs to the current user
                 if (journal.getUserId() != userId) {
-                    System.out.println("[DEBUG JournalViewLogicHandler] User " + userId + " tried to access journal " + journalId + " which belongs to user " + journal.getUserId());
+                    System.out.println("[DEBUG JournalViewLogicHandler] User " + userId + " tried to access journal "
+                            + journalId + " which belongs to user " + journal.getUserId());
                     request.setAttribute("error", "You do not have permission to view this journal entry.");
-                    request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect to journals list
+                    request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or redirect
+                                                                                                        // to journals
+                                                                                                        // list
                     return;
                 }
 
@@ -928,7 +938,9 @@ public class FrontControllerServlet extends HttpServlet {
                 System.out.println("[DEBUG JournalViewLogicHandler] Error fetching journal: " + e.getMessage());
                 e.printStackTrace();
                 request.setAttribute("error", "An error occurred while loading the journal entry: " + e.getMessage());
-                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or show a specific error page
+                request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response); // Or show a
+                                                                                                    // specific error
+                                                                                                    // page
             }
         }
     }
@@ -943,7 +955,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             System.out.println("[DEBUG EditJournalLogicHandler] Handling /editjournal request");
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("user_id") == null) {
@@ -972,7 +985,8 @@ public class FrontControllerServlet extends HttpServlet {
                 return;
             }
 
-            System.out.println("[DEBUG EditJournalLogicHandler] User ID: " + userId + ", Requested Journal ID: " + journalId);
+            System.out.println(
+                    "[DEBUG EditJournalLogicHandler] User ID: " + userId + ", Requested Journal ID: " + journalId);
 
             try {
                 // Fetch the specific journal
@@ -987,7 +1001,8 @@ public class FrontControllerServlet extends HttpServlet {
 
                 // Security check: Ensure the journal belongs to the current user
                 if (journal.getUserId() != userId) {
-                    System.out.println("[DEBUG EditJournalLogicHandler] User " + userId + " tried to access journal " + journalId + " which belongs to user " + journal.getUserId());
+                    System.out.println("[DEBUG EditJournalLogicHandler] User " + userId + " tried to access journal "
+                            + journalId + " which belongs to user " + journal.getUserId());
                     request.setAttribute("error", "You do not have permission to edit this journal entry.");
                     request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
                     return;
@@ -1013,7 +1028,8 @@ public class FrontControllerServlet extends HttpServlet {
 
     private void routeToCreateMemoryServlet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // This forwards the EXACT SAME request (with files, parts, everything) to your servlet
+        // This forwards the EXACT SAME request (with files, parts, everything) to your
+        // servlet
         RequestDispatcher dispatcher = request.getRequestDispatcher("/createMemoryServlet");
         dispatcher.forward(request, response);
     }
