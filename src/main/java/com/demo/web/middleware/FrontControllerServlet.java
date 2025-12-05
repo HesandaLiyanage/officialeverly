@@ -15,6 +15,7 @@ import com.demo.web.model.autograph;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,6 +28,10 @@ interface LogicHandler {
     void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 }
 
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 50, // 50MB per file
+        maxRequestSize = 1024 * 1024 * 100 // 100MB total request
+)
 public class FrontControllerServlet extends HttpServlet {
 
     private Map<String, String> routeToJsp;
