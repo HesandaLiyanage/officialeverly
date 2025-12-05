@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-
 public class MemoriesServlet extends HttpServlet {
 
     private memoryDAO memoryDAO;
@@ -73,7 +72,8 @@ public class MemoriesServlet extends HttpServlet {
                         System.out.println("No media for memory " + memory.getMemoryId());
                     }
                 } catch (Exception e) {
-                    System.err.println("Error getting media for memory " + memory.getMemoryId() + ": " + e.getMessage());
+                    System.err
+                            .println("Error getting media for memory " + memory.getMemoryId() + ": " + e.getMessage());
                     // Continue with other memories
                 }
             }
@@ -83,12 +83,12 @@ public class MemoriesServlet extends HttpServlet {
             request.setAttribute("encryptionAvailable", encryptionAvailable);
 
             // Forward to JSP
-            request.getRequestDispatcher("/memories").forward(request, response);
+            request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error loading memories: " + e.getMessage());
-            request.getRequestDispatcher("/memories").forward(request, response);
+            request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
         }
     }
 }
@@ -101,9 +101,9 @@ public class MemoriesServlet extends HttpServlet {
  * 3. Check if encryption available
  * 4. Get all memories for user
  * 5. For each memory:
- *    - Get first media item (cover photo)
- *    - Create URL to viewMedia servlet
- *    - Store in request attributes
+ * - Get first media item (cover photo)
+ * - Create URL to viewMedia servlet
+ * - Store in request attributes
  * 6. Forward to JSP
  * 7. JSP displays covers using <img src="/viewMedia?mediaId=X">
  * 8. Browser requests /viewMedia which decrypts and serves image
