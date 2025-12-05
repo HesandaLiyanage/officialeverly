@@ -112,7 +112,7 @@
     });
   </script>
 
-  <body>
+  <body class="has-fixed-header">
 
     <header class="main-header">
       <div class="logo">
