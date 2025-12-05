@@ -4,6 +4,7 @@ import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.Memory;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,10 @@ import java.io.IOException;
 /**
  * Servlet for updating memory details
  */
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 50, // 50MB per file
+        maxRequestSize = 1024 * 1024 * 100 // 100MB total request
+)
 public class UpdateMemoryServlet extends HttpServlet {
 
     private memoryDAO memoryDao;
