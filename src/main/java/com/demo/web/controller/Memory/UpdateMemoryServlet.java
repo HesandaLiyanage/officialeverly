@@ -41,7 +41,15 @@ public class UpdateMemoryServlet extends HttpServlet {
             String description = request.getParameter("memoryDescription");
             String[] removedMediaIds = request.getParameterValues("removedFileIds[]");
 
+            // Debug logging
+            System.out.println("=== UpdateMemoryServlet Debug ===");
+            System.out.println("memoryId param: " + memoryIdParam);
+            System.out.println("memoryName param: " + title);
+            System.out.println("memoryDescription param: " + description);
+            System.out.println("userId from session: " + userId);
+
             if (memoryIdParam == null || memoryIdParam.isEmpty()) {
+                System.out.println("ERROR: memoryId is null or empty!");
                 response.sendRedirect("/memories");
                 return;
             }
@@ -52,6 +60,7 @@ public class UpdateMemoryServlet extends HttpServlet {
             Memory memory = memoryDao.getMemoryById(memoryId);
 
             if (memory == null) {
+                System.out.println("ERROR: Memory not found for id: " + memoryId);
                 request.setAttribute("errorMessage", "Memory not found");
                 response.sendRedirect("/memories");
                 return;
@@ -59,10 +68,16 @@ public class UpdateMemoryServlet extends HttpServlet {
 
             // Check ownership
             if (memory.getUserId() != userId) {
+                System.out.println("ERROR: User " + userId + " doesn't own memory " + memoryId + " (owned by "
+                        + memory.getUserId() + ")");
                 request.setAttribute("errorMessage", "You don't have permission to edit this memory");
                 response.sendRedirect("/memories");
                 return;
             }
+
+            // Debug: print current values
+            System.out.println("Current title: " + memory.getTitle());
+            System.out.println("New title: " + title);
 
             // Update memory fields
             if (title != null && !title.trim().isEmpty()) {
@@ -73,13 +88,17 @@ public class UpdateMemoryServlet extends HttpServlet {
             }
 
             // Save updates
+            System.out.println("Attempting to update memory...");
             boolean updated = memoryDao.updateMemory(memory);
+            System.out.println("Update result: " + updated);
 
             if (!updated) {
+                System.out.println("ERROR: Update returned false!");
                 request.setAttribute("errorMessage", "Failed to update memory");
                 request.getRequestDispatcher("/views/app/editmemory.jsp").forward(request, response);
                 return;
             }
+            System.out.println("Memory updated successfully!");
 
             // Handle removed media items (TODO: implement unlinkMediaFromMemory in DAO)
             // For now, media removal is not implemented

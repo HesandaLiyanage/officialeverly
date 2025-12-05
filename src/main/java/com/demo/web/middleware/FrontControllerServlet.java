@@ -223,10 +223,10 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
-        // Route /viewMedia to ViewMediaServlet (GET requests)
-        if ("/viewMedia".equals(path)) {
-            logger.info("Routing /viewMedia to ViewMediaServlet");
-            request.getRequestDispatcher("/viewMediaServlet").forward(request, response);
+        // Route /viewMedia to ViewMediaServlet (GET requests) - support both cases
+        if ("/viewMedia".equals(path) || "/viewmedia".equals(path)) {
+            logger.info("Routing " + path + " to ViewMediaServlet");
+            request.getRequestDispatcher("/viewmedia").forward(request, response);
             return;
         }
 

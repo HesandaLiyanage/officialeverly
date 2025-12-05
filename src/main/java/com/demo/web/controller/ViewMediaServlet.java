@@ -46,10 +46,13 @@ public class ViewMediaServlet extends HttpServlet {
             return;
         }
 
-        // Get media ID from URL
-        String mediaIdParam = request.getParameter("mediaId");
+        // Get media ID from URL (support both 'id' and 'mediaId' parameters)
+        String mediaIdParam = request.getParameter("id");
         if (mediaIdParam == null || mediaIdParam.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing mediaId parameter");
+            mediaIdParam = request.getParameter("mediaId");
+        }
+        if (mediaIdParam == null || mediaIdParam.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing id parameter");
             return;
         }
 
@@ -113,8 +116,7 @@ public class ViewMediaServlet extends HttpServlet {
         // Step 1: Get encrypted media key from database
         MediaDAO.EncryptionKeyData keyData = mediaDAO.getMediaEncryptionKey(
                 mediaItem.getEncryptionKeyId(),
-                mediaItem.getUserId()
-        );
+                mediaItem.getUserId());
 
         if (keyData == null) {
             throw new Exception("Encryption key not found for media: " + mediaItem.getMediaId());
@@ -124,8 +126,7 @@ public class ViewMediaServlet extends HttpServlet {
         SecretKey mediaKey = EncryptionService.decryptKey(
                 keyData.getEncryptedKey(),
                 keyData.getIv(),
-                userMasterKey
-        );
+                userMasterKey);
 
         System.out.println("  → Decrypted media key for: " + mediaItem.getOriginalFilename());
 
@@ -138,8 +139,7 @@ public class ViewMediaServlet extends HttpServlet {
         byte[] decryptedData = EncryptionService.decrypt(
                 encryptedFileData,
                 mediaItem.getEncryptionIv(),
-                mediaKey
-        );
+                mediaKey);
 
         System.out.println("  → Decrypted to: " + decryptedData.length + " bytes");
 
@@ -160,7 +160,7 @@ public class ViewMediaServlet extends HttpServlet {
 
         // Read file into byte array
         try (FileInputStream fis = new FileInputStream(file);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
             byte[] buffer = new byte[8192];
             int bytesRead;
@@ -191,7 +191,7 @@ public class ViewMediaServlet extends HttpServlet {
         response.setContentLength((int) file.length());
 
         try (FileInputStream fis = new FileInputStream(file);
-             OutputStream out = response.getOutputStream()) {
+                OutputStream out = response.getOutputStream()) {
 
             byte[] buffer = new byte[8192];
             int bytesRead;
