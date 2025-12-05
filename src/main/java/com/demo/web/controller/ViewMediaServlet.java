@@ -58,18 +58,31 @@ public class ViewMediaServlet extends HttpServlet {
 
         try {
             int mediaId = Integer.parseInt(mediaIdParam);
+            System.out.println("=== ViewMediaServlet Debug ===");
+            System.out.println("Requested media ID: " + mediaId);
+            System.out.println("User ID from session: " + userId);
 
             // Get media metadata from database
             MediaItem mediaItem = mediaDAO.getMediaById(mediaId);
 
             if (mediaItem == null) {
+                System.out.println("ERROR: Media not found in database for ID: " + mediaId);
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Media not found");
                 return;
             }
 
+            System.out.println("Found media: " + mediaItem.getOriginalFilename());
+            System.out.println("  - isEncrypted: " + mediaItem.isEncrypted());
+            System.out.println("  - encryptionKeyId: " + mediaItem.getEncryptionKeyId());
+            System.out.println("  - filePath: " + mediaItem.getFilePath());
+            System.out.println("  - mimeType: " + mediaItem.getMimeType());
+            System.out.println("  - mediaUserId: " + mediaItem.getUserId());
+
             // Security check: Verify user owns this media
             if (mediaItem.getUserId() != userId) {
                 // TODO: Also check if user has access through group sharing
+                System.out.println("ERROR: Access denied. User " + userId + " doesn't own media (owned by "
+                        + mediaItem.getUserId() + ")");
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
                 return;
             }
@@ -77,10 +90,12 @@ public class ViewMediaServlet extends HttpServlet {
             // Check if file is encrypted
             if (!mediaItem.isEncrypted()) {
                 // File not encrypted - serve directly (shouldn't happen with new system)
+                System.out.println("File is NOT encrypted, serving directly");
                 serveUnencryptedFile(mediaItem, response);
                 return;
             }
 
+            System.out.println("Starting decryption process...");
             // Decrypt and serve the file
             byte[] decryptedData = decryptMediaFile(mediaItem, masterKey);
 
@@ -100,8 +115,10 @@ public class ViewMediaServlet extends HttpServlet {
                     " (" + decryptedData.length + " bytes)");
 
         } catch (NumberFormatException e) {
+            System.out.println("ERROR: Invalid mediaId format: " + mediaIdParam);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid mediaId");
         } catch (Exception e) {
+            System.out.println("ERROR during decryption: " + e.getClass().getName() + " - " + e.getMessage());
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     "Error decrypting media: " + e.getMessage());
