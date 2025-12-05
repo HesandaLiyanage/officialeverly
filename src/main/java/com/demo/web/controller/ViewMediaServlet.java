@@ -18,6 +18,9 @@ public class ViewMediaServlet extends HttpServlet {
 
     private MediaDAO mediaDAO;
 
+    // Must match the physical path used in CreateMemoryServlet
+    private static final String PHYSICAL_UPLOAD_PATH = "/home/hesanda/IdeaProjects/officialeverly/src/main/webapp/media_uploads_encrypted";
+
     @Override
     public void init() throws ServletException {
         super.init();
@@ -167,9 +170,21 @@ public class ViewMediaServlet extends HttpServlet {
      * Read encrypted file from disk
      */
     private byte[] readEncryptedFile(String relativePath) throws IOException {
-        // Get absolute path
-        String uploadPath = getServletContext().getRealPath("") + File.separator + relativePath;
+        // Extract just the filename from the relative path (e.g.,
+        // "encrypted_uploads/xxx.enc" -> "xxx.enc")
+        String filename = relativePath;
+        if (relativePath.contains("/")) {
+            filename = relativePath.substring(relativePath.lastIndexOf("/") + 1);
+        }
+        if (relativePath.contains(File.separator)) {
+            filename = relativePath.substring(relativePath.lastIndexOf(File.separator) + 1);
+        }
+
+        // Use the physical upload path where files are actually stored
+        String uploadPath = PHYSICAL_UPLOAD_PATH + File.separator + filename;
         File file = new File(uploadPath);
+
+        System.out.println("  → Looking for encrypted file at: " + uploadPath);
 
         if (!file.exists()) {
             throw new FileNotFoundException("Encrypted file not found: " + uploadPath);
