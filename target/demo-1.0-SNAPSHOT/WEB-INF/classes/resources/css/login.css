@@ -1,61 +1,64 @@
-/* Login Page Styles */
+/*
+ * login.css - Login page styles
+ * Uses CSS variables from base.css
+ */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+/* ============================================ */
+/* PAGE LAYOUT                                  */
+/* ============================================ */
+body.login-page {
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-/* ==================== LOGIN PAGE ==================== */
-
+/* ============================================ */
+/* LOGIN CONTAINER                              */
+/* ============================================ */
 .login-container {
     max-width: 480px;
     margin: 60px auto;
-    padding: 40px;
-    background: white;
-    border-radius: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    padding: var(--space-10);
+    background: var(--white);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
 }
 
 .login-container h1 {
-    font-size: 32px;
-    font-weight: 700;
-    color: #0d141c;
-    margin-bottom: 8px;
+    font-size: var(--text-4xl);
+    font-weight: var(--font-bold);
+    color: var(--gray-900);
+    margin-bottom: var(--space-2);
     text-align: center;
 }
 
-.login-container > p {
-    font-size: 15px;
-    color: #6b7280;
+.login-container>p {
+    font-size: var(--text-sm);
+    color: var(--gray-500);
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: var(--space-8);
 }
 
+/* ============================================ */
+/* LOGIN FORM                                   */
+/* ============================================ */
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--space-5);
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-2);
 }
 
 .form-group label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #374151;
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--gray-700);
 }
 
 .input-wrapper {
@@ -67,15 +70,13 @@ body {
 .login-form input[type="text"],
 .login-form input[type="password"] {
     width: 100%;
-    padding: 14px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    background: #f9fafb;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    color: #0d141c;
-    transition: all 0.2s ease;
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    background: var(--gray-50);
+    font-size: var(--text-sm);
+    color: var(--gray-900);
+    transition: all var(--transition-fast);
     outline: none;
 }
 
@@ -84,30 +85,32 @@ body {
 }
 
 .login-form input:focus {
-    border-color: #9A74D8;
-    background: #ffffff;
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(154, 116, 216, 0.15);
 }
 
 .login-form input::placeholder {
-    color: #9ca3af;
+    color: var(--gray-400);
 }
 
+/* Password Toggle */
 .toggle-password {
     position: absolute;
     right: 14px;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px;
+    padding: var(--space-1);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #6b7280;
-    transition: color 0.2s ease;
+    color: var(--gray-500);
+    transition: color var(--transition-fast);
 }
 
 .toggle-password:hover {
-    color: #9A74D8;
+    color: var(--primary);
 }
 
 .toggle-password svg {
@@ -115,46 +118,49 @@ body {
     height: 20px;
 }
 
-/* Error Message */
+/* ============================================ */
+/* ERROR MESSAGE                                */
+/* ============================================ */
 .error {
-    padding: 12px 16px;
-    background: #fef2f2;
+    padding: var(--space-3) var(--space-4);
+    background: var(--error-light);
     border: 2px solid #fecaca;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     color: #dc2626;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 20px;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    margin-bottom: var(--space-5);
 }
 
-/* Submit Button */
+/* ============================================ */
+/* SUBMIT BUTTON                                */
+/* ============================================ */
 .btn {
-    padding: 16px 24px;
+    padding: var(--space-4) var(--space-6);
     border: none;
-    border-radius: 16px;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
+    border-radius: var(--radius-xl);
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-bounce);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-2);
 }
 
 .btn-primary {
     width: 100%;
-    background: #9A74D8;
-    color: white;
-    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
-    margin-top: 12px;
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: var(--shadow-primary);
+    margin-top: var(--space-3);
 }
 
 .btn-primary:hover {
-    background: #8a64c8;
+    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
+    box-shadow: var(--shadow-primary-lg);
 }
 
 .btn-primary:active {
@@ -162,30 +168,34 @@ body {
 }
 
 .btn-primary:disabled {
-    background: #d1d5db;
+    background: var(--gray-300);
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
 }
 
-/* Divider */
+/* ============================================ */
+/* DIVIDER                                      */
+/* ============================================ */
 .divider {
-    margin: 2rem 0;
+    margin: var(--space-8) 0;
     position: relative;
     text-align: center;
 }
 
 .divider span {
-    background: #fff;
-    padding: 0 10px;
-    color: #888;
+    background: var(--white);
+    padding: 0 var(--space-3);
+    color: var(--gray-400);
     position: relative;
     z-index: 1;
+    font-size: var(--text-sm);
 }
 
 .divider::before {
     content: "";
     height: 1px;
-    background: #ddd;
+    background: var(--gray-200);
     position: absolute;
     top: 50%;
     left: 0;
@@ -193,31 +203,28 @@ body {
     z-index: 0;
 }
 
-/* Google Login Button */
+/* ============================================ */
+/* GOOGLE LOGIN                                 */
+/* ============================================ */
 .google-login-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: white;
-    cursor: pointer;
-    flex-direction: row;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
     width: 100%;
-    background: #f9fafb;
-    border: 2px solid #e5e7eb;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    color: #0d141c;
-    transition: all 0.2s ease;
+    background: var(--gray-50);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    color: var(--gray-800);
+    cursor: pointer;
+    transition: all var(--transition-fast);
 }
 
 .google-login-btn:hover {
-    border-color: #9A74D8;
-    background: #ffffff;
+    border-color: var(--primary);
+    background: var(--white);
 }
 
 .google-login-btn img {
@@ -225,31 +232,40 @@ body {
     height: 20px;
 }
 
-/* Extra Links */
+/* ============================================ */
+/* EXTRA LINKS                                  */
+/* ============================================ */
 .extra-links {
-    margin-top: 24px;
+    margin-top: var(--space-6);
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
 }
 
 .extra-links a {
-    color: #6b7280;
+    color: var(--gray-500);
     text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: color 0.2s ease;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    transition: color var(--transition-fast);
 }
 
 .extra-links a:hover {
-    color: #9A74D8;
+    color: var(--primary);
 }
 
-/* Loading Animation for Button */
+/* ============================================ */
+/* LOADING STATE                                */
+/* ============================================ */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .btn-primary:disabled::after {
@@ -257,61 +273,49 @@ body {
     display: inline-block;
     width: 16px;
     height: 16px;
-    margin-left: 8px;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
+    margin-left: var(--space-2);
+    border: 2px solid var(--white);
+    border-radius: var(--radius-full);
     border-top-color: transparent;
     animation: spin 1s ease-in-out infinite;
 }
 
 .btn-primary.success {
-    background: #10b981;
+    background: var(--success);
 }
 
-/* ==================== RESPONSIVE DESIGN ==================== */
-
-/* Tablet Styles */
+/* ============================================ */
+/* RESPONSIVE                                   */
+/* ============================================ */
 @media (max-width: 768px) {
     .login-container {
-        margin: 40px 20px; /* Reduced side margins */
-        padding: 32px 24px; /* Reduced padding */
+        margin: var(--space-10) var(--space-5);
+        padding: var(--space-8) var(--space-6);
     }
 
     .login-container h1 {
-        font-size: 28px; /* Slightly smaller heading */
+        font-size: var(--text-3xl);
     }
 
     .login-form input[type="text"],
     .login-form input[type="password"] {
-        padding: 12px 14px; /* Smaller padding */
-        font-size: 14px; /* Smaller font */
+        padding: var(--space-3) var(--space-3);
+        font-size: var(--text-sm);
     }
 
     .btn {
-        padding: 14px 20px; /* Smaller button padding */
-        font-size: 15px; /* Smaller button font */
+        padding: var(--space-3) var(--space-5);
+        font-size: var(--text-sm);
     }
 }
 
-/* Mobile Styles */
 @media (max-width: 480px) {
     .login-container {
-        margin: 24px 16px; /* Further reduced side margins */
-        padding: 24px 20px; /* Further reduced padding */
+        margin: var(--space-6) var(--space-4);
+        padding: var(--space-6) var(--space-5);
     }
 
     .login-container h1 {
-        font-size: 24px; /* Even smaller heading */
-    }
-
-    .login-form input[type="text"],
-    .login-form input[type="password"] {
-        padding: 12px 14px; /* Consistent padding */
-        font-size: 14px; /* Consistent font size */
-    }
-
-    .btn {
-        padding: 14px 20px; /* Consistent padding */
-        font-size: 15px; /* Consistent font size */
+        font-size: var(--text-2xl);
     }
 }
