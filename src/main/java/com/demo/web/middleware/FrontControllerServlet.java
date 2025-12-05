@@ -190,7 +190,15 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         if ("/memories".equals(path)) {
+            logger.info("Routing /memories to MemoriesServlet");
             request.getRequestDispatcher("/memoriesServlet").forward(request, response);
+            return;
+        }
+
+        // Route /viewMedia to ViewMediaServlet (GET requests)
+        if ("/viewMedia".equals(path)) {
+            logger.info("Routing /viewMedia to ViewMediaServlet");
+            request.getRequestDispatcher("/viewMediaServlet").forward(request, response);
             return;
         }
 

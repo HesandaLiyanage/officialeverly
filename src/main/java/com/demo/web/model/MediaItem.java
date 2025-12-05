@@ -23,6 +23,8 @@ public class MediaItem {
     private int splitCount;
     private long originalFileSize;
     private boolean isSplit;
+    private byte[] encryptionIv;
+
 
     // Constructors
     public MediaItem() {
@@ -192,6 +194,10 @@ public class MediaItem {
     public void setSplit(boolean split) {
         isSplit = split;
     }
+
+    public byte[] getEncryptionIv() { return encryptionIv; }
+
+    public void setEncryptionIv(byte[] iv) { this.encryptionIv = iv; }
 
     @Override
     public String toString() {

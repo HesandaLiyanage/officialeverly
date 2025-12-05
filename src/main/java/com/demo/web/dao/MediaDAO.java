@@ -255,6 +255,13 @@ public class MediaDAO {
         item.setUploadTimestamp(rs.getTimestamp("upload_timestamp"));
         item.setEncrypted(rs.getBoolean("is_encrypted"));
         item.setEncryptionKeyId(rs.getString("encryption_key_id"));
+
+        // NEW: Get encryption_iv
+        byte[] encryptionIv = rs.getBytes("encryption_iv");
+        if (encryptionIv != null) {
+            item.setEncryptionIv(encryptionIv);
+        }
+
         item.setOriginalFileSize(rs.getLong("original_file_size"));
         item.setSplit(rs.getBoolean("is_split"));
         item.setSplitCount(rs.getInt("split_count"));
@@ -295,4 +302,6 @@ public class MediaDAO {
             return iv;
         }
     }
+
+
 }

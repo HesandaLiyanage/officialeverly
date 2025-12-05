@@ -86,11 +86,20 @@
 
     <servlet>
         <servlet-name>MemoriesListServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.MemoriesListServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MemoriesServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MemoriesListServlet</servlet-name>
-        <url-pattern>/memoriesServlet</url-pattern>
+        <url-pattern>/memoriesview</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ViewMediaServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.ViewMediaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewMediaServlet</servlet-name>
+        <url-pattern>/viewmedia</url-pattern>
     </servlet-mapping>
 
     <servlet>
