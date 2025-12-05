@@ -94,6 +94,42 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>MemoryViewServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.MemoryViewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MemoryViewServlet</servlet-name>
+        <url-pattern>/memoryViewServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditMemoryServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.EditMemoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditMemoryServlet</servlet-name>
+        <url-pattern>/editMemoryServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UpdateMemoryServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.UpdateMemoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateMemoryServlet</servlet-name>
+        <url-pattern>/updateMemoryServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DeleteMemoryServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.DeleteMemoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteMemoryServlet</servlet-name>
+        <url-pattern>/deleteMemoryServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>ViewMediaServlet</servlet-name>
         <servlet-class>com.demo.web.controller.ViewMediaServlet</servlet-class>
     </servlet>
