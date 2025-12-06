@@ -1,18 +1,7 @@
-/* Blocked Users Page Styles */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+/*
+ * blockedusers.css - Blocked users page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 
 /* ==================== BLOCKED USERS PAGE ==================== */
 
@@ -33,7 +22,7 @@ body {
     text-align: center;
 }
 
-.blocked-container > p {
+.blocked-container>p {
     font-size: 15px;
     color: #6b7280;
     text-align: center;
@@ -223,8 +212,13 @@ body {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* ==================== RESPONSIVE DESIGN ==================== */

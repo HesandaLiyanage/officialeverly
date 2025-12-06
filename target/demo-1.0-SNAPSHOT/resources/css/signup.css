@@ -1,14 +1,11 @@
-/* Signup and Profile Setup Styles */
+/*
+ * signup.css - Signup and profile setup page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+/* Page-specific body style override */
+body.signup-page {
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -33,7 +30,7 @@ body {
     text-align: center;
 }
 
-.signup-container > p {
+.signup-container>p {
     font-size: 15px;
     color: #6b7280;
     text-align: center;
@@ -483,8 +480,13 @@ body {
 
 /* Loading Animation for Button */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .btn-primary:disabled::after {
@@ -506,6 +508,7 @@ body {
 /* ==================== RESPONSIVE DESIGN ==================== */
 
 @media (max-width: 768px) {
+
     .signup-container,
     .profile-container,
     .thankyou-container {
@@ -525,6 +528,7 @@ body {
 }
 
 @media (max-width: 480px) {
+
     .signup-container,
     .profile-container,
     .thankyou-container {

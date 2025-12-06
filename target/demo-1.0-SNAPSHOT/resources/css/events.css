@@ -1,5 +1,7 @@
-/* Events Page - Matching Memories Page Exactly */
-
+/*
+ * events.css - Events page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 /* Page Wrapper - Same as memories */
 .page-wrapper {
     position: relative;
@@ -110,6 +112,7 @@
         opacity: 0;
         transform: scale(0.9) translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);

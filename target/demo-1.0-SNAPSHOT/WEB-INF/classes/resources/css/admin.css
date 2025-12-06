@@ -1,3 +1,8 @@
+/*
+ * admin.css - Admin page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
+
 /* Admin Page Wrapper */
 .admin-page-wrapper {
     position: relative;
@@ -236,9 +241,12 @@
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.5;
     }
@@ -568,6 +576,7 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -579,10 +588,26 @@
     animation: fadeInUp 0.5s ease;
 }
 
-.stat-card:nth-child(1) { animation-delay: 0s; }
-.stat-card:nth-child(2) { animation-delay: 0.1s; }
-.stat-card:nth-child(3) { animation-delay: 0.2s; }
+.stat-card:nth-child(1) {
+    animation-delay: 0s;
+}
 
-.admin-nav-card:nth-child(1) { animation-delay: 0.3s; }
-.admin-nav-card:nth-child(2) { animation-delay: 0.4s; }
-.admin-nav-card:nth-child(3) { animation-delay: 0.5s; }
+.stat-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.stat-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.admin-nav-card:nth-child(1) {
+    animation-delay: 0.3s;
+}
+
+.admin-nav-card:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
+.admin-nav-card:nth-child(3) {
+    animation-delay: 0.5s;
+}

@@ -1,5 +1,7 @@
-/* Create Memory Page Styles */
-
+/*
+ * creatememory.css - Create memory page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 .page-wrapper {
     position: relative;
     width: 90%;
