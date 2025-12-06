@@ -1,3 +1,8 @@
+/*
+ * publicfeed.css - Public feed page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
+
 .page-wrapper {
     width: 100%;
     max-width: 1200px;
@@ -14,7 +19,8 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    height: calc(100vh - 80px); /* 👈 ADJUST THIS VALUE */
+    height: calc(100vh - 80px);
+    /* 👈 ADJUST THIS VALUE */
 }
 
 .fixed-top-section {
@@ -38,6 +44,7 @@
     top: 20px;
     align-self: flex-start;
 }
+
 /* Tab Navigation */
 .tab-nav {
     display: flex;
@@ -127,6 +134,7 @@
         opacity: 0;
         transform: scale(0.9) translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -274,7 +282,8 @@
 .post-image {
     width: 100%;
     height: auto;
-    min-height: 400px;   /* Ensures large size even on small content */
+    min-height: 400px;
+    /* Ensures large size even on small content */
     max-height: 600px;
     aspect-ratio: 1 / 1;
     overflow: hidden;
@@ -329,9 +338,12 @@
 }
 
 @keyframes likeAnimation {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.2);
     }
@@ -582,6 +594,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -599,7 +612,8 @@
     align-items: center;
     margin-bottom: 10px;
     border-bottom: 2px solid #e9ecef;
-    padding: 0 4px; /* minor padding to align with posts */
+    padding: 0 4px;
+    /* minor padding to align with posts */
 }
 
 /* Left-side tab buttons */
@@ -667,7 +681,7 @@
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .profile-info {
@@ -770,7 +784,7 @@
     position: relative;
     overflow: hidden;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
 }
 
@@ -792,10 +806,12 @@
         flex-direction: column;
         align-items: flex-start;
     }
+
     .profile-avatar img {
         width: 100px;
         height: 100px;
     }
+
     .profile-posts-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -806,6 +822,7 @@
         width: 80px;
         height: 80px;
     }
+
     .profile-posts-grid {
         grid-template-columns: 1fr;
     }

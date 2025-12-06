@@ -1,16 +1,7 @@
-/* Post Comments Page - Instagram Style */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #fafafa;
-    overflow: hidden;
-}
+/*
+ * postcomments.css - Post comments page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 
 /* Main Container */
 .comments-page-container {
@@ -195,6 +186,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -611,6 +603,7 @@ body {
         opacity: 0;
         transform: translateX(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);

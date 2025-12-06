@@ -1,9 +1,8 @@
-/* Global Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/*
+ * components.css - Legacy component styles
+ * Depends on base.css for reset, variables, and base styles
+ * Note: Consider migrating variables to base.css
+ */
 
 :root {
     /* Colors */
@@ -138,4 +137,5 @@ body {
 
 .btn--primary {
     background-color: var(--color-primary);
-    color: var(--color-white
+    color: var(--color-white);
+}

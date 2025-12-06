@@ -1,5 +1,7 @@
-/* Edit Memory Page Styles */
-
+/*
+ * editmemory.css - Edit memory page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 .page-wrapper {
     position: relative;
     width: 90%;

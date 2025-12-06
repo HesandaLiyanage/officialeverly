@@ -1,9 +1,7 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background-color: #fff;
-    color: #222;
-}
+/*
+ * headercomponents.css - Header components styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 
 /* Hero section */
 .hero {
@@ -26,7 +24,7 @@ body {
     left: 50%;
     transform: translate(-15%, -5%);
     color: white;
-    background: rgba(0,0,0,0.0);
+    background: rgba(0, 0, 0, 0.0);
     padding: 20px 30px;
     border-radius: 10px;
 }
@@ -150,22 +148,11 @@ body {
     border-radius: 25px;
     font-size: 14px;
     cursor: pointer;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 .cta-btn:hover {
     background-color: #8f5de8;
-}
-
-
-
-
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background-color: #fff;
-    color: #222;
 }
 
 /* Section Wrapper */
@@ -195,7 +182,7 @@ body {
     padding: 25px;
     border-radius: 12px;
     width: 260px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
 }
 
@@ -247,7 +234,7 @@ body {
     border-radius: 25px;
     font-size: 14px;
     cursor: pointer;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
     margin-top: 10px;
 }
 

@@ -1,3 +1,8 @@
+/*
+ * follow.css - Followers/following page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
+
 /* Followers Wrapper */
 .followers-wrapper {
     max-width: 600px;

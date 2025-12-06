@@ -1,5 +1,7 @@
-/* Notifications Page - Consistent with Memories & Journals */
-
+/*
+ * notifications.css - Notifications page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 .page-wrapper {
     position: relative;
     width: 90%;

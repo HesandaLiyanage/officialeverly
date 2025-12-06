@@ -1,15 +1,7 @@
-/* Autograph Viewer Page Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #f8f9fa;
-    overflow-x: hidden;
-}
+/*
+ * autographviewer.css - Autograph viewer page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 
 .autograph-viewer-wrapper {
     width: 100%;
@@ -35,6 +27,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -46,6 +39,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -143,17 +137,15 @@ body {
     height: 100%;
     background: #faf8f3;
     background-image:
-            repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 31px,
-                    rgba(139, 69, 19, 0.1) 31px,
-                    rgba(139, 69, 19, 0.1) 32px
-            );
+        repeating-linear-gradient(0deg,
+            transparent,
+            transparent 31px,
+            rgba(139, 69, 19, 0.1) 31px,
+            rgba(139, 69, 19, 0.1) 32px);
     border-radius: 4px;
     box-shadow:
-            0 2px 4px rgba(0, 0, 0, 0.1),
-            0 8px 16px rgba(0, 0, 0, 0.1);
+        0 2px 4px rgba(0, 0, 0, 0.1),
+        0 8px 16px rgba(0, 0, 0, 0.1);
     padding: 40px 45px;
     position: relative;
     transition: opacity 0.3s ease;
@@ -210,8 +202,15 @@ body {
 }
 
 @keyframes heartPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.2); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
 }
 
 /* Page Content */

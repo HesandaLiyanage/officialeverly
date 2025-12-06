@@ -1,15 +1,7 @@
-/* Event Info Page Styles - Matching Memory Viewer */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #f8f9fa;
-    overflow-x: hidden;
-}
+/*
+ * eventinfo.css - Event info page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
 
 .event-viewer-wrapper {
     width: 100%;
@@ -35,6 +27,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

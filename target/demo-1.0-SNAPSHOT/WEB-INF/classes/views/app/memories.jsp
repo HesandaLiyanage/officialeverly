@@ -1,315 +1,307 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>--%>
-<%--<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>--%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<!-- Memories Page Content -->
-<jsp:include page="../public/header2.jsp" />
-<html>
-<body>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/memories.css">
+            <jsp:include page="../public/header2.jsp" />
+            <html>
 
-<!-- Wrap everything after header -->
-<div class="page-wrapper">
-  <main class="main-content">
-    <!-- Tab Navigation -->
-    <div class="tab-nav">
-      <button class="active" data-tab="memories">Memories</button>
-      <button data-tab="collab" onclick="window.location.href='/collabmemories'">Collab Memories</button>
-      <button data-tab="recap" onclick="window.location.href='/memoryrecap'">Memory Recap</button>
-    </div>
+            <body>
+                <link rel="stylesheet" type="text/css"
+                    href="${pageContext.request.contextPath}/resources/css/memories.css">
 
-    <!-- Search and Filters -->
-    <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
-      <div class="memories-search-container">
-        <button class="memories-search-btn" id="memoriesSearchBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-        </button>
-      </div>
-      <button class="filter-btn" id="dateFilter">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <polyline points="19 12 12 19 5 12"></polyline>
-        </svg>
-        Date
-      </button>
-      <button class="filter-btn" id="locationFilter">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
-        </svg>
-        Location
-      </button>
-    </div>
-    <%--    <a href="/memoryview"/>--%>
+                <div class="page-wrapper">
+                    <main class="main-content">
+                        <div class="tab-nav">
+                            <button class="active">Memories</button>
+                            <button onclick="window.location.href='/collabmemories'">Collab Memories</button>
+                            <button onclick="window.location.href='/memoryrecap'">Memory Recap</button>
+                        </div>
 
-    <!-- Memories Grid -->
-    <div class="memories-grid" id="memoriesGrid" style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
-      <div class="memory-card" data-title="Beach Sunset Adventure" id="sunset">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Beach Sunset Adventure</h3>
-          <p class="memory-date">July 15, 2024</p>
-        </div>
-      </div>
+                        <!-- Search and Filters -->
+                        <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
+                            <div class="memories-search-container">
+                                <button class="memories-search-btn" id="memoriesSearchBtn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <path d="m21 21-4.35-4.35"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <button class="filter-btn" id="dateFilter">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <polyline points="19 12 12 19 5 12"></polyline>
+                                </svg>
+                                Date
+                            </button>
+                        </div>
 
-      <div class="memory-card" data-title="Mountain Hiking Trip">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Mountain Hiking Trip</h3>
-          <p class="memory-date">June 22, 2024</p>
-        </div>
-      </div>
+                        <!-- Show warning if encryption not available -->
+                        <c:if test="${not encryptionAvailable}">
+                            <div
+                                style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 8px;">
+                                <strong>⚠️ Encryption Not Available</strong>
+                                <p>Your encryption keys are not loaded. Please logout and login again to view encrypted
+                                    memories.</p>
+                            </div>
+                        </c:if>
 
-      <div class="memory-card" data-title="Family Reunion Dinner">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Family Reunion Dinner</h3>
-          <p class="memory-date">May 10, 2024</p>
-        </div>
-      </div>
+                        <!-- Show error message if any -->
+                        <c:if test="${not empty errorMessage}">
+                            <div
+                                style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; margin: 15px 0; border-radius: 8px;">
+                                <strong>Error:</strong> ${errorMessage}
+                            </div>
+                        </c:if>
 
-      <div class="memory-card" data-title="Adventure in the Wild">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Adventure in the Wild</h3>
-          <p class="memory-date">April 5, 2024</p>
-        </div>
-      </div>
+                        <div class="memories-grid" id="memoriesGrid"
+                            style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
+                            <c:choose>
+                                <c:when test="${empty memories}">
+                                    <!-- No memories - show empty state -->
+                                    <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #888;">
+                                        <div style="font-size: 64px; margin-bottom: 20px;">📸</div>
+                                        <h3 style="margin-bottom: 10px;">No memories yet</h3>
+                                        <p style="margin-bottom: 30px;">Start creating your first memory!</p>
+                                        <a href="/creatememory" class="floating-btn"
+                                            style="display: inline-block; padding: 12px 30px; text-decoration: none;">
+                                            Create Your First Memory
+                                        </a>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <!-- Display memories -->
+                                    <c:forEach var="memory" items="${memories}">
+                                        <!-- Get cover URL (set by servlet) -->
+                                        <c:set var="coverUrl"
+                                            value="${requestScope['cover_'.concat(memory.memoryId)]}" />
 
-      <div class="memory-card" data-title="City Lights Exploration">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">City Lights Exploration</h3>
-          <p class="memory-date">March 18, 2024</p>
-        </div>
-      </div>
+                                        <!-- Use cover if available, otherwise use default -->
+                                        <c:set var="finalCover"
+                                            value="${not empty coverUrl ? coverUrl : pageContext.request.contextPath.concat('/resources/images/default-memory.jpg')}" />
 
-      <div class="memory-card" data-title="Art Exhibition Visit">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Art Exhibition Visit</h3>
-          <p class="memory-date">February 2, 2024</p>
-        </div>
-      </div>
+                                        <div class="memory-card" data-title="${memory.title}"
+                                            onclick="location.href='/memoryview?id=${memory.memoryId}'"
+                                            style="cursor: pointer;">
+                                            <!-- Cover image - will be decrypted by ViewMediaServlet -->
+                                            <div class="memory-image" style="background-image: url('${finalCover}');">
+                                                <!-- Encryption indicator -->
+                                                <c:if test="${encryptionAvailable}">
+                                                    <div
+                                                        style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px;">
+                                                        🔒 Encrypted
+                                                    </div>
+                                                </c:if>
+                                            </div>
 
-      <div class="memory-card" data-title="Weekend Getaway">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Weekend Getaway</h3>
-          <p class="memory-date">January 20, 2024</p>
-        </div>
-      </div>
+                                            <!-- Memory details -->
+                                            <div class="memory-content">
+                                                <h3 class="memory-title">${memory.title}</h3>
+                                                <p class="memory-date">
+                                                    <fmt:formatDate value="${memory.createdTimestamp}"
+                                                        pattern="MMMM d, yyyy" />
+                                                </p>
 
-      <div class="memory-card" data-title="Coffee Shop Hangout">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Coffee Shop Hangout</h3>
-          <p class="memory-date">December 15, 2023</p>
-        </div>
-      </div>
+                                                <!-- Optional: Show description if available -->
+                                                <c:if test="${not empty memory.description}">
+                                                    <p class="memory-description"
+                                                        style="margin: 8px 0 0 0; color: #888; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                        ${memory.description}
+                                                    </p>
+                                                </c:if>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
 
-      <div class="memory-card" data-title="Birthday Celebration">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Birthday Celebration</h3>
-          <p class="memory-date">November 8, 2023</p>
-        </div>
-      </div>
+                        <!-- Empty state container for search -->
+                        <div id="emptyStateContainer" style="display: none; min-height: 600px;">
+                            <p style="text-align: center; color: #6c757d; margin: 40px 0; font-size: 16px;">No memories
+                                found</p>
+                        </div>
+                    </main>
 
-      <div class="memory-card" data-title="Graduation Day">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Graduation Day</h3>
-          <p class="memory-date">October 10, 2023</p>
-        </div>
-      </div>
+                    <aside class="sidebar">
+                        <!-- Quick Actions Section -->
+                        <div class="sidebar-section">
+                            <h3 class="sidebar-title">Quick Stats</h3>
+                            <ul class="favorites-list">
+                                <li class="favorite-item">
+                                    <div class="favorite-icon"
+                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📷</div>
+                                    <span class="favorite-name">Total Memories:
+                                        <c:out value="${memories.size()}" default="0" />
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
 
-      <div class="memory-card" data-title="Summer BBQ Party">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Summer BBQ Party</h3>
-          <p class="memory-date">September 5, 2023</p>
-        </div>
-      </div>
+                        <!-- Floating Action Buttons -->
+                        <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
+                            <a href="/creatememory" class="floating-btn">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Add Memory
+                            </a>
+                            <a href="/vaultmemories" class="floating-btn vault-btn">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                Vault
+                            </a>
+                        </div>
+                    </aside>
+                </div>
 
-      <div class="memory-card" data-title="Road Trip to Coast">
-        <div class="memory-image" style="background-image: url('https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800')"></div>
-        <div class="memory-content">
-          <h3 class="memory-title">Road Trip to Coast</h3>
-          <p class="memory-date">August 12, 2023</p>
-        </div>
-      </div>
-    </div>
+                <jsp:include page="../public/footer.jsp" />
 
-    <!-- Empty state container for minimum height -->
-    <div id="emptyStateContainer" style="display: none; min-height: 600px;"></div>
-  </main>
+                <!-- Optional: Loading indicator for images -->
+                <style>
+                    .memory-image img {
+                        transition: opacity 0.3s ease;
+                    }
 
-  <aside class="sidebar">
-    <!-- Favourites Section -->
-    <div class="sidebar-section">
-      <h3 class="sidebar-title">Favourites</h3>
-      <ul class="favorites-list">
-        <li class="favorite-item">
-          <div class="favorite-icon graduation">  </div>
-          <span class="favorite-name">Graduation Day</span>
-        </li>
-        <li class="favorite-item">
-          <div class="favorite-icon bbq"> </div>
-          <span class="favorite-name">Summer BBQ Party</span>
-        </li>
-        <li class="favorite-item">
-          <div class="favorite-icon city"> </div>
-          <span class="favorite-name">City Lights Exploration</span>
-        </li>
-        <li class="favorite-item">
-          <div class="favorite-icon art">  </div>
-          <span class="favorite-name">Art Exhibition Visit</span>
-        </li>
-        <li class="favorite-item">
-          <div class="favorite-icon road">  </div>
-          <span class="favorite-name">Road Trip to Coast</span>
-        </li>
-      </ul>
-    </div>
+                    .memory-image img[src*="viewMedia"] {
+                        background: #f0f0f0;
+                    }
 
-    <!-- Floating Action Buttons - Now fixed below sidebar -->
-    <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
-      <a href="/creatememory" class="floating-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        Add Memory
-      </a>
-      <a href="/vaultentries" class="floating-btn vault-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-        Vault
-      </a>
-    </div>
+                    /* Optional: Add loading spinner */
+                    .memory-card {
+                        transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    }
 
-    <!-- Floating Action Buttons - Now in sidebar -->
+                    .memory-card:hover {
+                        transform: translateY(-4px);
+                        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+                    }
 
-  </aside>
-</div>
+                    .favorite-icon {
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        font-size: 14px;
+                    }
+                </style>
 
-<jsp:include page="../public/footer.jsp" />
+                <!-- Search functionality -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const memoriesSearchBtn = document.getElementById('memoriesSearchBtn');
+                        const memoriesGrid = document.getElementById('memoriesGrid');
+                        const emptyStateContainer = document.getElementById('emptyStateContainer');
 
-<script>
+                        // Search functionality
+                        if (memoriesSearchBtn) {
+                            memoriesSearchBtn.addEventListener('click', function (event) {
+                                event.stopPropagation();
 
-  const card = document.getElementById('sunset');
+                                const searchBtnElement = this;
+                                const searchContainer = searchBtnElement.parentElement;
 
-  card.addEventListener('click', function() {
-    window.location.href = '/memoryview';
-  })
-  // Modern Search Functionality for Memories Page
-  document.addEventListener('DOMContentLoaded', function() {
-    const memoriesSearchBtn = document.getElementById('memoriesSearchBtn');
+                                const searchBox = document.createElement('div');
+                                searchBox.className = 'memories-search-expanded';
+                                searchBox.innerHTML = `
+                    <div class="memories-search-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                    <input type="text" id="searchInput" placeholder="Search memories..." autofocus>
+                    <button class="memories-search-close">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                `;
 
-    if (memoriesSearchBtn) {
-      memoriesSearchBtn.addEventListener('click', function(event) {
-        event.stopPropagation();
+                                searchContainer.replaceChild(searchBox, searchBtnElement);
 
-        const searchBtnElement = this;
-        const searchContainer = searchBtnElement.parentElement;
+                                const input = searchBox.querySelector('input');
+                                input.focus();
 
-        const searchBox = document.createElement('div');
-        searchBox.className = 'memories-search-expanded';
-        searchBox.innerHTML = `
-          <div class="memories-search-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          </div>
-          <input type="text" id="searchInput" placeholder="Search memories..." autofocus>
-          <button class="memories-search-close">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        `;
+                                const closeSearch = () => {
+                                    const newSearchBtn = document.createElement('button');
+                                    newSearchBtn.className = 'memories-search-btn';
+                                    newSearchBtn.id = 'memoriesSearchBtn';
+                                    newSearchBtn.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    `;
+                                    searchContainer.replaceChild(newSearchBtn, searchBox);
+                                    // Reset search results
+                                    const cards = document.querySelectorAll('.memory-card');
+                                    cards.forEach(card => card.style.display = 'block');
+                                    if (memoriesGrid) memoriesGrid.style.display = 'grid';
+                                    if (emptyStateContainer) emptyStateContainer.style.display = 'none';
+                                };
 
-        searchContainer.replaceChild(searchBox, searchBtnElement);
+                                searchBox.querySelector('.memories-search-close').addEventListener('click', closeSearch);
 
-        const input = searchBox.querySelector('input');
-        input.focus();
+                                // Search functionality
+                                input.addEventListener('input', function (e) {
+                                    const query = e.target.value.toLowerCase();
+                                    const memoryCards = document.querySelectorAll('.memory-card');
+                                    let visibleCount = 0;
 
-        const closeSearch = () => {
-          const newSearchBtn = document.createElement('button');
-          newSearchBtn.className = 'memories-search-btn';
-          newSearchBtn.id = 'memoriesSearchBtn';
-          newSearchBtn.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          `;
-          searchContainer.replaceChild(newSearchBtn, searchBox);
-          newSearchBtn.addEventListener('click', arguments.callee);
-        };
+                                    memoryCards.forEach(card => {
+                                        const title = card.getAttribute('data-title')?.toLowerCase() || '';
+                                        const matches = title.includes(query);
 
-        searchBox.querySelector('.memories-search-close').addEventListener('click', closeSearch);
+                                        if (matches) {
+                                            card.style.display = 'block';
+                                            visibleCount++;
+                                        } else {
+                                            card.style.display = 'none';
+                                        }
+                                    });
 
-        input.addEventListener('blur', function() {
-          setTimeout(() => {
-            if (!document.activeElement.closest('.memories-search-expanded')) {
-              closeSearch();
-            }
-          }, 150);
-        });
+                                    // Show/hide empty state
+                                    if (visibleCount === 0 && query !== '') {
+                                        if (memoriesGrid) memoriesGrid.style.display = 'none';
+                                        if (emptyStateContainer) emptyStateContainer.style.display = 'block';
+                                    } else {
+                                        if (memoriesGrid) memoriesGrid.style.display = 'grid';
+                                        if (emptyStateContainer) emptyStateContainer.style.display = 'none';
+                                    }
+                                });
+                            });
+                        }
 
-        searchBox.addEventListener('mousedown', function(e) {
-          e.preventDefault();
-          input.focus();
-        });
+                        // Add loading indicator for encrypted images
+                        const images = document.querySelectorAll('.memory-image img[src*="viewMedia"]');
+                        images.forEach(img => {
+                            img.style.opacity = '0.5';
 
-        // Search functionality - FIXED: Now works properly
-        input.addEventListener('input', function(e) {
-          const query = e.target.value.toLowerCase();
-          const memoryCards = document.querySelectorAll('.memory-card');
-          memoryCards.forEach(card => {
-            const title = card.getAttribute('data-title')?.toLowerCase() || '';
-            card.style.display = title.includes(query) ? 'block' : 'none';
-          });
-        });
-      });
-    }
+                            img.addEventListener('load', function () {
+                                img.style.opacity = '1';
+                                console.log('✓ Loaded:', img.src);
+                            });
 
-    // Tab switching functionality
-    const tabButtons = document.querySelectorAll('.tab-nav button');
-    const memoriesGrid = document.getElementById('memoriesGrid');
+                            img.addEventListener('error', function () {
+                                console.error('✗ Failed to load:', img.src);
+                                img.style.opacity = '1';
+                            });
+                        });
+                    });
+                </script>
+            </body>
 
-    tabButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const tab = this.getAttribute('data-tab');
-
-        // Update active button
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-
-        // Update content based on tab
-        if (tab === 'memories') {
-          // Show all memories
-          const memoryCards = document.querySelectorAll('.memory-card');
-          memoryCards.forEach(card => card.style.display = 'block');
-        } else if (tab === 'collab') {
-          // Show no collab memories message
-          memoriesGrid.innerHTML = '<p style="text-align: center; color: #6c757d; grid-column: 1 / -1; margin: 40px 0; font-size: 16px;">No collab memories yet</p>';
-        } else if (tab === 'recap') {
-          // Show no memory recap message
-          memoriesGrid.innerHTML = '<p style="text-align: center; color: #6c757d; grid-column: 1 / -1; margin: 40px 0; font-size: 16px;">No memory recaps yet</p>';
-        }
-      });
-    });
-  });
-</script>
-</body>
-</html>
+            </html>

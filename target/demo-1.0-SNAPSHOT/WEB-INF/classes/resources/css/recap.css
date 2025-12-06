@@ -1,3 +1,8 @@
+/*
+ * recap.css - Recap page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
+
 /* Page Wrapper - Optimized width for modern look */
 .page-wrapper {
     position: relative;
@@ -109,6 +114,7 @@
         opacity: 0;
         transform: scale(0.9) translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -223,51 +229,51 @@
 }
 
 .memory-card.family-vacation .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><rect x="0" y="150" width="300" height="50" fill="%23F4A460"/><circle cx="80" cy="100" r="15" fill="%23FF6B6B"/><circle cx="120" cy="100" r="15" fill="%23FF6B6B"/><circle cx="180" cy="100" r="12" fill="%23FFE66D"/><circle cx="210" cy="100" r="12" fill="%23FFE66D"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><rect x="0" y="150" width="300" height="50" fill="%23F4A460"/><circle cx="80" cy="100" r="15" fill="%23FF6B6B"/><circle cx="120" cy="100" r="15" fill="%23FF6B6B"/><circle cx="180" cy="100" r="12" fill="%23FFE66D"/><circle cx="210" cy="100" r="12" fill="%23FFE66D"/></svg>');
 }
 
 .memory-card.birthday-party .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23FFF8DC"/><rect x="50" y="80" width="200" height="100" fill="%23DEB887"/><text x="150" y="130" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="20" fill="%23B8860B">Happy Birthday</text></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23FFF8DC"/><rect x="50" y="80" width="200" height="100" fill="%23DEB887"/><text x="150" y="130" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="20" fill="%23B8860B">Happy Birthday</text></svg>');
 }
 
 .memory-card.getaway .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23228B22"/><polygon points="150,20 120,80 180,80" fill="%23006400"/><polygon points="130,30 110,90 150,90" fill="%23006400"/><polygon points="170,25 150,85 190,85" fill="%23006400"/><rect x="100" y="120" width="100" height="60" fill="%238B4513"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23228B22"/><polygon points="150,20 120,80 180,80" fill="%23006400"/><polygon points="130,30 110,90 150,90" fill="%23006400"/><polygon points="170,25 150,85 190,85" fill="%23006400"/><rect x="100" y="120" width="100" height="60" fill="%238B4513"/></svg>');
 }
 
 .memory-card.graduation .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23E6F3FF"/><circle cx="150" cy="100" r="40" fill="%23000080"/><polygon points="150,60 130,40 170,40" fill="%23000080"/><rect x="148" y="40" width="4" height="20" fill="%23FFD700"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23E6F3FF"/><circle cx="150" cy="100" r="40" fill="%23000080"/><polygon points="150,60 130,40 170,40" fill="%23000080"/><rect x="148" y="40" width="4" height="20" fill="%23FFD700"/></svg>');
 }
 
 .memory-card.bbq .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23F0E68C"/><ellipse cx="150" cy="120" rx="80" ry="30" fill="%23696969"/><rect x="130" y="100" width="40" height="20" fill="%23FF4500"/><rect x="120" y="90" width="60" height="10" fill="%23FF6347"/><rect x="140" y="80" width="20" height="10" fill="%23FF4500"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23F0E68C"/><ellipse cx="150" cy="120" rx="80" ry="30" fill="%23696969"/><rect x="130" y="100" width="40" height="20" fill="%23FF4500"/><rect x="120" y="90" width="60" height="10" fill="%23FF6347"/><rect x="140" y="80" width="20" height="10" fill="%23FF4500"/></svg>');
 }
 
 .memory-card.hiking .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><polygon points="0,150 100,50 200,80 300,40 300,200 0,200" fill="%23228B22"/><circle cx="200" cy="60" r="8" fill="%23FF6B6B"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><polygon points="0,150 100,50 200,80 300,40 300,200 0,200" fill="%23228B22"/><circle cx="200" cy="60" r="8" fill="%23FF6B6B"/></svg>');
 }
 
 .memory-card.concert .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23191970"/><circle cx="150" cy="80" r="30" fill="%23FFD700" opacity="0.8"/><rect x="100" y="120" width="100" height="60" fill="%23000000"/><circle cx="130" cy="140" r="3" fill="%23FFD700"/><circle cx="150" cy="135" r="3" fill="%23FFD700"/><circle cx="170" cy="145" r="3" fill="%23FFD700"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23191970"/><circle cx="150" cy="80" r="30" fill="%23FFD700" opacity="0.8"/><rect x="100" y="120" width="100" height="60" fill="%23000000"/><circle cx="130" cy="140" r="3" fill="%23FFD700"/><circle cx="150" cy="135" r="3" fill="%23FFD700"/><circle cx="170" cy="145" r="3" fill="%23FFD700"/></svg>');
 }
 
 .memory-card.art-exhibition .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23F5F5F5"/><rect x="50" y="40" width="60" height="80" fill="%23FFFFFF" stroke="%23000000" stroke-width="2"/><rect x="130" y="50" width="50" height="70" fill="%23FFFFFF" stroke="%23000000" stroke-width="2"/><rect x="200" y="45" width="60" height="75" fill="%23FFFFFF" stroke="%23000000" stroke-width="2"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23F5F5F5"/><rect x="50" y="40" width="60" height="80" fill="%23FFFFFF" stroke="%23000000" stroke-width="2"/><rect x="130" y="50" width="50" height="70" fill="%23FFFFFF" stroke="%23000000" stroke-width="2"/><rect x="200" y="45" width="60" height="75" fill="%23FFFFFF" stroke="%23000000" stroke-width="2"/></svg>');
 }
 
 .memory-card.beach .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><rect x="0" y="140" width="300" height="60" fill="%23F4A460"/><circle cx="250" cy="50" r="25" fill="%23FFD700"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><rect x="0" y="140" width="300" height="60" fill="%23F4A460"/><circle cx="250" cy="50" r="25" fill="%23FFD700"/></svg>');
 }
 
 .memory-card.city .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><rect x="50" y="100" width="30" height="100" fill="%23696969"/><rect x="100" y="60" width="40" height="140" fill="%23708090"/><rect x="160" y="80" width="35" height="120" fill="%23696969"/><rect x="220" y="40" width="45" height="160" fill="%23708090"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><rect x="50" y="100" width="30" height="100" fill="%23696969"/><rect x="100" y="60" width="40" height="140" fill="%23708090"/><rect x="160" y="80" width="35" height="120" fill="%23696969"/><rect x="220" y="40" width="45" height="160" fill="%23708090"/></svg>');
 }
 
 .memory-card.holiday .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23006400"/><circle cx="80" cy="80" r="25" fill="%23DC143C"/><circle cx="150" cy="100" r="30" fill="%23FFD700"/><circle cx="220" cy="75" r="20" fill="%23FF6347"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23006400"/><circle cx="80" cy="80" r="25" fill="%23DC143C"/><circle cx="150" cy="100" r="30" fill="%23FFD700"/><circle cx="220" cy="75" r="20" fill="%23FF6347"/></svg>');
 }
 
 .memory-card.road-trip .memory-image {
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><rect x="0" y="120" width="300" height="80" fill="%23228B22"/><rect x="0" y="118" width="300" height="4" fill="%23FFD700"/><polygon points="50,60 100,30 200,40 250,70 300,50 300,120 0,120" fill="%23006400"/></svg>');
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%2387CEEB"/><rect x="0" y="120" width="300" height="80" fill="%23228B22"/><rect x="0" y="118" width="300" height="4" fill="%23FFD700"/><polygon points="50,60 100,30 200,40 250,70 300,50 300,120 0,120" fill="%23006400"/></svg>');
 }
 
 .memory-content {
@@ -349,11 +355,25 @@
     flex-shrink: 0;
 }
 
-.favorite-icon.graduation { background: #e3f2fd; }
-.favorite-icon.bbq { background: #fff3e0; }
-.favorite-icon.city { background: #f3e5f5; }
-.favorite-icon.art { background: #e8f5e8; }
-.favorite-icon.road { background: #fff8e1; }
+.favorite-icon.graduation {
+    background: #e3f2fd;
+}
+
+.favorite-icon.bbq {
+    background: #fff3e0;
+}
+
+.favorite-icon.city {
+    background: #f3e5f5;
+}
+
+.favorite-icon.art {
+    background: #e8f5e8;
+}
+
+.favorite-icon.road {
+    background: #fff8e1;
+}
 
 .favorite-name {
     font-weight: 600;
@@ -736,6 +756,7 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -746,17 +767,41 @@
     animation: fadeInUp 0.5s ease;
 }
 
-.recap-column:nth-child(1) .recap-card:nth-child(2) { animation-delay: 0.1s; }
-.recap-column:nth-child(1) .recap-card:nth-child(3) { animation-delay: 0.2s; }
-.recap-column:nth-child(1) .recap-card:nth-child(4) { animation-delay: 0.3s; }
+.recap-column:nth-child(1) .recap-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
 
-.recap-column:nth-child(2) .recap-card:nth-child(2) { animation-delay: 0.15s; }
-.recap-column:nth-child(2) .recap-card:nth-child(3) { animation-delay: 0.25s; }
-.recap-column:nth-child(2) .recap-card:nth-child(4) { animation-delay: 0.35s; }
+.recap-column:nth-child(1) .recap-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
 
-.recap-column:nth-child(3) .recap-card:nth-child(2) { animation-delay: 0.2s; }
-.recap-column:nth-child(3) .recap-card:nth-child(3) { animation-delay: 0.3s; }
-.recap-column:nth-child(3) .recap-card:nth-child(4) { animation-delay: 0.4s; }
+.recap-column:nth-child(1) .recap-card:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.recap-column:nth-child(2) .recap-card:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.recap-column:nth-child(2) .recap-card:nth-child(3) {
+    animation-delay: 0.25s;
+}
+
+.recap-column:nth-child(2) .recap-card:nth-child(4) {
+    animation-delay: 0.35s;
+}
+
+.recap-column:nth-child(3) .recap-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.recap-column:nth-child(3) .recap-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.recap-column:nth-child(3) .recap-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
 
 /* Responsive Design */
 @media (max-width: 1200px) {
@@ -974,18 +1019,17 @@
     0% {
         background-position: -1000px 0;
     }
+
     100% {
         background-position: 1000px 0;
     }
 }
 
 .recap-card.loading {
-    background: linear-gradient(
-            90deg,
+    background: linear-gradient(90deg,
             #f0f0f0 0px,
             #f8f8f8 40px,
-            #f0f0f0 80px
-    );
+            #f0f0f0 80px);
     background-size: 1000px 100%;
     animation: shimmer 2s infinite;
 }
@@ -1033,8 +1077,13 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* Story Viewer Container */
@@ -1056,6 +1105,7 @@
         opacity: 0;
         transform: translateY(100px) scale(0.9);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1098,8 +1148,13 @@
 }
 
 @keyframes progressAnimation {
-    from { width: 0%; }
-    to { width: 100%; }
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
 }
 
 /* Story Header */
@@ -1109,7 +1164,7 @@
     left: 0;
     right: 0;
     padding: 20px 20px 60px 20px;
-    background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
     z-index: 99;
     display: flex;
     align-items: flex-start;
@@ -1202,6 +1257,7 @@
         opacity: 0;
         transform: scale(1.1);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -1220,7 +1276,7 @@
     left: 0;
     right: 0;
     padding: 40px 20px 20px 20px;
-    background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
     color: white;
 }
 
@@ -1246,8 +1302,13 @@
     z-index: 98;
 }
 
-.story-nav-prev { left: 0; }
-.story-nav-next { right: 0; }
+.story-nav-prev {
+    left: 0;
+}
+
+.story-nav-next {
+    right: 0;
+}
 
 .story-nav:active {
     background: rgba(255, 255, 255, 0.05);
