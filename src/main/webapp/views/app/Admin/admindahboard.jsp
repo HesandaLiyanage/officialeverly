@@ -1,196 +1,225 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<jsp:include page="../../public/header2.jsp" />
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everly Dashboard</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard-styles.css">
+</head>
 <body>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/admin.css">
-
-<!-- Page Wrapper -->
-<div class="admin-page-wrapper">
-    <main class="admin-main-content">
-        <!-- Welcome Header -->
-        <div class="welcome-header">
-            <h1 class="welcome-title">Admin Dashboard</h1>
+<div class="header">
+    <div class="logo" onclick="navigateTo('overview')">Everly</div>
+    <div class="header-right">
+        <div class="search-box">
+            <input type="text" placeholder="Search..." id="searchInput">
+            <span class="search-icon">⌕</span>
         </div>
-
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">Active users</div>
-                <div class="stat-number">14,024</div>
-                <div class="stat-change positive">+1258 users</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">Total content</div>
-                <div class="stat-number">27,900</div>
-                <div class="stat-change positive">+74.3%</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">New content</div>
-                <div class="stat-number">900</div>
-                <div class="stat-change positive">+125.7%</div>
-            </div>
-        </div>
-
-        <!-- Admin Navigation Cards -->
-        <div class="admin-nav-grid">
-            <a href="/adminanalytics" class="admin-nav-card">
-                <div class="card-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="20" x2="12" y2="10"></line>
-                        <line x1="18" y1="20" x2="18" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="16"></line>
-                    </svg>
-                </div>
-                <h3 class="card-title">Analytics & Reports</h3>
-            </a>
-
-            <a href="/adminuser" class="admin-nav-card">
-                <div class="card-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>
-                <h3 class="card-title">User Management</h3>
-            </a>
-
-            <a href="/admincontent" class="admin-nav-card">
-                <div class="card-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                </div>
-                <h3 class="card-title">Content Management</h3>
-            </a>
-
-            <a href="/adminsettings" class="admin-nav-card">
-                <div class="card-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                    </svg>
-                </div>
-                <h3 class="card-title">Settings</h3>
-            </a>
-        </div>
-    </main>
-
-    <!-- Alerts & Feedbacks Sidebar -->
-    <aside class="admin-sidebar">
-        <!-- Alerts Section -->
-        <div class="sidebar-section">
-            <div class="section-icon-title">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                <h3 class="sidebar-title">Alerts</h3>
-            </div>
-            <ul class="alerts-list">
-                <li class="alert-item critical">
-                    <div class="alert-indicator"></div>
-                    <div class="alert-content">
-                        <span class="alert-text">Server load at 95%</span>
-                        <span class="alert-time">5 mins ago</span>
-                    </div>
-                </li>
-                <li class="alert-item warning">
-                    <div class="alert-indicator"></div>
-                    <div class="alert-content">
-                        <span class="alert-text">Database backup pending</span>
-                        <span class="alert-time">1 hour ago</span>
-                    </div>
-                </li>
-                <li class="alert-item info">
-                    <div class="alert-indicator"></div>
-                    <div class="alert-content">
-                        <span class="alert-text">New user registration spike</span>
-                        <span class="alert-time">2 hours ago</span>
-                    </div>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Feedbacks Section -->
-        <div class="sidebar-section">
-            <div class="section-icon-title">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <h3 class="sidebar-title">Feedbacks</h3>
-            </div>
-            <ul class="feedbacks-list">
-                <li class="feedback-item">
-                    <div class="feedback-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">JD</div>
-                    <div class="feedback-content">
-                        <span class="feedback-user">John Doe</span>
-                        <span class="feedback-text">Love the new features!</span>
-                        <span class="feedback-rating">⭐⭐⭐⭐⭐</span>
-                    </div>
-                </li>
-                <li class="feedback-item">
-                    <div class="feedback-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">SM</div>
-                    <div class="feedback-content">
-                        <span class="feedback-user">Sarah Miller</span>
-                        <span class="feedback-text">UI could be improved</span>
-                        <span class="feedback-rating">⭐⭐⭐⭐</span>
-                    </div>
-                </li>
-                <li class="feedback-item">
-                    <div class="feedback-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">MJ</div>
-                    <div class="feedback-content">
-                        <span class="feedback-user">Mike Johnson</span>
-                        <span class="feedback-text">Great app overall!</span>
-                        <span class="feedback-rating">⭐⭐⭐⭐⭐</span>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </aside>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
 </div>
 
-<jsp:include page="../../public/footer.jsp" />
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-title">Dashboard</div>
+        <div class="nav-item active" onclick="navigateTo('overview')">
+            <span>○</span> Overview
+        </div>
+        <div class="nav-item" onclick="navigateTo('users')">
+            <span>▢</span> User Management
+        </div>
+        <div class="nav-item" onclick="navigateTo('content')">
+            <span>▢</span> Content Management
+        </div>
+        <div class="nav-item" onclick="navigateTo('analytics')">
+            <span>▢</span> Analytics and Reports
+        </div>
+        <div class="nav-item" onclick="navigateTo('settings')">
+            <span>▢</span> Settings
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Overview</h1>
+            <select class="date-selector" onchange="handleDateChange(this.value)">
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="year">This Year</option>
+            </select>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card" onclick="navigateTo('users')">
+                <div class="stat-label">Active Users</div>
+                <div class="stat-value">2,318</div>
+                <div class="stat-change positive">
+                    ↑ +6.08%
+                </div>
+            </div>
+
+            <div class="stat-card" onclick="navigateTo('users')">
+                <div class="stat-label">New Users</div>
+                <div class="stat-value">156</div>
+                <div class="stat-change positive">
+                    ↑ +15.03%
+                </div>
+            </div>
+
+            <div class="stat-card" onclick="navigateTo('content')">
+                <div class="stat-label">Total Content</div>
+                <div class="stat-value">3,671</div>
+                <div class="stat-change negative">
+                    ↓ -0.03%
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="chart-card">
+                <h2 class="card-title">User Analytics</h2>
+                <div class="chart-placeholder">
+                    Interactive Chart Area - Click to view detailed analytics
+                </div>
+            </div>
+
+            <div class="right-sidebar">
+                <div class="alerts-card">
+                    <h2 class="card-title">Alerts</h2>
+                    <div class="alert-item critical" onclick="handleAlert('server')">
+                        <div class="alert-title">Server load at 95%</div>
+                        <div class="alert-time">Just now</div>
+                    </div>
+                    <div class="alert-item" onclick="handleAlert('backup')">
+                        <div class="alert-title">Database backup pending</div>
+                        <div class="alert-time">59 minutes ago</div>
+                    </div>
+                    <div class="alert-item info" onclick="handleAlert('registration')">
+                        <div class="alert-title">New user registration spike</div>
+                        <div class="alert-time">12 hours ago</div>
+                    </div>
+                </div>
+
+                <div class="feedback-card">
+                    <h2 class="card-title">Recent Feedback</h2>
+                    <div class="feedback-item" onclick="viewFeedback(1)">
+                        <div class="feedback-header">
+                            <span class="feedback-user">John Doe</span>
+                            <div class="star-rating">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                        </div>
+                        <div class="feedback-text">Love the new features! The interface is much more intuitive now.</div>
+                    </div>
+                    <div class="feedback-item" onclick="viewFeedback(2)">
+                        <div class="feedback-header">
+                            <span class="feedback-user">Sarah Miller</span>
+                            <div class="star-rating">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star empty">★</span>
+                                <span class="star empty">★</span>
+                            </div>
+                        </div>
+                        <div class="feedback-text">Good overall, but the UI could be improved in some areas.</div>
+                    </div>
+                    <div class="feedback-item" onclick="viewFeedback(3)">
+                        <div class="feedback-header">
+                            <span class="feedback-user">Mike Johnson</span>
+                            <div class="star-rating">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star empty">★</span>
+                            </div>
+                        </div>
+                        <div class="feedback-text">Great product! Looking forward to future updates.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
+    // Navigation function matching your Front Controller routes
+    function navigateTo(page) {
+        // Define routes matching your front controller
+        const routes = {
+            'overview': '/admin',
+            'users': '/adminuser',
+            'content': '/admincontent',
+            'analytics': '/adminanalytics',
+            'settings': '/settings'
+        };
+
+        // Navigate to the route
+        if (routes[page]) {
+            window.location.href = routes[page];
+        }
+    }
+
+    function handleLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            window.location.href = '/logout';
+        }
+    }
+
+    function handleDateChange(period) {
+        console.log(`Date range changed to: ${period}`);
+        // Fetch and update dashboard data based on selected period
+        // You can make an AJAX call here to update the data without page reload
+    }
+
+    function handleAlert(type) {
+        console.log(`Alert clicked: ${type}`);
+        if (type === 'server') {
+            if (confirm('Server Load Alert: CPU usage at 95%. Would you like to view server details?')) {
+                navigateTo('analytics');
+            }
+        } else if (type === 'backup') {
+            if (confirm('Database Backup: Backup scheduled for 11:00 PM. View backup history?')) {
+                navigateTo('settings');
+            }
+        } else if (type === 'registration') {
+            if (confirm('User Registration Spike: 45 new users in the last hour. View details?')) {
+                navigateTo('users');
+            }
+        }
+    }
+
+    function viewFeedback(id) {
+        console.log(`Viewing feedback #${id}`);
+        // Navigate to feedback detail page or open modal
+        window.location.href = `/feedback?id=${id}`;
+    }
+
+    // Search functionality
     document.addEventListener('DOMContentLoaded', function() {
-        // Animate stat numbers
-        const statNumbers = document.querySelectorAll('.stat-number');
-        statNumbers.forEach(stat => {
-            const finalValue = parseInt(stat.textContent.replace(/,/g, ''));
-            animateValue(stat, 0, finalValue, 1500);
+        const searchInput = document.getElementById('searchInput');
+
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm.length > 2) {
+                console.log(`Searching for: ${searchTerm}`);
+                // Implement search logic here
+            }
         });
 
-        function animateValue(element, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const value = Math.floor(progress * (end - start) + start);
-                element.textContent = value.toLocaleString();
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const searchTerm = e.target.value;
+                if (searchTerm) {
+                    // Redirect to search results page
+                    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
                 }
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        // Add hover effects for navigation cards
-        const navCards = document.querySelectorAll('.admin-nav-card');
-        navCards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-8px)';
-            });
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
+            }
         });
     });
 </script>
