@@ -27,13 +27,29 @@
 
 /* Page Title */
 .page-title {
-    font-size: 42px;
+    background: none;
+    padding: var(--space-2) var(--space-5);
+    font-size: var(--text-3xl);
     font-weight: var(--font-bold);
     color: var(--gray-800);
-    margin: 0 0 var(--space-3) 0;
-    letter-spacing: -0.5px;
+    border-bottom-color: var(--primary);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border-bottom: 3px solid transparent;
 }
-
+.page-subtitle {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #6c757d;
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+.tab-nav {
+    display: flex;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
 /* ============================================ */
 /* SEARCH AND FILTERS                           */
 /* ============================================ */
@@ -344,7 +360,7 @@
     border-radius: var(--radius-xl);
     padding: var(--space-6);
     margin-bottom: var(--space-5);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-title {

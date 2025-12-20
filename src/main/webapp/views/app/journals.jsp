@@ -22,7 +22,10 @@
 <div class="page-wrapper">
   <main class="main-content">
     <!-- Page Title -->
-    <h1 class="page-title">Journals</h1>
+   <div class="tab-nav">
+    <div class="page-title">Journals
+     <p class="page-subtitle">Capture your daily thoughts and special moments.</p></div>
+   </div>
     <!-- Search and Filters -->
     <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
       <div class="journals-search-container">

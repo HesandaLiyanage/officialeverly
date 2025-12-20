@@ -18,9 +18,10 @@
     <main class="main-content">
 
         <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">Autographs</h1>
+        <div class="tab-nav">
+            <div class="page-title">Autographs
             <p class="page-subtitle">Share your book with friends and collect heartfelt messages.</p>
+        </div>
         </div>
 
         <!-- Search Bar -->
@@ -69,7 +70,13 @@
                 }
             } else {
             %>
-            <p>No autograph books found.</p>
+                <div style="text-align: center; padding: 40px; color: #6b7280;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 20px; opacity: 0.5;">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <h3 style="margin: 0 0 10px; color: #374151;">No autograph books found.</h3>
+                    <p style="margin: 0;">Start sharing your book and collecting heartfelt messages!</p>
+                </div>
             <%
                 }
             %>
