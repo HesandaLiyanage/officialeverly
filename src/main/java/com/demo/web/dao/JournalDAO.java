@@ -223,6 +223,29 @@ public class JournalDAO {
 
         return journals;
     }
+
+    /**
+     * Permanently delete a journal (used only for "Delete Forever" in Trash)
+     */
+    public boolean deleteJournal(int journalId) {
+        String sql = "DELETE FROM journal WHERE journal_id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, journalId);
+            int rowsAffected = pstmt.executeUpdate();
+            System.out.println("[DEBUG JournalDAO] Permanent delete - Rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.out.println("[ERROR JournalDAO] Error permanently deleting journal: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     /**
      * Helper method to map ResultSet to Journal object
      */

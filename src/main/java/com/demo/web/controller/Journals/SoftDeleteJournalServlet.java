@@ -18,9 +18,9 @@ public class SoftDeleteJournalServlet extends HttpServlet {
             throws ServletException, IOException {
 
         // Get current user ID from session (adjust key if yours is different)
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        Integer userId = (Integer) request.getSession().getAttribute("user_id");
         if (userId == null) {
-            response.sendRedirect(request.getContextPath() + "/views/public/logincontent.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
@@ -51,9 +51,9 @@ public class SoftDeleteJournalServlet extends HttpServlet {
         // Perform soft delete
         boolean success = journalDAO.softDeleteJournal(journalId);
         if (success) {
-            response.sendRedirect("journal/list?msg=Journal moved to Recycle Bin");
+            response.sendRedirect(request.getContextPath() + "/journals?msg=Journal moved to Recycle Bin");
         } else {
-            response.sendRedirect("journal/list?error=Failed to delete journal");
+            response.sendRedirect(request.getContextPath() + "/journals?error=Failed to delete journal");
         }
     }
 }
