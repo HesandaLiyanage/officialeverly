@@ -11,10 +11,10 @@ import java.util.List;
 public class JournalDAO {
 
     /**
-     * Find all journals for a specific user
+     * Find all ACTIVE (non-deleted) journals for a specific user
      */
     public List<Journal> findByUserId(int userId) {
-        String sql = "SELECT * FROM journal WHERE user_id = ? ORDER BY journal_id DESC"; // Changed to order by id since no created_at
+        String sql = "SELECT * FROM journal WHERE user_id = ? AND is_deleted = false ORDER BY journal_id DESC";
         List<Journal> journals = new ArrayList<>();
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -29,10 +29,10 @@ public class JournalDAO {
                 }
             }
 
-            System.out.println("[DEBUG JournalDAO] findByUserId(" + userId + ") returned " + journals.size() + " records.");
+            System.out.println("[DEBUG JournalDAO] findByUserId(" + userId + ") returned " + journals.size() + " ACTIVE records.");
 
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error finding journals by user ID: " + e.getMessage());
+            System.out.println("[ERROR JournalDAO] Error finding active journals by user ID: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -129,23 +129,21 @@ public class JournalDAO {
     }
 
     /**
-     * Delete a journal entry
+     * Soft-delete a journal (move to Recycle Bin)
      */
-    public boolean deleteJournal(int journalId) {
-        String sql = "DELETE FROM journal WHERE journal_id = ?";
+    public boolean softDeleteJournal(int journalId) {
+        String sql = "UPDATE journal SET is_deleted = true, deleted_at = NOW() WHERE journal_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, journalId);
-
             int rowsAffected = pstmt.executeUpdate();
-            System.out.println("[DEBUG JournalDAO] deleteJournal - Rows affected: " + rowsAffected);
-
+            System.out.println("[DEBUG JournalDAO] softDeleteJournal - Rows affected: " + rowsAffected);
             return rowsAffected > 0;
 
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error deleting journal: " + e.getMessage());
+            System.out.println("[ERROR JournalDAO] Error soft-deleting journal: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -177,6 +175,55 @@ public class JournalDAO {
     }
 
     /**
+     * Restore a journal from Recycle Bin
+     */
+    public boolean restoreJournal(int journalId) {
+        String sql = "UPDATE journal SET is_deleted = false, restored_at = NOW(), deleted_at = NULL WHERE journal_id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, journalId);
+            int rowsAffected = pstmt.executeUpdate();
+            System.out.println("[DEBUG JournalDAO] restoreJournal - Rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.out.println("[ERROR JournalDAO] Error restoring journal: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Find all DELETED journals for a specific user (for Recycle Bin)
+     */
+    public List<Journal> findDeletedByUserId(int userId) {
+        String sql = "SELECT * FROM journal WHERE user_id = ? AND is_deleted = true ORDER BY deleted_at DESC NULLS LAST";
+        List<Journal> journals = new ArrayList<>();
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Journal journal = mapResultSetToJournal(rs);
+                    journals.add(journal);
+                }
+            }
+
+            System.out.println("[DEBUG JournalDAO] findDeletedByUserId(" + userId + ") returned " + journals.size() + " DELETED records.");
+
+        } catch (SQLException e) {
+            System.out.println("[ERROR JournalDAO] Error finding deleted journals: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return journals;
+    }
+    /**
      * Helper method to map ResultSet to Journal object
      */
     private Journal mapResultSetToJournal(ResultSet rs) throws SQLException {
@@ -186,6 +233,10 @@ public class JournalDAO {
         journal.setContent(rs.getString("j_content"));
         journal.setUserId(rs.getInt("user_id"));
         journal.setJournalPic(rs.getString("journal_pic"));
+
+        journal.setDeleted(rs.getBoolean("is_deleted"));
+        journal.setDeletedAt(rs.getTimestamp("deleted_at"));
+        journal.setRestoredAt(rs.getTimestamp("restored_at"));
 
         // No timestamps in model anymore
         return journal;
