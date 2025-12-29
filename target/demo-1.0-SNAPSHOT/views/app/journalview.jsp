@@ -176,7 +176,9 @@
 </div>
 
 <!-- Hidden form for deletion -->
-<form id="deleteJournalForm" action="${pageContext.request.contextPath}/journal/soft-delete" method="post" style="display: none;">
+<form id="deleteJournalForm"
+      action="${pageContext.request.contextPath}/journal/delete"
+      method="post" style="display:none;">
     <input type="hidden" name="journalId" id="journalIdInput" value="<%= journal != null ? journal.getJournalId() : "" %>">
 </form>
 

@@ -1,7 +1,11 @@
+/*
+/ File: src/main/java/com/demo/web/controller/Journals/TrashManagementServlet.java
+
+
 package com.demo.web.controller.Journals;
 
-import com.demo.web.dao.JournalDAO;
-import com.demo.web.model.Journal;
+import com.demo.web.dao.RecycleBinDAO;
+import com.demo.web.model.RecycleBinItem;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +18,6 @@ import java.util.List;
 @WebServlet("/trashmgt")
 public class TrashManagementServlet extends HttpServlet {
 
-    // GET → Show trash
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -25,13 +28,14 @@ public class TrashManagementServlet extends HttpServlet {
             return;
         }
 
-        JournalDAO journalDAO = new JournalDAO();
-        List<Journal> deletedJournals = journalDAO.findDeletedByUserId(userId);
+        // ✅ Use RecycleBinDAO (not JournalDAO)
+        RecycleBinDAO rbDao = new RecycleBinDAO();
+        List<RecycleBinItem> trashItems = rbDao.findByUserId(userId);
 
-        request.setAttribute("deletedJournals", deletedJournals);
-        request.getRequestDispatcher("/views/app/trashmgt.jsp").forward(request, response);    }
+        request.setAttribute("trashItems", trashItems);
+        request.getRequestDispatcher("/views/app/trashmgt.jsp").forward(request, response);
+    }
 
-    // POST → Handle Restore or Permanent Delete
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -43,46 +47,41 @@ public class TrashManagementServlet extends HttpServlet {
         }
 
         String action = request.getParameter("action");
-        String journalIdStr = request.getParameter("journalId");
+        String recycleBinIdStr = request.getParameter("recycleBinId"); // ← Key change!
 
-        if (journalIdStr == null || journalIdStr.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/trashmgt?error=Invalid journal");
+        if (recycleBinIdStr == null || recycleBinIdStr.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/trashmgt?error=Invalid item");
             return;
         }
 
         try {
-            int journalId = Integer.parseInt(journalIdStr);
-
-            // 🔒 Security: Verify ownership (optional but recommended)
-            JournalDAO dao = new JournalDAO();
-            Journal journal = dao.findById(journalId);
-            if (journal == null || journal.getUserId() != userId) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
-                return;
-            }
+            int recycleBinId = Integer.parseInt(recycleBinIdStr);
 
             if ("restore".equals(action)) {
-                boolean success = dao.restoreJournal(journalId);
+                // ✅ Restore via JournalDAO (it handles re-insert + cleanup)
+                com.demo.web.dao.JournalDAO journalDAO = new com.demo.web.dao.JournalDAO();
+                boolean success = journalDAO.restoreJournalFromRecycleBin(recycleBinId, userId);
                 if (success) {
                     response.sendRedirect(request.getContextPath() + "/trashmgt?msg=Journal restored");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/trashmgt?error=Failed to restore");
                 }
-            }
-            else if ("permanentDelete".equals(action)) {
-                boolean success = dao.deleteJournal(journalId); // Actual DELETE
+            } else if ("permanentDelete".equals(action)) {
+                // ✅ Delete directly from recycle_bin
+                RecycleBinDAO rbDao = new RecycleBinDAO();
+                boolean success = rbDao.deleteFromRecycleBin(recycleBinId);
                 if (success) {
                     response.sendRedirect(request.getContextPath() + "/trashmgt?msg=Journal permanently deleted");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/trashmgt?error=Failed to delete");
                 }
-            }
-            else {
+            } else {
                 response.sendRedirect(request.getContextPath() + "/trashmgt?error=Unknown action");
             }
 
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/trashmgt?error=Invalid journal ID");
+            response.sendRedirect(request.getContextPath() + "/trashmgt?error=Invalid ID");
         }
     }
 }
+*/

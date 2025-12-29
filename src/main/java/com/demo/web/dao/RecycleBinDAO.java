@@ -10,35 +10,7 @@ import java.util.List;
 
 public class RecycleBinDAO {
 
-    // Save a journal to recycle bin
-    public int saveJournalToRecycleBin(RecycleBinItem item) {
-        String sql = """
-            INSERT INTO recycle_bin (original_id, item_type, user_id, title, content, metadata)
-            VALUES (?, 'journal', ?, ?, ?, ?::JSONB) RETURNING id
-            """;
-
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, item.getOriginalId());
-            stmt.setInt(2, item.getUserId());
-            stmt.setString(3, item.getTitle());
-            stmt.setString(4, item.getContent());
-            stmt.setString(5, item.getMetadata());
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    // Get all deleted journals for a user
-    public List<RecycleBinItem> findJournalsByUserId(int userId) {
+    public List<RecycleBinItem> findByUserId(int userId) {
         String sql = "SELECT * FROM recycle_bin WHERE user_id = ? AND item_type = 'journal' ORDER BY deleted_at DESC";
         List<RecycleBinItem> items = new ArrayList<>();
 
@@ -65,7 +37,6 @@ public class RecycleBinDAO {
         return items;
     }
 
-    // Get one item by ID (for restore)
     public RecycleBinItem findById(int id) {
         String sql = "SELECT * FROM recycle_bin WHERE id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -91,7 +62,6 @@ public class RecycleBinDAO {
         return null;
     }
 
-    // Remove from recycle bin (after restore or permanent delete)
     public boolean deleteFromRecycleBin(int id) {
         String sql = "DELETE FROM recycle_bin WHERE id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -102,5 +72,31 @@ public class RecycleBinDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public int saveJournalToRecycleBin(RecycleBinItem item) {
+        String sql = """
+            INSERT INTO recycle_bin (original_id, item_type, user_id, title, content, metadata)
+            VALUES (?, 'journal', ?, ?, ?, ?::JSONB) RETURNING id
+            """;
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, item.getOriginalId());
+            stmt.setInt(2, item.getUserId());
+            stmt.setString(3, item.getTitle());
+            stmt.setString(4, item.getContent());
+            stmt.setString(5, item.getMetadata());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

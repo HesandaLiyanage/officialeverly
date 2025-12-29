@@ -40,18 +40,13 @@
 
   <div class="trash-list">
     <%
-      // ✅ Get RecycleBinItem list (not Journal)
       List<RecycleBinItem> trashItems = (List<RecycleBinItem>) request.getAttribute("trashItems");
-
       if (trashItems == null || trashItems.isEmpty()) {
     %>
     <p class="empty-trash-message">Trash is empty.</p>
     <%
     } else {
       for (RecycleBinItem item : trashItems) {
-        // Only show journals (you can add autographs/memories later)
-        if (!"journal".equals(item.getItemType())) continue;
-
         String title = (item.getTitle() != null && !item.getTitle().trim().isEmpty())
                 ? item.getTitle()
                 : "Untitled Journal";
@@ -73,14 +68,11 @@
         </div>
       </div>
       <div style="display:flex; gap:8px;">
-        <!-- Restore Button -->
-        <form method="post" action="${pageContext.request.contextPath}/journal/restore" style="display:inline;">
+        <form method="post" action="${pageContext.request.contextPath}/journal/restore">
           <input type="hidden" name="recycleBinId" value="<%= item.getId() %>">
           <button type="submit" class="trash-delete-btn" style="background:#28a745;">Restore</button>
         </form>
-
-        <!-- Permanent Delete Button -->
-        <form method="post" action="${pageContext.request.contextPath}/journal/permanent-delete" style="display:inline;">
+        <form method="post" action="${pageContext.request.contextPath}/journal/permanent-delete">
           <input type="hidden" name="recycleBinId" value="<%= item.getId() %>">
           <button type="submit" class="trash-delete-btn"
                   onclick="return confirm('Permanently delete this journal? This cannot be undone.');">

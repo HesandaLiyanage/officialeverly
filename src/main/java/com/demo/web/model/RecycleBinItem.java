@@ -10,7 +10,7 @@ public class RecycleBinItem {
     private int userId;
     private String title;
     private String content;
-    private String metadata; // JSON string
+    private String metadata;
     private Timestamp deletedAt;
 
     // Getters & Setters

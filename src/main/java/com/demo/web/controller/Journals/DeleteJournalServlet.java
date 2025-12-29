@@ -1,4 +1,4 @@
-// File: src/main/java/com/demo/web/controller/DeleteJournalServlet.java
+// File: src/main/java/com/demo/web/controller/Journals/DeleteJournalServlet.java
 package com.demo.web.controller.Journals;
 
 import com.demo.web.dao.JournalDAO;
@@ -12,6 +12,7 @@ import java.io.IOException;
 
 @WebServlet("/journal/delete")
 public class DeleteJournalServlet extends HttpServlet {
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
