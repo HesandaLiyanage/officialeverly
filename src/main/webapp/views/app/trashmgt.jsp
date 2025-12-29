@@ -1,3 +1,7 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.demo.web.model.RecycleBinItem" %>
+<%@ page import="java.util.List" %>
+
 <jsp:include page="../public/header2.jsp" />
 
 <div class="settings-container">
@@ -36,50 +40,48 @@
 
   <div class="trash-list">
     <%
-      // Get deleted journals from request (set by servlet)
-      java.util.List<com.demo.web.model.Journal> deletedJournals =
-              (java.util.List<com.demo.web.model.Journal>) request.getAttribute("deletedJournals");
+      // ✅ Get RecycleBinItem list (not Journal)
+      List<RecycleBinItem> trashItems = (List<RecycleBinItem>) request.getAttribute("trashItems");
 
-      if (deletedJournals == null || deletedJournals.isEmpty()) {
+      if (trashItems == null || trashItems.isEmpty()) {
     %>
     <p class="empty-trash-message">Trash is empty.</p>
     <%
     } else {
-      for (com.demo.web.model.Journal journal : deletedJournals) {
-        // Use title as display name; fallback to "Untitled"
-        String title = (journal.getTitle() != null && !journal.getTitle().trim().isEmpty())
-                ? journal.getTitle()
+      for (RecycleBinItem item : trashItems) {
+        // Only show journals (you can add autographs/memories later)
+        if (!"journal".equals(item.getItemType())) continue;
+
+        String title = (item.getTitle() != null && !item.getTitle().trim().isEmpty())
+                ? item.getTitle()
                 : "Untitled Journal";
-        String deletedDate = (journal.getDeletedAt() != null)
-                ? journal.getDeletedAt().toString()
+        String deletedDate = (item.getDeletedAt() != null)
+                ? item.getDeletedAt().toString()
                 : "Unknown";
     %>
     <div class="trash-item">
       <div class="trash-item-left">
-        <!-- Journal icon (you can replace with default image later) -->
         <div style="width:60px; height:60px; background:#e0e0e0; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#777; font-weight:bold;">
           📝
         </div>
         <div class="trash-details">
           <p class="trash-title"><%= title %></p>
           <p class="trash-meta">
-            Journal ID: <%= journal.getJournalId() %><br>
+            Original ID: <%= item.getOriginalId() %><br>
             Deleted: <%= deletedDate %>
           </p>
         </div>
       </div>
       <div style="display:flex; gap:8px;">
         <!-- Restore Button -->
-        <form method="post" action="${pageContext.request.contextPath}/trashmgt" style="display:inline;">
-          <input type="hidden" name="action" value="restore">
-          <input type="hidden" name="journalId" value="<%= journal.getJournalId() %>">
+        <form method="post" action="${pageContext.request.contextPath}/journal/restore" style="display:inline;">
+          <input type="hidden" name="recycleBinId" value="<%= item.getId() %>">
           <button type="submit" class="trash-delete-btn" style="background:#28a745;">Restore</button>
         </form>
 
         <!-- Permanent Delete Button -->
-        <form method="post" action="${pageContext.request.contextPath}/trashmgt" style="display:inline;">
-          <input type="hidden" name="action" value="permanentDelete">
-          <input type="hidden" name="journalId" value="<%= journal.getJournalId() %>">
+        <form method="post" action="${pageContext.request.contextPath}/journal/permanent-delete" style="display:inline;">
+          <input type="hidden" name="recycleBinId" value="<%= item.getId() %>">
           <button type="submit" class="trash-delete-btn"
                   onclick="return confirm('Permanently delete this journal? This cannot be undone.');">
             Delete
@@ -92,24 +94,6 @@
       }
     %>
   </div>
-
-  <!-- Optional: Restore All / Empty Trash (for all journals) -->
-  <%
-    if (deletedJournals != null && !deletedJournals.isEmpty()) {
-  %>
-  <div class="trash-actions">
-    <!-- You can add "Restore All" later if needed -->
-    <form method="post" action="${pageContext.request.contextPath}/trashmgt">
-      <input type="hidden" name="action" value="emptyAll"> <!-- Not implemented yet -->
-      <button type="button" class="restore-all-btn" disabled>Restore All</button>
-    </form>
-
-    <!-- Empty Trash: You'd need to implement batch delete -->
-    <button type="button" class="empty-trash-btn" disabled>Empty Trash</button>
-  </div>
-  <%
-    }
-  %>
 </div>
 
 <jsp:include page="../public/footer.jsp" />

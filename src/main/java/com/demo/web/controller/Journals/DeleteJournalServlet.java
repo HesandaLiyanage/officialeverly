@@ -1,4 +1,4 @@
-// File: src/main/java/com/demo/web/controller/RestoreJournalServlet.java
+// File: src/main/java/com/demo/web/controller/DeleteJournalServlet.java
 package com.demo.web.controller.Journals;
 
 import com.demo.web.dao.JournalDAO;
@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/journal/restore")
-public class RestoreJournalServlet extends HttpServlet {
+@WebServlet("/journal/delete")
+public class DeleteJournalServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -21,24 +21,24 @@ public class RestoreJournalServlet extends HttpServlet {
             return;
         }
 
-        String recycleBinIdStr = request.getParameter("recycleBinId");
-        if (recycleBinIdStr == null) {
-            response.sendRedirect(request.getContextPath() + "/trashmgt");
+        String journalIdStr = request.getParameter("journalId");
+        if (journalIdStr == null) {
+            response.sendRedirect(request.getContextPath() + "/journals");
             return;
         }
 
         try {
-            int recycleBinId = Integer.parseInt(recycleBinIdStr);
+            int journalId = Integer.parseInt(journalIdStr);
             JournalDAO dao = new JournalDAO();
-            boolean success = dao.restoreJournalFromRecycleBin(recycleBinId, userId);
+            boolean success = dao.deleteJournalToRecycleBin(journalId, userId);
 
             if (success) {
-                response.sendRedirect(request.getContextPath() + "/trashmgt?msg=Journal restored");
+                response.sendRedirect(request.getContextPath() + "/journals?msg=Journal moved to Recycle Bin");
             } else {
-                response.sendRedirect(request.getContextPath() + "/trashmgt?error=Failed to restore");
+                response.sendRedirect(request.getContextPath() + "/journals?error=Failed to delete journal");
             }
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/trashmgt?error=Invalid ID");
+            response.sendRedirect(request.getContextPath() + "/journals?error=Invalid journal ID");
         }
     }
 }

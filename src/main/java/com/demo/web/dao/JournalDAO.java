@@ -11,10 +11,10 @@ import java.util.List;
 public class JournalDAO {
 
     /**
-     * Find all ACTIVE (non-deleted) journals for a specific user
+     * Find all journals for a specific user (no soft-delete needed)
      */
     public List<Journal> findByUserId(int userId) {
-        String sql = "SELECT * FROM journal WHERE user_id = ? AND is_deleted = false ORDER BY journal_id DESC";
+        String sql = "SELECT * FROM journal WHERE user_id = ? ORDER BY journal_id DESC";
         List<Journal> journals = new ArrayList<>();
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -29,10 +29,10 @@ public class JournalDAO {
                 }
             }
 
-            System.out.println("[DEBUG JournalDAO] findByUserId(" + userId + ") returned " + journals.size() + " ACTIVE records.");
+            System.out.println("[DEBUG JournalDAO] findByUserId(" + userId + ") returned " + journals.size() + " records.");
 
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error finding active journals by user ID: " + e.getMessage());
+            System.out.println("[ERROR JournalDAO] Error finding journals by user ID: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -68,7 +68,6 @@ public class JournalDAO {
      * Create a new journal entry
      */
     public boolean createJournal(Journal journal) {
-        // ⚠️ IMPORTANT: Removed created_at and updated_at columns since they don't exist in DB
         String sql = "INSERT INTO journal (j_title, j_content, user_id, journal_pic) " +
                 "VALUES (?, ?, ?, ?)";
 
@@ -104,7 +103,6 @@ public class JournalDAO {
      * Update an existing journal entry
      */
     public boolean updateJournal(Journal journal) {
-        // ⚠️ IMPORTANT: Removed updated_at column since it doesn't exist in DB
         String sql = "UPDATE journal SET j_title = ?, j_content = ?, journal_pic = ? " +
                 "WHERE journal_id = ?";
 
@@ -129,24 +127,96 @@ public class JournalDAO {
     }
 
     /**
-     * Soft-delete a journal (move to Recycle Bin)
+     * Delete a journal: move to recycle_bin, then delete from journal table
      */
-    public boolean softDeleteJournal(int journalId) {
-        String sql = "UPDATE journal SET is_deleted = true, deleted_at = NOW() WHERE journal_id = ?";
+    public boolean deleteJournalToRecycleBin(int journalId, int userId) {
+        // 1. Fetch the journal to verify ownership
+        Journal journal = findById(journalId);
+        if (journal == null || journal.getUserId() != userId) {
+            return false;
+        }
+
+        // 2. Insert into recycle_bin
+        String insertSql = """
+            INSERT INTO recycle_bin (original_id, item_type, user_id, title, content, metadata)
+            VALUES (?, 'journal', ?, ?, ?, ?::JSONB)
+            """;
 
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
 
-            pstmt.setInt(1, journalId);
-            int rowsAffected = pstmt.executeUpdate();
-            System.out.println("[DEBUG JournalDAO] softDeleteJournal - Rows affected: " + rowsAffected);
-            return rowsAffected > 0;
+            insertStmt.setInt(1, journal.getJournalId());
+            insertStmt.setInt(2, userId);
+            insertStmt.setString(3, journal.getTitle());
+            insertStmt.setString(4, journal.getContent());
+
+            // Store journalPic in metadata as JSON
+            String metadata = "{\"journalPic\": \"" +
+                    (journal.getJournalPic() != null ? journal.getJournalPic() : "") +
+                    "\"}";
+            insertStmt.setString(5, metadata);
+
+            int inserted = insertStmt.executeUpdate();
+            if (inserted <= 0) {
+                return false;
+            }
+
+            // 3. Delete from journal table
+            String deleteSql = "DELETE FROM journal WHERE journal_id = ?";
+            try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+                deleteStmt.setInt(1, journalId);
+                int deleted = deleteStmt.executeUpdate();
+                System.out.println("[DEBUG JournalDAO] Journal moved to recycle_bin and deleted. ID: " + journalId);
+                return deleted > 0;
+            }
 
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error soft-deleting journal: " + e.getMessage());
+            System.out.println("[ERROR JournalDAO] Error moving journal to recycle_bin: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Restore a journal from recycle_bin
+     */
+    public boolean restoreJournalFromRecycleBin(int recycleBinId, int userId) {
+        // 1. Fetch from recycle_bin
+        RecycleBinItem item = getRecycleBinItemById(recycleBinId);
+        if (item == null || !item.getItemType().equals("journal") || item.getUserId() != userId) {
+            return false;
+        }
+
+        // 2. Rebuild journal
+        Journal journal = new Journal();
+        journal.setTitle(item.getTitle());
+        journal.setContent(item.getContent());
+        journal.setUserId(userId);
+
+        // Extract journalPic from metadata
+        String journalPic = "";
+        if (item.getMetadata() != null) {
+            // Simple JSON parsing (improve with Gson if needed)
+            String meta = item.getMetadata();
+            int start = meta.indexOf("\"journalPic\": \"");
+            if (start != -1) {
+                start += 15; // length of "\"journalPic\": \""
+                int end = meta.indexOf("\"", start);
+                if (end != -1) {
+                    journalPic = meta.substring(start, end);
+                }
+            }
+        }
+        journal.setJournalPic(journalPic);
+
+        // 3. Insert back into journal table
+        boolean restored = createJournal(journal);
+        if (restored) {
+            // 4. Remove from recycle_bin
+            deleteFromRecycleBin(recycleBinId);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -175,76 +245,47 @@ public class JournalDAO {
     }
 
     /**
-     * Restore a journal from Recycle Bin
+     * Helper: Get item from recycle_bin by ID
      */
-    public boolean restoreJournal(int journalId) {
-        String sql = "UPDATE journal SET is_deleted = false, restored_at = NOW(), deleted_at = NULL WHERE journal_id = ?";
-
+    private RecycleBinItem getRecycleBinItemById(int id) {
+        String sql = "SELECT * FROM recycle_bin WHERE id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, journalId);
-            int rowsAffected = pstmt.executeUpdate();
-            System.out.println("[DEBUG JournalDAO] restoreJournal - Rows affected: " + rowsAffected);
-            return rowsAffected > 0;
-
-        } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error restoring journal: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * Find all DELETED journals for a specific user (for Recycle Bin)
-     */
-    public List<Journal> findDeletedByUserId(int userId) {
-        String sql = "SELECT * FROM journal WHERE user_id = ? AND is_deleted = true ORDER BY deleted_at DESC NULLS LAST";
-        List<Journal> journals = new ArrayList<>();
-
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, userId);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    Journal journal = mapResultSetToJournal(rs);
-                    journals.add(journal);
-                }
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                RecycleBinItem item = new RecycleBinItem();
+                item.setId(rs.getInt("id"));
+                item.setOriginalId(rs.getInt("original_id"));
+                item.setItemType(rs.getString("item_type"));
+                item.setUserId(rs.getInt("user_id"));
+                item.setTitle(rs.getString("title"));
+                item.setContent(rs.getString("content"));
+                item.setMetadata(rs.getString("metadata"));
+                item.setDeletedAt(rs.getTimestamp("deleted_at"));
+                return item;
             }
-
-            System.out.println("[DEBUG JournalDAO] findDeletedByUserId(" + userId + ") returned " + journals.size() + " DELETED records.");
-
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error finding deleted journals: " + e.getMessage());
             e.printStackTrace();
         }
-
-        return journals;
+        return null;
     }
 
     /**
-     * Permanently delete a journal (used only for "Delete Forever" in Trash)
+     * Helper: Delete from recycle_bin
      */
-    public boolean deleteJournal(int journalId) {
-        String sql = "DELETE FROM journal WHERE journal_id = ?";
-
+    private boolean deleteFromRecycleBin(int id) {
+        String sql = "DELETE FROM recycle_bin WHERE id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, journalId);
-            int rowsAffected = pstmt.executeUpdate();
-            System.out.println("[DEBUG JournalDAO] Permanent delete - Rows affected: " + rowsAffected);
-            return rowsAffected > 0;
-
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error permanently deleting journal: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
-
 
     /**
      * Helper method to map ResultSet to Journal object
@@ -256,12 +297,43 @@ public class JournalDAO {
         journal.setContent(rs.getString("j_content"));
         journal.setUserId(rs.getInt("user_id"));
         journal.setJournalPic(rs.getString("journal_pic"));
-
-        journal.setDeleted(rs.getBoolean("is_deleted"));
-        journal.setDeletedAt(rs.getTimestamp("deleted_at"));
-        journal.setRestoredAt(rs.getTimestamp("restored_at"));
-
-        // No timestamps in model anymore
         return journal;
+    }
+
+    // --- Embedded RecycleBinItem class (for internal use) ---
+    private static class RecycleBinItem {
+        private int id;
+        private int originalId;
+        private String itemType;
+        private int userId;
+        private String title;
+        private String content;
+        private String metadata;
+        private Timestamp deletedAt;
+
+        // Getters & Setters
+        public int getId() { return id; }
+        public void setId(int id) { this.id = id; }
+
+        public int getOriginalId() { return originalId; }
+        public void setOriginalId(int originalId) { this.originalId = originalId; }
+
+        public String getItemType() { return itemType; }
+        public void setItemType(String itemType) { this.itemType = itemType; }
+
+        public int getUserId() { return userId; }
+        public void setUserId(int userId) { this.userId = userId; }
+
+        public String getTitle() { return title; }
+        public void setTitle(String title) { this.title = title; }
+
+        public String getContent() { return content; }
+        public void setContent(String content) { this.content = content; }
+
+        public String getMetadata() { return metadata; }
+        public void setMetadata(String metadata) { this.metadata = metadata; }
+
+        public Timestamp getDeletedAt() { return deletedAt; }
+        public void setDeletedAt(Timestamp deletedAt) { this.deletedAt = deletedAt; }
     }
 }
