@@ -12,6 +12,9 @@ import com.demo.web.dao.JournalDAO;
 import com.demo.web.model.Event;
 import com.demo.web.model.UserSession;
 import com.demo.web.model.autograph;
+import com.demo.web.dao.JournalStreakDAO;
+import com.demo.web.model.JournalStreak;
+
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -825,9 +828,11 @@ public class FrontControllerServlet extends HttpServlet {
     // Inner class implementing the logic for /journals
     private static class JournalListLogicHandler implements LogicHandler {
         private JournalDAO journalDAO;
+        private JournalStreakDAO streakDAO;
 
         public JournalListLogicHandler() {
             this.journalDAO = new JournalDAO();
+            this.streakDAO = new JournalStreakDAO();
         }
 
         @Override
@@ -844,6 +849,17 @@ public class FrontControllerServlet extends HttpServlet {
             System.out.println("[DEBUG JournalListLogicHandler] User ID: " + userId);
 
             try {
+                // Check and update streak status (in case user missed a day)
+                streakDAO.checkAndUpdateStreakStatus(userId);
+
+                // Get streak information
+                JournalStreak streak = streakDAO.getStreakByUserId(userId);
+                int streakDays = (streak != null) ? streak.getCurrentStreak() : 0;
+                int longestStreak = (streak != null) ? streak.getLongestStreak() : 0;
+
+                System.out.println("[DEBUG JournalListLogicHandler] Current streak: " + streakDays + " days");
+                System.out.println("[DEBUG JournalListLogicHandler] Longest streak: " + longestStreak + " days");
+
                 // Get all journals for this user
                 List<Journal> journals = journalDAO.findByUserId(userId);
                 System.out.println("[DEBUG JournalListLogicHandler] Found " + journals.size() + " journals");
@@ -852,13 +868,11 @@ public class FrontControllerServlet extends HttpServlet {
                 int totalCount = journalDAO.getJournalCount(userId);
                 System.out.println("[DEBUG JournalListLogicHandler] Total journal count: " + totalCount);
 
-                // Calculate streak (placeholder - you can implement actual streak logic later)
-                int streakDays = calculateStreak(journals);
-
                 // Set attributes for JSP
                 request.setAttribute("journals", journals);
                 request.setAttribute("totalCount", totalCount);
                 request.setAttribute("streakDays", streakDays);
+                request.setAttribute("longestStreak", longestStreak);
 
                 System.out.println("[DEBUG JournalListLogicHandler] Forwarding to journals.jsp");
                 request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
@@ -869,24 +883,6 @@ public class FrontControllerServlet extends HttpServlet {
                 request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
             }
         }
-
-        /**
-         * Calculate journal streak (consecutive days with entries)
-         * This is a simple implementation - you can enhance it later
-         * Note: Since we don't have timestamps, this is a placeholder.
-         * You could potentially parse the date from the title string if needed.
-         */
-        private int calculateStreak(List<Journal> journals) {
-            if (journals == null || journals.isEmpty()) {
-                return 0;
-            }
-            // Placeholder: Return a fixed number or a count-based number
-            // For a real streak, you'd need actual date information
-            // You could parse the title string "24th October 2025" to determine dates
-            // For now, just return a simple placeholder
-            return journals.size() > 0 ? 7 : 0; // Example: assume 7 days if they have entries
-        }
-
     }
 
     // Inner class implementing the logic for /journalview
