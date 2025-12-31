@@ -72,12 +72,10 @@
           <input type="hidden" name="recycleBinId" value="<%= item.getId() %>">
           <button type="submit" class="trash-delete-btn" style="background:#28a745;">Restore</button>
         </form>
-        <form method="post" action="${pageContext.request.contextPath}/journal/permanent-delete">
+        <form method="post" action="${pageContext.request.contextPath}/trashmgt">
+          <input type="hidden" name="action" value="permanentDelete">
           <input type="hidden" name="recycleBinId" value="<%= item.getId() %>">
-          <button type="submit" class="trash-delete-btn"
-                  onclick="return confirm('Permanently delete this journal? This cannot be undone.');">
-            Delete
-          </button>
+          <button type="submit" onclick="return confirm('Permanently delete?')">Delete</button>
         </form>
       </div>
     </div>

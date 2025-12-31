@@ -99,4 +99,31 @@ public class RecycleBinDAO {
         }
         return -1;
     }
+
+    // ✅ ADDED: Save autograph to recycle bin
+    public int saveAutographToRecycleBin(RecycleBinItem item) {
+        String sql = """
+            INSERT INTO recycle_bin (original_id, item_type, user_id, title, content, metadata)
+            VALUES (?, 'autograph', ?, ?, ?, ?::JSONB) RETURNING id
+            """;
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, item.getOriginalId());
+            stmt.setInt(2, item.getUserId());
+            stmt.setString(3, item.getTitle());
+            stmt.setString(4, item.getContent());
+            stmt.setString(5, item.getMetadata());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

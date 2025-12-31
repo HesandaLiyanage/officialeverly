@@ -1,4 +1,4 @@
-// File: src/main/java/com/demo/web/controller/RestoreJournalServlet.java
+// File: src/main/java/com/demo/web/controller/Journals/RestoreJournalServlet.java
 package com.demo.web.controller.Journals;
 
 import com.demo.web.dao.JournalDAO;
@@ -12,6 +12,7 @@ import java.io.IOException;
 
 @WebServlet("/journal/restore")
 public class RestoreJournalServlet extends HttpServlet {
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
