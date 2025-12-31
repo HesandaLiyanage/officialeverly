@@ -62,7 +62,7 @@
                                 <c:when test="${empty memories}">
                                     <!-- No memories - show empty state -->
                                     <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #888;">
-                                        <div style="font-size: 64px; margin-bottom: 20px;">📸</div>
+<%--                                        <div style="font-size: 64px; margin-bottom: 20px;">📸</div>--%>
                                         <h3 style="margin-bottom: 10px;">No memories yet</h3>
                                         <p style="margin-bottom: 30px;">Start creating your first memory!</p>
                                         <a href="/creatememory" class="floating-btn"
