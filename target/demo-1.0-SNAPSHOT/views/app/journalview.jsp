@@ -176,7 +176,9 @@
 </div>
 
 <!-- Hidden form for deletion -->
-<form id="deleteJournalForm" action="${pageContext.request.contextPath}/deletejournal" method="post" style="display: none;">
+<form id="deleteJournalForm"
+      action="${pageContext.request.contextPath}/journal/delete"
+      method="post" style="display:none;">
     <input type="hidden" name="journalId" id="journalIdInput" value="<%= journal != null ? journal.getJournalId() : "" %>">
 </form>
 
@@ -277,25 +279,23 @@
     document.addEventListener('DOMContentLoaded', renderDecorations);
 
     // Delete button functionality
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
         const deleteBtn = document.getElementById('deleteBtn');
         const deleteForm = document.getElementById('deleteJournalForm');
 
         if (deleteBtn && deleteForm) {
-            deleteBtn.addEventListener('click', function(event) {
-                event.preventDefault();
-                const journalId = document.getElementById('journalIdInput').value;
-                if (!journalId) {
-                    alert('Journal ID is missing.');
-                    return;
-                }
-                const confirmDelete = confirm('Are you sure you want to delete this journal entry? This action cannot be undone.');
-                if (confirmDelete) {
-                    // Submit the form
-                    deleteForm.submit();
-                }
-            });
-        }
+        deleteBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        const journalId = document.getElementById('journalIdInput').value;
+        if (!journalId) {
+        alert('Journal ID is missing.');
+        return;
+    }
+        if (confirm('Move this journal to the Recycle Bin? You can restore it later.')) {
+        deleteForm.submit();
+    }
+    });
+    }
     });
 </script>
 
