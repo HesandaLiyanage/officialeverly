@@ -3,6 +3,7 @@ package com.demo.web.controller.Journals;
 
 import com.demo.web.dao.JournalDAO;
 import com.demo.web.model.Journal;
+import com.demo.web.dao.JournalStreakDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,11 +19,13 @@ public class CreateJournalServlet extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(CreateJournalServlet.class.getName());
     private JournalDAO journalDAO;
+    private JournalStreakDAO streakDAO;
 
     @Override
     public void init() throws ServletException {
         super.init();
         this.journalDAO = new JournalDAO();
+        this.streakDAO = new JournalStreakDAO();
     }
 
     @Override
@@ -83,6 +86,23 @@ public class CreateJournalServlet extends HttpServlet {
 
             if (success) {
                 System.out.println("[DEBUG CreateJournalServlet] Journal saved successfully with ID: " + newJournal.getJournalId());
+
+                // ✅ UPDATE STREAK - Use the correct method with date parameter
+                try {
+                    java.sql.Date today = new java.sql.Date(System.currentTimeMillis());
+                    boolean streakUpdated = streakDAO.updateStreakOnNewEntry(userId, today);
+
+                    if (streakUpdated) {
+                        System.out.println("[DEBUG CreateJournalServlet] Streak updated successfully for user " + userId);
+                    } else {
+                        System.out.println("[WARNING CreateJournalServlet] Streak update returned false for user " + userId);
+                    }
+                } catch (Exception e) {
+                    System.out.println("[ERROR CreateJournalServlet] Streak update failed: " + e.getMessage());
+                    e.printStackTrace();
+                    // Don't fail the journal creation if streak update fails
+                }
+
                 // Redirect to journals list page
                 response.sendRedirect(request.getContextPath() + "/journals");
             } else {
@@ -90,6 +110,7 @@ public class CreateJournalServlet extends HttpServlet {
                 request.setAttribute("error", "Failed to save journal entry. Please try again.");
                 request.getRequestDispatcher("/writejournal").forward(request, response);
             }
+
 
         } catch (Exception e) {
             System.out.println("[ERROR CreateJournalServlet] Unexpected error: " + e.getMessage());

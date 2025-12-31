@@ -196,48 +196,62 @@
 
         makeDraggable(element) {
             let isDragging = false;
-            let currentX;
-            let currentY;
-            let initialX;
-            let initialY;
-            let xOffset = 0;
-            let yOffset = 0;
+            let startX;
+            let startY;
+            let initialLeft;
+            let initialTop;
 
             element.addEventListener('mousedown', (e) => {
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-
                 if (e.target === element) {
                     isDragging = true;
                     element.style.cursor = 'grabbing';
                     element.style.zIndex = '1000';
+
+                    // Get the current position of the element
+                    const rect = element.getBoundingClientRect();
+                    const containerRect = this.decorationsContainer.getBoundingClientRect();
+
+                    // Store initial mouse position
+                    startX = e.clientX;
+                    startY = e.clientY;
+
+                    // Store initial element position relative to container
+                    initialLeft = rect.left - containerRect.left;
+                    initialTop = rect.top - containerRect.top;
+
+                    e.preventDefault();
                 }
             });
 
             document.addEventListener('mousemove', (e) => {
                 if (isDragging) {
                     e.preventDefault();
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
 
-                    xOffset = currentX;
-                    yOffset = currentY;
+                    // Calculate how much the mouse has moved
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
 
-                    const rect = this.decorationsContainer.getBoundingClientRect();
-                    const percentX = (currentX / rect.width) * 100;
-                    const percentY = (currentY / rect.height) * 100;
+                    // Calculate new position
+                    const newLeft = initialLeft + deltaX;
+                    const newTop = initialTop + deltaY;
 
+                    // Convert to percentage
+                    const containerRect = this.decorationsContainer.getBoundingClientRect();
+                    const percentX = (newLeft / containerRect.width) * 100;
+                    const percentY = (newTop / containerRect.height) * 100;
+
+                    // Update element position
                     element.style.left = percentX + '%';
                     element.style.top = percentY + '%';
                 }
             });
 
             document.addEventListener('mouseup', () => {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
-                element.style.cursor = 'grab';
-                element.style.zIndex = '5';
+                if (isDragging) {
+                    isDragging = false;
+                    element.style.cursor = 'grab';
+                    element.style.zIndex = '5';
+                }
             });
 
             // Double click to remove
