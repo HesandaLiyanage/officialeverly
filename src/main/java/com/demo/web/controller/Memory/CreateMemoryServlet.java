@@ -16,10 +16,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
-        maxFileSize = 1024 * 1024 * 50,       // 50MB per file
-        maxRequestSize = 1024 * 1024 * 100    // 100MB total request
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 50, // 50MB per file
+        maxRequestSize = 1024 * 1024 * 100 // 100MB total request
 )
 public class CreateMemoryServlet extends HttpServlet {
 
@@ -30,8 +29,7 @@ public class CreateMemoryServlet extends HttpServlet {
     private static final String LOGICAL_UPLOAD_DIR = "encrypted_uploads";
 
     // REAL physical path where encrypted files are saved (your dev path)
-    private static final String PHYSICAL_UPLOAD_PATH =
-            "/home/hesanda/IdeaProjects/officialeverly/src/main/webapp/media_uploads_encrypted";
+    private static final String PHYSICAL_UPLOAD_PATH = "/home/hesanda/IdeaProjects/officialeverly/src/main/webapp/media_uploads_encrypted";
 
     @Override
     public void init() throws ServletException {
@@ -73,8 +71,9 @@ public class CreateMemoryServlet extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("user_id");
         SecretKey masterKey = (SecretKey) session.getAttribute("masterKey");
         if (masterKey == null) {
+            response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("{\"error\": \"Encryption key missing\"}");
+            response.getWriter().write("{\"error\": \"Encryption key missing. Please log out and log in again.\"}");
             return;
         }
 
@@ -83,6 +82,7 @@ public class CreateMemoryServlet extends HttpServlet {
             String memoryDate = request.getParameter("memoryDate");
 
             if (memoryName == null || memoryName.trim().isEmpty()) {
+                response.setContentType("application/json;charset=UTF-8");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().write("{\"error\": \"Memory name is required\"}");
                 return;
@@ -101,18 +101,19 @@ public class CreateMemoryServlet extends HttpServlet {
             int uploadedCount = 0;
 
             for (Part filePart : fileParts) {
-                if (!"mediaFiles".equals(filePart.getName()) || filePart.getSize() == 0) continue;
+                if (!"mediaFiles".equals(filePart.getName()) || filePart.getSize() == 0)
+                    continue;
 
                 String fileName = getFileName(filePart);
-                if (fileName == null || fileName.isEmpty()) continue;
+                if (fileName == null || fileName.isEmpty())
+                    continue;
 
                 System.out.println("Processing file: " + fileName + " (" + filePart.getSize() + " bytes)");
 
                 byte[] fileData = readFileData(filePart);
 
                 int mediaId = uploadEncryptedMedia(
-                        userId, masterKey, fileData, fileName, filePart.getContentType()
-                );
+                        userId, masterKey, fileData, fileName, filePart.getContentType());
 
                 memoryDAO.linkMediaToMemory(memoryId, mediaId);
                 uploadedCount++;
@@ -125,19 +126,19 @@ public class CreateMemoryServlet extends HttpServlet {
             try (PrintWriter out = response.getWriter()) {
                 out.write(String.format(
                         "{\"success\": true, \"memoryId\": %d, \"filesUploaded\": %d}",
-                        memoryId, uploadedCount
-                ));
+                        memoryId, uploadedCount));
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+            response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\": \"Failed: " + e.getMessage() + "\"}");
+            response.getWriter().write("{\"error\": \"Failed: " + e.getMessage().replace("\"", "'") + "\"}");
         }
     }
 
     private int uploadEncryptedMedia(int userId, SecretKey userMasterKey,
-                                     byte[] fileData, String originalFilename, String mimeType) throws Exception {
+            byte[] fileData, String originalFilename, String mimeType) throws Exception {
 
         SecretKey mediaKey = EncryptionService.generateKey();
         String keyId = EncryptionService.generateKeyId();
@@ -155,8 +156,7 @@ public class CreateMemoryServlet extends HttpServlet {
         mediaDAO.storeMediaEncryptionKey(
                 keyId, userId,
                 encryptedMediaKey.getEncryptedData(),
-                encryptedMediaKey.getIv()
-        );
+                encryptedMediaKey.getIv());
 
         MediaItem mediaItem = new MediaItem();
         mediaItem.setUserId(userId);
@@ -177,7 +177,7 @@ public class CreateMemoryServlet extends HttpServlet {
 
     private byte[] readFileData(Part filePart) throws IOException {
         try (InputStream in = filePart.getInputStream();
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[8192];
             int bytesRead;
             while ((bytesRead = in.read(buffer)) != -1) {
@@ -193,7 +193,8 @@ public class CreateMemoryServlet extends HttpServlet {
 
     private String getFileName(Part part) {
         String header = part.getHeader("content-disposition");
-        if (header == null) return null;
+        if (header == null)
+            return null;
         for (String partHeader : header.split(";")) {
             if (partHeader.trim().startsWith("filename")) {
                 String filename = partHeader.substring(partHeader.indexOf('=') + 1).trim().replace("\"", "");
