@@ -29,7 +29,7 @@ public class CreateMemoryServlet extends HttpServlet {
     private static final String LOGICAL_UPLOAD_DIR = "encrypted_uploads";
 
     // REAL physical path where encrypted files are saved (your dev path)
-    private static final String PHYSICAL_UPLOAD_PATH = "/home/hesanda/IdeaProjects/officialeverly/src/main/webapp/media_uploads_encrypted";
+    private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads_encrypted";
 
     @Override
     public void init() throws ServletException {
@@ -63,6 +63,7 @@ public class CreateMemoryServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
+            response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"error\": \"Not logged in\"}");
             return;
