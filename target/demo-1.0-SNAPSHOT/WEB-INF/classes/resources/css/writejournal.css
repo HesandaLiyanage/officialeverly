@@ -13,7 +13,7 @@
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    background: white;
+    background: transparent;
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
     overflow: hidden;
@@ -74,7 +74,7 @@
 .toolbar-section {
     background: #f9fafb;
     border-radius: 16px;
-    padding: 20px;
+    padding: 15px;
 }
 
 .toolbar-title {
@@ -196,20 +196,14 @@
 .autograph-page {
     width: 100%;
     min-height: 600px;
-    background: #faf8f3;
-    background-image:
-        repeating-linear-gradient(0deg,
-            transparent,
-            transparent 31px,
-            rgba(139, 69, 19, 0.1) 31px,
-            rgba(139, 69, 19, 0.1) 32px);
+    background-color: transparent;
     border-radius: 4px;
     box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.1),
-        0 8px 16px rgba(0, 0, 0, 0.1);
+            0 2px 4px rgba(0, 0, 0, 0.1),
+            0 8px 16px rgba(0, 0, 0, 0.1);
     padding: 40px 45px;
     position: relative;
-    overflow: visible;
+    overflow: hidden; /* Changed from visible to hidden */
 }
 
 
@@ -225,14 +219,25 @@
 
 /* Writing Area */
 .writing-area {
+    background-color: transparent;
     position: relative;
+    z-index: 2;
     min-height: 400px;
     padding-left: 25px;
     font-size: 16px;
     line-height: 32px;
-    color: #374151;
     outline: none;
-    z-index: 2;
+    /* Updated background properties */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Add these to make it fill the container perfectly */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 40px 45px 40px 70px; /* Match the autograph-page padding + margin line space */
 }
 
 .writing-area:empty:before {
@@ -557,3 +562,35 @@
         font-size: 14px;
     }
 }
+
+/* Paper Theme Selector */
+.paper-theme-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.paper-theme-btn {
+    width: 46px;
+    height: 46px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.paper-theme-btn:hover {
+    border-color: #9A74D8;
+    background: #f3f0ff;
+}
+
+.paper-theme-btn.active {
+        border-color: #9A74D8;
+        box-shadow: 0 0 0 3px rgba(154, 116, 216, 0.4);
+}
+
+/* Journal background images */

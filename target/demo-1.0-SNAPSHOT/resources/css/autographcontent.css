@@ -26,17 +26,16 @@
     position: relative;
 }
 
-/* Page Header */
-.page-header {
-    margin-bottom: 10px;
-}
-
 .page-title {
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 32px;
-    font-weight: 700;
-    color: #0d141c;
-    margin: 0 0 8px 0;
+    background: none;
+    padding: var(--space-2) var(--space-5);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--gray-800);
+    border-bottom-color: var(--primary);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border-bottom: 3px solid transparent;
 }
 
 .page-subtitle {
@@ -44,9 +43,14 @@
     font-size: 16px;
     font-weight: 400;
     color: #6c757d;
-    margin: 0;
+    margin-top: 5px;
+    margin-bottom: 2px;
 }
-
+.tab-nav {
+    display: flex;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
 /* Search Filters */
 .search-filters {
     display: flex;
