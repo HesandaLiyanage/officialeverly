@@ -19,7 +19,7 @@ public class ViewMediaServlet extends HttpServlet {
     private MediaDAO mediaDAO;
 
     // Must match the physical path used in CreateMemoryServlet
-    private static final String PHYSICAL_UPLOAD_PATH = "/home/hesanda/IdeaProjects/officialeverly/src/main/webapp/media_uploads_encrypted";
+    private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads_encrypted";
 
     @Override
     public void init() throws ServletException {
