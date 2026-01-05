@@ -2,6 +2,7 @@
 package com.demo.web.dao;
 
 import com.demo.web.model.autograph;
+import com.demo.web.model.RecycleBinItem;
 import com.demo.web.util.DatabaseUtil;
 import java.sql.*;
 import java.util.ArrayList;
@@ -139,5 +140,76 @@ public class autographDAO {
         autograph.setUserId(rs.getInt("user_id"));
         autograph.setAutographPicUrl(rs.getString("autograph_pic_url"));
         return autograph;
+    }
+
+    /**
+     * Move autograph to recycle bin (soft delete)
+     */
+    public boolean deleteAutographToRecycleBin(int autographId, int userId) {
+        autograph autograph = findById(autographId);
+        if (autograph == null || autograph.getUserId() != userId) {
+            return false;
+        }
+
+        RecycleBinItem item = new RecycleBinItem();
+        item.setOriginalId(autograph.getAutographId());
+        item.setUserId(userId);
+        item.setTitle(autograph.getTitle());
+        item.setContent(autograph.getDescription());
+        String metadata = "{\"autographPicUrl\": \"" +
+                (autograph.getAutographPicUrl() != null ? autograph.getAutographPicUrl() : "") +
+                "\"}";
+        item.setMetadata(metadata);
+
+        RecycleBinDAO rbDao = new RecycleBinDAO();
+        int recycleId = rbDao.saveAutographToRecycleBin(item);
+        if (recycleId <= 0) return false;
+
+        String deleteSql = "DELETE FROM autograph WHERE autograph_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
+            stmt.setInt(1, autographId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Restore autograph from recycle bin
+     */
+    public boolean restoreAutographFromRecycleBin(int recycleBinId, int userId) {
+        RecycleBinDAO rbDao = new RecycleBinDAO();
+        RecycleBinItem item = rbDao.findById(recycleBinId);
+        if (item == null || !"autograph".equals(item.getItemType()) || item.getUserId() != userId) {
+            return false;
+        }
+
+        autograph autograph = new autograph();
+        autograph.setTitle(item.getTitle());
+        autograph.setDescription(item.getContent());
+        autograph.setUserId(userId);
+
+        String autographPicUrl = "";
+        if (item.getMetadata() != null) {
+            String meta = item.getMetadata();
+            int start = meta.indexOf("\"autographPicUrl\": \"");
+            if (start != -1) {
+                start += 20;
+                int end = meta.indexOf("\"", start);
+                if (end != -1) {
+                    autographPicUrl = meta.substring(start, end);
+                }
+            }
+        }
+        autograph.setAutographPicUrl(autographPicUrl);
+
+        boolean restored = createAutograph(autograph);
+        if (restored) {
+            rbDao.deleteFromRecycleBin(recycleBinId);
+            return true;
+        }
+        return false;
     }
 }

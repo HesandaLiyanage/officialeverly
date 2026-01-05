@@ -37,6 +37,33 @@ public class RecycleBinDAO {
         return items;
     }
 
+    public List<RecycleBinItem> findAutographsByUserId(int userId) {
+        String sql = "SELECT * FROM recycle_bin WHERE user_id = ? AND item_type = 'autograph' ORDER BY deleted_at DESC";
+        List<RecycleBinItem> items = new ArrayList<>();
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                RecycleBinItem item = new RecycleBinItem();
+                item.setId(rs.getInt("id"));
+                item.setOriginalId(rs.getInt("original_id"));
+                item.setItemType(rs.getString("item_type"));
+                item.setUserId(rs.getInt("user_id"));
+                item.setTitle(rs.getString("title"));
+                item.setContent(rs.getString("content"));
+                item.setMetadata(rs.getString("metadata"));
+                item.setDeletedAt(rs.getTimestamp("deleted_at"));
+                items.add(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
     public RecycleBinItem findById(int id) {
         String sql = "SELECT * FROM recycle_bin WHERE id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
