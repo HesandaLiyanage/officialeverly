@@ -34,6 +34,35 @@ public class autographDAO {
             throw new RuntimeException("Error while creating autograph", e);
         }
     }
+    public String getOrCreateShareToken(int autographId) throws SQLException {
+        String selectSql = "SELECT share_token FROM autograph WHERE autograph_id = ?";
+        String updateSql = "UPDATE autograph SET share_token = ? WHERE autograph_id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
+
+            selectStmt.setInt(1, autographId);
+            ResultSet rs = selectStmt.executeQuery();
+
+            if (rs.next()) {
+                String existingToken = rs.getString("share_token");
+                if (existingToken != null && !existingToken.isEmpty()) {
+                    return existingToken;
+                }
+            }
+
+            // Generate new token
+            String newToken = java.util.UUID.randomUUID().toString().replace("-", "");
+
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                updateStmt.setString(1, newToken);
+                updateStmt.setInt(2, autographId);
+                updateStmt.executeUpdate();
+            }
+
+            return newToken;
+        }
+    }
 
     /**
      * Get autograph by ID
@@ -56,6 +85,36 @@ public class autographDAO {
             e.printStackTrace();
             throw new RuntimeException("Error while fetching autograph by ID", e);
         }
+        return null;
+    }
+    /**
+     * Get autograph by share token
+     */
+    public autograph getAutographByShareToken(String shareToken) throws SQLException {
+
+        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url, share_token " +
+                "FROM autograph WHERE share_token = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, shareToken);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                autograph ag = new autograph();
+                ag.setAutographId(rs.getInt("autograph_id"));
+                ag.setTitle(rs.getString("a_title"));
+                ag.setDescription(rs.getString("a_description"));
+                ag.setCreatedAt(rs.getTimestamp("created_at"));
+                ag.setUserId(rs.getInt("user_id"));
+                ag.setAutographPicUrl(rs.getString("autograph_pic_url"));
+                ag.setShareToken(rs.getString("share_token"));
+                return ag;
+            }
+        }
+
         return null;
     }
 

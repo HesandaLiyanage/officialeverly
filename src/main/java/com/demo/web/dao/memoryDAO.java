@@ -98,7 +98,7 @@ public class memoryDAO {
     }
 
     /**
-     * Get all memories for a user
+     * Get all memories for a user (excluding vault items)
      */
     public List<Memory> getMemoriesByUserId(int userId) throws SQLException {
         List<Memory> memories = new ArrayList<>();
@@ -110,7 +110,8 @@ public class memoryDAO {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
                     "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
-                    "FROM memory WHERE user_id = ? ORDER BY created_timestamp DESC";
+                    "FROM memory WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL) " +
+                    "ORDER BY created_timestamp DESC";
 
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
@@ -267,11 +268,124 @@ public class memoryDAO {
      */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
-            if (conn != null) conn.close();
+            if (rs != null)
+                rs.close();
+            if (stmt != null)
+                stmt.close();
+            if (conn != null)
+                conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    // ============================================
+    // VAULT METHODS
+    // ============================================
+
+    /**
+     * Get all vault memories for a user
+     */
+    public List<Memory> getVaultMemoriesByUserId(int userId) throws SQLException {
+        List<Memory> memories = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
+                    "FROM memory WHERE user_id = ? AND is_in_vault = TRUE " +
+                    "ORDER BY created_timestamp DESC";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                memories.add(mapResultSetToMemory(rs));
+            }
+
+            return memories;
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    /**
+     * Move a memory to the vault
+     */
+    public boolean moveToVault(int memoryId, int userId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE memory SET is_in_vault = TRUE WHERE memory_id = ? AND user_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            stmt.setInt(2, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Remove a memory from the vault (restore to regular view)
+     */
+    public boolean removeFromVault(int memoryId, int userId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE memory SET is_in_vault = FALSE WHERE memory_id = ? AND user_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            stmt.setInt(2, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Check if a memory is in the vault
+     */
+    public boolean isMemoryInVault(int memoryId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT is_in_vault FROM memory WHERE memory_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getBoolean("is_in_vault");
+            }
+
+            return false;
+
+        } finally {
+            closeResources(rs, stmt, conn);
         }
     }
 }
