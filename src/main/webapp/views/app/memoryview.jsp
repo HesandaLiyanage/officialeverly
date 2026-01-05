@@ -507,6 +507,9 @@
                                 if (data.success) {
                                     alert('Memory moved to vault successfully!');
                                     window.location.href = '${pageContext.request.contextPath}/memories';
+                                } else if (data.redirectToSetup) {
+                                    alert('You need to set up your vault first. You will be redirected to create a vault password.');
+                                    window.location.href = '${pageContext.request.contextPath}/vaultSetup';
                                 } else {
                                     alert('Error: ' + (data.error || 'Failed to move to vault'));
                                 }

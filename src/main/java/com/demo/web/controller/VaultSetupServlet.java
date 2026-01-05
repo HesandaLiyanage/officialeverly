@@ -66,7 +66,7 @@ public class VaultSetupServlet extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("user_id");
 
         String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirm-password");
+        String confirmPassword = request.getParameter("confirmPassword");
 
         // Validate passwords
         if (password == null || password.isEmpty()) {

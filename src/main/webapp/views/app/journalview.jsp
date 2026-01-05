@@ -468,6 +468,9 @@
                                                 if (data.success) {
                                                     alert('Journal moved to vault successfully!');
                                                     window.location.href = '${pageContext.request.contextPath}/journals';
+                                                } else if (data.redirectToSetup) {
+                                                    alert('You need to set up your vault first. You will be redirected to create a vault password.');
+                                                    window.location.href = '${pageContext.request.contextPath}/vaultSetup';
                                                 } else {
                                                     alert('Error: ' + (data.error || 'Failed to move to vault'));
                                                 }
