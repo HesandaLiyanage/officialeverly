@@ -465,3 +465,117 @@
         font-size: 11px;
     }
 }
+     /* Share Button Styles */
+ .share-btn {
+     border: none;
+     border-radius: 8px;
+     background: #9A74D8;
+     box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+     padding: 6px 12px;
+     display: inline-flex;
+     justify-content: center;
+     align-items: center;
+     gap: 6px;
+     cursor: pointer;
+     font-family: "Plus Jakarta Sans", sans-serif;
+     transition: all 0.3s ease;
+     font-size: 13px;
+     color: #ffffff;
+     font-weight: 500;
+ }
+
+.share-btn:hover {
+    background: #8a64c8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
+}
+
+.share-btn:active {
+    transform: translateY(0);
+}
+
+.share-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: #ffffff;
+    fill: none;
+}
+
+.autograph-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+/* Share Popup */
+.share-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.share-modal {
+    width: 320px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: scaleIn 0.25s ease;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.share-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.share-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.close-share {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.share-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
+    transition: background 0.2s ease;
+}
+
+.share-option:hover {
+    background: #f3edff;
+}
+.share-option.whatsapp {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 2px;
+}
+
+.whatsapp-icon {
+    width: 22px;
+    height: 22px;
+}

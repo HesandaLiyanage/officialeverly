@@ -62,6 +62,16 @@
                             </svg>
                             <%= "N/A" %> signatures <!-- You might need to calculate the signature count from another table -->
                         </span>
+                        <button class="share-btn" onclick="openSharePopup(event, '<%= ag.getAutographId() %>', '<%= ag.getTitle() %>')">
+                            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            Share
+                        </button>
                     </div>
                 </div>
             </div>
@@ -151,11 +161,63 @@
 
     </aside>
 </div>
+<!-- Share Popup Overlay -->
+<div class="share-overlay" id="shareOverlay">
+    <div class="share-modal">
+        <div class="share-header">
+            <h3>Share</h3>
+            <button class="close-share" id="closeShare">&times;</button>
+        </div>
 
+        <!-- Copy Link -->
+        <div class="share-option" id="copyLinkBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy link</span>
+        </div>
+
+        <!-- WhatsApp -->
+        <a id="whatsappShare" class="share-option whatsapp" target="_blank">
+            <img src="${pageContext.request.contextPath}/resources/assets/whatsapp.jpeg" alt="WhatsApp" class="whatsapp-icon"/>
+            <span>WhatsApp</span>
+        </a>
+    </div>
+</div>
 <jsp:include page="../../public/footer.jsp" />
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+        // Function to open share popup
+        function openSharePopup(event, autographId, title) {
+        event.stopPropagation(); // Prevent card click
+
+        const shareOverlay = document.getElementById('shareOverlay');
+        const whatsappShare = document.getElementById('whatsappShare');
+
+        // Create the share URL
+        const baseUrl = window.location.origin;
+        const shareUrl = baseUrl + '/autographview?id=' + encodeURIComponent(autographId);
+
+        // Store for copy link function
+        window.currentShareUrl = shareUrl;
+        window.currentShareTitle = title;
+
+        // Update WhatsApp link
+        if (whatsappShare) {
+        const whatsappText = 'Check out my autograph book: ' + title + ' - ' + shareUrl;
+        whatsappShare.href = 'https://wa.me/?text=' + encodeURIComponent(whatsappText);
+    }
+
+        // Show the overlay
+        if (shareOverlay) {
+        shareOverlay.style.display = 'flex';
+    }
+    }
+
+        document.addEventListener('DOMContentLoaded', function() {
 
         // Modern Search Functionality
         const autographsSearchBtn = document.getElementById('autographsSearchBtn');
@@ -255,7 +317,54 @@
                 this.classList.add('selected');
             });
         });
+        // ===============================
+// SHARE POPUP LOGIC
+// ===============================
+        const shareOverlay = document.getElementById('shareOverlay');
+        const closeShare = document.getElementById('closeShare');
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const whatsappShare = document.getElementById('whatsappShare');
 
+
+        // Close share popup
+        if (closeShare && shareOverlay) {
+            closeShare.addEventListener('click', () => {
+                shareOverlay.style.display = 'none';
+            });
+
+            shareOverlay.addEventListener('click', (e) => {
+                if (e.target === shareOverlay) {
+                    shareOverlay.style.display = 'none';
+                }
+            });
+        }
+
+        // Copy link functionality
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener('click', () => {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(currentShareUrl).then(() => {
+                        const span = copyLinkBtn.querySelector('span');
+                        const originalText = span.textContent;
+                        span.textContent = 'Copied!';
+                        setTimeout(() => {
+                            span.textContent = originalText;
+                        }, 1500);
+                    }).catch(() => {
+                        alert('Copy failed. Please copy manually: ' + currentShareUrl);
+                    });
+                } else {
+                    // Fallback for older browsers
+                    const tempInput = document.createElement('input');
+                    tempInput.value = currentShareUrl;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+                    alert('Link copied!');
+                }
+            });
+        }
     });
 </script>
 
