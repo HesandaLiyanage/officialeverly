@@ -9,7 +9,17 @@ public class autograph {
     private Timestamp created_at;
     private int user_id;
     private String autograph_pic_url; // New field for the picture URL
+    // Add this field
+    private String shareToken;
 
+    // Add getter and setter
+    public String getShareToken() {
+        return shareToken;
+    }
+
+    public void setShareToken(String shareToken) {
+        this.shareToken = shareToken;
+    }
     // Default constructor
     public autograph() {
     }
@@ -77,3 +87,4 @@ public class autograph {
                 '}';
     }
 }
+

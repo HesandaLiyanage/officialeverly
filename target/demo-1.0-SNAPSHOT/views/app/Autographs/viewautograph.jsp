@@ -158,6 +158,7 @@
         </svg>
         Edit
     </a>
+
     <button class="floating-btn delete-btn" id="deleteBtn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6"></polyline>
