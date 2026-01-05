@@ -69,6 +69,94 @@
                         box-shadow: 0 6px 20px rgba(234, 221, 255, 0.6);
                     }
 
+                    /* Vault Button Specific Style */
+                    .floating-btn-memory-viewer.vault-btn {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: #ffffff;
+                    }
+
+                    .floating-btn-memory-viewer.vault-btn:hover {
+                        background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+                        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+                    }
+
+                    /* Vault Password Modal */
+                    .vault-modal-overlay {
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.6);
+                        z-index: 3000;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .vault-modal-overlay.active {
+                        display: flex;
+                    }
+
+                    .vault-modal {
+                        background: white;
+                        padding: 30px;
+                        border-radius: 16px;
+                        max-width: 400px;
+                        width: 90%;
+                        text-align: center;
+                    }
+
+                    .vault-modal h3 {
+                        margin: 0 0 10px 0;
+                        color: #333;
+                    }
+
+                    .vault-modal p {
+                        color: #666;
+                        margin-bottom: 20px;
+                    }
+
+                    .vault-modal input {
+                        width: 100%;
+                        padding: 12px;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        margin-bottom: 15px;
+                        box-sizing: border-box;
+                    }
+
+                    .vault-modal input:focus {
+                        border-color: #9A74D8;
+                        outline: none;
+                    }
+
+                    .vault-modal-buttons {
+                        display: flex;
+                        gap: 10px;
+                        justify-content: center;
+                    }
+
+                    .vault-modal-btn {
+                        padding: 10px 24px;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    }
+
+                    .vault-modal-btn.confirm {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                    }
+
+                    .vault-modal-btn.cancel {
+                        background: #f0f0f0;
+                        color: #666;
+                    }
+
                     /* Photo grid styles */
                     .photos-grid {
                         display: grid;
@@ -277,6 +365,14 @@
 
                 <!-- Floating Action Buttons -->
                 <div class="floating-buttons-memory-viewer">
+                    <button class="floating-btn-memory-viewer vault-btn" onclick="openVaultModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Move to Vault
+                    </button>
                     <a href="/editmemory?id=${memory.memoryId}" class="floating-btn-memory-viewer edit-btn">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -294,6 +390,19 @@
                         </svg>
                         Delete Memory
                     </button>
+                </div>
+
+                <!-- Vault Password Modal -->
+                <div class="vault-modal-overlay" id="vaultModal">
+                    <div class="vault-modal">
+                        <h3>🔒 Move to Vault</h3>
+                        <p>Enter your vault password to move this memory to the vault.</p>
+                        <input type="password" id="vaultPasswordInput" placeholder="Vault password">
+                        <div class="vault-modal-buttons">
+                            <button class="vault-modal-btn cancel" onclick="closeVaultModal()">Cancel</button>
+                            <button class="vault-modal-btn confirm" onclick="moveToVault()">Move to Vault</button>
+                        </div>
+                    </div>
                 </div>
 
                 <jsp:include page="../public/footer.jsp" />
@@ -363,6 +472,58 @@
                         const countEl = document.getElementById('likeCount');
                         let count = parseInt(countEl.textContent);
                         countEl.textContent = this.classList.contains('liked') ? count + 1 : count - 1;
+                    });
+
+                    // Vault modal functions
+                    function openVaultModal() {
+                        document.getElementById('vaultModal').classList.add('active');
+                        document.getElementById('vaultPasswordInput').focus();
+                    }
+
+                    function closeVaultModal() {
+                        document.getElementById('vaultModal').classList.remove('active');
+                        document.getElementById('vaultPasswordInput').value = '';
+                    }
+
+                    function moveToVault() {
+                        const password = document.getElementById('vaultPasswordInput').value;
+                        if (!password) {
+                            alert('Please enter your vault password');
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        formData.append('type', 'memory');
+                        formData.append('id', '${memory.memoryId}');
+                        formData.append('action', 'add');
+                        formData.append('vaultPassword', password);
+
+                        fetch('${pageContext.request.contextPath}/moveToVault', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Memory moved to vault successfully!');
+                                    window.location.href = '${pageContext.request.contextPath}/memories';
+                                } else {
+                                    alert('Error: ' + (data.error || 'Failed to move to vault'));
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Error moving to vault. Please try again.');
+                            });
+
+                        closeVaultModal();
+                    }
+
+                    // Close vault modal on background click
+                    document.getElementById('vaultModal').addEventListener('click', function (e) {
+                        if (e.target === this) {
+                            closeVaultModal();
+                        }
                     });
                 </script>
             </body>
