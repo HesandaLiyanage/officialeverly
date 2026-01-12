@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Created-By: IntelliJ IDEA
-Built-By: hesanda
-Build-Jdk: Java 21.0.9
+Built-By: hesandaliyanage
+Build-Jdk: Eclipse Temurin 24.0.2 - aarch64
 
