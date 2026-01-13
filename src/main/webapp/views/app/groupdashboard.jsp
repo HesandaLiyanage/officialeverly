@@ -17,7 +17,10 @@
 <div class="page-wrapper">
   <main class="main-content">
     <!-- Page Title -->
-    <h1 class="page-title">My Groups</h1>
+      <div class="tab-nav">
+    <div class="page-title">Groups
+        <p class="page-subtitle">Stay connected through shared groups and conversations.</p></div>
+      </div>
 
     <!-- Search and Filters -->
     <div class="search-filters">
@@ -41,9 +44,13 @@
 
         if (groups == null || groups.isEmpty()) {
       %>
-      <div style="text-align: center; padding: 40px; color: #6b7280;">
-        <p>No groups yet. Create your first group to get started!</p>
-      </div>
+        <div style="text-align: center; padding: 40px; color: #6b7280;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 20px; opacity: 0.5;">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <h3 style="margin: 0 0 10px; color: #374151;">No groups yet.</h3>
+            <p style="margin: 0;">Create your first group to get started!</p>
+        </div>
       <%
       } else {
         for (Group group : groups) {

@@ -12,7 +12,12 @@ import com.demo.web.dao.JournalDAO;
 import com.demo.web.model.Event;
 import com.demo.web.model.UserSession;
 import com.demo.web.model.autograph;
+import com.demo.web.dao.JournalStreakDAO;
+import com.demo.web.model.JournalStreak;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -158,9 +163,21 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/journalview", new JournalViewLogicHandler()); // ADD THIS LINE
         routeToLogic.put("/editjournal", new EditJournalLogicHandler());
         routeToLogic.put("/memories", new MemoryViewLogicHandler());
+        routeToLogic.put("/generateShareLink", new GenerateShareLinkLogicHandler());
 
         // Remove this if using servlet
+}
 
+    /**
+     * Generates a unique random token for share links
+     */
+    private String generateShareToken() {
+        SecureRandom random = new SecureRandom();
+        byte[] randomBytes = new byte[16];
+        random.nextBytes(randomBytes);
+        return Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(randomBytes);
     }
 
     private static class MemoryViewLogicHandler implements LogicHandler {
@@ -225,6 +242,15 @@ public class FrontControllerServlet extends HttpServlet {
         if ("/deletememory".equals(path)) {
             logger.info("Routing /deletememory to DeleteMemoryServlet");
             request.getRequestDispatcher("/deleteMemoryServlet").forward(request, response);
+            return;
+        }
+
+        // Route /share/* to handle share links
+        if (path.startsWith("/share/")) {
+            logger.info("Routing share link to ShareLinkViewLogicHandler");
+            String shareToken = path.substring("/share/".length());
+            request.setAttribute("shareToken", shareToken);
+            new ShareLinkViewLogicHandler().execute(request, response);
             return;
         }
 
@@ -436,6 +462,106 @@ public class FrontControllerServlet extends HttpServlet {
             request.setAttribute("autograph", autographDetail);
 
             request.getRequestDispatcher("/views/app/Autographs/viewautograph.jsp").forward(request, response);
+        }
+    }
+
+    // Inner class implementing the logic for viewing shared autographs
+    private static class ShareLinkViewLogicHandler implements LogicHandler {
+        private autographDAO autographDAO;
+
+        public ShareLinkViewLogicHandler() {
+            this.autographDAO = new autographDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            String shareToken = (String) request.getAttribute("shareToken");
+
+            if (shareToken == null || shareToken.trim().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid share link");
+                return;
+            }
+
+            try {
+                autograph ag = autographDAO.getAutographByShareToken(shareToken);
+
+                if (ag == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Autograph not found");
+                    return;
+                }
+
+                // Redirect to the autograph view page with ID
+                response.sendRedirect(request.getContextPath() +
+                        "/autographview?id=" + ag.getAutographId());
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Error loading autograph");
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Error loading autograph");
+            }
+        }
+    }
+    // Inner class implementing the logic for generating share links
+    private static class GenerateShareLinkLogicHandler implements LogicHandler {
+        private autographDAO autographDAO;
+
+        public GenerateShareLinkLogicHandler() {
+            this.autographDAO = new autographDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Not authenticated\"}");
+                return;
+            }
+
+            try {
+                String autographIdStr = request.getParameter("autographId");
+
+                if (autographIdStr == null || autographIdStr.isEmpty()) {
+                    response.getWriter().write("{\"success\": false, \"message\": \"Autograph ID is required\"}");
+                    return;
+                }
+
+                int autographId = Integer.parseInt(autographIdStr);
+
+                // Get or create share token
+                String shareToken = autographDAO.getOrCreateShareToken(autographId);
+
+                // Generate full share URL
+                String baseUrl = request.getScheme() + "://" +
+                        request.getServerName() +
+                        (request.getServerPort() != 80 && request.getServerPort() != 443
+                                ? ":" + request.getServerPort() : "") +
+                        request.getContextPath();
+
+                String shareUrl = baseUrl + "/share/" + shareToken;
+
+                // Return JSON response
+                response.getWriter().write("{\"success\": true, \"shareUrl\": \"" + shareUrl + "\"}");
+
+            } catch (NumberFormatException e) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Invalid autograph ID\"}");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.getWriter().write("{\"success\": false, \"message\": \"Database error occurred\"}");
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.getWriter().write("{\"success\": false, \"message\": \"Error generating share link\"}");
+            }
         }
     }
 
@@ -825,9 +951,11 @@ public class FrontControllerServlet extends HttpServlet {
     // Inner class implementing the logic for /journals
     private static class JournalListLogicHandler implements LogicHandler {
         private JournalDAO journalDAO;
+        private JournalStreakDAO streakDAO;
 
         public JournalListLogicHandler() {
             this.journalDAO = new JournalDAO();
+            this.streakDAO = new JournalStreakDAO();
         }
 
         @Override
@@ -844,6 +972,17 @@ public class FrontControllerServlet extends HttpServlet {
             System.out.println("[DEBUG JournalListLogicHandler] User ID: " + userId);
 
             try {
+                // Check and update streak status (in case user missed a day)
+                streakDAO.checkAndUpdateStreakStatus(userId);
+
+                // Get streak information
+                JournalStreak streak = streakDAO.getStreakByUserId(userId);
+                int streakDays = (streak != null) ? streak.getCurrentStreak() : 0;
+                int longestStreak = (streak != null) ? streak.getLongestStreak() : 0;
+
+                System.out.println("[DEBUG JournalListLogicHandler] Current streak: " + streakDays + " days");
+                System.out.println("[DEBUG JournalListLogicHandler] Longest streak: " + longestStreak + " days");
+
                 // Get all journals for this user
                 List<Journal> journals = journalDAO.findByUserId(userId);
                 System.out.println("[DEBUG JournalListLogicHandler] Found " + journals.size() + " journals");
@@ -852,13 +991,11 @@ public class FrontControllerServlet extends HttpServlet {
                 int totalCount = journalDAO.getJournalCount(userId);
                 System.out.println("[DEBUG JournalListLogicHandler] Total journal count: " + totalCount);
 
-                // Calculate streak (placeholder - you can implement actual streak logic later)
-                int streakDays = calculateStreak(journals);
-
                 // Set attributes for JSP
                 request.setAttribute("journals", journals);
                 request.setAttribute("totalCount", totalCount);
                 request.setAttribute("streakDays", streakDays);
+                request.setAttribute("longestStreak", longestStreak);
 
                 System.out.println("[DEBUG JournalListLogicHandler] Forwarding to journals.jsp");
                 request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
@@ -869,24 +1006,6 @@ public class FrontControllerServlet extends HttpServlet {
                 request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
             }
         }
-
-        /**
-         * Calculate journal streak (consecutive days with entries)
-         * This is a simple implementation - you can enhance it later
-         * Note: Since we don't have timestamps, this is a placeholder.
-         * You could potentially parse the date from the title string if needed.
-         */
-        private int calculateStreak(List<Journal> journals) {
-            if (journals == null || journals.isEmpty()) {
-                return 0;
-            }
-            // Placeholder: Return a fixed number or a count-based number
-            // For a real streak, you'd need actual date information
-            // You could parse the title string "24th October 2025" to determine dates
-            // For now, just return a simple placeholder
-            return journals.size() > 0 ? 7 : 0; // Example: assume 7 days if they have entries
-        }
-
     }
 
     // Inner class implementing the logic for /journalview

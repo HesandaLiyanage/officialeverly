@@ -79,16 +79,53 @@
                         <button class="doodle-btn" data-doodle="☆" data-type="star">☆</button>
                     </div>
                 </div>
+
+                <!-- Paper Themes -->
+                <div class="toolbar-section">
+                    <h3 class="toolbar-title">Themes</h3>
+
+                    <div class="paper-theme-grid">
+                        <button type="button" class="paper-theme-btn active" data-theme="theme-lined" data-bg="${pageContext.request.contextPath}/resources/assets/journal1.png" style="background-image: url('${pageContext.request.contextPath}/resources/assets/journal1.png');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                ">
+                        </button>
+
+                        <button type="button" class="paper-theme-btn" data-theme="theme-lined"  data-bg="${pageContext.request.contextPath}/resources/assets/journal3.jpg" style="background-image: url('${pageContext.request.contextPath}/resources/assets/journal3.jpg');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                ">
+                        </button>
+
+                        <button type="button" class="paper-theme-btn" data-theme="theme-lined" data-bg="${pageContext.request.contextPath}/resources/assets/journal2.jpg" style="background-image: url('${pageContext.request.contextPath}/resources/assets/journal2.jpg');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                ">
+                        </button>
+
+
+                        <button type="button" class="paper-theme-btn" data-theme="theme-lined" data-bg="${pageContext.request.contextPath}/resources/assets/journal4.jpg" style="background-image: url('${pageContext.request.contextPath}/resources/assets/journal4.jpg');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                ">
+                        </button>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Autograph Page -->
             <div class="page-area">
                 <div class="autograph-page" id="autographPage">
-                    <!-- Red margin line -->
+                <!-- Red margin line -->
                     <div class="margin-line"></div>
 
                     <!-- Writing Area -->
-                    <div class="writing-area" id="writingArea" contenteditable="true" data-placeholder="Start writing your message...">
+                    <div class="writing-area" id="writingArea" contenteditable="true">
                     </div>
 
                     <!-- Decorations Container -->
@@ -129,6 +166,8 @@
             this.initializeEmojis();
             this.initializeDoodles();
             this.initializeButtons();
+            this.initializePaperThemes();
+
         }
 
         initializeFormatting() {
@@ -175,6 +214,43 @@
             });
         }
 
+        initializePaperThemes() {
+            const buttons = document.querySelectorAll('.paper-theme-btn');
+            const writingArea = document.getElementById('writingArea');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const bgImage = btn.dataset.bg;
+
+                    if (bgImage) {
+                        writingArea.style.backgroundImage = `url('` + bgImage + `')`;
+                        writingArea.style.backgroundSize = 'cover';
+                        writingArea.style.backgroundPosition = 'center';
+                        writingArea.style.backgroundRepeat = 'no-repeat';
+                    } else {
+                        writingArea.style.backgroundImage = 'none';
+                        writingArea.style.backgroundColor = 'transparent';
+                    }
+                });
+            });
+
+            // Set the default theme on page load
+            const activeBtn = document.querySelector('.paper-theme-btn.active');
+            if (activeBtn) {
+                const bgImage = activeBtn.dataset.bg;
+                if (bgImage) {
+                    writingArea.style.backgroundImage = `url('` + bgImage + `')`;
+                    writingArea.style.backgroundSize = 'cover';
+                    writingArea.style.backgroundPosition = 'center';
+                    writingArea.style.backgroundRepeat = 'no-repeat';
+                }
+            }
+        }
+
         addDecoration(content, className, type = '') {
             const decoration = document.createElement('div');
             decoration.className = `decoration ${className}`;
@@ -196,48 +272,62 @@
 
         makeDraggable(element) {
             let isDragging = false;
-            let currentX;
-            let currentY;
-            let initialX;
-            let initialY;
-            let xOffset = 0;
-            let yOffset = 0;
+            let startX;
+            let startY;
+            let initialLeft;
+            let initialTop;
 
             element.addEventListener('mousedown', (e) => {
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-
                 if (e.target === element) {
                     isDragging = true;
                     element.style.cursor = 'grabbing';
                     element.style.zIndex = '1000';
+
+                    // Get the current position of the element
+                    const rect = element.getBoundingClientRect();
+                    const containerRect = this.decorationsContainer.getBoundingClientRect();
+
+                    // Store initial mouse position
+                    startX = e.clientX;
+                    startY = e.clientY;
+
+                    // Store initial element position relative to container
+                    initialLeft = rect.left - containerRect.left;
+                    initialTop = rect.top - containerRect.top;
+
+                    e.preventDefault();
                 }
             });
 
             document.addEventListener('mousemove', (e) => {
                 if (isDragging) {
                     e.preventDefault();
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
 
-                    xOffset = currentX;
-                    yOffset = currentY;
+                    // Calculate how much the mouse has moved
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
 
-                    const rect = this.decorationsContainer.getBoundingClientRect();
-                    const percentX = (currentX / rect.width) * 100;
-                    const percentY = (currentY / rect.height) * 100;
+                    // Calculate new position
+                    const newLeft = initialLeft + deltaX;
+                    const newTop = initialTop + deltaY;
 
+                    // Convert to percentage
+                    const containerRect = this.decorationsContainer.getBoundingClientRect();
+                    const percentX = (newLeft / containerRect.width) * 100;
+                    const percentY = (newTop / containerRect.height) * 100;
+
+                    // Update element position
                     element.style.left = percentX + '%';
                     element.style.top = percentY + '%';
                 }
             });
 
             document.addEventListener('mouseup', () => {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
-                element.style.cursor = 'grab';
-                element.style.zIndex = '5';
+                if (isDragging) {
+                    isDragging = false;
+                    element.style.cursor = 'grab';
+                    element.style.zIndex = '5';
+                }
             });
 
             // Double click to remove

@@ -75,20 +75,20 @@
 
 <script>
     function navigateTo(tab) {
-        window.location.href = tab + ".jsp";
+        window.location.href = "${pageContext.request.contextPath}" + tab + ".jsp";
     }
 
     function openDuplicateFinder() {
-        window.location.href = "/duplicatefinder";
+        window.location.href = "${pageContext.request.contextPath}/duplicatefinder";
     }
 
     function openTrashManagement() {
-        window.location.href = "/trashmgt";
+        window.location.href = "${pageContext.request.contextPath}/trashmgt";
     }
 
     function upgradeStorage() {
         alert("Redirecting to storage upgrade page...");
-        window.location.href = "/plans";
+        window.location.href = "${pageContext.request.contextPath}/plans";
     }
 </script>
 <jsp:include page="../public/footer.jsp" />

@@ -1,7 +1,8 @@
-// File: com/demo/web/dao/JournalDAO.java
+// File: src/main/java/com/demo/web/dao/JournalDAO.java
 package com.demo.web.dao;
 
 import com.demo.web.model.Journal;
+import com.demo.web.model.RecycleBinItem;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.*;
@@ -11,105 +12,96 @@ import java.util.List;
 public class JournalDAO {
 
     /**
-     * Find all journals for a specific user
+     * Get all journals for a user (excluding vault items)
      */
     public List<Journal> findByUserId(int userId) {
-        String sql = "SELECT * FROM journal WHERE user_id = ? ORDER BY journal_id DESC"; // Changed to order by id since no created_at
+        String sql = "SELECT * FROM journal WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL) ORDER BY journal_id DESC";
         List<Journal> journals = new ArrayList<>();
-
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
-
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    Journal journal = mapResultSetToJournal(rs);
-                    journals.add(journal);
+                    journals.add(mapResultSetToJournal(rs));
                 }
             }
-
-            System.out.println("[DEBUG JournalDAO] findByUserId(" + userId + ") returned " + journals.size() + " records.");
-
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error finding journals by user ID: " + e.getMessage());
             e.printStackTrace();
         }
-
         return journals;
     }
 
-    /**
-     * Find a journal by ID
-     */
     public Journal findById(int journalId) {
         String sql = "SELECT * FROM journal WHERE journal_id = ?";
-
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, journalId);
-
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToJournal(rs);
                 }
             }
-
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error finding journal by ID: " + e.getMessage());
             e.printStackTrace();
         }
-
         return null;
     }
 
-    /**
-     * Create a new journal entry
-     */
     public boolean createJournal(Journal journal) {
-        // ⚠️ IMPORTANT: Removed created_at and updated_at columns since they don't exist in DB
-        String sql = "INSERT INTO journal (j_title, j_content, user_id, journal_pic) " +
-                "VALUES (?, ?, ?, ?)";
-
+        String sql = "INSERT INTO journal (j_title, j_content, user_id, journal_pic) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, journal.getTitle());
             pstmt.setString(2, journal.getContent());
             pstmt.setInt(3, journal.getUserId());
             pstmt.setString(4, journal.getJournalPic());
-
             int rowsAffected = pstmt.executeUpdate();
-
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         journal.setJournalId(generatedKeys.getInt(1));
                     }
                 }
-                System.out.println("[DEBUG JournalDAO] Journal created successfully with ID: " + journal.getJournalId());
                 return true;
             }
-
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error creating journal: " + e.getMessage());
             e.printStackTrace();
         }
-
         return false;
     }
+
+    // File: src/main/java/com/demo/web/dao/JournalDAO.java
+
+    public int getJournalCount(int userId) {
+        String sql = "SELECT COUNT(*) as count FROM journal WHERE user_id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("count");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // File: src/main/java/com/demo/web/dao/JournalDAO.java
 
     /**
      * Update an existing journal entry
      */
     public boolean updateJournal(Journal journal) {
-        // ⚠️ IMPORTANT: Removed updated_at column since it doesn't exist in DB
         String sql = "UPDATE journal SET j_title = ?, j_content = ?, journal_pic = ? " +
                 "WHERE journal_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, journal.getTitle());
             pstmt.setString(2, journal.getContent());
@@ -118,7 +110,6 @@ public class JournalDAO {
 
             int rowsAffected = pstmt.executeUpdate();
             System.out.println("[DEBUG JournalDAO] updateJournal - Rows affected: " + rowsAffected);
-
             return rowsAffected > 0;
 
         } catch (SQLException e) {
@@ -128,57 +119,72 @@ public class JournalDAO {
         }
     }
 
-    /**
-     * Delete a journal entry
-     */
-    public boolean deleteJournal(int journalId) {
-        String sql = "DELETE FROM journal WHERE journal_id = ?";
+    public boolean deleteJournalToRecycleBin(int journalId, int userId) {
+        Journal journal = findById(journalId);
+        if (journal == null || journal.getUserId() != userId) {
+            return false;
+        }
 
+        RecycleBinItem item = new RecycleBinItem();
+        item.setOriginalId(journal.getJournalId());
+        item.setUserId(userId);
+        item.setTitle(journal.getTitle());
+        item.setContent(journal.getContent());
+        String metadata = "{\"journalPic\": \"" +
+                (journal.getJournalPic() != null ? journal.getJournalPic() : "") +
+                "\"}";
+        item.setMetadata(metadata);
+
+        RecycleBinDAO rbDao = new RecycleBinDAO();
+        int recycleId = rbDao.saveJournalToRecycleBin(item);
+        if (recycleId <= 0)
+            return false;
+
+        String deleteSql = "DELETE FROM journal WHERE journal_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, journalId);
-
-            int rowsAffected = pstmt.executeUpdate();
-            System.out.println("[DEBUG JournalDAO] deleteJournal - Rows affected: " + rowsAffected);
-
-            return rowsAffected > 0;
-
+                PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
+            stmt.setInt(1, journalId);
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error deleting journal: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
-    /**
-     * Get total count of journals for a user
-     */
-    public int getJournalCount(int userId) {
-        String sql = "SELECT COUNT(*) as count FROM journal WHERE user_id = ?";
-
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, userId);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("count");
-                }
-            }
-
-        } catch (SQLException e) {
-            System.out.println("[ERROR JournalDAO] Error getting journal count: " + e.getMessage());
-            e.printStackTrace();
+    public boolean restoreJournalFromRecycleBin(int recycleBinId, int userId) {
+        RecycleBinDAO rbDao = new RecycleBinDAO();
+        RecycleBinItem item = rbDao.findById(recycleBinId);
+        if (item == null || !"journal".equals(item.getItemType()) || item.getUserId() != userId) {
+            return false;
         }
 
-        return 0;
+        Journal journal = new Journal();
+        journal.setTitle(item.getTitle());
+        journal.setContent(item.getContent());
+        journal.setUserId(userId);
+
+        String journalPic = "";
+        if (item.getMetadata() != null) {
+            String meta = item.getMetadata();
+            int start = meta.indexOf("\"journalPic\": \"");
+            if (start != -1) {
+                start += 15;
+                int end = meta.indexOf("\"", start);
+                if (end != -1) {
+                    journalPic = meta.substring(start, end);
+                }
+            }
+        }
+        journal.setJournalPic(journalPic);
+
+        boolean restored = createJournal(journal);
+        if (restored) {
+            rbDao.deleteFromRecycleBin(recycleBinId);
+            return true;
+        }
+        return false;
     }
 
-    /**
-     * Helper method to map ResultSet to Journal object
-     */
     private Journal mapResultSetToJournal(ResultSet rs) throws SQLException {
         Journal journal = new Journal();
         journal.setJournalId(rs.getInt("journal_id"));
@@ -186,8 +192,83 @@ public class JournalDAO {
         journal.setContent(rs.getString("j_content"));
         journal.setUserId(rs.getInt("user_id"));
         journal.setJournalPic(rs.getString("journal_pic"));
-
-        // No timestamps in model anymore
         return journal;
+    }
+
+    // ============================================
+    // VAULT METHODS
+    // ============================================
+
+    /**
+     * Get all vault journals for a user
+     */
+    public List<Journal> getVaultJournalsByUserId(int userId) {
+        String sql = "SELECT * FROM journal WHERE user_id = ? AND is_in_vault = TRUE ORDER BY journal_id DESC";
+        List<Journal> journals = new ArrayList<>();
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    journals.add(mapResultSetToJournal(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return journals;
+    }
+
+    /**
+     * Move a journal to the vault
+     */
+    public boolean moveToVault(int journalId, int userId) {
+        String sql = "UPDATE journal SET is_in_vault = TRUE WHERE journal_id = ? AND user_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, journalId);
+            pstmt.setInt(2, userId);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Remove a journal from the vault (restore to regular view)
+     */
+    public boolean removeFromVault(int journalId, int userId) {
+        String sql = "UPDATE journal SET is_in_vault = FALSE WHERE journal_id = ? AND user_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, journalId);
+            pstmt.setInt(2, userId);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Check if a journal is in the vault
+     */
+    public boolean isJournalInVault(int journalId) {
+        String sql = "SELECT is_in_vault FROM journal WHERE journal_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, journalId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean("is_in_vault");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

@@ -6,10 +6,13 @@
   List<Journal> journals = (List<Journal>) request.getAttribute("journals");
   Integer totalCount = (Integer) request.getAttribute("totalCount");
   Integer streakDays = (Integer) request.getAttribute("streakDays");
+  Integer longestStreak = (Integer) request.getAttribute("longestStreak");
   String errorMessage = (String) request.getAttribute("error");
+
   // Set defaults
   if (totalCount == null) totalCount = 0;
   if (streakDays == null) streakDays = 0;
+  if (longestStreak == null) longestStreak = 0;
   // We don't have created_at anymore, so we'll use the title for display
   // If titles were purely dates, you could parse them, but for now, we just display the title
   // SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy"); // Not used now
@@ -22,7 +25,10 @@
 <div class="page-wrapper">
   <main class="main-content">
     <!-- Page Title -->
-    <h1 class="page-title">Journals</h1>
+   <div class="tab-nav">
+    <div class="page-title">Journals
+     <p class="page-subtitle">Capture your daily thoughts and special moments.</p></div>
+   </div>
     <!-- Search and Filters -->
     <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
       <div class="journals-search-container">
@@ -119,7 +125,7 @@
         <div class="streak-icon">🔥</div>
         <div class="streak-info">
           <p class="streak-label">Journal</p>
-          <p class="streak-days"><%= streakDays %> days</p>
+          <p class="streak-days"><%= streakDays %> <%= streakDays == 1 ? "day" : "days" %></p>
         </div>
       </div>
     </div>
