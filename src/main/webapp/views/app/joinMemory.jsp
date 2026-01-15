@@ -238,7 +238,7 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                window.location.href = '${pageContext.request.contextPath}/memory/view?id=' + data.memoryId;
+                                window.location.href = '${pageContext.request.contextPath}/memoryViewServlet?id=' + data.memoryId;
                             } else {
                                 alert(data.error || 'Failed to join memory');
                                 btn.disabled = false;

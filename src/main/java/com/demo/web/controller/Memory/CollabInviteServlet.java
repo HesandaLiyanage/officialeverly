@@ -86,7 +86,7 @@ public class CollabInviteServlet extends HttpServlet {
                 // Store the invite URL in session for after login
                 HttpSession newSession = request.getSession(true);
                 newSession.setAttribute("pendingInviteToken", token);
-                response.sendRedirect(request.getContextPath() + "/login?redirect=" +
+                response.sendRedirect(request.getContextPath() + "/login?return=" +
                         java.net.URLEncoder.encode("/invite/" + token, "UTF-8"));
                 return;
             }
@@ -96,7 +96,7 @@ public class CollabInviteServlet extends HttpServlet {
             // Check if already a member
             if (memberDao.isUserMemberOf(memory.getMemoryId(), userId)) {
                 // Already a member, redirect to the memory
-                response.sendRedirect(request.getContextPath() + "/memory/view?id=" + memory.getMemoryId());
+                response.sendRedirect(request.getContextPath() + "/memoryViewServlet?id=" + memory.getMemoryId());
                 return;
             }
 
