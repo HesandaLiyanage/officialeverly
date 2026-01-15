@@ -18,6 +18,8 @@ import com.demo.web.model.JournalStreak;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.sql.SQLException;
+import com.demo.web.dao.AutographEntryDAO;
+import com.demo.web.model.AutographEntry;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -431,9 +433,11 @@ public class FrontControllerServlet extends HttpServlet {
     // Inner class implementing the logic for /autographview
     private static class AutographViewLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
+        private AutographEntryDAO entryDAO;
 
         public AutographViewLogicHandler() {
             this.autographDAO = new autographDAO();
+            this.entryDAO = new AutographEntryDAO();
         }
 
         @Override
@@ -466,6 +470,14 @@ public class FrontControllerServlet extends HttpServlet {
             if (autographDetail == null || autographDetail.getUserId() != userId) {
                 response.sendRedirect(request.getContextPath() + "/autographs");
                 return;
+            }
+
+            try {
+                // Load real entries for this autograph
+                List<AutographEntry> entries = entryDAO.findByAutographId(autographId);
+                request.setAttribute("entries", entries);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
 
             request.setAttribute("autograph", autographDetail);
@@ -515,6 +527,55 @@ public class FrontControllerServlet extends HttpServlet {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         "Error loading autograph");
+            }
+        }
+    }
+
+    private static class SharedAutographViewLogicHandler implements LogicHandler {
+        private autographDAO autographDAO;
+        private AutographEntryDAO entryDAO;
+
+        public SharedAutographViewLogicHandler() {
+            this.autographDAO = new autographDAO();
+            this.entryDAO = new AutographEntryDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            String shareToken = (String) request.getAttribute("shareToken");
+
+            if (shareToken == null || shareToken.trim().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid share link");
+                return;
+            }
+
+            try {
+                autograph ag = autographDAO.getAutographByShareToken(shareToken);
+
+                if (ag == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Autograph not found");
+                    return;
+                }
+
+                // Load entries for this autograph
+                List<AutographEntry> entries = entryDAO.findByAutographId(ag.getAutographId());
+
+                request.setAttribute("autograph", ag);
+                request.setAttribute("entries", entries);
+                request.setAttribute("shareToken", shareToken);
+
+                request.getRequestDispatcher("/views/app/sharedautographview.jsp").forward(request, response);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Error loading autograph entries");
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Error loading autograph entries");
             }
         }
     }
