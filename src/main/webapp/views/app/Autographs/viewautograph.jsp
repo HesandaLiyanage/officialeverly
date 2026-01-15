@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="com.demo.web.model.autographEntry" %>
+    <%@ page import="com.demo.web.model.AutographEntry" %>
         <%@ page import="java.util.List" %>
-            <% List<autographEntry> entries = (List<autographEntry>) request.getAttribute("entries");
+            <% List<AutographEntry> entries = (List<AutographEntry>) request.getAttribute("entries");
                     %>
                     <jsp:include page="../../public/header2.jsp" />
                     <html>

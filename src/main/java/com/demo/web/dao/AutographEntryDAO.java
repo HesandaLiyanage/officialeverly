@@ -1,6 +1,6 @@
 package com.demo.web.dao;
 
-import com.demo.web.model.autographEntry;
+import com.demo.web.model.AutographEntry;
 import com.demo.web.util.DatabaseUtil;
 
 import java.security.SecureRandom;
@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class autographEntryDAO {
+public class AutographEntryDAO {
 
     // Constants for secure token generation (for entry links)
     private static final String ALPHANUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -44,7 +44,7 @@ public class autographEntryDAO {
     /**
      * Create a new autograph entry
      */
-    public boolean createEntry(autographEntry entry) throws SQLException {
+    public boolean createEntry(AutographEntry entry) throws SQLException {
         String sql = "INSERT INTO autograph_entry (link, content, autograph_id, user_id) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseUtil.getConnection()) {
@@ -74,7 +74,7 @@ public class autographEntryDAO {
                     if (generatedKeys.next()) {
                         entry.setEntryId(generatedKeys.getInt(1));
                     }
-                    System.out.println("[DEBUG autographEntryDAO] Created entry with ID: " + entry.getEntryId()
+                    System.out.println("[DEBUG AutographEntryDAO] Created entry with ID: " + entry.getEntryId()
                             + ", link: " + newToken);
                     return true;
                 }
@@ -86,10 +86,10 @@ public class autographEntryDAO {
     /**
      * Find all entries for a specific autograph book
      */
-    public List<autographEntry> findByAutographId(int autographId) throws SQLException {
+    public List<AutographEntry> findByAutographId(int autographId) throws SQLException {
         String sql = "SELECT entry_id, link, content, submitted_at, autograph_id, user_id " +
                 "FROM autograph_entry WHERE autograph_id = ? ORDER BY submitted_at DESC";
-        List<autographEntry> entries = new ArrayList<>();
+        List<AutographEntry> entries = new ArrayList<>();
 
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -101,7 +101,7 @@ public class autographEntryDAO {
                 entries.add(mapResultSetToEntry(rs));
             }
 
-            System.out.println("[DEBUG autographEntryDAO] findByAutographId(" + autographId + ") returned "
+            System.out.println("[DEBUG AutographEntryDAO] findByAutographId(" + autographId + ") returned "
                     + entries.size() + " entries");
         }
 
@@ -111,7 +111,7 @@ public class autographEntryDAO {
     /**
      * Find entry by its unique link token
      */
-    public autographEntry findByLink(String link) throws SQLException {
+    public AutographEntry findByLink(String link) throws SQLException {
         String sql = "SELECT entry_id, link, content, submitted_at, autograph_id, user_id " +
                 "FROM autograph_entry WHERE link = ?";
 
@@ -162,16 +162,16 @@ public class autographEntryDAO {
             int rowsDeleted = stmt.executeUpdate();
 
             System.out.println(
-                    "[DEBUG autographEntryDAO] deleteEntry affected " + rowsDeleted + " rows for ID: " + entryId);
+                    "[DEBUG AutographEntryDAO] deleteEntry affected " + rowsDeleted + " rows for ID: " + entryId);
             return rowsDeleted > 0;
         }
     }
 
     /**
-     * Map ResultSet to autographEntry object
+     * Map ResultSet to AutographEntry object
      */
-    private autographEntry mapResultSetToEntry(ResultSet rs) throws SQLException {
-        autographEntry entry = new autographEntry();
+    private AutographEntry mapResultSetToEntry(ResultSet rs) throws SQLException {
+        AutographEntry entry = new AutographEntry();
         entry.setEntryId(rs.getInt("entry_id"));
         entry.setLink(rs.getString("link"));
         entry.setContent(rs.getString("content"));
