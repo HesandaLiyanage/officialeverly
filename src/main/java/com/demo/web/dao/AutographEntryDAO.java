@@ -1,17 +1,14 @@
 package com.demo.web.dao;
 
-import com.demo.web.model.AutographEntry;
+import com.demo.web.model.autographEntry;
 import com.demo.web.util.DatabaseUtil;
 
 import java.security.SecureRandom;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
-public class AutographEntryDAO {
-
-    private static final Logger logger = Logger.getLogger(AutographEntryDAO.class.getName());
+public class autographEntryDAO {
 
     // Constants for secure token generation (for entry links)
     private static final String ALPHANUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -47,7 +44,7 @@ public class AutographEntryDAO {
     /**
      * Create a new autograph entry
      */
-    public boolean createEntry(AutographEntry entry) throws SQLException {
+    public boolean createEntry(autographEntry entry) throws SQLException {
         String sql = "INSERT INTO autograph_entry (link, content, autograph_id, user_id) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseUtil.getConnection()) {
@@ -77,7 +74,7 @@ public class AutographEntryDAO {
                     if (generatedKeys.next()) {
                         entry.setEntryId(generatedKeys.getInt(1));
                     }
-                    System.out.println("[DEBUG AutographEntryDAO] Created entry with ID: " + entry.getEntryId()
+                    System.out.println("[DEBUG autographEntryDAO] Created entry with ID: " + entry.getEntryId()
                             + ", link: " + newToken);
                     return true;
                 }
@@ -89,10 +86,10 @@ public class AutographEntryDAO {
     /**
      * Find all entries for a specific autograph book
      */
-    public List<AutographEntry> findByAutographId(int autographId) throws SQLException {
+    public List<autographEntry> findByAutographId(int autographId) throws SQLException {
         String sql = "SELECT entry_id, link, content, submitted_at, autograph_id, user_id " +
                 "FROM autograph_entry WHERE autograph_id = ? ORDER BY submitted_at DESC";
-        List<AutographEntry> entries = new ArrayList<>();
+        List<autographEntry> entries = new ArrayList<>();
 
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -104,7 +101,7 @@ public class AutographEntryDAO {
                 entries.add(mapResultSetToEntry(rs));
             }
 
-            System.out.println("[DEBUG AutographEntryDAO] findByAutographId(" + autographId + ") returned "
+            System.out.println("[DEBUG autographEntryDAO] findByAutographId(" + autographId + ") returned "
                     + entries.size() + " entries");
         }
 
@@ -114,7 +111,7 @@ public class AutographEntryDAO {
     /**
      * Find entry by its unique link token
      */
-    public AutographEntry findByLink(String link) throws SQLException {
+    public autographEntry findByLink(String link) throws SQLException {
         String sql = "SELECT entry_id, link, content, submitted_at, autograph_id, user_id " +
                 "FROM autograph_entry WHERE link = ?";
 
@@ -165,16 +162,16 @@ public class AutographEntryDAO {
             int rowsDeleted = stmt.executeUpdate();
 
             System.out.println(
-                    "[DEBUG AutographEntryDAO] deleteEntry affected " + rowsDeleted + " rows for ID: " + entryId);
+                    "[DEBUG autographEntryDAO] deleteEntry affected " + rowsDeleted + " rows for ID: " + entryId);
             return rowsDeleted > 0;
         }
     }
 
     /**
-     * Map ResultSet to AutographEntry object
+     * Map ResultSet to autographEntry object
      */
-    private AutographEntry mapResultSetToEntry(ResultSet rs) throws SQLException {
-        AutographEntry entry = new AutographEntry();
+    private autographEntry mapResultSetToEntry(ResultSet rs) throws SQLException {
+        autographEntry entry = new autographEntry();
         entry.setEntryId(rs.getInt("entry_id"));
         entry.setLink(rs.getString("link"));
         entry.setContent(rs.getString("content"));

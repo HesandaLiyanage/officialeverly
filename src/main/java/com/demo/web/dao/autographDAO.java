@@ -39,10 +39,10 @@ public class autographDAO {
     // Constants for secure token generation
     private static final String ALPHANUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-    private static final int TOKEN_LENGTH = 15;
+    private static final int TOKEN_LENGTH = 12;
 
     /**
-     * Generates a secure 15-character alphanumeric token
+     * Generates a secure 12-character alphanumeric token
      */
     private String generateSecureToken() {
         StringBuilder token = new StringBuilder(TOKEN_LENGTH);

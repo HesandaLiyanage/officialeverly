@@ -2,7 +2,7 @@ package com.demo.web.model;
 
 import java.sql.Date;
 
-public class AutographEntry {
+public class autographEntry {
     private int entryId;
     private String link; // Unique token for this entry
     private String content; // The autograph content/message
@@ -11,7 +11,7 @@ public class AutographEntry {
     private int userId; // FK to user who submitted
 
     // Default constructor
-    public AutographEntry() {
+    public autographEntry() {
     }
 
     // Getters and Setters

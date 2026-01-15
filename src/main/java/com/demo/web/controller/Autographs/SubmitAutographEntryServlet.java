@@ -1,9 +1,9 @@
 package com.demo.web.controller.Autographs;
 
 import com.demo.web.dao.autographDAO;
-import com.demo.web.dao.AutographEntryDAO;
+import com.demo.web.dao.autographEntryDAO;
 import com.demo.web.model.autograph;
-import com.demo.web.model.AutographEntry;
+import com.demo.web.model.autographEntry;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,12 +22,12 @@ import java.sql.SQLException;
 public class SubmitAutographEntryServlet extends HttpServlet {
 
     private autographDAO autographDAO;
-    private AutographEntryDAO entryDAO;
+    private autographEntryDAO entryDAO;
 
     @Override
     public void init() throws ServletException {
         autographDAO = new autographDAO();
-        entryDAO = new AutographEntryDAO();
+        entryDAO = new autographEntryDAO();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class SubmitAutographEntryServlet extends HttpServlet {
             }
 
             // Create the entry
-            AutographEntry entry = new AutographEntry();
+            autographEntry entry = new autographEntry();
             entry.setAutographId(ag.getAutographId());
             entry.setUserId(userId);
 
@@ -96,7 +96,7 @@ public class SubmitAutographEntryServlet extends HttpServlet {
             // Truncate if needed (content column is VARCHAR(50) based on schema)
             // Note: You may want to increase this limit in the database
             if (fullContent.length() > 50) {
-                System.out.println("[DEBUG SubmitAutographEntryServlet] Warning: Content truncated from "
+                System.out.println("[DEBUG SubmitautographEntryServlet] Warning: Content truncated from "
                         + fullContent.length() + " to 50 chars");
                 fullContent = fullContent.substring(0, 50);
             }
@@ -107,7 +107,7 @@ public class SubmitAutographEntryServlet extends HttpServlet {
             boolean success = entryDAO.createEntry(entry);
 
             if (success) {
-                System.out.println("[DEBUG SubmitAutographEntryServlet] Entry created successfully with ID: "
+                System.out.println("[DEBUG SubmitautographEntryServlet] Entry created successfully with ID: "
                         + entry.getEntryId());
 
                 // Redirect to shared view page with the token

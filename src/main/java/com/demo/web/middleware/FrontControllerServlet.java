@@ -18,8 +18,8 @@ import com.demo.web.model.JournalStreak;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.sql.SQLException;
-import com.demo.web.dao.AutographEntryDAO;
-import com.demo.web.model.AutographEntry;
+import com.demo.web.dao.autographEntryDAO;
+import com.demo.web.model.autographEntry;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -433,11 +433,11 @@ public class FrontControllerServlet extends HttpServlet {
     // Inner class implementing the logic for /autographview
     private static class AutographViewLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
-        private AutographEntryDAO entryDAO;
+        private autographEntryDAO entryDAO;
 
         public AutographViewLogicHandler() {
             this.autographDAO = new autographDAO();
-            this.entryDAO = new AutographEntryDAO();
+            this.entryDAO = new autographEntryDAO();
         }
 
         @Override
@@ -474,7 +474,7 @@ public class FrontControllerServlet extends HttpServlet {
 
             try {
                 // Load real entries for this autograph
-                List<AutographEntry> entries = entryDAO.findByAutographId(autographId);
+                List<autographEntry> entries = entryDAO.findByAutographId(autographId);
                 request.setAttribute("entries", entries);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -533,11 +533,11 @@ public class FrontControllerServlet extends HttpServlet {
 
     private static class SharedAutographViewLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
-        private AutographEntryDAO entryDAO;
+        private autographEntryDAO entryDAO;
 
         public SharedAutographViewLogicHandler() {
             this.autographDAO = new autographDAO();
-            this.entryDAO = new AutographEntryDAO();
+            this.entryDAO = new autographEntryDAO();
         }
 
         @Override
@@ -560,7 +560,7 @@ public class FrontControllerServlet extends HttpServlet {
                 }
 
                 // Load entries for this autograph
-                List<AutographEntry> entries = entryDAO.findByAutographId(ag.getAutographId());
+                List<autographEntry> entries = entryDAO.findByAutographId(ag.getAutographId());
 
                 request.setAttribute("autograph", ag);
                 request.setAttribute("entries", entries);

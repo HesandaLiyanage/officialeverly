@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <%@ page import="com.demo.web.model.autograph" %>
-        <%@ page import="com.demo.web.model.AutographEntry" %>
+        <%@ page import="com.demo.web.model.autographEntry" %>
             <%@ page import="java.util.List" %>
-                <% autograph ag=(autograph) request.getAttribute("autograph"); List<AutographEntry> entries = (List
-                    <AutographEntry>) request.getAttribute("entries");
+                <% autograph ag=(autograph) request.getAttribute("autograph"); List<autographEntry> entries = (List
+                    <autographEntry>) request.getAttribute("entries");
                         String shareToken = (String) request.getAttribute("shareToken");
                         %>
 
@@ -115,7 +115,7 @@
                             <input type="hidden" id="entriesData" value='[<% 
     if (entries != null) {
         for (int i = 0; i < entries.size(); i++) {
-            AutographEntry entry = entries.get(i);
+            autographEntry entry = entries.get(i);
             // Escape double quotes and backslashes for JSON compatibility within single quotes
             String content = entry.getContent().replace("\\", "\\\\").replace("\"", "\\\"");
             // Replace newlines for JSON
