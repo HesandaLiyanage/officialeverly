@@ -166,7 +166,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/generateShareLink", new GenerateShareLinkLogicHandler());
 
         // Remove this if using servlet
-}
+    }
 
     /**
      * Generates a unique random token for share links
@@ -492,9 +492,11 @@ public class FrontControllerServlet extends HttpServlet {
                     return;
                 }
 
-                // Redirect to the autograph view page with ID
-                response.sendRedirect(request.getContextPath() +
-                        "/autographview?id=" + ag.getAutographId());
+                // Forward to the write autograph page so invitees can add their autograph
+                request.setAttribute("autograph", ag);
+                request.setAttribute("shareToken", shareToken);
+                request.setAttribute("isSharedAccess", true); // Flag to indicate shared access
+                request.getRequestDispatcher("/views/app/writeautograph.jsp").forward(request, response);
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -507,6 +509,7 @@ public class FrontControllerServlet extends HttpServlet {
             }
         }
     }
+
     // Inner class implementing the logic for generating share links
     private static class GenerateShareLinkLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
@@ -545,7 +548,9 @@ public class FrontControllerServlet extends HttpServlet {
                 String baseUrl = request.getScheme() + "://" +
                         request.getServerName() +
                         (request.getServerPort() != 80 && request.getServerPort() != 443
-                                ? ":" + request.getServerPort() : "") +
+                                ? ":" + request.getServerPort()
+                                : "")
+                        +
                         request.getContextPath();
 
                 String shareUrl = baseUrl + "/share/" + shareToken;
