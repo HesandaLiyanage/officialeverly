@@ -15,6 +15,10 @@ public class Memory {
     private Timestamp expiresAt;
     private boolean isLinkShared;
 
+    // Collaborative memory fields
+    private boolean isCollaborative;
+    private String groupKeyId;
+
     // Constructors
     public Memory() {
     }
@@ -116,10 +120,24 @@ public class Memory {
         isLinkShared = linkShared;
     }
 
-    // Add to Memory.java
-    private String coverUrl; // temporary for display
+    public boolean isCollaborative() {
+        return isCollaborative;
+    }
 
+    public void setCollaborative(boolean collaborative) {
+        isCollaborative = collaborative;
+    }
 
+    public String getGroupKeyId() {
+        return groupKeyId;
+    }
+
+    public void setGroupKeyId(String groupKeyId) {
+        this.groupKeyId = groupKeyId;
+    }
+
+    // Temporary for display
+    private String coverUrl;
 
     public void setCoverUrl(String coverUrl) {
         this.coverUrl = coverUrl;
@@ -134,6 +152,7 @@ public class Memory {
                 ", userId=" + userId +
                 ", coverMediaId=" + coverMediaId +
                 ", isPublic=" + isPublic +
+                ", isCollaborative=" + isCollaborative +
                 ", createdTimestamp=" + createdTimestamp +
                 '}';
     }

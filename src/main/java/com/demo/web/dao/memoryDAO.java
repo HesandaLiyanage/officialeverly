@@ -78,7 +78,8 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
+                    "is_collaborative, group_key_id " +
                     "FROM memory WHERE memory_id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -109,7 +110,8 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
+                    "is_collaborative, group_key_id " +
                     "FROM memory WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL) " +
                     "ORDER BY created_timestamp DESC";
 
@@ -259,6 +261,8 @@ public class memoryDAO {
         memory.setShareKey(rs.getString("share_key"));
         memory.setExpiresAt(rs.getTimestamp("expires_at"));
         memory.setLinkShared(rs.getBoolean("is_link_shared"));
+        memory.setCollaborative(rs.getBoolean("is_collaborative"));
+        memory.setGroupKeyId(rs.getString("group_key_id"));
 
         return memory;
     }
@@ -280,6 +284,33 @@ public class memoryDAO {
     }
 
     // ============================================
+    // COLLABORATIVE MEMORY METHODS
+    // ============================================
+
+    /**
+     * Set a memory as collaborative and assign a group key
+     */
+    public boolean setCollaborative(int memoryId, String groupKeyId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE memory SET is_collaborative = TRUE, group_key_id = ? WHERE memory_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, groupKeyId);
+            stmt.setInt(2, memoryId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    // ============================================
     // VAULT METHODS
     // ============================================
 
@@ -295,7 +326,8 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
+                    "is_collaborative, group_key_id " +
                     "FROM memory WHERE user_id = ? AND is_in_vault = TRUE " +
                     "ORDER BY created_timestamp DESC";
 
