@@ -1,4 +1,4 @@
-package com.demo.web.controller.Autographs;
+package com.demo.web.controller.autographs;
 
 import com.demo.web.dao.autographDAO;
 import com.demo.web.dao.autographEntryDAO;
@@ -19,7 +19,7 @@ import java.sql.SQLException;
  * Uses token-only lookup for security (no autograph ID exposed).
  */
 @WebServlet("/submitAutographEntry")
-public class SubmitAutographEntryServlet extends HttpServlet {
+public class submitAutographEntryServlet extends HttpServlet {
 
     private autographDAO autographDAO;
     private autographEntryDAO entryDAO;
