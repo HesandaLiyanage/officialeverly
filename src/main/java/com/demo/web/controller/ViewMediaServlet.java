@@ -1,6 +1,7 @@
 package com.demo.web.controller;
 
 import com.demo.web.dao.MediaDAO;
+import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.model.MediaItem;
 import com.demo.web.util.EncryptionService;
 
@@ -17,6 +18,7 @@ import java.io.*;
 public class ViewMediaServlet extends HttpServlet {
 
     private MediaDAO mediaDAO;
+    private MemoryMemberDAO memberDAO;
 
     // Must match the physical path used in CreateMemoryServlet
     private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads_encrypted";
@@ -25,6 +27,7 @@ public class ViewMediaServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         mediaDAO = new MediaDAO();
+        memberDAO = new MemoryMemberDAO();
     }
 
     @Override
@@ -81,11 +84,26 @@ public class ViewMediaServlet extends HttpServlet {
             System.out.println("  - mimeType: " + mediaItem.getMimeType());
             System.out.println("  - mediaUserId: " + mediaItem.getUserId());
 
-            // Security check: Verify user owns this media
-            if (mediaItem.getUserId() != userId) {
-                // TODO: Also check if user has access through group sharing
-                System.out.println("ERROR: Access denied. User " + userId + " doesn't own media (owned by "
-                        + mediaItem.getUserId() + ")");
+            // Security check: Verify user has access (owner OR collaborative memory member)
+            boolean hasAccess = (mediaItem.getUserId() == userId);
+
+            if (!hasAccess) {
+                // Check if user is a member of a collaborative memory that contains this media
+                Integer memoryId = mediaDAO.getMemoryIdForMedia(mediaId);
+                if (memoryId != null) {
+                    try {
+                        hasAccess = memberDAO.isUserMemberOf(memoryId, userId);
+                        if (hasAccess) {
+                            System.out.println("Access granted through collaborative memory membership");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error checking membership: " + e.getMessage());
+                    }
+                }
+            }
+
+            if (!hasAccess) {
+                System.out.println("ERROR: Access denied. User " + userId + " doesn't have access to media");
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
                 return;
             }

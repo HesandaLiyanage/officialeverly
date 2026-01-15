@@ -62,7 +62,8 @@ public class MediaDAO {
     /**
      * Store encrypted media encryption key in encryption_keys table
      */
-    public boolean storeMediaEncryptionKey(String keyId, int userId, byte[] encryptedKey, byte[] iv) throws SQLException {
+    public boolean storeMediaEncryptionKey(String keyId, int userId, byte[] encryptedKey, byte[] iv)
+            throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -136,8 +137,7 @@ public class MediaDAO {
             if (rs.next()) {
                 return new EncryptionKeyData(
                         rs.getBytes("encrypted_key"),
-                        rs.getBytes("iv")
-                );
+                        rs.getBytes("iv"));
             }
 
             return null;
@@ -274,9 +274,12 @@ public class MediaDAO {
      */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
-            if (conn != null) conn.close();
+            if (rs != null)
+                rs.close();
+            if (stmt != null)
+                stmt.close();
+            if (conn != null)
+                conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -303,5 +306,34 @@ public class MediaDAO {
         }
     }
 
+    /**
+     * Get the memory ID that a media item belongs to
+     * 
+     * @param mediaId the media item ID
+     * @return the memory ID or null if not linked to any memory
+     */
+    public Integer getMemoryIdForMedia(int mediaId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT memory_id FROM memory_media WHERE media_id = ? LIMIT 1";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, mediaId);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("memory_id");
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
 
 }

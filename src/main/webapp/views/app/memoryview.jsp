@@ -288,6 +288,70 @@
                             </div>
                         </div>
 
+                        <!-- Collaborative Memory Section -->
+                        <c:if test="${isCollaborative}">
+                            <div class="collab-section"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 20px; margin-bottom: 24px; color: white;">
+                                <div
+                                    style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="8.5" cy="7" r="4"></circle>
+                                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                                        </svg>
+                                        <div>
+                                            <span style="font-weight: 600;">Collaborative Memory</span>
+                                            <c:if test="${not empty members}">
+                                                <span
+                                                    style="opacity: 0.8; font-size: 13px; margin-left: 8px;">${members.size()}
+                                                    member<c:if test="${members.size() != 1}">s</c:if></span>
+                                            </c:if>
+                                        </div>
+                                    </div>
+
+                                    <!-- Invite Link for Owner Only -->
+                                    <c:if test="${isOwner}">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <button type="button" onclick="generateAndCopyLink()" id="copyLinkBtn"
+                                                style="padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path
+                                                        d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71">
+                                                    </path>
+                                                    <path
+                                                        d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71">
+                                                    </path>
+                                                </svg>
+                                                <span id="copyLinkBtnText">Copy Invite Link</span>
+                                            </button>
+                                        </div>
+                                    </c:if>
+                                </div>
+
+                                <!-- Member List (collapsed by default, expand on click) -->
+                                <c:if test="${not empty members}">
+                                    <div
+                                        style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);">
+                                        <div style="font-size: 13px; opacity: 0.9;">
+                                            <c:forEach var="member" items="${members}" varStatus="status">
+                                                <span
+                                                    style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; margin: 4px;">
+                                                    ${member.username}
+                                                    <c:if test="${member.role eq 'owner'}">
+                                                        <span style="margin-left: 4px; font-size: 11px;">(owner)</span>
+                                                    </c:if>
+                                                </span>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </div>
+                        </c:if>
+
                         <!-- Photo Grid -->
                         <c:choose>
                             <c:when test="${empty mediaItems}">
@@ -528,6 +592,60 @@
                             closeVaultModal();
                         }
                     });
+
+                    // Generate and copy invite link for collaborative memories
+                    function generateAndCopyLink() {
+                        const btn = document.getElementById('copyLinkBtn');
+                        const btnText = document.getElementById('copyLinkBtnText');
+
+                        btn.disabled = true;
+                        btnText.textContent = 'Generating...';
+
+                        fetch('${pageContext.request.contextPath}/memory/generate-invite', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'memoryId=${memory.memoryId}'
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Copy to clipboard
+                                    navigator.clipboard.writeText(data.inviteUrl).then(() => {
+                                        btnText.textContent = 'Link Copied!';
+                                        setTimeout(() => {
+                                            btnText.textContent = 'Copy Invite Link';
+                                            btn.disabled = false;
+                                        }, 2000);
+                                    }).catch(() => {
+                                        // Fallback for older browsers
+                                        const tempInput = document.createElement('input');
+                                        tempInput.value = data.inviteUrl;
+                                        document.body.appendChild(tempInput);
+                                        tempInput.select();
+                                        document.execCommand('copy');
+                                        document.body.removeChild(tempInput);
+
+                                        btnText.textContent = 'Link Copied!';
+                                        setTimeout(() => {
+                                            btnText.textContent = 'Copy Invite Link';
+                                            btn.disabled = false;
+                                        }, 2000);
+                                    });
+                                } else {
+                                    alert('Failed to generate invite link: ' + (data.error || 'Unknown error'));
+                                    btnText.textContent = 'Copy Invite Link';
+                                    btn.disabled = false;
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error generating invite link:', err);
+                                alert('Error generating invite link');
+                                btnText.textContent = 'Copy Invite Link';
+                                btn.disabled = false;
+                            });
+                    }
                 </script>
             </body>
 
