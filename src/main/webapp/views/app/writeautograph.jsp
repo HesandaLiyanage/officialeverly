@@ -291,7 +291,6 @@
                         submitAutograph() {
                             const message = this.writingArea.innerHTML.trim();
                             const author = this.authorInput.value.trim();
-                            const autographId = document.getElementById('autographId').value;
                             const shareToken = document.getElementById('shareToken').value;
                             const isSharedAccess = document.getElementById('isSharedAccess').value === 'true';
 
@@ -318,21 +317,18 @@
                                 });
                             });
 
-                            // Prepare data for submission
+                            // Prepare data for submission (token-only, no ID exposed)
                             const autographData = {
                                 message: message,
                                 author: author,
                                 decorations: JSON.stringify(decorations),
-                                timestamp: new Date().toISOString(),
-                                autographId: autographId,
-                                shareToken: shareToken,
-                                isSharedAccess: isSharedAccess
+                                shareToken: shareToken  // Token-only for security
                             };
 
-                            console.log('Submitting autograph:', autographData);
+                            console.log('Submitting autograph entry via token:', shareToken);
 
                             // Submit via form POST for shared access
-                            if (isSharedAccess && autographId) {
+                            if (isSharedAccess && shareToken) {
                                 // Create a form and submit
                                 const form = document.createElement('form');
                                 form.method = 'POST';

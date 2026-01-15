@@ -245,12 +245,21 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
-        // Route /share/* to handle share links
+        // Route /share/* to handle share links (write access)
         if (path.startsWith("/share/")) {
             logger.info("Routing share link to ShareLinkViewLogicHandler");
             String shareToken = path.substring("/share/".length());
             request.setAttribute("shareToken", shareToken);
             new ShareLinkViewLogicHandler().execute(request, response);
+            return;
+        }
+
+        // Route /sharedview/* to handle viewing autograph entries (token-only access)
+        if (path.startsWith("/sharedview/")) {
+            logger.info("Routing shared view to SharedAutographViewLogicHandler");
+            String shareToken = path.substring("/sharedview/".length());
+            request.setAttribute("shareToken", shareToken);
+            new SharedAutographViewLogicHandler().execute(request, response);
             return;
         }
 
