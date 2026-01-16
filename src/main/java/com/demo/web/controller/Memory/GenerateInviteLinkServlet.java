@@ -95,19 +95,64 @@ public class GenerateInviteLinkServlet extends HttpServlet {
                 SecretKey groupKey = EncryptionService.generateKey();
                 String groupKeyId = EncryptionService.generateKeyId();
 
-                // Encrypt the group key with the owner's master key
+                // Encrypt the group key with the owner's master key (for owner access)
                 EncryptedData encryptedGroupKey = EncryptionService.encryptGroupKeyForUser(groupKey, masterKey);
-
-                // Mark memory as collaborative
-                memoryDao.setCollaborative(memoryId, groupKeyId);
 
                 // Add owner as the first member
                 memberDao.addMember(memoryId, userId, "owner",
                         encryptedGroupKey.getEncryptedData(),
                         encryptedGroupKey.getIv());
 
+                // Generate the invite token FIRST (needed to encrypt group key for sharing)
+                String token = EncryptionService.generateInviteToken();
+                byte[] salt = EncryptionService.generateSalt();
+
+                // OPTION C: Encrypt group key with token-derived key for sharing
+                EncryptedData tokenEncryptedGroupKey = EncryptionService.encryptGroupKeyWithToken(
+                        groupKey, token, salt);
+
+                // Store both the memory collab status AND token-encrypted group key
+                memoryDao.storeTokenEncryptedGroupKey(memoryId, groupKeyId,
+                        tokenEncryptedGroupKey.getEncryptedData(),
+                        salt,
+                        tokenEncryptedGroupKey.getIv());
+
                 System.out.println("Memory " + memoryId + " is now collaborative with groupKeyId: " + groupKeyId);
+
+                // Parse optional expiration time
+                Timestamp expiresAt = null;
+                String expiresInHoursParam = request.getParameter("expiresInHours");
+                if (expiresInHoursParam != null && !expiresInHoursParam.isEmpty()) {
+                    int hours = Integer.parseInt(expiresInHoursParam);
+                    expiresAt = new Timestamp(System.currentTimeMillis() + (hours * 60L * 60L * 1000L));
+                }
+
+                // Parse optional max uses
+                Integer maxUses = null;
+                String maxUsesParam = request.getParameter("maxUses");
+                if (maxUsesParam != null && !maxUsesParam.isEmpty()) {
+                    maxUses = Integer.parseInt(maxUsesParam);
+                }
+
+                // Create the invite link with the token we already generated
+                inviteLinkDao.createInviteLinkWithToken(memoryId, userId, token, expiresAt, maxUses);
+
+                // Build the full invite URL
+                String baseUrl = request.getScheme() + "://" + request.getServerName();
+                if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+                    baseUrl += ":" + request.getServerPort();
+                }
+                baseUrl += request.getContextPath();
+                String inviteUrl = baseUrl + "/invite/" + token;
+
+                // Return success response
+                response.setStatus(HttpServletResponse.SC_OK);
+                out.write("{\"success\": true, \"token\": \"" + token + "\", \"inviteUrl\": \"" + inviteUrl + "\"}");
+                return;
             }
+
+            // Memory is already collaborative - just generate a new invite link
+            // (uses existing token-encrypted group key)
 
             // Parse optional expiration time
             Timestamp expiresAt = null;
@@ -124,8 +169,38 @@ public class GenerateInviteLinkServlet extends HttpServlet {
                 maxUses = Integer.parseInt(maxUsesParam);
             }
 
+            // For already-collaborative memory, we need to generate a new token
+            // and re-encrypt the group key with it
+            // First, get the current group key by decrypting owner's copy
+            SecretKey groupKey = null;
+            var ownerMember = memberDao.getMember(memoryId, userId);
+            if (ownerMember != null) {
+                groupKey = EncryptionService.decryptGroupKeyForUser(
+                        ownerMember.getEncryptedGroupKey(),
+                        ownerMember.getGroupKeyIv(),
+                        masterKey);
+            }
+
+            if (groupKey == null) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                out.write("{\"error\": \"Could not retrieve group key\"}");
+                return;
+            }
+
+            // Generate new token and encrypt group key with it
+            String token = EncryptionService.generateInviteToken();
+            byte[] salt = EncryptionService.generateSalt();
+            EncryptedData tokenEncryptedGroupKey = EncryptionService.encryptGroupKeyWithToken(
+                    groupKey, token, salt);
+
+            // Update memory with new token-encrypted group key
+            memoryDao.storeTokenEncryptedGroupKey(memoryId, memory.getGroupKeyId(),
+                    tokenEncryptedGroupKey.getEncryptedData(),
+                    salt,
+                    tokenEncryptedGroupKey.getIv());
+
             // Generate the invite link
-            String token = inviteLinkDao.createInviteLink(memoryId, userId, expiresAt, maxUses);
+            inviteLinkDao.createInviteLinkWithToken(memoryId, userId, token, expiresAt, maxUses);
 
             // Build the full invite URL
             String baseUrl = request.getScheme() + "://" + request.getServerName();

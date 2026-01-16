@@ -7,6 +7,11 @@
 ALTER TABLE memory ADD COLUMN IF NOT EXISTS is_collaborative BOOLEAN DEFAULT FALSE;
 ALTER TABLE memory ADD COLUMN IF NOT EXISTS group_key_id VARCHAR(255);
 
+-- Option C: Token-encrypted group key for sharing via invite links
+ALTER TABLE memory ADD COLUMN IF NOT EXISTS token_encrypted_group_key BYTEA;
+ALTER TABLE memory ADD COLUMN IF NOT EXISTS group_key_salt BYTEA;
+ALTER TABLE memory ADD COLUMN IF NOT EXISTS group_key_iv BYTEA;
+
 -- Table for storing invite links
 CREATE TABLE IF NOT EXISTS memory_invite_link (
     invite_id SERIAL PRIMARY KEY,

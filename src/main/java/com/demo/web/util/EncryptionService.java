@@ -125,7 +125,7 @@ public class EncryptionService {
     }
 
     public static SecretKey unlockUserMasterKey(String password, byte[] salt,
-                                                byte[] encryptedMasterKey, byte[] iv) throws Exception {
+            byte[] encryptedMasterKey, byte[] iv) throws Exception {
         SecretKey passwordKey = deriveKeyFromPassword(password, salt);
         return decryptKey(encryptedMasterKey, iv, passwordKey);
     }
@@ -139,8 +139,50 @@ public class EncryptionService {
     }
 
     public static SecretKey decryptGroupKeyForUser(byte[] encryptedGroupKey, byte[] iv,
-                                                   SecretKey userMasterKey) throws Exception {
+            SecretKey userMasterKey) throws Exception {
         return decryptKey(encryptedGroupKey, iv, userMasterKey);
+    }
+
+    // ============================================
+    // TOKEN-BASED GROUP KEY OPERATIONS (Option C)
+    // For collaborative memories where group key is
+    // encrypted with key derived from invite token
+    // ============================================
+
+    /**
+     * Generate a cryptographically secure invite token (32 chars)
+     */
+    public static String generateInviteToken() {
+        byte[] tokenBytes = new byte[24]; // 24 bytes = 32 chars in base64
+        new SecureRandom().nextBytes(tokenBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes);
+    }
+
+    /**
+     * Derive an encryption key from an invite token using PBKDF2
+     * This allows anyone with the token to decrypt the group key
+     */
+    public static SecretKey deriveKeyFromToken(String token, byte[] salt) throws Exception {
+        // Reuse the existing PBKDF2 infrastructure
+        return deriveKeyFromPassword(token, salt);
+    }
+
+    /**
+     * Encrypt group key with token-derived key for sharing via invite links
+     */
+    public static EncryptedData encryptGroupKeyWithToken(SecretKey groupKey, String token, byte[] salt)
+            throws Exception {
+        SecretKey tokenKey = deriveKeyFromToken(token, salt);
+        return encryptKey(groupKey, tokenKey);
+    }
+
+    /**
+     * Decrypt group key using invite token
+     */
+    public static SecretKey decryptGroupKeyWithToken(byte[] encryptedGroupKey, byte[] iv,
+            String token, byte[] salt) throws Exception {
+        SecretKey tokenKey = deriveKeyFromToken(token, salt);
+        return decryptKey(encryptedGroupKey, iv, tokenKey);
     }
 
     // ============================================
@@ -263,9 +305,17 @@ public class EncryptionService {
             this.salt = salt;
         }
 
-        public byte[] getEncryptedMasterKey() { return encryptedMasterKey; }
-        public byte[] getIv() { return iv; }
-        public byte[] getSalt() { return salt; }
+        public byte[] getEncryptedMasterKey() {
+            return encryptedMasterKey;
+        }
+
+        public byte[] getIv() {
+            return iv;
+        }
+
+        public byte[] getSalt() {
+            return salt;
+        }
     }
 
     public static UserMasterKeyData setupUserMasterKey(String password) throws Exception {
@@ -275,7 +325,6 @@ public class EncryptionService {
         return new UserMasterKeyData(
                 encryptedMasterKey.getEncryptedData(),
                 encryptedMasterKey.getIv(),
-                salt
-        );
+                salt);
     }
 }

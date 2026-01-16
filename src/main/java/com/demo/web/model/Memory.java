@@ -19,6 +19,11 @@ public class Memory {
     private boolean isCollaborative;
     private String groupKeyId;
 
+    // Option C: Token-encrypted group key for sharing
+    private byte[] tokenEncryptedGroupKey;
+    private byte[] groupKeySalt;
+    private byte[] groupKeyIv;
+
     // Constructors
     public Memory() {
     }
@@ -134,6 +139,30 @@ public class Memory {
 
     public void setGroupKeyId(String groupKeyId) {
         this.groupKeyId = groupKeyId;
+    }
+
+    public byte[] getTokenEncryptedGroupKey() {
+        return tokenEncryptedGroupKey;
+    }
+
+    public void setTokenEncryptedGroupKey(byte[] tokenEncryptedGroupKey) {
+        this.tokenEncryptedGroupKey = tokenEncryptedGroupKey;
+    }
+
+    public byte[] getGroupKeySalt() {
+        return groupKeySalt;
+    }
+
+    public void setGroupKeySalt(byte[] groupKeySalt) {
+        this.groupKeySalt = groupKeySalt;
+    }
+
+    public byte[] getGroupKeyIv() {
+        return groupKeyIv;
+    }
+
+    public void setGroupKeyIv(byte[] groupKeyIv) {
+        this.groupKeyIv = groupKeyIv;
     }
 
     // Temporary for display

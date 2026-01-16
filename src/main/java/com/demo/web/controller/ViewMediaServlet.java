@@ -2,7 +2,10 @@ package com.demo.web.controller;
 
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.dao.MemoryMemberDAO;
+import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.MediaItem;
+import com.demo.web.model.Memory;
+import com.demo.web.model.MemoryMember;
 import com.demo.web.util.EncryptionService;
 
 import javax.crypto.SecretKey;
@@ -19,6 +22,7 @@ public class ViewMediaServlet extends HttpServlet {
 
     private MediaDAO mediaDAO;
     private MemoryMemberDAO memberDAO;
+    private memoryDAO memDAO;
 
     // Must match the physical path used in CreateMemoryServlet
     private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads_encrypted";
@@ -28,6 +32,7 @@ public class ViewMediaServlet extends HttpServlet {
         super.init();
         mediaDAO = new MediaDAO();
         memberDAO = new MemoryMemberDAO();
+        memDAO = new memoryDAO();
     }
 
     @Override
@@ -117,8 +122,36 @@ public class ViewMediaServlet extends HttpServlet {
             }
 
             System.out.println("Starting decryption process...");
+
+            // Determine the decryption key to use
+            // For owner: use their master key directly
+            // For collaborator: get their group key first, then use group key
+            SecretKey decryptionKey = masterKey;
+            boolean isCollaborator = (mediaItem.getUserId() != userId);
+
+            if (isCollaborator) {
+                // Get the memory ID and check if it's collaborative
+                Integer memoryId = mediaDAO.getMemoryIdForMedia(mediaId);
+                if (memoryId != null) {
+                    Memory memory = memDAO.getMemoryById(memoryId);
+                    if (memory != null && memory.isCollaborative()) {
+                        // Get user's encrypted group key from memory_member
+                        MemoryMember membership = memberDAO.getMember(memoryId, userId);
+                        if (membership != null && membership.getEncryptedGroupKey() != null) {
+                            // Decrypt group key with user's master key
+                            SecretKey groupKey = EncryptionService.decryptGroupKeyForUser(
+                                    membership.getEncryptedGroupKey(),
+                                    membership.getGroupKeyIv(),
+                                    masterKey);
+                            decryptionKey = groupKey;
+                            System.out.println("Using group key for collaborative memory decryption");
+                        }
+                    }
+                }
+            }
+
             // Decrypt and serve the file
-            byte[] decryptedData = decryptMediaFile(mediaItem, masterKey);
+            byte[] decryptedData = decryptMediaFile(mediaItem, decryptionKey);
 
             // Set response headers
             response.setContentType(mediaItem.getMimeType());

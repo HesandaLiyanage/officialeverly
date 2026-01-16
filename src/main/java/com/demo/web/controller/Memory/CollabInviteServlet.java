@@ -6,6 +6,7 @@ import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.InviteLink;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MemoryMember;
+import com.demo.web.util.EncryptionService;
 
 import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
@@ -166,51 +167,45 @@ public class CollabInviteServlet extends HttpServlet {
                 return;
             }
 
-            // Get the owner's encrypted group key to decrypt and re-encrypt for the new
-            // member
-            MemoryMember ownerMember = getOwnerMember(memory.getMemoryId());
-            if (ownerMember == null) {
+            // OPTION C: Decrypt group key using the token from the URL
+            // The token was used to encrypt the group key when the invite was generated
+            byte[] tokenEncryptedGroupKey = memory.getTokenEncryptedGroupKey();
+            byte[] groupKeySalt = memory.getGroupKeySalt();
+            byte[] groupKeyIv = memory.getGroupKeyIv();
+
+            if (tokenEncryptedGroupKey == null || groupKeySalt == null || groupKeyIv == null) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("{\"error\": \"Could not find memory owner\"}");
+                response.getWriter().write(
+                        "{\"error\": \"This memory's invite link may have expired or been regenerated. Please request a new invite link.\"}");
                 return;
             }
 
-            // For now, we need the current user's session to have access to decrypt group
-            // key
-            // In a real scenario, we'd need a server-side mechanism to re-encrypt
-            // Since we're using client-side encryption, we'll store a reference
-            // The actual group key sharing happens when the owner or existing member
-            // re-encrypts for the new user
+            // Decrypt the group key using the token from the invite URL
+            SecretKey groupKey = EncryptionService.decryptGroupKeyWithToken(
+                    tokenEncryptedGroupKey, groupKeyIv, token, groupKeySalt);
 
-            // For simplicity in this implementation, we'll generate a new encrypted copy
-            // using the same group key that was encrypted for the owner
-            // This requires the owner to be online OR we store the group key server-side
-            // (less secure)
+            // Get user's master key to re-encrypt the group key for their use
+            SecretKey userMasterKey = (SecretKey) session.getAttribute("masterKey");
+            if (userMasterKey == null) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("{\"error\": \"Encryption key missing. Please log out and log in again.\"}");
+                return;
+            }
 
-            // Simplified approach: Use the memory's group_key_id to look up and share
-            // In production, you'd want a more sophisticated key exchange protocol
+            // Re-encrypt the group key with the new user's master key
+            EncryptionService.EncryptedData userEncryptedGroupKey = EncryptionService.encryptGroupKeyForUser(groupKey,
+                    userMasterKey);
 
-            // Get owner's group key data
-            byte[] ownerEncryptedKey = ownerMember.getEncryptedGroupKey();
-            byte[] ownerKeyIv = ownerMember.getGroupKeyIv();
-
-            // Since we can't decrypt the owner's key without owner's master key,
-            // we'll store a placeholder and have the owner/system share the key
-            // For this demo, we'll need to implement an alternative approach
-
-            // Alternative: Store the raw group key in a secure table on the server
-            // and encrypt it for each new user when they join
-            // This is a trade-off between pure E2E encryption and usability
-
-            // For now, add member with placeholder key data
-            // The member will request key from owner when viewing
+            // Add member with their own encrypted copy of the group key
             memberDao.addMember(memory.getMemoryId(), userId, "contributor",
-                    ownerEncryptedKey, ownerKeyIv);
+                    userEncryptedGroupKey.getEncryptedData(),
+                    userEncryptedGroupKey.getIv());
 
             // Increment the use count
             inviteLinkDao.incrementUseCount(token);
 
-            System.out.println("User " + userId + " joined memory " + memory.getMemoryId());
+            System.out
+                    .println("User " + userId + " joined memory " + memory.getMemoryId() + " (Option C key exchange)");
 
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write("{\"success\": true, \"memoryId\": " + memory.getMemoryId() + "}");

@@ -58,6 +58,44 @@ public class InviteLinkDAO {
     }
 
     /**
+     * Create an invite link with a pre-generated token (for Option C)
+     * The token is generated externally by EncryptionService.generateInviteToken()
+     */
+    public void createInviteLinkWithToken(int memoryId, int createdBy, String token,
+            Timestamp expiresAt, Integer maxUses) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "INSERT INTO memory_invite_link (memory_id, invite_token, created_by, expires_at, max_uses) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            stmt.setString(2, token);
+            stmt.setInt(3, createdBy);
+
+            if (expiresAt != null) {
+                stmt.setTimestamp(4, expiresAt);
+            } else {
+                stmt.setNull(4, Types.TIMESTAMP);
+            }
+
+            if (maxUses != null) {
+                stmt.setInt(5, maxUses);
+            } else {
+                stmt.setNull(5, Types.INTEGER);
+            }
+
+            stmt.executeUpdate();
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
      * Get invite link by token
      */
     public InviteLink getInviteLinkByToken(String token) throws SQLException {
