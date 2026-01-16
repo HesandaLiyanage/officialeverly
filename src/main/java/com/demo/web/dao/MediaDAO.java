@@ -60,6 +60,39 @@ public class MediaDAO {
     }
 
     /**
+     * Get all media for a memory (via memory_media join table)
+     */
+    public List<MediaItem> getMediaForMemory(int memoryId) throws SQLException {
+        List<MediaItem> mediaList = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT m.media_id, m.user_id, m.filename, m.original_filename, m.file_path, " +
+                    "m.file_size, m.mime_type, m.media_type, m.title, m.description, m.upload_timestamp, " +
+                    "m.is_encrypted, m.encryption_key_id, m.encryption_iv, m.original_file_size, " +
+                    "m.is_split, m.split_count " +
+                    "FROM media_items m " +
+                    "INNER JOIN memory_media mm ON m.media_id = mm.media_id " +
+                    "WHERE mm.memory_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                mediaList.add(mapResultSetToMediaItem(rs));
+            }
+            return mediaList;
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    /**
      * Store encrypted media encryption key in encryption_keys table
      */
     public boolean storeMediaEncryptionKey(String keyId, int userId, byte[] encryptedKey, byte[] iv)
@@ -82,6 +115,68 @@ public class MediaDAO {
 
         } finally {
             closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Store a group-key-encrypted copy of a media encryption key
+     * Uses negative memory_id as user_id to differentiate from owner's version
+     */
+    public boolean storeGroupKeyEncryptedMediaKey(String keyId, int memoryId, byte[] encryptedKey, byte[] iv)
+            throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            // Use ON CONFLICT to update if already exists
+            String sql = "INSERT INTO encryption_keys (key_id, user_id, encrypted_key, iv) VALUES (?, ?, ?, ?) " +
+                    "ON CONFLICT (key_id, user_id) DO UPDATE SET encrypted_key = ?, iv = ?";
+
+            int groupMarker = -memoryId; // Negative memory_id marks this as group-key encrypted
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, keyId);
+            stmt.setInt(2, groupMarker);
+            stmt.setBytes(3, encryptedKey);
+            stmt.setBytes(4, iv);
+            stmt.setBytes(5, encryptedKey);
+            stmt.setBytes(6, iv);
+
+            stmt.executeUpdate();
+            return true;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Get group-key-encrypted media key (for collaborators)
+     */
+    public EncryptionKeyData getGroupKeyEncryptedMediaKey(String keyId, int memoryId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            int groupMarker = -memoryId;
+            String sql = "SELECT encrypted_key, iv FROM encryption_keys WHERE key_id = ? AND user_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, keyId);
+            stmt.setInt(2, groupMarker);
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new EncryptionKeyData(rs.getBytes("encrypted_key"), rs.getBytes("iv"));
+            }
+            return null;
+
+        } finally {
+            closeResources(rs, stmt, conn);
         }
     }
 

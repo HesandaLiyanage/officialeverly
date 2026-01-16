@@ -1,9 +1,11 @@
 package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.InviteLinkDAO;
+import com.demo.web.dao.MediaDAO;
 import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.Memory;
+import com.demo.web.model.MediaItem;
 import com.demo.web.util.EncryptionService;
 import com.demo.web.util.EncryptionService.EncryptedData;
 
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Servlet for generating invite links for collaborative memories
@@ -31,12 +34,14 @@ public class GenerateInviteLinkServlet extends HttpServlet {
     private memoryDAO memoryDao;
     private InviteLinkDAO inviteLinkDao;
     private MemoryMemberDAO memberDao;
+    private MediaDAO mediaDao;
 
     @Override
     public void init() throws ServletException {
         memoryDao = new memoryDAO();
         inviteLinkDao = new InviteLinkDAO();
         memberDao = new MemoryMemberDAO();
+        mediaDao = new MediaDAO();
     }
 
     @Override
@@ -118,6 +123,33 @@ public class GenerateInviteLinkServlet extends HttpServlet {
                         tokenEncryptedGroupKey.getIv());
 
                 System.out.println("Memory " + memoryId + " is now collaborative with groupKeyId: " + groupKeyId);
+
+                // Re-encrypt existing media keys with the group key so collaborators can access
+                List<MediaItem> existingMedia = mediaDao.getMediaForMemory(memoryId);
+                for (MediaItem media : existingMedia) {
+                    if (media.isEncrypted() && media.getEncryptionKeyId() != null) {
+                        // Get owner's encrypted media key
+                        MediaDAO.EncryptionKeyData ownerKeyData = mediaDao.getMediaEncryptionKey(
+                                media.getEncryptionKeyId(), userId);
+                        if (ownerKeyData != null) {
+                            // Decrypt with owner's master key
+                            SecretKey mediaKey = EncryptionService.decryptKey(
+                                    ownerKeyData.getEncryptedKey(),
+                                    ownerKeyData.getIv(),
+                                    masterKey);
+                            // Re-encrypt with group key
+                            EncryptedData groupEncryptedKey = EncryptionService.encryptKey(mediaKey, groupKey);
+                            // Store group-key-encrypted version
+                            mediaDao.storeGroupKeyEncryptedMediaKey(
+                                    media.getEncryptionKeyId(),
+                                    memoryId,
+                                    groupEncryptedKey.getEncryptedData(),
+                                    groupEncryptedKey.getIv());
+                            System.out.println("  Re-encrypted media key for: " + media.getOriginalFilename());
+                        }
+                    }
+                }
+                System.out.println("Re-encrypted " + existingMedia.size() + " media keys with group key");
 
                 // Parse optional expiration time
                 Timestamp expiresAt = null;

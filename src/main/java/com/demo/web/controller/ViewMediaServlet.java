@@ -123,11 +123,10 @@ public class ViewMediaServlet extends HttpServlet {
 
             System.out.println("Starting decryption process...");
 
-            // Determine the decryption key to use
-            // For owner: use their master key directly
-            // For collaborator: get their group key first, then use group key
-            SecretKey decryptionKey = masterKey;
+            // Determine if this is a collaborator accessing a collaborative memory
             boolean isCollaborator = (mediaItem.getUserId() != userId);
+            Integer collabMemoryId = null;
+            SecretKey groupKey = null;
 
             if (isCollaborator) {
                 // Get the memory ID and check if it's collaborative
@@ -139,19 +138,27 @@ public class ViewMediaServlet extends HttpServlet {
                         MemoryMember membership = memberDAO.getMember(memoryId, userId);
                         if (membership != null && membership.getEncryptedGroupKey() != null) {
                             // Decrypt group key with user's master key
-                            SecretKey groupKey = EncryptionService.decryptGroupKeyForUser(
+                            groupKey = EncryptionService.decryptGroupKeyForUser(
                                     membership.getEncryptedGroupKey(),
                                     membership.getGroupKeyIv(),
                                     masterKey);
-                            decryptionKey = groupKey;
-                            System.out.println("Using group key for collaborative memory decryption");
+                            collabMemoryId = memoryId;
+                            System.out.println(
+                                    "Using group key for collaborative memory decryption (memoryId: " + memoryId + ")");
                         }
                     }
                 }
             }
 
             // Decrypt and serve the file
-            byte[] decryptedData = decryptMediaFile(mediaItem, decryptionKey);
+            byte[] decryptedData;
+            if (collabMemoryId != null && groupKey != null) {
+                // Collaborator: use group-key-encrypted media key
+                decryptedData = decryptMediaFileForCollaborator(mediaItem, groupKey, collabMemoryId);
+            } else {
+                // Owner: use their own master key
+                decryptedData = decryptMediaFile(mediaItem, masterKey);
+            }
 
             // Set response headers
             response.setContentType(mediaItem.getMimeType());
@@ -200,6 +207,47 @@ public class ViewMediaServlet extends HttpServlet {
                 userMasterKey);
 
         System.out.println("  → Decrypted media key for: " + mediaItem.getOriginalFilename());
+
+        // Step 3: Read encrypted file from disk
+        byte[] encryptedFileData = readEncryptedFile(mediaItem.getFilePath());
+
+        System.out.println("  → Read encrypted file: " + encryptedFileData.length + " bytes");
+
+        // Step 4: Decrypt file data
+        byte[] decryptedData = EncryptionService.decrypt(
+                encryptedFileData,
+                mediaItem.getEncryptionIv(),
+                mediaKey);
+
+        System.out.println("  → Decrypted to: " + decryptedData.length + " bytes");
+
+        return decryptedData;
+    }
+
+    /**
+     * Decrypt media file for a collaborator using group-key-encrypted media key
+     */
+    private byte[] decryptMediaFileForCollaborator(MediaItem mediaItem, SecretKey groupKey, int memoryId)
+            throws Exception {
+
+        // Step 1: Get group-key-encrypted media key from database
+        // This was stored when the memory became collaborative
+        MediaDAO.EncryptionKeyData keyData = mediaDAO.getGroupKeyEncryptedMediaKey(
+                mediaItem.getEncryptionKeyId(),
+                memoryId);
+
+        if (keyData == null) {
+            throw new Exception("Group-encrypted key not found for media: " + mediaItem.getMediaId() +
+                    ". This may be older media uploaded before collaboration was enabled.");
+        }
+
+        // Step 2: Decrypt media key using group key
+        SecretKey mediaKey = EncryptionService.decryptKey(
+                keyData.getEncryptedKey(),
+                keyData.getIv(),
+                groupKey);
+
+        System.out.println("  → Decrypted media key using group key for: " + mediaItem.getOriginalFilename());
 
         // Step 3: Read encrypted file from disk
         byte[] encryptedFileData = readEncryptedFile(mediaItem.getFilePath());
