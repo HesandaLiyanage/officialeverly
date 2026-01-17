@@ -291,6 +291,25 @@
         <url-pattern>/linkeddevicesservlet</url-pattern>
     </servlet-mapping>
 
+    <!-- Collaborative Memory Servlets -->
+    <servlet>
+        <servlet-name>GenerateInviteLinkServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.GenerateInviteLinkServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GenerateInviteLinkServlet</servlet-name>
+        <url-pattern>/memory/generate-invite</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CollabInviteServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.CollabInviteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CollabInviteServlet</servlet-name>
+        <url-pattern>/invite/*</url-pattern>
+    </servlet-mapping>
+
     <!-- Authentication Filter -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>

@@ -28,25 +28,53 @@
                                     </svg>
                                 </button>
                             </div>
-                            <button class="filter-btn" id="dateFilter">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <polyline points="19 12 12 19 5 12"></polyline>
-                                </svg>
-                                Date
-                            </button>
-                        </div>
 
-                        <!-- Show warning if encryption not available -->
-                        <c:if test="${not encryptionAvailable}">
-                            <div
-                                style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 8px;">
-                                <strong>⚠️ Encryption Not Available</strong>
-                                <p>Your encryption keys are not loaded. Please logout and login again to view encrypted
-                                    memories.</p>
+                            <!-- Sort Dropdown -->
+                            <div class="filter-dropdown-container">
+                                <button class="filter-btn" id="sortFilterBtn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <polyline points="19 12 12 19 5 12"></polyline>
+                                    </svg>
+                                    Sort by
+                                </button>
+                                <div class="filter-dropdown" id="sortDropdown">
+                                    <div class="filter-dropdown-item selected" data-sort="date-created-desc">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
+                                        Date Created (Newest)
+                                    </div>
+                                    <div class="filter-dropdown-item" data-sort="date-created-asc">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
+                                        Date Created (Oldest)
+                                    </div>
+                                    <div class="filter-dropdown-item" data-sort="last-edited-desc">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                        Last Edited (Recent)
+                                    </div>
+                                    <div class="filter-dropdown-item" data-sort="last-edited-asc">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                        Last Edited (Oldest)
+                                    </div>
+                                </div>
                             </div>
-                        </c:if>
+                        </div>
 
                         <!-- Show error message if any -->
                         <c:if test="${not empty errorMessage}">
@@ -85,15 +113,8 @@
                                         <div class="memory-card" data-title="${memory.title}"
                                             onclick="location.href='/memoryview?id=${memory.memoryId}'"
                                             style="cursor: pointer;">
-                                            <!-- Cover image - will be decrypted by ViewMediaServlet -->
+                                            <!-- Cover image -->
                                             <div class="memory-image" style="background-image: url('${finalCover}');">
-                                                <!-- Encryption indicator -->
-                                                <c:if test="${encryptionAvailable}">
-                                                    <div
-                                                        style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px;">
-                                                        🔒 Encrypted
-                                                    </div>
-                                                </c:if>
                                             </div>
 
                                             <!-- Memory details -->
@@ -164,17 +185,7 @@
 
                 <jsp:include page="../public/footer.jsp" />
 
-                <!-- Optional: Loading indicator for images -->
                 <style>
-                    .memory-image img {
-                        transition: opacity 0.3s ease;
-                    }
-
-                    .memory-image img[src*="viewMedia"] {
-                        background: #f0f0f0;
-                    }
-
-                    /* Optional: Add loading spinner */
                     .memory-card {
                         transition: transform 0.2s ease, box-shadow 0.2s ease;
                     }
@@ -194,6 +205,55 @@
                         color: white;
                         font-weight: 700;
                         font-size: 14px;
+                    }
+
+                    /* Filter dropdown styles */
+                    .filter-dropdown-container {
+                        position: relative;
+                        display: inline-block;
+                    }
+
+                    .filter-dropdown {
+                        display: none;
+                        position: absolute;
+                        top: 100%;
+                        left: 0;
+                        margin-top: 8px;
+                        background: white;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                        min-width: 180px;
+                        z-index: 100;
+                        overflow: hidden;
+                    }
+
+                    .filter-dropdown.active {
+                        display: block;
+                    }
+
+                    .filter-dropdown-item {
+                        padding: 12px 16px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        color: #374151;
+                        transition: background 0.2s ease;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+
+                    .filter-dropdown-item:hover {
+                        background: #f3f4f6;
+                    }
+
+                    .filter-dropdown-item.selected {
+                        background: rgba(154, 116, 216, 0.1);
+                        color: #9A74D8;
+                    }
+
+                    .filter-dropdown-item svg {
+                        width: 16px;
+                        height: 16px;
                     }
                 </style>
 
@@ -285,21 +345,51 @@
                             });
                         }
 
-                        // Add loading indicator for encrypted images
-                        const images = document.querySelectorAll('.memory-image img[src*="viewMedia"]');
-                        images.forEach(img => {
-                            img.style.opacity = '0.5';
+                        // Sort dropdown functionality
+                        const sortFilterBtn = document.getElementById('sortFilterBtn');
+                        const sortDropdown = document.getElementById('sortDropdown');
 
-                            img.addEventListener('load', function () {
-                                img.style.opacity = '1';
-                                console.log('✓ Loaded:', img.src);
+                        if (sortFilterBtn && sortDropdown) {
+                            sortFilterBtn.addEventListener('click', function (e) {
+                                e.stopPropagation();
+                                sortDropdown.classList.toggle('active');
                             });
 
-                            img.addEventListener('error', function () {
-                                console.error('✗ Failed to load:', img.src);
-                                img.style.opacity = '1';
+                            // Close dropdown when clicking outside
+                            document.addEventListener('click', function (e) {
+                                if (!sortDropdown.contains(e.target) && e.target !== sortFilterBtn) {
+                                    sortDropdown.classList.remove('active');
+                                }
                             });
-                        });
+
+                            // Sort dropdown items
+                            const sortItems = sortDropdown.querySelectorAll('.filter-dropdown-item');
+                            sortItems.forEach(item => {
+                                item.addEventListener('click', function () {
+                                    // Update selected state
+                                    sortItems.forEach(i => i.classList.remove('selected'));
+                                    this.classList.add('selected');
+
+                                    // Update button text
+                                    const sortText = this.textContent.trim();
+                                    sortFilterBtn.innerHTML = `
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <polyline points="19 12 12 19 5 12"></polyline>
+                                        </svg>
+                                        ${sortText}
+                                    `;
+
+                                    // Close dropdown
+                                    sortDropdown.classList.remove('active');
+
+                                    // Sort memo cards based on data attribute
+                                    const sortType = this.dataset.sort;
+                                    console.log('Sorting by:', sortType);
+                                    // Note: Full sorting requires backend support for updated_at data
+                                });
+                            });
+                        }
                     });
                 </script>
             </body>
