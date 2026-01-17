@@ -69,6 +69,94 @@
                         box-shadow: 0 6px 20px rgba(234, 221, 255, 0.6);
                     }
 
+                    /* Vault Button Specific Style */
+                    .floating-btn-memory-viewer.vault-btn {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: #ffffff;
+                    }
+
+                    .floating-btn-memory-viewer.vault-btn:hover {
+                        background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+                        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+                    }
+
+                    /* Vault Password Modal */
+                    .vault-modal-overlay {
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.6);
+                        z-index: 3000;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .vault-modal-overlay.active {
+                        display: flex;
+                    }
+
+                    .vault-modal {
+                        background: white;
+                        padding: 30px;
+                        border-radius: 16px;
+                        max-width: 400px;
+                        width: 90%;
+                        text-align: center;
+                    }
+
+                    .vault-modal h3 {
+                        margin: 0 0 10px 0;
+                        color: #333;
+                    }
+
+                    .vault-modal p {
+                        color: #666;
+                        margin-bottom: 20px;
+                    }
+
+                    .vault-modal input {
+                        width: 100%;
+                        padding: 12px;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        margin-bottom: 15px;
+                        box-sizing: border-box;
+                    }
+
+                    .vault-modal input:focus {
+                        border-color: #9A74D8;
+                        outline: none;
+                    }
+
+                    .vault-modal-buttons {
+                        display: flex;
+                        gap: 10px;
+                        justify-content: center;
+                    }
+
+                    .vault-modal-btn {
+                        padding: 10px 24px;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    }
+
+                    .vault-modal-btn.confirm {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                    }
+
+                    .vault-modal-btn.cancel {
+                        background: #f0f0f0;
+                        color: #666;
+                    }
+
                     /* Photo grid styles */
                     .photos-grid {
                         display: grid;
@@ -200,6 +288,111 @@
                             </div>
                         </div>
 
+                        <!-- Collaborative Memory Section -->
+                        <c:if test="${isCollaborative}">
+                            <div class="collab-section"
+                                style="background: #9A74D8; border-radius: 12px; padding: 20px; margin-bottom: 24px; color: white;">
+                                <div
+                                    style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="8.5" cy="7" r="4"></circle>
+                                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                                        </svg>
+                                        <div>
+                                            <span style="font-weight: 600;">Collaborative Memory</span>
+                                            <c:if test="${not empty members}">
+                                                <span
+                                                    style="opacity: 0.8; font-size: 13px; margin-left: 8px;">${members.size()}
+                                                    member<c:if test="${members.size() != 1}">s</c:if></span>
+                                            </c:if>
+                                        </div>
+                                    </div>
+
+                                    <div style="display: flex; gap: 10px; align-items: center;">
+                                        <!-- Owner Only: Share Link & Manage Members -->
+                                        <c:if test="${isOwner}">
+                                            <button type="button" onclick="toggleMembersPanel()"
+                                                style="padding: 10px 16px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="9" cy="7" r="4"></circle>
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                </svg>
+                                                Manage
+                                            </button>
+                                            <button type="button" onclick="generateAndCopyLink()" id="copyLinkBtn"
+                                                style="padding: 10px 16px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path
+                                                        d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71">
+                                                    </path>
+                                                    <path
+                                                        d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71">
+                                                    </path>
+                                                </svg>
+                                                <span id="copyLinkBtnText">Get Link</span>
+                                            </button>
+                                        </c:if>
+
+                                        <!-- Members Only: Leave Button -->
+                                        <c:if test="${not isOwner && isMember}">
+                                            <button type="button" onclick="leaveCollabMemory()"
+                                                style="padding: 10px 16px; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                                </svg>
+                                                Leave
+                                            </button>
+                                        </c:if>
+                                    </div>
+                                </div>
+
+                                <!-- Member List Panel (for owners) -->
+                                <div id="membersPanel"
+                                    style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);">
+                                    <h4 style="font-size: 14px; margin: 0 0 12px 0; opacity: 0.9;">Members</h4>
+                                    <div id="membersList" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                        <c:forEach var="member" items="${members}">
+                                            <div class="member-badge" data-user-id="${member.userId}"
+                                                style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; gap: 8px;">
+                                                <span>${member.username}</span>
+                                                <c:choose>
+                                                    <c:when test="${member.role eq 'owner'}">
+                                                        <span
+                                                            style="font-size: 11px; background: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 10px;">Owner</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:if test="${isOwner}">
+                                                            <button
+                                                                onclick="removeMember(${member.userId}, '${member.username}')"
+                                                                style="background: none; border: none; color: white; cursor: pointer; padding: 2px; display: flex; align-items: center; opacity: 0.7;"
+                                                                title="Remove member">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24"
+                                                                    fill="none" stroke="currentColor" stroke-width="2">
+                                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                                </svg>
+                                                            </button>
+                                                        </c:if>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
+
                         <!-- Photo Grid -->
                         <c:choose>
                             <c:when test="${empty mediaItems}">
@@ -219,7 +412,7 @@
                                         <div class="photo-item" onclick="openLightbox(${status.index})"
                                             data-media-id="${media.mediaId}">
                                             <!-- Debug: All media items should use viewmedia servlet -->
-                                            <img src="${pageContext.request.contextPath}/viewmedia?id=${media.mediaId}"
+                                            <img src="${pageContext.request.contextPath}/viewMedia?mediaId=${media.mediaId}"
                                                 alt="${media.title}" loading="lazy"
                                                 onerror="console.error('Failed to load media ID: ${media.mediaId}'); this.style.background='#ffcccc';">
                                         </div>
@@ -277,6 +470,14 @@
 
                 <!-- Floating Action Buttons -->
                 <div class="floating-buttons-memory-viewer">
+                    <button class="floating-btn-memory-viewer vault-btn" onclick="openVaultModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Move to Vault
+                    </button>
                     <a href="/editmemory?id=${memory.memoryId}" class="floating-btn-memory-viewer edit-btn">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -294,6 +495,19 @@
                         </svg>
                         Delete Memory
                     </button>
+                </div>
+
+                <!-- Vault Password Modal -->
+                <div class="vault-modal-overlay" id="vaultModal">
+                    <div class="vault-modal">
+                        <h3>🔒 Move to Vault</h3>
+                        <p>Enter your vault password to move this memory to the vault.</p>
+                        <input type="password" id="vaultPasswordInput" placeholder="Vault password">
+                        <div class="vault-modal-buttons">
+                            <button class="vault-modal-btn cancel" onclick="closeVaultModal()">Cancel</button>
+                            <button class="vault-modal-btn confirm" onclick="moveToVault()">Move to Vault</button>
+                        </div>
+                    </div>
                 </div>
 
                 <jsp:include page="../public/footer.jsp" />
@@ -364,6 +578,179 @@
                         let count = parseInt(countEl.textContent);
                         countEl.textContent = this.classList.contains('liked') ? count + 1 : count - 1;
                     });
+
+                    // Vault modal functions
+                    function openVaultModal() {
+                        document.getElementById('vaultModal').classList.add('active');
+                        document.getElementById('vaultPasswordInput').focus();
+                    }
+
+                    function closeVaultModal() {
+                        document.getElementById('vaultModal').classList.remove('active');
+                        document.getElementById('vaultPasswordInput').value = '';
+                    }
+
+                    function moveToVault() {
+                        const password = document.getElementById('vaultPasswordInput').value;
+                        if (!password) {
+                            alert('Please enter your vault password');
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        formData.append('type', 'memory');
+                        formData.append('id', '${memory.memoryId}');
+                        formData.append('action', 'add');
+                        formData.append('vaultPassword', password);
+
+                        fetch('${pageContext.request.contextPath}/moveToVault', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Memory moved to vault successfully!');
+                                    window.location.href = '${pageContext.request.contextPath}/memories';
+                                } else if (data.redirectToSetup) {
+                                    alert('You need to set up your vault first. You will be redirected to create a vault password.');
+                                    window.location.href = '${pageContext.request.contextPath}/vaultSetup';
+                                } else {
+                                    alert('Error: ' + (data.error || 'Failed to move to vault'));
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Error moving to vault. Please try again.');
+                            });
+
+                        closeVaultModal();
+                    }
+
+                    // Close vault modal on background click
+                    document.getElementById('vaultModal').addEventListener('click', function (e) {
+                        if (e.target === this) {
+                            closeVaultModal();
+                        }
+                    });
+
+                    // Generate and copy invite link for collaborative memories
+                    function generateAndCopyLink() {
+                        const btn = document.getElementById('copyLinkBtn');
+                        const btnText = document.getElementById('copyLinkBtnText');
+
+                        btn.disabled = true;
+                        btnText.textContent = 'Generating...';
+
+                        fetch('${pageContext.request.contextPath}/memory/generate-invite', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'memoryId=${memory.memoryId}'
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Copy to clipboard
+                                    navigator.clipboard.writeText(data.inviteUrl).then(() => {
+                                        btnText.textContent = 'Copied!';
+                                        setTimeout(() => {
+                                            btnText.textContent = 'Get Link';
+                                            btn.disabled = false;
+                                        }, 2000);
+                                    }).catch(() => {
+                                        // Fallback for older browsers
+                                        const tempInput = document.createElement('input');
+                                        tempInput.value = data.inviteUrl;
+                                        document.body.appendChild(tempInput);
+                                        tempInput.select();
+                                        document.execCommand('copy');
+                                        document.body.removeChild(tempInput);
+
+                                        btnText.textContent = 'Copied!';
+                                        setTimeout(() => {
+                                            btnText.textContent = 'Get Link';
+                                            btn.disabled = false;
+                                        }, 2000);
+                                    });
+                                } else {
+                                    alert('Failed to generate invite link: ' + (data.error || 'Unknown error'));
+                                    btnText.textContent = 'Get Link';
+                                    btn.disabled = false;
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error generating invite link:', err);
+                                alert('Error generating invite link');
+                                btnText.textContent = 'Get Link';
+                                btn.disabled = false;
+                            });
+                    }
+
+                    // Toggle members panel visibility
+                    function toggleMembersPanel() {
+                        const panel = document.getElementById('membersPanel');
+                        if (panel) {
+                            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                        }
+                    }
+
+                    // Remove a member from the collab memory (owner only)
+                    function removeMember(userId, username) {
+                        if (!confirm('Are you sure you want to remove ' + username + ' from this memory?')) {
+                            return;
+                        }
+
+                        fetch('${pageContext.request.contextPath}/memory/members?memoryId=${memory.memoryId}&userId=' + userId, {
+                            method: 'DELETE'
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Remove the member badge from UI
+                                    const badge = document.querySelector('.member-badge[data-user-id="' + userId + '"]');
+                                    if (badge) {
+                                        badge.remove();
+                                    }
+                                    alert(username + ' has been removed from this memory.');
+                                } else {
+                                    alert('Failed to remove member: ' + (data.error || 'Unknown error'));
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error removing member:', err);
+                                alert('Error removing member. Please try again.');
+                            });
+                    }
+
+                    // Leave a collab memory (for non-owners)
+                    function leaveCollabMemory() {
+                        if (!confirm('Are you sure you want to leave this collab memory? You can rejoin using an invite link.')) {
+                            return;
+                        }
+
+                        fetch('${pageContext.request.contextPath}/memory/leave', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'memoryId=${memory.memoryId}'
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('You have left this collab memory.');
+                                    window.location.href = '${pageContext.request.contextPath}/collabmemories';
+                                } else {
+                                    alert('Failed to leave: ' + (data.error || 'Unknown error'));
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error leaving memory:', err);
+                                alert('Error leaving memory. Please try again.');
+                            });
+                    }
                 </script>
             </body>
 

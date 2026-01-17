@@ -2,6 +2,7 @@ package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.dao.MediaDAO;
+import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
 
@@ -22,6 +23,7 @@ public class CreateMemoryServlet extends HttpServlet {
 
     private memoryDAO memoryDAO;
     private MediaDAO mediaDAO;
+    private MemoryMemberDAO memberDAO;
 
     // Logical path stored in DB
     private static final String LOGICAL_UPLOAD_DIR = "media_uploads";
@@ -34,6 +36,7 @@ public class CreateMemoryServlet extends HttpServlet {
         super.init();
         memoryDAO = new memoryDAO();
         mediaDAO = new MediaDAO();
+        memberDAO = new MemoryMemberDAO();
 
         // Create the physical directory if it doesn't exist
         try {
@@ -80,6 +83,10 @@ public class CreateMemoryServlet extends HttpServlet {
                 return;
             }
 
+            // Check if this is a collaborative memory
+            String isCollabParam = request.getParameter("isCollab");
+            boolean isCollab = "true".equalsIgnoreCase(isCollabParam);
+
             Memory memory = new Memory();
             memory.setTitle(memoryName.trim());
             memory.setDescription(memoryDate != null ? "Created on " + memoryDate : "");
@@ -88,6 +95,13 @@ public class CreateMemoryServlet extends HttpServlet {
 
             int memoryId = memoryDAO.createMemory(memory);
             System.out.println("Memory created with ID: " + memoryId);
+
+            // If collaborative, set is_collaborative flag and add creator as owner
+            if (isCollab) {
+                memoryDAO.setMemoryCollaborative(memoryId);
+                memberDAO.addMemberSimple(memoryId, userId, "owner");
+                System.out.println("Set memory " + memoryId + " as collaborative, added user " + userId + " as owner");
+            }
 
             Collection<Part> fileParts = request.getParts();
             int uploadedCount = 0;
