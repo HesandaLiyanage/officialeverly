@@ -114,6 +114,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/groupmemories", "/views/app/groupmemories.jsp");
         routeToJsp.put("/groupmembers", "/views/app/groupmembers.jsp");
         routeToJsp.put("/groupannouncement", "/views/app/groupannouncement.jsp");
+        routeToJsp.put("/createannouncement", "/views/app/createannouncement.jsp");
+        routeToJsp.put("/viewannouncement", "/views/app/viewannouncement.jsp");
         routeToJsp.put("/writeautograph", "/views/app/writeautograph.jsp");
         routeToJsp.put("/eventinfo", "/views/app/eventinfo.jsp");
         routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
@@ -242,6 +244,25 @@ public class FrontControllerServlet extends HttpServlet {
         if ("/groupmembers".equals(path)) {
             logger.info("Routing /groupmembers to GroupMembersServlet");
             request.getRequestDispatcher("/groupmembersservlet").forward(request, response);
+            return;
+        }
+
+        // Group Announcement routes
+        if ("/groupannouncement".equals(path)) {
+            logger.info("Routing /groupannouncement to GroupAnnouncementServlet");
+            request.getRequestDispatcher("/groupannouncementservlet").forward(request, response);
+            return;
+        }
+
+        if ("/createannouncement".equals(path)) {
+            logger.info("Routing /createannouncement to CreateAnnouncementServlet");
+            request.getRequestDispatcher("/createannouncementservlet").forward(request, response);
+            return;
+        }
+
+        if ("/viewannouncement".equals(path)) {
+            logger.info("Routing /viewannouncement to ViewAnnouncementServlet");
+            request.getRequestDispatcher("/viewannouncementservlet").forward(request, response);
             return;
         }
 
