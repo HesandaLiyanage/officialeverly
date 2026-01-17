@@ -102,6 +102,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/vaultPassword", "/views/app/vaultPassword.jsp");
         routeToJsp.put("/vaultSetup", "/views/app/vaultSetup.jsp");
         routeToJsp.put("/autographview", "/views/app/Autographs/viewautograph.jsp");
+        routeToJsp.put("/writeautograph", "/views/app/Autographs/writeautograph.jsp");
         routeToJsp.put("/journalview", "/views/app/journalview.jsp");
         routeToJsp.put("/memoryview", "/views/app/memoryview.jsp");
         routeToJsp.put("/collabmemoryview", "/views/app/collabmemoryview.jsp");
@@ -303,6 +304,41 @@ public class FrontControllerServlet extends HttpServlet {
             logger.warning("Path not found: " + path);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             request.getRequestDispatcher("/views/public/404.jsp").forward(request, response);
+        }
+    }
+
+    public class ShareAutographWriteLogicHandler {
+
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            String shareToken = (String) request.getAttribute("shareToken");
+
+            if (shareToken == null || shareToken.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
+            autographDAO dao = new autographDAO();
+
+            try {
+                autograph ag = dao.getAutographByShareToken(shareToken);
+
+                if (ag == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+
+                // Pass autograph + token to JSP
+                request.setAttribute("autograph", ag);
+                request.setAttribute("shareToken", shareToken);
+
+                request.getRequestDispatcher(
+                        "/views/app/Autographs/writeautograph.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
         }
     }
 

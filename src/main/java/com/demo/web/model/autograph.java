@@ -20,6 +20,7 @@ public class autograph {
     public void setShareToken(String shareToken) {
         this.shareToken = shareToken;
     }
+
     // Default constructor
     public autograph() {
     }
@@ -87,4 +88,3 @@ public class autograph {
                 '}';
     }
 }
-
