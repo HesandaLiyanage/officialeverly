@@ -310,6 +310,33 @@
         <url-pattern>/invite/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>CollabMemoriesServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemoriesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CollabMemoriesServlet</servlet-name>
+        <url-pattern>/collabmemories</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CollabMembersServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.CollabMembersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CollabMembersServlet</servlet-name>
+        <url-pattern>/memory/members</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LeaveCollabServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.LeaveCollabServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LeaveCollabServlet</servlet-name>
+        <url-pattern>/memory/leave</url-pattern>
+    </servlet-mapping>
+
     <!-- Authentication Filter -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>

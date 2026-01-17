@@ -41,12 +41,12 @@ public class CollabMemoriesServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
+        if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        int userId = (int) session.getAttribute("userId");
+        int userId = (int) session.getAttribute("user_id");
 
         try {
             // Get all memberships for this user

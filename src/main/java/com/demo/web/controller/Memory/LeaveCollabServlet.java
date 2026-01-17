@@ -33,13 +33,13 @@ public class LeaveCollabServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
 
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
+        if (session == null || session.getAttribute("user_id") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"error\": \"Not logged in\"}");
             return;
         }
 
-        int userId = (int) session.getAttribute("userId");
+        int userId = (int) session.getAttribute("user_id");
         String memoryIdStr = request.getParameter("memoryId");
 
         if (memoryIdStr == null || memoryIdStr.isEmpty()) {
