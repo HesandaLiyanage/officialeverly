@@ -13,7 +13,9 @@ import com.demo.web.model.Event;
 import com.demo.web.model.UserSession;
 import com.demo.web.model.autograph;
 import com.demo.web.dao.JournalStreakDAO;
+import com.demo.web.dao.AutographEntryDAO;
 import com.demo.web.model.JournalStreak;
+import com.demo.web.model.AutographEntry;
 
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -166,7 +168,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/generateShareLink", new GenerateShareLinkLogicHandler());
 
         // Remove this if using servlet
-}
+    }
 
     /**
      * Generates a unique random token for share links
@@ -251,6 +253,15 @@ public class FrontControllerServlet extends HttpServlet {
             String shareToken = path.substring("/share/".length());
             request.setAttribute("shareToken", shareToken);
             new ShareLinkViewLogicHandler().execute(request, response);
+            return;
+        }
+
+        // Route /sharedview/* to handle viewing autograph entries (token-only access)
+        if (path.startsWith("/sharedview/")) {
+            logger.info("Routing shared view to SharedAutographViewLogicHandler");
+            String shareToken = path.substring("/sharedview/".length());
+            request.setAttribute("shareToken", shareToken);
+            new SharedAutographViewLogicHandler().execute(request, response);
             return;
         }
 
@@ -492,9 +503,10 @@ public class FrontControllerServlet extends HttpServlet {
                     return;
                 }
 
-                // Redirect to the autograph view page with ID
-                response.sendRedirect(request.getContextPath() +
-                        "/autographview?id=" + ag.getAutographId());
+                // Forward to the write autograph page
+                request.setAttribute("autograph", ag);
+                request.setAttribute("shareToken", shareToken);
+                request.getRequestDispatcher("/views/app/Autographs/writeautograph.jsp").forward(request, response);
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -507,6 +519,7 @@ public class FrontControllerServlet extends HttpServlet {
             }
         }
     }
+
     // Inner class implementing the logic for generating share links
     private static class GenerateShareLinkLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
@@ -545,7 +558,9 @@ public class FrontControllerServlet extends HttpServlet {
                 String baseUrl = request.getScheme() + "://" +
                         request.getServerName() +
                         (request.getServerPort() != 80 && request.getServerPort() != 443
-                                ? ":" + request.getServerPort() : "") +
+                                ? ":" + request.getServerPort()
+                                : "")
+                        +
                         request.getContextPath();
 
                 String shareUrl = baseUrl + "/share/" + shareToken;
@@ -1174,6 +1189,56 @@ public class FrontControllerServlet extends HttpServlet {
                 e.printStackTrace();
                 request.setAttribute("error", "An error occurred while loading the journal entry: " + e.getMessage());
                 request.getRequestDispatcher("/views/app/journals.jsp").forward(request, response);
+            }
+        }
+    }
+
+    private static class SharedAutographViewLogicHandler implements LogicHandler {
+        private autographDAO autographDAO;
+        private AutographEntryDAO entryDAO;
+
+        public SharedAutographViewLogicHandler() {
+            this.autographDAO = new autographDAO();
+            this.entryDAO = new AutographEntryDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            String shareToken = (String) request.getAttribute("shareToken");
+
+            if (shareToken == null || shareToken.trim().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid share link");
+                return;
+            }
+
+            try {
+                autograph ag = autographDAO.getAutographByShareToken(shareToken);
+
+                if (ag == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Autograph not found");
+                    return;
+                }
+
+                // Load entries for this autograph
+                List<AutographEntry> entries = entryDAO.findByAutographId(ag.getAutographId());
+
+                request.setAttribute("autograph", ag);
+                request.setAttribute("entries", entries);
+                request.setAttribute("shareToken", shareToken);
+
+                request.getRequestDispatcher("/views/app/Autographs/sharedautographview.jsp").forward(request,
+                        response);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Error loading autograph entries");
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Error loading autograph entries");
             }
         }
     }
