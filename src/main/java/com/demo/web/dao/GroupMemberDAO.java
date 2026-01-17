@@ -74,7 +74,7 @@ public class GroupMemberDAO {
         List<GroupMember> members = new ArrayList<>();
         String sql = "SELECT gm.group_id, gm.role, gm.joined_at, gm.status, u.user_id, u.username, u.email, u.profile_picture_url " +
                 "FROM group_member gm " +
-                "JOIN \"user\" u ON gm.member_id = u.user_id " +
+                "JOIN users u ON gm.member_id = u.user_id " +
                 "WHERE gm.group_id = ? " +
                 "ORDER BY CASE WHEN gm.role = 'admin' THEN 0 ELSE 1 END, gm.joined_at";
         try (Connection conn = getConnection();
