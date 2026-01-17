@@ -65,7 +65,12 @@ public class AutographEntryDAO {
                 stmt.setString(1, newToken);
                 stmt.setString(2, entry.getContent());
                 stmt.setInt(3, entry.getAutographId());
-                stmt.setInt(4, entry.getUserId());
+
+                if (entry.getUserId() == 0) {
+                    stmt.setNull(4, java.sql.Types.INTEGER);
+                } else {
+                    stmt.setInt(4, entry.getUserId());
+                }
 
                 int rowsInserted = stmt.executeUpdate();
 

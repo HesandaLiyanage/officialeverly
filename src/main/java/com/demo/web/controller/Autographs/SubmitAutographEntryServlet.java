@@ -38,8 +38,7 @@ public class SubmitAutographEntryServlet extends HttpServlet {
 
         // Get form parameters
         String shareToken = request.getParameter("shareToken");
-        String message = request.getParameter("message");
-        String author = request.getParameter("author");
+        String content = request.getParameter("content");
         String decorations = request.getParameter("decorations");
 
         // Validate share token
@@ -50,8 +49,9 @@ public class SubmitAutographEntryServlet extends HttpServlet {
         }
 
         // Validate message
-        if (message == null || message.trim().isEmpty()) {
-            System.out.println("[DEBUG SubmitAutographEntryServlet] Empty message");
+        // Validate content
+        if (content == null || content.trim().isEmpty()) {
+            System.out.println("[DEBUG SubmitAutographEntryServlet] Empty content");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Message is required");
             return;
         }
@@ -76,9 +76,8 @@ public class SubmitAutographEntryServlet extends HttpServlet {
             if (session != null && session.getAttribute("user_id") != null) {
                 userId = (Integer) session.getAttribute("user_id");
             } else {
-                // For guests, we could use the autograph owner's ID or a designated guest ID
-                // Using the autograph owner's ID for simplicity
-                userId = ag.getUserId();
+                // For guests, we utilize 0 as the ID which the DAO handles as NULL
+                userId = 0;
             }
 
             // Create the entry
@@ -86,19 +85,18 @@ public class SubmitAutographEntryServlet extends HttpServlet {
             entry.setAutographId(ag.getAutographId());
             entry.setUserId(userId);
 
-            // Combine author name with message for content field
-            // Format: "Author: Message [Decorations JSON]"
-            String fullContent = author + ": " + message;
+            // Combine content with decorations if present
+            String fullContent = content;
             if (decorations != null && !decorations.isEmpty() && !decorations.equals("[]")) {
                 fullContent += " |DECORATIONS|" + decorations;
             }
 
-            // Truncate if needed (content column is VARCHAR(50) based on schema)
-            // Note: You may want to increase this limit in the database
-            if (fullContent.length() > 50) {
-                System.out.println("[DEBUG SubmitAutographEntryServlet] Warning: Content truncated from "
-                        + fullContent.length() + " to 50 chars");
-                fullContent = fullContent.substring(0, 50);
+            // Truncate if needed (content column is VARCHAR(50) based on schema, but we
+            // hope for more)
+            // INCREASED LIMIT TO 500 characters assumption (or it will fail on DB side if
+            // strict)
+            if (fullContent.length() > 5000) {
+                fullContent = fullContent.substring(0, 5000);
             }
 
             entry.setContent(fullContent);
