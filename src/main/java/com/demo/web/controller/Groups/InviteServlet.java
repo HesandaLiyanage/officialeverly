@@ -104,7 +104,7 @@ public class InviteServlet extends HttpServlet {
             System.out.println("[DEBUG InviteServlet] Successfully added user " + userId + " to group " + groupId);
             response.sendRedirect(request.getContextPath() + "/groupmembers?groupId=" + groupId + "&msg=Successfully joined " + group.getName());
         } else {
-            System.out.println("[DEBUG InviteServlet] Failed to add user " + userId + " to group " + groupId);
+            System.err.println("[ERROR InviteServlet] Failed to add user " + userId + " to group " + groupId + ". Check GroupMemberDAO logs for SQL errors.");
             response.sendRedirect(request.getContextPath() + "/groups?error=Failed to join group");
         }
     }

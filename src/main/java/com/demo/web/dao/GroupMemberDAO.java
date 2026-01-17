@@ -31,7 +31,7 @@ public class GroupMemberDAO {
 
     // Create (Add a member to a group)
     public boolean addGroupMember(GroupMember gm) {
-        String sql = "INSERT INTO group_member (group_id, user_id, role, joined_at, status) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO group_member (group_id, member_id, role, joined_at, status) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, gm.getGroupId());
@@ -43,7 +43,9 @@ public class GroupMemberDAO {
             System.out.println("[DEBUG GroupMemberDAO] addGroupMember: Added " + rows + " member(s) to group " + gm.getGroupId());
             return rows > 0;
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupMemberDAO] Error adding group member: " + e.getMessage());
+            String errorMsg = "[ERROR GroupMemberDAO] Error adding group member: " + e.getMessage() + 
+                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+            System.err.println(errorMsg);
             e.printStackTrace();
             return false;
         }
@@ -51,7 +53,7 @@ public class GroupMemberDAO {
 
     // Check if user is already a member of the group
     public boolean isUserMember(int groupId, int userId) {
-        String sql = "SELECT COUNT(*) as cnt FROM group_member WHERE group_id = ? AND user_id = ?";
+        String sql = "SELECT COUNT(*) as cnt FROM group_member WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);
@@ -63,7 +65,9 @@ public class GroupMemberDAO {
                 return isMember;
             }
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupMemberDAO] Error checking membership: " + e.getMessage());
+            String errorMsg = "[ERROR GroupMemberDAO] Error checking membership: " + e.getMessage() +
+                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+            System.err.println(errorMsg);
             e.printStackTrace();
         }
         return false;
@@ -74,7 +78,7 @@ public class GroupMemberDAO {
         List<GroupMember> members = new ArrayList<>();
         String sql = "SELECT gm.group_id, gm.role, gm.joined_at, gm.status, u.user_id, u.username, u.email, u.profile_picture_url " +
                 "FROM group_member gm " +
-                "JOIN users u ON gm.user_id = u.user_id " +
+                "JOIN users u ON gm.member_id = u.user_id " +
                 "WHERE gm.group_id = ? " +
                 "ORDER BY CASE WHEN gm.role = 'admin' THEN 0 ELSE 1 END, gm.joined_at";
         try (Connection conn = getConnection();
@@ -99,7 +103,9 @@ public class GroupMemberDAO {
             }
             System.out.println("[DEBUG GroupMemberDAO] getMembersByGroupId: Found " + members.size() + " members for group " + groupId);
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupMemberDAO] Error getting members: " + e.getMessage());
+            String errorMsg = "[ERROR GroupMemberDAO] Error getting members: " + e.getMessage() +
+                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+            System.err.println(errorMsg);
             e.printStackTrace();
         }
         return members;
@@ -107,7 +113,7 @@ public class GroupMemberDAO {
 
     // Update membership details (role, status)
     public boolean updateGroupMember(GroupMember gm) {
-        String sql = "UPDATE group_member SET role = ?, joined_at = ?, status = ? WHERE group_id = ? AND user_id = ?";
+        String sql = "UPDATE group_member SET role = ?, joined_at = ?, status = ? WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, gm.getRole());
@@ -117,7 +123,9 @@ public class GroupMemberDAO {
             stmt.setInt(5, gm.getUser().getId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupMemberDAO] Error updating member: " + e.getMessage());
+            String errorMsg = "[ERROR GroupMemberDAO] Error updating member: " + e.getMessage() +
+                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+            System.err.println(errorMsg);
             e.printStackTrace();
             return false;
         }
@@ -125,14 +133,16 @@ public class GroupMemberDAO {
 
     // Delete (remove member from group)
     public boolean deleteGroupMember(int groupId, int userId) {
-        String sql = "DELETE FROM group_member WHERE group_id = ? AND user_id = ?";
+        String sql = "DELETE FROM group_member WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);
             stmt.setInt(2, userId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupMemberDAO] Error deleting member: " + e.getMessage());
+            String errorMsg = "[ERROR GroupMemberDAO] Error deleting member: " + e.getMessage() +
+                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+            System.err.println(errorMsg);
             e.printStackTrace();
             return false;
         }
