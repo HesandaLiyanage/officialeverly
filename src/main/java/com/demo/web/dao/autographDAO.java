@@ -37,6 +37,7 @@ public class autographDAO {
     public String getOrCreateShareToken(int autographId) throws SQLException {
         String selectSql = "SELECT share_token FROM autograph WHERE autograph_id = ?";
         String updateSql = "UPDATE autograph SET share_token = ? WHERE autograph_id = ?";
+        String newToken = generateToken();
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
@@ -52,7 +53,6 @@ public class autographDAO {
             }
 
             // Generate new token
-            String newToken = java.util.UUID.randomUUID().toString().replace("-", "");
 
             try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
                 updateStmt.setString(1, newToken);
@@ -199,4 +199,16 @@ public class autographDAO {
         autograph.setAutographPicUrl(rs.getString("autograph_pic_url"));
         return autograph;
     }
+    // ✅ ADD THIS HERE (outside all other methods)
+    private String generateToken() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder token = new StringBuilder();
+        java.util.Random random = new java.util.Random();
+
+        for (int i = 0; i < 12; i++) {
+            token.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return token.toString();
+    }
+
 }
