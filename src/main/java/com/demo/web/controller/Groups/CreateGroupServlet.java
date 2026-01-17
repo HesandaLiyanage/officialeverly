@@ -1,7 +1,10 @@
 package com.demo.web.controller.Groups;
 
 import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.model.Group;
+import com.demo.web.model.GroupMember;
+import com.demo.web.model.user;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -24,11 +27,13 @@ import java.util.UUID;
 public class CreateGroupServlet extends HttpServlet {
 
     private GroupDAO groupDAO;
+    private GroupMemberDAO groupMemberDAO;
     private static final String UPLOAD_DIR = "resources/db images";
 
     @Override
     public void init() throws ServletException {
         groupDAO = new GroupDAO();
+        groupMemberDAO = new GroupMemberDAO();
     }
 
     @Override
@@ -164,6 +169,23 @@ public class CreateGroupServlet extends HttpServlet {
 
             if (success) {
                 System.out.println("[DEBUG CreateGroupServlet] Group created successfully");
+                
+                // Get the newly created group to get its ID
+                Group createdGroup = groupDAO.findByUrl(cleanedLink);
+                if (createdGroup != null) {
+                    // Add creator as admin member
+                    GroupMember adminMember = new GroupMember();
+                    adminMember.setGroupId(createdGroup.getGroupId());
+                    user creatorUser = new user();
+                    creatorUser.setId(userId);
+                    adminMember.setUser(creatorUser);
+                    adminMember.setRole("admin");
+                    adminMember.setJoinedAt(new Timestamp(System.currentTimeMillis()));
+                    adminMember.setStatus("active");
+                    groupMemberDAO.addGroupMember(adminMember);
+                    System.out.println("[DEBUG CreateGroupServlet] Added creator as admin member");
+                }
+                
                 // Redirect to groups dashboard with success message
                 session.setAttribute("successMessage", "Group created successfully!");
                 response.sendRedirect(request.getContextPath() + "/groups");

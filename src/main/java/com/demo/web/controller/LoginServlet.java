@@ -115,6 +115,15 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
+            // Check for pending invite token (from group invite link)
+            HttpSession session = request.getSession();
+            String pendingInviteToken = (String) session.getAttribute("pendingInviteToken");
+            if (pendingInviteToken != null) {
+                session.removeAttribute("pendingInviteToken");
+                response.sendRedirect(request.getContextPath() + "/invite/" + pendingInviteToken);
+                return;
+            }
+
             // Redirect to original page or /memories
             String returnUrl = request.getParameter("return");
             if (returnUrl != null && !returnUrl.isEmpty()) {
