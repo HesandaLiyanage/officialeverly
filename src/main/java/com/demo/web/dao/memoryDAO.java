@@ -280,32 +280,6 @@ public class memoryDAO {
     }
 
     // ============================================
-    // COLLABORATIVE MEMORY METHODS
-    // ============================================
-
-    /**
-     * Set a memory as collaborative
-     */
-    public boolean setMemoryCollaborative(int memoryId) throws SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = DatabaseUtil.getConnection();
-            String sql = "UPDATE memory SET is_collaborative = TRUE WHERE memory_id = ?";
-
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, memoryId);
-
-            int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
-
-        } finally {
-            closeResources(null, stmt, conn);
-        }
-    }
-
-    // ============================================
     // VAULT METHODS
     // ============================================
 

@@ -291,7 +291,7 @@
                         <!-- Collaborative Memory Section -->
                         <c:if test="${isCollaborative}">
                             <div class="collab-section"
-                                style="background: #9A74D8; border-radius: 12px; padding: 20px; margin-bottom: 24px; color: white;">
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 20px; margin-bottom: 24px; color: white;">
                                 <div
                                     style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
                                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -312,22 +312,11 @@
                                         </div>
                                     </div>
 
-                                    <div style="display: flex; gap: 10px; align-items: center;">
-                                        <!-- Owner Only: Share Link & Manage Members -->
-                                        <c:if test="${isOwner}">
-                                            <button type="button" onclick="toggleMembersPanel()"
-                                                style="padding: 10px 16px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2">
-                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                    <circle cx="9" cy="7" r="4"></circle>
-                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                                </svg>
-                                                Manage
-                                            </button>
+                                    <!-- Invite Link for Owner Only -->
+                                    <c:if test="${isOwner}">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
                                             <button type="button" onclick="generateAndCopyLink()" id="copyLinkBtn"
-                                                style="padding: 10px 16px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                                                style="padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2">
                                                     <path
@@ -337,59 +326,29 @@
                                                         d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71">
                                                     </path>
                                                 </svg>
-                                                <span id="copyLinkBtnText">Get Link</span>
+                                                <span id="copyLinkBtnText">Copy Invite Link</span>
                                             </button>
-                                        </c:if>
-
-                                        <!-- Members Only: Leave Button -->
-                                        <c:if test="${not isOwner && isMember}">
-                                            <button type="button" onclick="leaveCollabMemory()"
-                                                style="padding: 10px 16px; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2">
-                                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                                    <polyline points="16 17 21 12 16 7"></polyline>
-                                                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                                                </svg>
-                                                Leave
-                                            </button>
-                                        </c:if>
-                                    </div>
+                                        </div>
+                                    </c:if>
                                 </div>
 
-                                <!-- Member List Panel (for owners) -->
-                                <div id="membersPanel"
-                                    style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);">
-                                    <h4 style="font-size: 14px; margin: 0 0 12px 0; opacity: 0.9;">Members</h4>
-                                    <div id="membersList" style="display: flex; flex-wrap: wrap; gap: 8px;">
-                                        <c:forEach var="member" items="${members}">
-                                            <div class="member-badge" data-user-id="${member.userId}"
-                                                style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; gap: 8px;">
-                                                <span>${member.username}</span>
-                                                <c:choose>
-                                                    <c:when test="${member.role eq 'owner'}">
-                                                        <span
-                                                            style="font-size: 11px; background: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 10px;">Owner</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <c:if test="${isOwner}">
-                                                            <button
-                                                                onclick="removeMember(${member.userId}, '${member.username}')"
-                                                                style="background: none; border: none; color: white; cursor: pointer; padding: 2px; display: flex; align-items: center; opacity: 0.7;"
-                                                                title="Remove member">
-                                                                <svg width="14" height="14" viewBox="0 0 24 24"
-                                                                    fill="none" stroke="currentColor" stroke-width="2">
-                                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                                </svg>
-                                                            </button>
-                                                        </c:if>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </div>
-                                        </c:forEach>
+                                <!-- Member List (collapsed by default, expand on click) -->
+                                <c:if test="${not empty members}">
+                                    <div
+                                        style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);">
+                                        <div style="font-size: 13px; opacity: 0.9;">
+                                            <c:forEach var="member" items="${members}" varStatus="status">
+                                                <span
+                                                    style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; margin: 4px;">
+                                                    ${member.username}
+                                                    <c:if test="${member.role eq 'owner'}">
+                                                        <span style="margin-left: 4px; font-size: 11px;">(owner)</span>
+                                                    </c:if>
+                                                </span>
+                                            </c:forEach>
+                                        </div>
                                     </div>
-                                </div>
+                                </c:if>
                             </div>
                         </c:if>
 
@@ -654,9 +613,9 @@
                                 if (data.success) {
                                     // Copy to clipboard
                                     navigator.clipboard.writeText(data.inviteUrl).then(() => {
-                                        btnText.textContent = 'Copied!';
+                                        btnText.textContent = 'Link Copied!';
                                         setTimeout(() => {
-                                            btnText.textContent = 'Get Link';
+                                            btnText.textContent = 'Copy Invite Link';
                                             btn.disabled = false;
                                         }, 2000);
                                     }).catch(() => {
@@ -668,87 +627,23 @@
                                         document.execCommand('copy');
                                         document.body.removeChild(tempInput);
 
-                                        btnText.textContent = 'Copied!';
+                                        btnText.textContent = 'Link Copied!';
                                         setTimeout(() => {
-                                            btnText.textContent = 'Get Link';
+                                            btnText.textContent = 'Copy Invite Link';
                                             btn.disabled = false;
                                         }, 2000);
                                     });
                                 } else {
                                     alert('Failed to generate invite link: ' + (data.error || 'Unknown error'));
-                                    btnText.textContent = 'Get Link';
+                                    btnText.textContent = 'Copy Invite Link';
                                     btn.disabled = false;
                                 }
                             })
                             .catch(err => {
                                 console.error('Error generating invite link:', err);
                                 alert('Error generating invite link');
-                                btnText.textContent = 'Get Link';
+                                btnText.textContent = 'Copy Invite Link';
                                 btn.disabled = false;
-                            });
-                    }
-
-                    // Toggle members panel visibility
-                    function toggleMembersPanel() {
-                        const panel = document.getElementById('membersPanel');
-                        if (panel) {
-                            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-                        }
-                    }
-
-                    // Remove a member from the collab memory (owner only)
-                    function removeMember(userId, username) {
-                        if (!confirm('Are you sure you want to remove ' + username + ' from this memory?')) {
-                            return;
-                        }
-
-                        fetch('${pageContext.request.contextPath}/memory/members?memoryId=${memory.memoryId}&userId=' + userId, {
-                            method: 'DELETE'
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // Remove the member badge from UI
-                                    const badge = document.querySelector('.member-badge[data-user-id="' + userId + '"]');
-                                    if (badge) {
-                                        badge.remove();
-                                    }
-                                    alert(username + ' has been removed from this memory.');
-                                } else {
-                                    alert('Failed to remove member: ' + (data.error || 'Unknown error'));
-                                }
-                            })
-                            .catch(err => {
-                                console.error('Error removing member:', err);
-                                alert('Error removing member. Please try again.');
-                            });
-                    }
-
-                    // Leave a collab memory (for non-owners)
-                    function leaveCollabMemory() {
-                        if (!confirm('Are you sure you want to leave this collab memory? You can rejoin using an invite link.')) {
-                            return;
-                        }
-
-                        fetch('${pageContext.request.contextPath}/memory/leave', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: 'memoryId=${memory.memoryId}'
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.success) {
-                                    alert('You have left this collab memory.');
-                                    window.location.href = '${pageContext.request.contextPath}/collabmemories';
-                                } else {
-                                    alert('Failed to leave: ' + (data.error || 'Unknown error'));
-                                }
-                            })
-                            .catch(err => {
-                                console.error('Error leaving memory:', err);
-                                alert('Error leaving memory. Please try again.');
                             });
                     }
                 </script>
