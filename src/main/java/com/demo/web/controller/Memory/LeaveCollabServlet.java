@@ -4,7 +4,6 @@ import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.model.MemoryMember;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +15,6 @@ import java.io.IOException;
  * Servlet to allow members to leave a collaborative memory.
  * Owners cannot leave - they would need to delete the memory.
  */
-@WebServlet("/memory/leave")
 public class LeaveCollabServlet extends HttpServlet {
 
     private MemoryMemberDAO memberDao;

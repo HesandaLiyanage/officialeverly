@@ -8,7 +8,6 @@ import com.demo.web.model.MemoryMember;
 import com.demo.web.model.MediaItem;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +21,6 @@ import java.util.List;
  * Servlet to list collaborative memories for the current user.
  * Shows memories where the user is either the owner or a member.
  */
-@WebServlet("/collabmemories")
 public class CollabMemoriesServlet extends HttpServlet {
 
     private memoryDAO memoryDao;

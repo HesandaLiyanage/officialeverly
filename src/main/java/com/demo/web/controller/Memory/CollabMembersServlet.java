@@ -5,7 +5,6 @@ import com.demo.web.model.MemoryMember;
 import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +20,6 @@ import java.util.Map;
  * GET: List members of a memory
  * DELETE: Remove a member (owner only)
  */
-@WebServlet("/memory/members")
 public class CollabMembersServlet extends HttpServlet {
 
     private MemoryMemberDAO memberDao;
