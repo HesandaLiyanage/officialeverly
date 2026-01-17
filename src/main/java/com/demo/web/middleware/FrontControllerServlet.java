@@ -433,9 +433,11 @@ public class FrontControllerServlet extends HttpServlet {
     // Inner class implementing the logic for /autographview
     private static class AutographViewLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
+        private AutographEntryDAO entryDAO;
 
         public AutographViewLogicHandler() {
             this.autographDAO = new autographDAO();
+            this.entryDAO = new AutographEntryDAO();
         }
 
         @Override
@@ -470,7 +472,13 @@ public class FrontControllerServlet extends HttpServlet {
                 return;
             }
 
-            request.setAttribute("autograph", autographDetail);
+            try {
+                List<AutographEntry> entries = entryDAO.findByAutographId(autographId);
+                request.setAttribute("autograph", autographDetail);
+                request.setAttribute("entries", entries);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             request.getRequestDispatcher("/views/app/Autographs/viewautograph.jsp").forward(request, response);
         }
