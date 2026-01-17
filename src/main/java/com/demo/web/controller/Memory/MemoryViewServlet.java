@@ -1,9 +1,11 @@
 package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.MediaDAO;
+import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Memory;
+import com.demo.web.model.MemoryMember;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,16 +17,20 @@ import java.util.List;
 
 /**
  * Servlet for viewing a single memory with its associated media
+ * Supports both regular memories (owner only) and collaborative memories (owner
+ * + members)
  */
 public class MemoryViewServlet extends HttpServlet {
 
     private memoryDAO memoryDao;
     private MediaDAO mediaDao;
+    private MemoryMemberDAO memberDao;
 
     @Override
     public void init() throws ServletException {
         memoryDao = new memoryDAO();
         mediaDao = new MediaDAO();
+        memberDao = new MemoryMemberDAO();
     }
 
     @Override
@@ -56,10 +62,31 @@ public class MemoryViewServlet extends HttpServlet {
                 return;
             }
 
-            // Check access: user must be the owner
+            // Check access: user must be the owner OR a member of a collaborative memory
             boolean isOwner = (memory.getUserId() == userId);
+            boolean isMember = false;
+            boolean isCollaborative = false;
+            MemoryMember membership = null;
+            List<MemoryMember> members = null;
 
-            if (!isOwner) {
+            // Check if this is a collaborative memory
+            try {
+                membership = memberDao.getMember(memoryId, userId);
+                if (membership != null) {
+                    isMember = true;
+                    isCollaborative = true;
+                    isOwner = "owner".equals(membership.getRole());
+
+                    // Get all members for display
+                    members = memberDao.getMembersOfMemory(memoryId);
+                }
+            } catch (Exception e) {
+                // Not a collaborative memory or error checking membership
+                // Continue with regular access check
+            }
+
+            // Check access
+            if (!isOwner && !isMember) {
                 request.setAttribute("errorMessage", "You don't have permission to view this memory");
                 request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
                 return;
@@ -72,6 +99,9 @@ public class MemoryViewServlet extends HttpServlet {
             request.setAttribute("memory", memory);
             request.setAttribute("mediaItems", mediaItems);
             request.setAttribute("isOwner", isOwner);
+            request.setAttribute("isMember", isMember);
+            request.setAttribute("isCollaborative", isCollaborative);
+            request.setAttribute("members", members);
 
             // Forward to view page
             request.getRequestDispatcher("/views/app/memoryview.jsp").forward(request, response);
