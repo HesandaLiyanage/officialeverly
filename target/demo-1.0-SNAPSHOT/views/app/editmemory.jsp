@@ -61,6 +61,74 @@
                 </div>
               </div>
 
+              <!-- Collaboration Settings Section -->
+              <div class="form-group">
+                <label class="form-label">Collaboration Settings</label>
+                <div class="collab-section" style="background: #f8f9fb; border-radius: 12px; padding: 20px;">
+                  <c:choose>
+                    <c:when test="${memory.collaborative}">
+                      <!-- Memory is already collaborative -->
+                      <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2"
+                          style="margin-right: 10px;">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="8.5" cy="7" r="4"></circle>
+                          <line x1="20" y1="8" x2="20" y2="14"></line>
+                          <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        <span style="font-weight: 600; color: #667eea;">This is a collaborative memory</span>
+                      </div>
+
+                      <!-- Generate New Invite Link Button -->
+                      <button type="button" id="generateLinkBtn" onclick="generateInviteLink()"
+                        style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 16px;">
+                        Generate New Invite Link
+                      </button>
+
+                      <!-- Invite Link Display -->
+                      <div id="inviteLinkSection"
+                        style="display: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 16px; color: white;">
+                        <div style="display: flex; gap: 10px;">
+                          <input type="text" id="inviteLinkInput" readonly
+                            style="flex: 1; padding: 12px; border-radius: 8px; border: none; background: rgba(255,255,255,0.2); color: white;">
+                          <button type="button" onclick="copyInviteLink()"
+                            style="padding: 12px 20px; background: white; color: #667eea; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            Copy
+                          </button>
+                        </div>
+                      </div>
+                    </c:when>
+                    <c:otherwise>
+                      <!-- Memory is not collaborative - show toggle -->
+                      <label class="toggle-wrapper" style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="collabToggle" name="makeCollab"
+                          style="width: 20px; height: 20px; margin-right: 12px; accent-color: #667eea;"
+                          onchange="handleCollabToggle(this)">
+                        <div>
+                          <span style="font-weight: 600; color: #1a1a2e;">Make this a collaborative memory</span>
+                          <p style="font-size: 13px; color: #6b7280; margin-top: 4px;">
+                            Allow others to add photos and content via an invite link
+                          </p>
+                        </div>
+                      </label>
+
+                      <!-- Invite Link Section (shown when generating) -->
+                      <div id="inviteLinkSection"
+                        style="display: none; margin-top: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 16px; color: white;">
+                        <div style="display: flex; gap: 10px;">
+                          <input type="text" id="inviteLinkInput" readonly
+                            style="flex: 1; padding: 12px; border-radius: 8px; border: none; background: rgba(255,255,255,0.2); color: white;">
+                          <button type="button" onclick="copyInviteLink()"
+                            style="padding: 12px 20px; background: white; color: #667eea; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            Copy
+                          </button>
+                        </div>
+                      </div>
+                    </c:otherwise>
+                  </c:choose>
+                </div>
+              </div>
+
               <!-- Existing Media Display -->
               <div class="form-group">
                 <label class="form-label">Current Media</label>
@@ -284,6 +352,74 @@
 
             // Form submission is handled normally by HTML form POST
           });
+
+          // Generate invite link function
+          function generateInviteLink() {
+            const memoryId = '${memory.memoryId}';
+            const btn = document.getElementById('generateLinkBtn');
+            if (btn) {
+              btn.disabled = true;
+              btn.textContent = 'Generating...';
+            }
+
+            fetch('${pageContext.request.contextPath}/memory/generate-invite', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body: 'memoryId=' + memoryId
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  const inviteLinkSection = document.getElementById('inviteLinkSection');
+                  const inviteLinkInput = document.getElementById('inviteLinkInput');
+                  inviteLinkSection.style.display = 'block';
+                  inviteLinkInput.value = data.inviteUrl;
+
+                  if (btn) {
+                    btn.textContent = 'Generate New Invite Link';
+                    btn.disabled = false;
+                  }
+                } else {
+                  alert('Failed to generate invite link: ' + (data.error || 'Unknown error'));
+                  if (btn) {
+                    btn.textContent = 'Generate New Invite Link';
+                    btn.disabled = false;
+                  }
+                }
+              })
+              .catch(err => {
+                console.error('Error generating invite link:', err);
+                alert('Error generating invite link');
+                if (btn) {
+                  btn.textContent = 'Generate New Invite Link';
+                  btn.disabled = false;
+                }
+              });
+          }
+          window.generateInviteLink = generateInviteLink;
+
+          // Handle collab toggle checkbox change
+          function handleCollabToggle(checkbox) {
+            if (checkbox.checked) {
+              generateInviteLink();
+            }
+          }
+          window.handleCollabToggle = handleCollabToggle;
+
+          // Copy invite link to clipboard
+          function copyInviteLink() {
+            const inviteLinkInput = document.getElementById('inviteLinkInput');
+            inviteLinkInput.select();
+            document.execCommand('copy');
+
+            event.target.textContent = 'Copied!';
+            setTimeout(() => {
+              event.target.textContent = 'Copy';
+            }, 2000);
+          }
+          window.copyInviteLink = copyInviteLink;
         </script>
 
       </body>
