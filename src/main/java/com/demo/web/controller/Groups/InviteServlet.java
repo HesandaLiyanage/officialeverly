@@ -9,7 +9,6 @@ import com.demo.web.model.GroupMember;
 import com.demo.web.model.user;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-@WebServlet("/invite/*")
 public class InviteServlet extends HttpServlet {
 
     private GroupInviteDAO groupInviteDAO;
