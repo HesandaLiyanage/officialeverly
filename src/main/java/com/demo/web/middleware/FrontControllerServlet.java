@@ -238,6 +238,13 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
+        // Route /groupmembers to GroupMembersServlet
+        if ("/groupmembers".equals(path)) {
+            logger.info("Routing /groupmembers to GroupMembersServlet");
+            request.getRequestDispatcher("/groupmembersservlet").forward(request, response);
+            return;
+        }
+
         logger.info("FrontController: Handling GET/POST request for path: " + path);
 
         if ("POST".equals(request.getMethod())) {

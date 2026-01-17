@@ -255,7 +255,35 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>editgroupservlet</servlet-name>
-        <url-pattern>/editgroupservlet</url-pattern>  <!-- or /process-login if you want different URL -->
+        <url-pattern>/editgroupservlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- Group Invite Servlets -->
+    <servlet>
+        <servlet-name>InviteServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.InviteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InviteServlet</servlet-name>
+        <url-pattern>/invite/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GenerateInviteLinkServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.GenerateInviteLinkServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GenerateInviteLinkServlet</servlet-name>
+        <url-pattern>/group/invite/generate</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GroupMembersServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.GroupMembersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupMembersServlet</servlet-name>
+        <url-pattern>/groupmembersservlet</url-pattern>
     </servlet-mapping>
 
     <servlet>
