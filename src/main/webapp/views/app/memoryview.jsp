@@ -371,7 +371,7 @@
                                         <div class="photo-item" onclick="openLightbox(${status.index})"
                                             data-media-id="${media.mediaId}">
                                             <!-- Debug: All media items should use viewmedia servlet -->
-                                            <img src="${pageContext.request.contextPath}/viewmedia?id=${media.mediaId}"
+                                            <img src="${pageContext.request.contextPath}/viewMedia?mediaId=${media.mediaId}"
                                                 alt="${media.title}" loading="lazy"
                                                 onerror="console.error('Failed to load media ID: ${media.mediaId}'); this.style.background='#ffcccc';">
                                         </div>
