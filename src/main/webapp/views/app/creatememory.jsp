@@ -99,9 +99,7 @@
                                 </div>
                                 <h3 class="upload-title">Add Media</h3>
                                 <p class="upload-description">Drag and drop or click to upload photos and videos</p>
-                                <p class="upload-description" style="font-size: 12px; color: #666; margin-top: 5px;">
-                                    🔒 All files will be encrypted automatically
-                                </p>
+
                                 <button type="button" class="browse-btn" id="browseBtn">Browse Files</button>
                                 <input type="file" class="file-input" id="fileInput" name="mediaFiles"
                                     accept="image/*,video/*" multiple hidden />
@@ -131,9 +129,9 @@
         <div id="loadingOverlay"
             style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
             <div style="text-align: center; color: white;">
-                <div style="font-size: 48px; margin-bottom: 20px;">🔒</div>
-                <h2>Encrypting and uploading...</h2>
-                <p>Please wait while we secure your memories</p>
+                <div style="font-size: 48px; margin-bottom: 20px;">📸</div>
+                <h2>Uploading your memory...</h2>
+                <p>Please wait while we save your files</p>
             </div>
         </div>
 
@@ -264,7 +262,7 @@
                     // Show loading overlay
                     loadingOverlay.style.display = 'flex';
                     submitBtn.disabled = true;
-                    btnText.textContent = 'Encrypting...';
+                    btnText.textContent = 'Uploading...';
 
                     console.log('Uploading memory:', memoryName);
                     console.log('Files:', fileInput.files.length);
@@ -320,7 +318,7 @@
                                     .catch(err => {
                                         console.error('Invite link error:', err);
                                         loadingOverlay.style.display = 'none';
-                                        alert('Memory created! Files uploaded and encrypted. (Invite link generation failed)');
+                                        alert('Memory created! Files uploaded. (Invite link generation failed)');
                                         window.location.href = '${pageContext.request.contextPath}/memories';
                                     });
                             } else {
@@ -328,7 +326,7 @@
                                 loadingOverlay.style.display = 'none';
 
                                 // Show success message
-                                alert('Memory created successfully! ' + data.filesUploaded + ' files uploaded and encrypted.');
+                                alert('Memory created successfully! ' + data.filesUploaded + ' files uploaded.');
 
                                 // Redirect to memories page
                                 window.location.href = '${pageContext.request.contextPath}/memories';

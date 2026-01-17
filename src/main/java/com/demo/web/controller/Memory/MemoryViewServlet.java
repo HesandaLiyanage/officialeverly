@@ -1,13 +1,10 @@
 package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.MediaDAO;
-import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Memory;
-import com.demo.web.model.MemoryMember;
 
-import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,19 +15,16 @@ import java.util.List;
 
 /**
  * Servlet for viewing a single memory with its associated media
- * Supports both owned memories and collaborative memories
  */
 public class MemoryViewServlet extends HttpServlet {
 
     private memoryDAO memoryDao;
     private MediaDAO mediaDao;
-    private MemoryMemberDAO memberDao;
 
     @Override
     public void init() throws ServletException {
         memoryDao = new memoryDAO();
         mediaDao = new MediaDAO();
-        memberDao = new MemoryMemberDAO();
     }
 
     @Override
@@ -62,17 +56,10 @@ public class MemoryViewServlet extends HttpServlet {
                 return;
             }
 
-            // Check access: user is owner OR user is a member of collaborative memory
+            // Check access: user must be the owner
             boolean isOwner = (memory.getUserId() == userId);
-            boolean isMember = false;
-            MemoryMember currentMember = null;
 
-            if (memory.isCollaborative()) {
-                currentMember = memberDao.getMember(memoryId, userId);
-                isMember = (currentMember != null);
-            }
-
-            if (!isOwner && !isMember) {
+            if (!isOwner) {
                 request.setAttribute("errorMessage", "You don't have permission to view this memory");
                 request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
                 return;
@@ -81,24 +68,10 @@ public class MemoryViewServlet extends HttpServlet {
             // Fetch associated media items
             List<MediaItem> mediaItems = mediaDao.getMediaByMemoryId(memoryId);
 
-            // Check if master key is available for decryption
-            SecretKey masterKey = (SecretKey) session.getAttribute("masterKey");
-            boolean encryptionAvailable = (masterKey != null);
-
-            // For collaborative memories, fetch member list
-            List<MemoryMember> members = null;
-            if (memory.isCollaborative()) {
-                members = memberDao.getMembersOfMemory(memoryId);
-            }
-
             // Set attributes for JSP
             request.setAttribute("memory", memory);
             request.setAttribute("mediaItems", mediaItems);
-            request.setAttribute("encryptionAvailable", encryptionAvailable);
             request.setAttribute("isOwner", isOwner);
-            request.setAttribute("isMember", isMember);
-            request.setAttribute("isCollaborative", memory.isCollaborative());
-            request.setAttribute("members", members);
 
             // Forward to view page
             request.getRequestDispatcher("/views/app/memoryview.jsp").forward(request, response);

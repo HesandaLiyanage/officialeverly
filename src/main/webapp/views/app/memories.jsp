@@ -13,7 +13,6 @@
                     <main class="main-content">
                         <div class="tab-nav">
                             <button class="active">Memories</button>
-                            <button onclick="window.location.href='/collabmemories'">Collab Memories</button>
                             <button onclick="window.location.href='/memoryrecap'">Memory Recap</button>
                         </div>
 
@@ -37,16 +36,6 @@
                                 Date
                             </button>
                         </div>
-
-                        <!-- Show warning if encryption not available -->
-                        <c:if test="${not encryptionAvailable}">
-                            <div
-                                style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 8px;">
-                                <strong>⚠️ Encryption Not Available</strong>
-                                <p>Your encryption keys are not loaded. Please logout and login again to view encrypted
-                                    memories.</p>
-                            </div>
-                        </c:if>
 
                         <!-- Show error message if any -->
                         <c:if test="${not empty errorMessage}">
@@ -85,15 +74,8 @@
                                         <div class="memory-card" data-title="${memory.title}"
                                             onclick="location.href='/memoryview?id=${memory.memoryId}'"
                                             style="cursor: pointer;">
-                                            <!-- Cover image - will be decrypted by ViewMediaServlet -->
+                                            <!-- Cover image -->
                                             <div class="memory-image" style="background-image: url('${finalCover}');">
-                                                <!-- Encryption indicator -->
-                                                <c:if test="${encryptionAvailable}">
-                                                    <div
-                                                        style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px;">
-                                                        🔒 Encrypted
-                                                    </div>
-                                                </c:if>
                                             </div>
 
                                             <!-- Memory details -->
@@ -164,17 +146,7 @@
 
                 <jsp:include page="../public/footer.jsp" />
 
-                <!-- Optional: Loading indicator for images -->
                 <style>
-                    .memory-image img {
-                        transition: opacity 0.3s ease;
-                    }
-
-                    .memory-image img[src*="viewMedia"] {
-                        background: #f0f0f0;
-                    }
-
-                    /* Optional: Add loading spinner */
                     .memory-card {
                         transition: transform 0.2s ease, box-shadow 0.2s ease;
                     }
@@ -284,22 +256,6 @@
                                 });
                             });
                         }
-
-                        // Add loading indicator for encrypted images
-                        const images = document.querySelectorAll('.memory-image img[src*="viewMedia"]');
-                        images.forEach(img => {
-                            img.style.opacity = '0.5';
-
-                            img.addEventListener('load', function () {
-                                img.style.opacity = '1';
-                                console.log('✓ Loaded:', img.src);
-                            });
-
-                            img.addEventListener('error', function () {
-                                console.error('✗ Failed to load:', img.src);
-                                img.style.opacity = '1';
-                            });
-                        });
                     });
                 </script>
             </body>

@@ -15,15 +15,6 @@ public class Memory {
     private Timestamp expiresAt;
     private boolean isLinkShared;
 
-    // Collaborative memory fields
-    private boolean isCollaborative;
-    private String groupKeyId;
-
-    // Option C: Token-encrypted group key for sharing
-    private byte[] tokenEncryptedGroupKey;
-    private byte[] groupKeySalt;
-    private byte[] groupKeyIv;
-
     // Constructors
     public Memory() {
     }
@@ -125,46 +116,6 @@ public class Memory {
         isLinkShared = linkShared;
     }
 
-    public boolean isCollaborative() {
-        return isCollaborative;
-    }
-
-    public void setCollaborative(boolean collaborative) {
-        isCollaborative = collaborative;
-    }
-
-    public String getGroupKeyId() {
-        return groupKeyId;
-    }
-
-    public void setGroupKeyId(String groupKeyId) {
-        this.groupKeyId = groupKeyId;
-    }
-
-    public byte[] getTokenEncryptedGroupKey() {
-        return tokenEncryptedGroupKey;
-    }
-
-    public void setTokenEncryptedGroupKey(byte[] tokenEncryptedGroupKey) {
-        this.tokenEncryptedGroupKey = tokenEncryptedGroupKey;
-    }
-
-    public byte[] getGroupKeySalt() {
-        return groupKeySalt;
-    }
-
-    public void setGroupKeySalt(byte[] groupKeySalt) {
-        this.groupKeySalt = groupKeySalt;
-    }
-
-    public byte[] getGroupKeyIv() {
-        return groupKeyIv;
-    }
-
-    public void setGroupKeyIv(byte[] groupKeyIv) {
-        this.groupKeyIv = groupKeyIv;
-    }
-
     // Temporary for display
     private String coverUrl;
 
@@ -181,7 +132,6 @@ public class Memory {
                 ", userId=" + userId +
                 ", coverMediaId=" + coverMediaId +
                 ", isPublic=" + isPublic +
-                ", isCollaborative=" + isCollaborative +
                 ", createdTimestamp=" + createdTimestamp +
                 '}';
     }

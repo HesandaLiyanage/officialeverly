@@ -78,8 +78,7 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
-                    "is_collaborative, group_key_id, token_encrypted_group_key, group_key_salt, group_key_iv " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
                     "FROM memory WHERE memory_id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -110,8 +109,7 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
-                    "is_collaborative, group_key_id, token_encrypted_group_key, group_key_salt, group_key_iv " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
                     "FROM memory WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL) " +
                     "ORDER BY created_timestamp DESC";
 
@@ -261,11 +259,6 @@ public class memoryDAO {
         memory.setShareKey(rs.getString("share_key"));
         memory.setExpiresAt(rs.getTimestamp("expires_at"));
         memory.setLinkShared(rs.getBoolean("is_link_shared"));
-        memory.setCollaborative(rs.getBoolean("is_collaborative"));
-        memory.setGroupKeyId(rs.getString("group_key_id"));
-        memory.setTokenEncryptedGroupKey(rs.getBytes("token_encrypted_group_key"));
-        memory.setGroupKeySalt(rs.getBytes("group_key_salt"));
-        memory.setGroupKeyIv(rs.getBytes("group_key_iv"));
 
         return memory;
     }
@@ -287,86 +280,6 @@ public class memoryDAO {
     }
 
     // ============================================
-    // COLLABORATIVE MEMORY METHODS
-    // ============================================
-
-    /**
-     * Set a memory as collaborative and assign a group key
-     */
-    public boolean setCollaborative(int memoryId, String groupKeyId) throws SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = DatabaseUtil.getConnection();
-            String sql = "UPDATE memory SET is_collaborative = TRUE, group_key_id = ? WHERE memory_id = ?";
-
-            stmt = conn.prepareStatement(sql);
-            stmt.setString(1, groupKeyId);
-            stmt.setInt(2, memoryId);
-
-            int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
-
-        } finally {
-            closeResources(null, stmt, conn);
-        }
-    }
-
-    /**
-     * Simple method to set memory collaborative status (no encryption)
-     */
-    public boolean setMemoryCollaborative(int memoryId, boolean isCollaborative) throws SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = DatabaseUtil.getConnection();
-            String sql = "UPDATE memory SET is_collaborative = ? WHERE memory_id = ?";
-
-            stmt = conn.prepareStatement(sql);
-            stmt.setBoolean(1, isCollaborative);
-            stmt.setInt(2, memoryId);
-
-            int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
-
-        } finally {
-            closeResources(null, stmt, conn);
-        }
-    }
-
-    /**
-     * Store the token-encrypted group key (Option C)
-     * This allows anyone with the invite token to decrypt the group key
-     */
-    public boolean storeTokenEncryptedGroupKey(int memoryId, String groupKeyId,
-            byte[] encryptedGroupKey, byte[] salt, byte[] iv) throws SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = DatabaseUtil.getConnection();
-            String sql = "UPDATE memory SET is_collaborative = TRUE, group_key_id = ?, " +
-                    "token_encrypted_group_key = ?, group_key_salt = ?, group_key_iv = ? " +
-                    "WHERE memory_id = ?";
-
-            stmt = conn.prepareStatement(sql);
-            stmt.setString(1, groupKeyId);
-            stmt.setBytes(2, encryptedGroupKey);
-            stmt.setBytes(3, salt);
-            stmt.setBytes(4, iv);
-            stmt.setInt(5, memoryId);
-
-            int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
-
-        } finally {
-            closeResources(null, stmt, conn);
-        }
-    }
-
-    // ============================================
     // VAULT METHODS
     // ============================================
 
@@ -382,8 +295,7 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
-                    "is_collaborative, group_key_id, token_encrypted_group_key, group_key_salt, group_key_iv " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
                     "FROM memory WHERE user_id = ? AND is_in_vault = TRUE " +
                     "ORDER BY created_timestamp DESC";
 

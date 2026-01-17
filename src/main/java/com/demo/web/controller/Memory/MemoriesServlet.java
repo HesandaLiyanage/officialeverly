@@ -5,7 +5,6 @@ import com.demo.web.dao.MediaDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
 
-import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -41,10 +40,6 @@ public class MemoriesServlet extends HttpServlet {
 
         Integer userId = (Integer) session.getAttribute("user_id");
 
-        // Check if user has master key (encryption available)
-        SecretKey masterKey = (SecretKey) session.getAttribute("masterKey");
-        boolean encryptionAvailable = (masterKey != null);
-
         try {
             // Get all memories for this user
             List<Memory> memories = memoryDAO.getMemoriesByUserId(userId);
@@ -61,7 +56,7 @@ public class MemoriesServlet extends HttpServlet {
                         // Use first media item as cover
                         MediaItem coverMedia = mediaItems.get(0);
 
-                        // Store media ID for cover (will be decrypted when displayed)
+                        // Store media ID for cover
                         request.setAttribute("cover_" + memory.getMemoryId(),
                                 request.getContextPath() + "/viewMedia?mediaId=" + coverMedia.getMediaId());
 
@@ -80,7 +75,6 @@ public class MemoriesServlet extends HttpServlet {
 
             // Set memories in request
             request.setAttribute("memories", memories);
-            request.setAttribute("encryptionAvailable", encryptionAvailable);
 
             // Forward to JSP
             request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
@@ -92,19 +86,3 @@ public class MemoriesServlet extends HttpServlet {
         }
     }
 }
-
-/*
- * HOW THIS WORKS:
- *
- * 1. User navigates to /memories
- * 2. Check if logged in
- * 3. Check if encryption available
- * 4. Get all memories for user
- * 5. For each memory:
- * - Get first media item (cover photo)
- * - Create URL to viewMedia servlet
- * - Store in request attributes
- * 6. Forward to JSP
- * 7. JSP displays covers using <img src="/viewMedia?mediaId=X">
- * 8. Browser requests /viewMedia which decrypts and serves image
- */

@@ -1,7 +1,6 @@
 package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.InviteLinkDAO;
-import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.Memory;
 
@@ -16,7 +15,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 /**
- * Servlet for generating invite links for collaborative memories
+ * Servlet for generating share links for memories
  * 
  * POST /memory/generate-invite
  * Parameters:
@@ -28,13 +27,11 @@ public class GenerateInviteLinkServlet extends HttpServlet {
 
     private memoryDAO memoryDao;
     private InviteLinkDAO inviteLinkDao;
-    private MemoryMemberDAO memberDao;
 
     @Override
     public void init() throws ServletException {
         memoryDao = new memoryDAO();
         inviteLinkDao = new InviteLinkDAO();
-        memberDao = new MemoryMemberDAO();
     }
 
     @Override
@@ -82,17 +79,6 @@ public class GenerateInviteLinkServlet extends HttpServlet {
 
             // Generate a simple token
             String token = generateSimpleToken();
-
-            // If memory is not yet collaborative, make it collaborative
-            if (!memory.isCollaborative()) {
-                // Add owner as the first member (simple - no encryption)
-                memberDao.addMemberSimple(memoryId, userId, "owner");
-
-                // Mark memory as collaborative
-                memoryDao.setMemoryCollaborative(memoryId, true);
-
-                System.out.println("Memory " + memoryId + " is now collaborative");
-            }
 
             // Parse optional expiration time
             Timestamp expiresAt = null;
