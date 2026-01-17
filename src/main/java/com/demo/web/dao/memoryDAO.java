@@ -314,6 +314,29 @@ public class memoryDAO {
     }
 
     /**
+     * Simple method to set memory collaborative status (no encryption)
+     */
+    public boolean setMemoryCollaborative(int memoryId, boolean isCollaborative) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE memory SET is_collaborative = ? WHERE memory_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setBoolean(1, isCollaborative);
+            stmt.setInt(2, memoryId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
      * Store the token-encrypted group key (Option C)
      * This allows anyone with the invite token to decrypt the group key
      */

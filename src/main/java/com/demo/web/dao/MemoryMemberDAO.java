@@ -42,6 +42,32 @@ public class MemoryMemberDAO {
     }
 
     /**
+     * Add a member to a collaborative memory (simple - no encryption)
+     */
+    public boolean addMemberSimple(int memoryId, int userId, String role) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "INSERT INTO memory_member (memory_id, user_id, role) " +
+                    "VALUES (?, ?, ?) " +
+                    "ON CONFLICT (memory_id, user_id) DO NOTHING";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            stmt.setInt(2, userId);
+            stmt.setString(3, role);
+
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
      * Check if a user is a member of a memory
      */
     public boolean isUserMemberOf(int memoryId, int userId) throws SQLException {

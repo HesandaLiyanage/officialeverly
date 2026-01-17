@@ -6,12 +6,10 @@ import com.demo.web.model.user;
 import com.demo.web.util.PasswordUtil;
 import com.demo.web.util.SessionUtil;
 
-import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
 import java.io.IOException;
 
@@ -66,42 +64,11 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        // Authenticate user (YOUR EXISTING CODE - UNCHANGED)
+        // Authenticate user
         user user = userDAO.findByemail(username);
         if (user != null && PasswordUtil.verifyPassword(password, user.getSalt(), user.getPassword())) {
             // Login success: create session (HTTP + Database)
             SessionUtil.createSession(request, user);
-
-            // ============================================
-            // NEW: Unlock encryption master key
-            // ============================================
-            try {
-                SecretKey masterKey = userDAO.unlockUserMasterKey(user.getId(), password);
-
-                // Store master key in session
-                HttpSession session = request.getSession();
-                session.setAttribute("masterKey", masterKey);
-
-                // Also store in session DAO cache (for load balancing)
-                String sessionId = (String) session.getAttribute("sessionId");
-                if (sessionId != null) {
-                    userSessionDAO.storeMasterKeyInCache(sessionId, masterKey);
-                }
-
-                System.out.println("✓ Encryption keys unlocked for user: " + user.getUsername());
-
-            } catch (Exception e) {
-                // User authenticated but encryption keys unavailable (old account or error)
-                System.err.println("⚠ Warning: Could not unlock encryption keys for user: " + user.getUsername());
-                System.err.println("  Reason: " + e.getMessage());
-
-                // Don't fail login - user can still access app
-                // But they won't be able to encrypt/decrypt files
-                // You might want to redirect them to setup encryption later
-            }
-            // ============================================
-            // END NEW CODE
-            // ============================================
 
             // Handle "Remember Me" if checkbox is checked
             String rememberMe = rememberMeToken;
@@ -129,7 +96,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     /**
-     * Handle remember me functionality - UNCHANGED
+     * Handle remember me functionality
      */
     private void handleRememberMe(int userId, HttpServletResponse response) {
         try {
@@ -148,7 +115,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     /**
-     * Check for remember me token and auto-login - UNCHANGED
+     * Check for remember me token and auto-login
      */
     private user checkRememberMeToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -170,21 +137,3 @@ public class LoginServlet extends HttpServlet {
         return null;
     }
 }
-
-/*
- * CHANGES MADE:
- *
- * 1. Added import: javax.crypto.SecretKey
- * 2. Added ~15 lines after successful authentication to unlock master key
- * 3. Everything else UNCHANGED
- *
- * WHAT THIS DOES:
- * - After user successfully logs in (your existing auth)
- * - Tries to unlock their encryption master key
- * - If successful: stores in session
- * - If fails: logs warning but login still succeeds
- *
- * BACKWARD COMPATIBLE:
- * - Old accounts without encryption: login still works (just can't encrypt files)
- * - New accounts with encryption: login works + can encrypt files
- */

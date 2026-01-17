@@ -25,10 +25,9 @@ public class MediaItem {
     private boolean isSplit;
     private byte[] encryptionIv;
 
-
     // Constructors
     public MediaItem() {
-        this.isEncrypted = true; // Default to encrypted
+        this.isEncrypted = false; // Default to NOT encrypted
         this.isPublic = false;
         this.splitCount = 1;
         this.isSplit = false;
@@ -195,9 +194,13 @@ public class MediaItem {
         isSplit = split;
     }
 
-    public byte[] getEncryptionIv() { return encryptionIv; }
+    public byte[] getEncryptionIv() {
+        return encryptionIv;
+    }
 
-    public void setEncryptionIv(byte[] iv) { this.encryptionIv = iv; }
+    public void setEncryptionIv(byte[] iv) {
+        this.encryptionIv = iv;
+    }
 
     @Override
     public String toString() {

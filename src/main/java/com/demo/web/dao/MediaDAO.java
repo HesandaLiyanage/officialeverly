@@ -60,6 +60,54 @@ public class MediaDAO {
     }
 
     /**
+     * Save media metadata to database WITHOUT encryption
+     * Simple CRUD operation for non-encrypted media
+     */
+    public int createMediaItemSimple(MediaItem mediaItem) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "INSERT INTO media_items (user_id, filename, original_filename, file_path, " +
+                    "file_size, mime_type, media_type, title, description, is_encrypted, " +
+                    "encryption_key_id, encryption_iv, original_file_size, is_split, split_count) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING media_id";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, mediaItem.getUserId());
+            stmt.setString(2, mediaItem.getFilename());
+            stmt.setString(3, mediaItem.getOriginalFilename());
+            stmt.setString(4, mediaItem.getFilePath());
+            stmt.setLong(5, mediaItem.getFileSize());
+            stmt.setString(6, mediaItem.getMimeType());
+            stmt.setString(7, mediaItem.getMediaType());
+            stmt.setString(8, mediaItem.getTitle());
+            stmt.setString(9, mediaItem.getDescription());
+            stmt.setBoolean(10, false); // is_encrypted = false
+            stmt.setNull(11, Types.VARCHAR); // encryption_key_id = null
+            stmt.setNull(12, Types.BINARY); // encryption_iv = null
+            stmt.setLong(13, mediaItem.getOriginalFileSize());
+            stmt.setBoolean(14, false); // is_split = false
+            stmt.setInt(15, 1); // split_count = 1
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int mediaId = rs.getInt("media_id");
+                mediaItem.setMediaId(mediaId);
+                return mediaId;
+            }
+
+            throw new SQLException("Failed to create media item, no ID obtained");
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    /**
      * Get all media for a memory (via memory_media join table)
      */
     public List<MediaItem> getMediaForMemory(int memoryId) throws SQLException {

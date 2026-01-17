@@ -5,10 +5,7 @@ import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.InviteLink;
 import com.demo.web.model.Memory;
-import com.demo.web.model.MemoryMember;
-import com.demo.web.util.EncryptionService;
 
-import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -133,13 +130,6 @@ public class CollabInviteServlet extends HttpServlet {
         }
 
         Integer userId = (Integer) session.getAttribute("user_id");
-        SecretKey masterKey = (SecretKey) session.getAttribute("masterKey");
-
-        if (masterKey == null) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("{\"error\": \"Encryption key missing. Please log out and log in again.\"}");
-            return;
-        }
 
         try {
             // Validate the invite link
@@ -167,45 +157,13 @@ public class CollabInviteServlet extends HttpServlet {
                 return;
             }
 
-            // OPTION C: Decrypt group key using the token from the URL
-            // The token was used to encrypt the group key when the invite was generated
-            byte[] tokenEncryptedGroupKey = memory.getTokenEncryptedGroupKey();
-            byte[] groupKeySalt = memory.getGroupKeySalt();
-            byte[] groupKeyIv = memory.getGroupKeyIv();
-
-            if (tokenEncryptedGroupKey == null || groupKeySalt == null || groupKeyIv == null) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write(
-                        "{\"error\": \"This memory's invite link may have expired or been regenerated. Please request a new invite link.\"}");
-                return;
-            }
-
-            // Decrypt the group key using the token from the invite URL
-            SecretKey groupKey = EncryptionService.decryptGroupKeyWithToken(
-                    tokenEncryptedGroupKey, groupKeyIv, token, groupKeySalt);
-
-            // Get user's master key to re-encrypt the group key for their use
-            SecretKey userMasterKey = (SecretKey) session.getAttribute("masterKey");
-            if (userMasterKey == null) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("{\"error\": \"Encryption key missing. Please log out and log in again.\"}");
-                return;
-            }
-
-            // Re-encrypt the group key with the new user's master key
-            EncryptionService.EncryptedData userEncryptedGroupKey = EncryptionService.encryptGroupKeyForUser(groupKey,
-                    userMasterKey);
-
-            // Add member with their own encrypted copy of the group key
-            memberDao.addMember(memory.getMemoryId(), userId, "contributor",
-                    userEncryptedGroupKey.getEncryptedData(),
-                    userEncryptedGroupKey.getIv());
+            // Add member to memory (simple CRUD - no encryption)
+            memberDao.addMemberSimple(memory.getMemoryId(), userId, "contributor");
 
             // Increment the use count
             inviteLinkDao.incrementUseCount(token);
 
-            System.out
-                    .println("User " + userId + " joined memory " + memory.getMemoryId() + " (Option C key exchange)");
+            System.out.println("User " + userId + " joined memory " + memory.getMemoryId());
 
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write("{\"success\": true, \"memoryId\": " + memory.getMemoryId() + "}");
@@ -230,15 +188,5 @@ public class CollabInviteServlet extends HttpServlet {
             token = token.substring(0, slashIndex);
         }
         return token;
-    }
-
-    private MemoryMember getOwnerMember(int memoryId) throws Exception {
-        java.util.List<MemoryMember> members = memberDao.getMembersOfMemory(memoryId);
-        for (MemoryMember member : members) {
-            if ("owner".equals(member.getRole())) {
-                return member;
-            }
-        }
-        return null;
     }
 }

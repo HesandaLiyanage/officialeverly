@@ -1,28 +1,21 @@
 package com.demo.web.controller;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import com.demo.web.dao.userDAO;
 import com.demo.web.dao.userSessionDAO;
 import com.demo.web.model.user;
-import com.demo.web.util.PasswordUtil;
 
 public class signupservlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private userDAO userDAO;
     private userSessionDAO userSessionDAO;
 
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
     @Override
     public void init() throws ServletException {
@@ -73,12 +66,17 @@ public class signupservlet extends HttpServlet {
 
         List<String> errors = new ArrayList<>();
 
-        if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) errors.add("Invalid email.");
-        if (password.length() < 6) errors.add("Password too short.");
-        if (!password.equals(confirmPassword)) errors.add("Passwords do not match.");
-        if (!"on".equals(terms)) errors.add("You must agree to Terms.");
+        if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches())
+            errors.add("Invalid email.");
+        if (password.length() < 6)
+            errors.add("Password too short.");
+        if (!password.equals(confirmPassword))
+            errors.add("Passwords do not match.");
+        if (!"on".equals(terms))
+            errors.add("You must agree to Terms.");
 
-        if (userDAO.findByemail(email) != null) errors.add("Email already exists.");
+        if (userDAO.findByemail(email) != null)
+            errors.add("Email already exists.");
 
         if (!errors.isEmpty()) {
             req.setAttribute("errorMessage", String.join(" ", errors));
@@ -125,8 +123,10 @@ public class signupservlet extends HttpServlet {
         }
 
         List<String> errors = new ArrayList<>();
-        if (name.length() < 2 || name.length() > 50) errors.add("Name invalid.");
-        if (bio.length() > 500) errors.add("Bio too long.");
+        if (name.length() < 2 || name.length() > 50)
+            errors.add("Name invalid.");
+        if (bio.length() > 500)
+            errors.add("Bio too long.");
 
         if (!errors.isEmpty()) {
             req.setAttribute("errorMessage", String.join(" ", errors));
@@ -138,14 +138,10 @@ public class signupservlet extends HttpServlet {
             user newUser = new user();
             newUser.setUsername(name);
             newUser.setEmail(email);
-            newUser.setPassword(password); // Raw password - DAO will hash it AND create encryption keys
+            newUser.setPassword(password); // Raw password - DAO will hash it
             newUser.setBio(bio);
             newUser.setProfilePictureUrl("/resources/assets/everlylogo.png");
 
-            // ============================================
-            // This now creates user WITH encryption keys automatically!
-            // Your updated userDAO.createUser() handles everything
-            // ============================================
             boolean created = userDAO.createUser(newUser);
 
             if (created) {
@@ -155,31 +151,7 @@ public class signupservlet extends HttpServlet {
                 session.setAttribute("user_id", newUser.getId());
                 userSessionDAO.createSession(newUser.getId(), session.getId());
 
-                // ============================================
-                // NEW: Unlock the master key after registration
-                // ============================================
-                try {
-                    SecretKey masterKey = userDAO.unlockUserMasterKey(newUser.getId(), password);
-
-                    // Store master key in session
-                    session.setAttribute("masterKey", masterKey);
-
-                    // Also store in session DAO cache
-                    userSessionDAO.storeMasterKeyInCache(session.getId(), masterKey);
-
-                    System.out.println("✓ User registered with encryption: " + newUser.getUsername());
-
-                } catch (Exception e) {
-                    // This shouldn't happen for new users, but handle gracefully
-                    System.err.println("⚠ Warning: User created but encryption keys failed: " + e.getMessage());
-                    e.printStackTrace();
-
-                    // User is created and logged in, but without encryption
-                    // They can set it up later if needed
-                }
-                // ============================================
-                // END NEW CODE
-                // ============================================
+                System.out.println("✓ User registered: " + newUser.getUsername());
 
                 resp.sendRedirect(req.getContextPath() + "/memories");
             } else {
@@ -194,26 +166,3 @@ public class signupservlet extends HttpServlet {
         }
     }
 }
-
-/*
- * CHANGES MADE:
- *
- * 1. Added import: javax.crypto.SecretKey
- * 2. Added ~15 lines after user creation to unlock master key
- * 3. Everything else UNCHANGED
- *
- * WHAT THIS DOES:
- * - userDAO.createUser() now creates BOTH auth credentials AND encryption keys
- * - After successful creation, immediately unlocks the master key
- * - Stores master key in session (user is auto-logged in with encryption ready)
- *
- * YOUR EXISTING FLOW:
- * - Step 1: Email + Password validation (UNCHANGED)
- * - Step 2: Name + Bio → Create user (UNCHANGED logic, enhanced DAO)
- * - NEW: Master key automatically unlocked and stored
- *
- * RESULT:
- * - New users get full encryption automatically
- * - No extra steps required from user
- * - Seamless experience
- */

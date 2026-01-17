@@ -2,13 +2,8 @@ package com.demo.web.controller;
 
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.dao.MemoryMemberDAO;
-import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.MediaItem;
-import com.demo.web.model.Memory;
-import com.demo.web.model.MemoryMember;
-import com.demo.web.util.EncryptionService;
 
-import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,17 +17,15 @@ public class ViewMediaServlet extends HttpServlet {
 
     private MediaDAO mediaDAO;
     private MemoryMemberDAO memberDAO;
-    private memoryDAO memDAO;
 
-    // Must match the physical path used in CreateMemoryServlet
-    private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads_encrypted";
+    // Physical path where files are stored
+    private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads";
 
     @Override
     public void init() throws ServletException {
         super.init();
         mediaDAO = new MediaDAO();
         memberDAO = new MemoryMemberDAO();
-        memDAO = new memoryDAO();
     }
 
     @Override
@@ -48,14 +41,6 @@ public class ViewMediaServlet extends HttpServlet {
         }
 
         Integer userId = (Integer) session.getAttribute("user_id");
-
-        // Get master key from session
-        SecretKey masterKey = (SecretKey) session.getAttribute("masterKey");
-        if (masterKey == null) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN,
-                    "Encryption not available. Please logout and login again.");
-            return;
-        }
 
         // Get media ID from URL (support both 'id' and 'mediaId' parameters)
         String mediaIdParam = request.getParameter("id");
@@ -83,8 +68,6 @@ public class ViewMediaServlet extends HttpServlet {
             }
 
             System.out.println("Found media: " + mediaItem.getOriginalFilename());
-            System.out.println("  - isEncrypted: " + mediaItem.isEncrypted());
-            System.out.println("  - encryptionKeyId: " + mediaItem.getEncryptionKeyId());
             System.out.println("  - filePath: " + mediaItem.getFilePath());
             System.out.println("  - mimeType: " + mediaItem.getMimeType());
             System.out.println("  - mediaUserId: " + mediaItem.getUserId());
@@ -113,164 +96,40 @@ public class ViewMediaServlet extends HttpServlet {
                 return;
             }
 
-            // Check if file is encrypted
-            if (!mediaItem.isEncrypted()) {
-                // File not encrypted - serve directly (shouldn't happen with new system)
-                System.out.println("File is NOT encrypted, serving directly");
-                serveUnencryptedFile(mediaItem, response);
-                return;
-            }
-
-            System.out.println("Starting decryption process...");
-
-            // Determine if this is a collaborator accessing a collaborative memory
-            boolean isCollaborator = (mediaItem.getUserId() != userId);
-            Integer collabMemoryId = null;
-            SecretKey groupKey = null;
-
-            if (isCollaborator) {
-                // Get the memory ID and check if it's collaborative
-                Integer memoryId = mediaDAO.getMemoryIdForMedia(mediaId);
-                if (memoryId != null) {
-                    Memory memory = memDAO.getMemoryById(memoryId);
-                    if (memory != null && memory.isCollaborative()) {
-                        // Get user's encrypted group key from memory_member
-                        MemoryMember membership = memberDAO.getMember(memoryId, userId);
-                        if (membership != null && membership.getEncryptedGroupKey() != null) {
-                            // Decrypt group key with user's master key
-                            groupKey = EncryptionService.decryptGroupKeyForUser(
-                                    membership.getEncryptedGroupKey(),
-                                    membership.getGroupKeyIv(),
-                                    masterKey);
-                            collabMemoryId = memoryId;
-                            System.out.println(
-                                    "Using group key for collaborative memory decryption (memoryId: " + memoryId + ")");
-                        }
-                    }
-                }
-            }
-
-            // Decrypt and serve the file
-            byte[] decryptedData;
-            if (collabMemoryId != null && groupKey != null) {
-                // Collaborator: use group-key-encrypted media key
-                decryptedData = decryptMediaFileForCollaborator(mediaItem, groupKey, collabMemoryId);
-            } else {
-                // Owner: use their own master key
-                decryptedData = decryptMediaFile(mediaItem, masterKey);
-            }
+            // Read and serve the file directly
+            byte[] fileData = readFile(mediaItem.getFilePath());
 
             // Set response headers
             response.setContentType(mediaItem.getMimeType());
-            response.setContentLength(decryptedData.length);
+            response.setContentLength(fileData.length);
 
             // Cache headers (optional - improves performance)
             response.setHeader("Cache-Control", "private, max-age=3600"); // Cache 1 hour
 
-            // Send decrypted file to browser
+            // Send file to browser
             OutputStream out = response.getOutputStream();
-            out.write(decryptedData);
+            out.write(fileData);
             out.flush();
 
-            System.out.println("✓ Served decrypted media: " + mediaItem.getOriginalFilename() +
-                    " (" + decryptedData.length + " bytes)");
+            System.out.println("✓ Served media: " + mediaItem.getOriginalFilename() +
+                    " (" + fileData.length + " bytes)");
 
         } catch (NumberFormatException e) {
             System.out.println("ERROR: Invalid mediaId format: " + mediaIdParam);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid mediaId");
         } catch (Exception e) {
-            System.out.println("ERROR during decryption: " + e.getClass().getName() + " - " + e.getMessage());
+            System.out.println("ERROR: " + e.getClass().getName() + " - " + e.getMessage());
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "Error decrypting media: " + e.getMessage());
+                    "Error serving media: " + e.getMessage());
         }
     }
 
     /**
-     * Decrypt media file
+     * Read file from disk
      */
-    private byte[] decryptMediaFile(MediaItem mediaItem, SecretKey userMasterKey) throws Exception {
-
-        // Step 1: Get encrypted media key from database
-        MediaDAO.EncryptionKeyData keyData = mediaDAO.getMediaEncryptionKey(
-                mediaItem.getEncryptionKeyId(),
-                mediaItem.getUserId());
-
-        if (keyData == null) {
-            throw new Exception("Encryption key not found for media: " + mediaItem.getMediaId());
-        }
-
-        // Step 2: Decrypt media key using user's master key
-        SecretKey mediaKey = EncryptionService.decryptKey(
-                keyData.getEncryptedKey(),
-                keyData.getIv(),
-                userMasterKey);
-
-        System.out.println("  → Decrypted media key for: " + mediaItem.getOriginalFilename());
-
-        // Step 3: Read encrypted file from disk
-        byte[] encryptedFileData = readEncryptedFile(mediaItem.getFilePath());
-
-        System.out.println("  → Read encrypted file: " + encryptedFileData.length + " bytes");
-
-        // Step 4: Decrypt file data
-        byte[] decryptedData = EncryptionService.decrypt(
-                encryptedFileData,
-                mediaItem.getEncryptionIv(),
-                mediaKey);
-
-        System.out.println("  → Decrypted to: " + decryptedData.length + " bytes");
-
-        return decryptedData;
-    }
-
-    /**
-     * Decrypt media file for a collaborator using group-key-encrypted media key
-     */
-    private byte[] decryptMediaFileForCollaborator(MediaItem mediaItem, SecretKey groupKey, int memoryId)
-            throws Exception {
-
-        // Step 1: Get group-key-encrypted media key from database
-        // This was stored when the memory became collaborative
-        MediaDAO.EncryptionKeyData keyData = mediaDAO.getGroupKeyEncryptedMediaKey(
-                mediaItem.getEncryptionKeyId(),
-                memoryId);
-
-        if (keyData == null) {
-            throw new Exception("Group-encrypted key not found for media: " + mediaItem.getMediaId() +
-                    ". This may be older media uploaded before collaboration was enabled.");
-        }
-
-        // Step 2: Decrypt media key using group key
-        SecretKey mediaKey = EncryptionService.decryptKey(
-                keyData.getEncryptedKey(),
-                keyData.getIv(),
-                groupKey);
-
-        System.out.println("  → Decrypted media key using group key for: " + mediaItem.getOriginalFilename());
-
-        // Step 3: Read encrypted file from disk
-        byte[] encryptedFileData = readEncryptedFile(mediaItem.getFilePath());
-
-        System.out.println("  → Read encrypted file: " + encryptedFileData.length + " bytes");
-
-        // Step 4: Decrypt file data
-        byte[] decryptedData = EncryptionService.decrypt(
-                encryptedFileData,
-                mediaItem.getEncryptionIv(),
-                mediaKey);
-
-        System.out.println("  → Decrypted to: " + decryptedData.length + " bytes");
-
-        return decryptedData;
-    }
-
-    /**
-     * Read encrypted file from disk
-     */
-    private byte[] readEncryptedFile(String relativePath) throws IOException {
-        // Extract just the filename from the relative path (e.g.,
-        // "encrypted_uploads/xxx.enc" -> "xxx.enc")
+    private byte[] readFile(String relativePath) throws IOException {
+        // Extract just the filename from the relative path
         String filename = relativePath;
         if (relativePath.contains("/")) {
             filename = relativePath.substring(relativePath.lastIndexOf("/") + 1);
@@ -279,14 +138,14 @@ public class ViewMediaServlet extends HttpServlet {
             filename = relativePath.substring(relativePath.lastIndexOf(File.separator) + 1);
         }
 
-        // Use the physical upload path where files are actually stored
+        // Use the physical upload path where files are stored
         String uploadPath = PHYSICAL_UPLOAD_PATH + File.separator + filename;
         File file = new File(uploadPath);
 
-        System.out.println("  → Looking for encrypted file at: " + uploadPath);
+        System.out.println("  → Looking for file at: " + uploadPath);
 
         if (!file.exists()) {
-            throw new FileNotFoundException("Encrypted file not found: " + uploadPath);
+            throw new FileNotFoundException("File not found: " + uploadPath);
         }
 
         // Read file into byte array
@@ -303,37 +162,6 @@ public class ViewMediaServlet extends HttpServlet {
             return baos.toByteArray();
         }
     }
-
-    /**
-     * Serve unencrypted file (for backwards compatibility)
-     */
-    private void serveUnencryptedFile(MediaItem mediaItem, HttpServletResponse response)
-            throws IOException {
-
-        String uploadPath = getServletContext().getRealPath("") + File.separator + mediaItem.getFilePath();
-        File file = new File(uploadPath);
-
-        if (!file.exists()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
-            return;
-        }
-
-        response.setContentType(mediaItem.getMimeType());
-        response.setContentLength((int) file.length());
-
-        try (FileInputStream fis = new FileInputStream(file);
-                OutputStream out = response.getOutputStream()) {
-
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
-
-            out.flush();
-        }
-    }
 }
 
 /*
@@ -341,20 +169,13 @@ public class ViewMediaServlet extends HttpServlet {
  *
  * 1. Browser requests: /viewMedia?mediaId=101
  * 2. Check user is logged in
- * 3. Check user has master key in session
- * 4. Get media metadata from database
- * 5. Verify user owns this media (security check)
- * 6. Get encrypted media key from database
- * 7. Decrypt media key using master key
- * 8. Read encrypted file from disk
- * 9. Decrypt file using media key
- * 10. Send decrypted bytes to browser
- * 11. Browser displays image!
+ * 3. Get media metadata from database
+ * 4. Verify user has access (owner or collaborative memory member)
+ * 5. Read file from disk
+ * 6. Send bytes to browser
+ * 7. Browser displays image/video!
  *
  * SECURITY:
  * - Only logged-in users can access
- * - Only file owner can view (or group members - todo)
- * - All decryption happens server-side
- * - Decrypted data only in memory, never saved to disk
- * - Master key only in session (memory), not database
+ * - Only file owner or collaborative memory members can view
  */
