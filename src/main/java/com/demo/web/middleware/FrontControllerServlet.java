@@ -20,6 +20,9 @@ import com.demo.web.model.AutographEntry;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.sql.SQLException;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -166,6 +169,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/editjournal", new EditJournalLogicHandler());
         routeToLogic.put("/memories", new MemoryViewLogicHandler());
         routeToLogic.put("/generateShareLink", new GenerateShareLinkLogicHandler());
+        routeToLogic.put("/submit-autograph", new SubmitAutographEntryLogicHandler());
 
         // Remove this if using servlet
     }
@@ -1264,5 +1268,85 @@ public class FrontControllerServlet extends HttpServlet {
         // servlet
         RequestDispatcher dispatcher = request.getRequestDispatcher("/createMemoryServlet");
         dispatcher.forward(request, response);
+    }
+
+    class SubmitAutographEntryLogicHandler implements LogicHandler {
+        private autographDAO autoDAO;
+        private AutographEntryDAO entryDAO;
+
+        public SubmitAutographEntryLogicHandler() {
+            this.autoDAO = new autographDAO();
+            this.entryDAO = new AutographEntryDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            int userId = (Integer) session.getAttribute("user_id");
+            String token = request.getParameter("token");
+            String contentPlain = request.getParameter("content");
+            String author = request.getParameter("author");
+            String decorationsJson = request.getParameter("decorations");
+
+            if (token == null || token.trim().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing token");
+                return;
+            }
+
+            try {
+                autograph ag = autoDAO.getAutographByShareToken(token);
+                if (ag == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Autograph book not found");
+                    return;
+                }
+
+                // Construct Rich HTML
+                StringBuilder richHtml = new StringBuilder();
+                richHtml.append("<div class='rich-autograph-entry'>");
+                richHtml.append("<div class='message-text'>").append(contentPlain).append("</div>");
+                richHtml.append(
+                        "<div class='decorations-layer' style='position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;'>");
+
+                if (decorationsJson != null && !decorationsJson.isEmpty() && !decorationsJson.equals("[]")) {
+                    JsonArray decorations = JsonParser.parseString(decorationsJson).getAsJsonArray();
+                    for (int i = 0; i < decorations.size(); i++) {
+                        JsonObject dec = decorations.get(i).getAsJsonObject();
+                        richHtml.append("<span class='").append(dec.get("className").getAsString()).append("' ")
+                                .append("style='position:absolute; top:").append(dec.get("top").getAsString())
+                                .append("; left:").append(dec.get("left").getAsString()).append(";'>")
+                                .append(dec.get("content").getAsString()).append("</span>");
+                    }
+                }
+                richHtml.append("</div>");
+                richHtml.append("<div class='author-signature'>- ").append(author).append("</div>");
+                richHtml.append("</div>");
+
+                AutographEntry entry = new AutographEntry();
+                entry.setAutographId(ag.getAutographId());
+                entry.setUserId(userId);
+                entry.setContent(richHtml.toString());
+                entry.setContentPlain(contentPlain);
+                entry.setLink(java.util.UUID.randomUUID().toString().substring(0, 8)); // Short unique link for entry
+
+                boolean success = entryDAO.createEntry(entry);
+
+                if (success) {
+                    response.sendRedirect(request.getContextPath() + "/sharedview/" + token);
+                } else {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to save entry");
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new ServletException("Database error during autograph submission", e);
+            }
+        }
     }
 }

@@ -1,3 +1,5 @@
+package com.demo.web.controller.Autographs;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +35,7 @@ public class WriteAutographServlet extends HttpServlet {
             request.setAttribute("shareToken", token);
 
             request.getRequestDispatcher(
-                    "/WEB-INF/views/autograph/writeautograph.jsp"
-            ).forward(request, response);
+                    "/WEB-INF/views/autograph/writeautograph.jsp").forward(request, response);
 
         } catch (Exception e) {
             throw new ServletException(e);
