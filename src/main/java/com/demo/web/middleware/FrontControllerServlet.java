@@ -1319,7 +1319,7 @@ public class FrontControllerServlet extends HttpServlet {
                 // Construct Rich HTML
                 StringBuilder richHtml = new StringBuilder();
                 richHtml.append(
-                        "<div class='rich-autograph-entry' style='position: relative; width: 100%; height: 600px;'>");
+                        "<div class='rich-autograph-entry' style='position: relative; width: 100%; min-height: 600px; height: auto;'>");
 
                 // Message block
                 richHtml.append("<div class='message-text' style='position: absolute; top:")

@@ -232,18 +232,18 @@
                                 let xOffset = 0;
                                 let yOffset = 0;
 
-                                // For elements that already have percentage positions
                                 const updateOffsets = () => {
-                                    const rect = this.decorationsContainer.getBoundingClientRect();
+                                    const rect = document.getElementById('autographPage').getBoundingClientRect();
                                     xOffset = (parseFloat(element.style.left) / 100) * rect.width;
                                     yOffset = (parseFloat(element.style.top) / 100) * rect.height;
                                 };
-                                updateOffsets();
 
                                 element.addEventListener('mousedown', (e) => {
-                                    // Don't drag if clicking inside writing area to type, unless clicking the edge
-                                    if (isWritingArea && e.target === element && (e.offsetX > 20 && e.offsetY > 20)) {
-                                        return;
+                                    if (isWritingArea) {
+                                        const rect = element.getBoundingClientRect();
+                                        const relativeX = e.clientX - rect.left;
+                                        const relativeY = e.clientY - rect.top;
+                                        if (relativeX > 30 && relativeY > 30) return;
                                     }
 
                                     updateOffsets();
@@ -263,29 +263,31 @@
                                         currentX = e.clientX - initialX;
                                         currentY = e.clientY - initialY;
 
-                                        xOffset = currentX;
-                                        yOffset = currentY;
+                                        const rect = document.getElementById('autographPage').getBoundingClientRect();
+                                        let percentX = (currentX / rect.width) * 100;
+                                        let percentY = (currentY / rect.height) * 100;
 
-                                        const rect = this.decorationsContainer.getBoundingClientRect();
-                                        const percentX = (currentX / rect.width) * 100;
-                                        const percentY = (currentY / rect.height) * 100;
+                                        percentX = Math.max(0, Math.min(95, percentX));
+                                        percentY = Math.max(0, Math.min(95, percentY));
 
                                         element.style.left = percentX + '%';
                                         element.style.top = percentY + '%';
+
+                                        xOffset = (percentX / 100) * rect.width;
+                                        yOffset = (percentY / 100) * rect.height;
                                     }
                                 });
 
                                 document.addEventListener('mouseup', () => {
-                                    initialX = currentX;
-                                    initialY = currentY;
-                                    isDragging = false;
-                                    element.style.cursor = 'grab';
-                                    element.style.zIndex = '5';
+                                    if (isDragging) {
+                                        isDragging = false;
+                                        element.style.cursor = 'grab';
+                                        element.style.zIndex = isWritingArea ? '2' : '10';
+                                    }
                                 });
 
-                                // Double click to remove
                                 element.addEventListener('dblclick', () => {
-                                    element.remove();
+                                    if (!isWritingArea && !element.id.includes('author')) element.remove();
                                 });
 
                                 element.style.cursor = 'grab';
