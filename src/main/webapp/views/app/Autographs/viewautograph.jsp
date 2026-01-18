@@ -126,7 +126,7 @@
                             </div>
                             <jsp:include page="../../public/footer.jsp" />
 
-                            <script src="https://cdnjs.cloudflare.com/ajax/libs/gson/2.10.1/gson.min.js"></script>
+
                             <script>
                                 class AutographViewer {
                                     constructor(pages) {
@@ -151,7 +151,7 @@
                                         }
                                         const page = this.pages[this.currentIndex];
                                         this.pageContentEl.innerHTML = page.content;
-                                        this.pageNumberEl.textContent = `Page ${this.currentIndex + 1} of ${this.pages.length}`;
+                                        this.pageNumberEl.textContent = "Page " + (this.currentIndex + 1) + " of " + this.pages.length;
                                     }
                                 }
 
