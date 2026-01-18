@@ -1,11 +1,17 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<%
+    request.setCharacterEncoding("UTF-8");
+    response.setCharacterEncoding("UTF-8");
+%>
     <%@ page import="com.demo.web.model.AutographEntry" %>
         <%@ page import="java.util.List" %>
             <%@ page import="com.google.gson.Gson" %>
                 <jsp:include page="../../public/header2.jsp" />
                 <% List<AutographEntry> entries = (List<AutographEntry>) request.getAttribute("entries");
-                        String entriesJson = new Gson().toJson(entries != null ? entries :
-                        java.util.Collections.emptyList());
+                    Gson gson = new com.google.gson.GsonBuilder()
+                            .disableHtmlEscaping()
+                            .create();
+                    String entriesJson = gson.toJson(entries != null ? entries : java.util.Collections.emptyList());
                         %>
                         <html>
 

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+
 // Interface for logic handlers
 interface LogicHandler {
     void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
@@ -209,6 +210,10 @@ public class FrontControllerServlet extends HttpServlet {
 
     private void handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
 

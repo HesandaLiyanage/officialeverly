@@ -1,4 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<%
+    request.setCharacterEncoding("UTF-8");
+    response.setCharacterEncoding("UTF-8");
+%>
     <%@ page import="com.demo.web.model.autograph" %>
         <%@ page import="com.demo.web.model.AutographEntry" %>
             <%@ page import="java.util.List" %>
