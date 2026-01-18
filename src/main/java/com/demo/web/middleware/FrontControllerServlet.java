@@ -496,6 +496,13 @@ public class FrontControllerServlet extends HttpServlet {
         public void execute(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
 
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                // Not logged in - redirect to login
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
             String shareToken = (String) request.getAttribute("shareToken");
 
             if (shareToken == null || shareToken.trim().isEmpty()) {

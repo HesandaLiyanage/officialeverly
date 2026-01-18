@@ -1,14 +1,15 @@
 package com.demo.web.model;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class AutographEntry {
     private int entryId;
+    private String link;
+    private String content; // Will store the rich HTML (text + emotions + doodles)
+    private Date submittedAt;
     private int autographId;
-    private int userId; // 0 for anonymous
-    private String content;
-    private String decorations;
-    private Timestamp submittedAt;
+    private int userId;
+    private String contentPlain; // Will store just the plain text
 
     public int getEntryId() {
         return entryId;
@@ -16,6 +17,30 @@ public class AutographEntry {
 
     public void setEntryId(int entryId) {
         this.entryId = entryId;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Date getSubmittedAt() {
+        return submittedAt;
+    }
+
+    public void setSubmittedAt(Date submittedAt) {
+        this.submittedAt = submittedAt;
     }
 
     public int getAutographId() {
@@ -34,27 +59,11 @@ public class AutographEntry {
         this.userId = userId;
     }
 
-    public String getContent() {
-        return content;
+    public String getContentPlain() {
+        return contentPlain;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getDecorations() {
-        return decorations;
-    }
-
-    public void setDecorations(String decorations) {
-        this.decorations = decorations;
-    }
-
-    public Timestamp getSubmittedAt() {
-        return submittedAt;
-    }
-
-    public void setSubmittedAt(Timestamp submittedAt) {
-        this.submittedAt = submittedAt;
+    public void setContentPlain(String contentPlain) {
+        this.contentPlain = contentPlain;
     }
 }
