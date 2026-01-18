@@ -219,13 +219,10 @@
     height: 100%;
     padding-left: 25px;
     transition: opacity 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
 .message-text {
-    position: relative;
+    position: absolute;
     z-index: 2;
 }
 

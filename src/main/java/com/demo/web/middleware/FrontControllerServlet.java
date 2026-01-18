@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-
 // Interface for logic handlers
 interface LogicHandler {
     void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
@@ -1300,6 +1299,11 @@ public class FrontControllerServlet extends HttpServlet {
             String author = request.getParameter("author");
             String decorationsJson = request.getParameter("decorations");
 
+            String messageTop = request.getParameter("messageTop");
+            String messageLeft = request.getParameter("messageLeft");
+            String authorTop = request.getParameter("authorTop");
+            String authorLeft = request.getParameter("authorLeft");
+
             if (token == null || token.trim().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing token");
                 return;
@@ -1314,8 +1318,16 @@ public class FrontControllerServlet extends HttpServlet {
 
                 // Construct Rich HTML
                 StringBuilder richHtml = new StringBuilder();
-                richHtml.append("<div class='rich-autograph-entry'>");
-                richHtml.append("<div class='message-text'>").append(contentPlain).append("</div>");
+                richHtml.append(
+                        "<div class='rich-autograph-entry' style='position: relative; width: 100%; height: 600px;'>");
+
+                // Message block
+                richHtml.append("<div class='message-text' style='position: absolute; top:")
+                        .append(messageTop != null ? messageTop : "10%").append("; left:")
+                        .append(messageLeft != null ? messageLeft : "10%").append("; width: 80%;'>")
+                        .append(contentPlain).append("</div>");
+
+                // Decorations layer
                 richHtml.append(
                         "<div class='decorations-layer' style='position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;'>");
 
@@ -1330,7 +1342,12 @@ public class FrontControllerServlet extends HttpServlet {
                     }
                 }
                 richHtml.append("</div>");
-                richHtml.append("<div class='author-signature'>- ").append(author).append("</div>");
+
+                // Author block
+                richHtml.append("<div class='author-signature' style='position: absolute; top:")
+                        .append(authorTop != null ? authorTop : "85%").append("; left:")
+                        .append(authorLeft != null ? authorLeft : "60%").append(";'>- ")
+                        .append(author).append("</div>");
                 richHtml.append("</div>");
 
                 AutographEntry entry = new AutographEntry();
