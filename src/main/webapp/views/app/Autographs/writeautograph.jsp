@@ -324,29 +324,37 @@
                                     return;
                                 }
 
-                                // Get all decorations
-                                const decorations = [];
-                                document.querySelectorAll('.decoration').forEach(dec => {
-                                    decorations.push({
-                                        content: dec.textContent,
-                                        className: dec.className,
-                                        top: dec.style.top,
-                                        left: dec.style.left
-                                    });
-                                });
+                                // Clone the page area for cleaning
+                                const pageClone = document.getElementById('autographPage').cloneNode(true);
+
+                                // Remove internal structure that isn't needed for viewing
+                                const marginLine = pageClone.querySelector('.margin-line');
+                                if (marginLine) marginLine.remove();
+
+                                // Transform writing area to static div
+                                const writingAreaClone = pageClone.querySelector('#writingArea');
+                                writingAreaClone.removeAttribute('contenteditable');
+                                writingAreaClone.removeAttribute('data-placeholder');
+                                writingAreaClone.id = ''; // Remove ID to prevent duplicates in view
+                                writingAreaClone.className = 'message-text';
+
+                                // Transform author input to static div
+                                const authorInputClone = pageClone.querySelector('#authorInput');
+                                const authorWrapperClone = authorInputClone.parentElement;
+                                const authorDiv = document.createElement('div');
+                                authorDiv.className = 'author-signature';
+                                authorDiv.textContent = '- ' + author;
+                                authorWrapperClone.replaceChild(authorDiv, authorInputClone);
+
+                                // Capture the full HTML content
+                                const fullContentHtml = pageClone.innerHTML;
 
                                 const formData = new URLSearchParams();
                                 formData.append('token', '<%= shareToken %>');
-                                formData.append('content', message);
+                                formData.append('content', fullContentHtml);
                                 formData.append('author', author);
-                                formData.append('decorations', JSON.stringify(decorations));
-
-                                // Add positions
-                                formData.append('messageTop', this.writingArea.style.top);
-                                formData.append('messageLeft', this.writingArea.style.left);
-                                const authorWrapper = this.authorInput.parentElement;
-                                formData.append('authorTop', authorWrapper.style.top);
-                                formData.append('authorLeft', authorWrapper.style.left);
+                                // We still send plain content for indexing or fallback if needed
+                                formData.append('contentPlain', message);
 
                                 const submitBtn = document.getElementById('submitBtn');
                                 const originalBtnText = submitBtn.textContent;

@@ -78,14 +78,23 @@
                                         text-align: right;
                                         font-style: italic;
                                         font-weight: 600;
-                                        margin-top: 30px;
                                         position: absolute;
+                                        color: #6b7280;
+                                        font-size: 17px;
+                                    }
+
+                                    .decorations-container {
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                        pointer-events: none;
                                     }
 
                                     .decoration {
-                                        font-size: 2rem;
-                                        user-select: none;
                                         position: absolute;
+                                        font-size: 2rem;
                                     }
 
                                     .emoji {

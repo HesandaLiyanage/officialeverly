@@ -20,9 +20,7 @@ import com.demo.web.model.AutographEntry;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.sql.SQLException;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import java.util.UUID;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -1295,14 +1293,10 @@ public class FrontControllerServlet extends HttpServlet {
 
             int userId = (Integer) session.getAttribute("user_id");
             String token = request.getParameter("token");
-            String contentPlain = request.getParameter("content");
-            String author = request.getParameter("author");
-            String decorationsJson = request.getParameter("decorations");
-
-            String messageTop = request.getParameter("messageTop");
-            String messageLeft = request.getParameter("messageLeft");
-            String authorTop = request.getParameter("authorTop");
-            String authorLeft = request.getParameter("authorLeft");
+            String fullHtmlContent = request.getParameter("content");
+            String contentPlain = request.getParameter("contentPlain");
+            String author = request.getParameter("author"); // Keep for metadata if needed, but the HTML capture is
+                                                            // primary
 
             if (token == null || token.trim().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing token");
@@ -1316,46 +1310,18 @@ public class FrontControllerServlet extends HttpServlet {
                     return;
                 }
 
-                // Construct Rich HTML
-                StringBuilder richHtml = new StringBuilder();
-                richHtml.append(
-                        "<div class='rich-autograph-entry' style='position: relative; width: 100%; min-height: 600px; height: auto;'>");
-
-                // Message block
-                richHtml.append("<div class='message-text' style='position: absolute; top:")
-                        .append(messageTop != null ? messageTop : "10%").append("; left:")
-                        .append(messageLeft != null ? messageLeft : "10%").append("; width: 80%;'>")
-                        .append(contentPlain).append("</div>");
-
-                // Decorations layer
-                richHtml.append(
-                        "<div class='decorations-layer' style='position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;'>");
-
-                if (decorationsJson != null && !decorationsJson.isEmpty() && !decorationsJson.equals("[]")) {
-                    JsonArray decorations = JsonParser.parseString(decorationsJson).getAsJsonArray();
-                    for (int i = 0; i < decorations.size(); i++) {
-                        JsonObject dec = decorations.get(i).getAsJsonObject();
-                        richHtml.append("<span class='").append(dec.get("className").getAsString()).append("' ")
-                                .append("style='position:absolute; top:").append(dec.get("top").getAsString())
-                                .append("; left:").append(dec.get("left").getAsString()).append(";'>")
-                                .append(dec.get("content").getAsString()).append("</span>");
-                    }
-                }
-                richHtml.append("</div>");
-
-                // Author block
-                richHtml.append("<div class='author-signature' style='position: absolute; top:")
-                        .append(authorTop != null ? authorTop : "85%").append("; left:")
-                        .append(authorLeft != null ? authorLeft : "60%").append(";'>- ")
-                        .append(author).append("</div>");
-                richHtml.append("</div>");
+                // Use the full captured HTML directly
+                String richHtml = "<div class='rich-autograph-entry' style='position: relative; width: 100%; min-height: 600px;'>"
+                        +
+                        fullHtmlContent +
+                        "</div>";
 
                 AutographEntry entry = new AutographEntry();
                 entry.setAutographId(ag.getAutographId());
                 entry.setUserId(userId);
-                entry.setContent(richHtml.toString());
-                entry.setContentPlain(contentPlain);
-                entry.setLink(java.util.UUID.randomUUID().toString().substring(0, 8)); // Short unique link for entry
+                entry.setContent(richHtml);
+                entry.setContentPlain(contentPlain != null ? contentPlain : "");
+                entry.setLink(java.util.UUID.randomUUID().toString().substring(0, 8));
 
                 boolean success = entryDAO.createEntry(entry);
 
