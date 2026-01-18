@@ -1,4 +1,4 @@
-package com.demo.web.controller.Autographs;
+package com.demo.web.controller.autographs;
 
 import com.demo.web.dao.autographDAO;
 import com.demo.web.model.autograph;
@@ -50,7 +50,8 @@ public class DeleteAutographServlet extends HttpServlet {
             // Optional: Verify the autograph belongs to the current user for security
             autograph existingAutograph = autographDAO.findById(autographId);
             if (existingAutograph == null || existingAutograph.getUserId() != userId) {
-                logger.warning("DeleteAutographServlet: User " + userId + " attempted to delete autograph " + autographId + " which does not exist or does not belong to them.");
+                logger.warning("DeleteAutographServlet: User " + userId + " attempted to delete autograph "
+                        + autographId + " which does not exist or does not belong to them.");
                 response.sendRedirect(request.getContextPath() + "/autographs"); // Redirect if unauthorized
                 return;
             }
@@ -63,14 +64,17 @@ public class DeleteAutographServlet extends HttpServlet {
                 // Redirect to the autographs list page on success
                 response.sendRedirect(request.getContextPath() + "/autographs");
             } else {
-                // This might happen if the delete failed for reasons other than the record not existing
+                // This might happen if the delete failed for reasons other than the record not
+                // existing
                 logger.warning("Failed to delete autograph ID: " + autographId + " by user ID: " + userId);
-                // You could redirect back with an error, but often redirecting to the list is fine.
+                // You could redirect back with an error, but often redirecting to the list is
+                // fine.
                 response.sendRedirect(request.getContextPath() + "/autographs?error=delete_failed");
             }
 
         } catch (NumberFormatException e) {
-            logger.severe("DeleteAutographServlet: Invalid autograph ID format: " + request.getParameter("autographId"));
+            logger.severe(
+                    "DeleteAutographServlet: Invalid autograph ID format: " + request.getParameter("autographId"));
             response.sendRedirect(request.getContextPath() + "/autographs"); // Redirect on invalid ID format
         } catch (Exception e) {
             logger.severe("Database error while deleting autograph: " + e.getMessage());

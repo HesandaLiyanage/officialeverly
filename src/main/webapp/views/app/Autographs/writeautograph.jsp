@@ -299,13 +299,44 @@
                                 });
                             });
 
-                            // Populated hidden form
-                            document.getElementById('contentField').value = message;
-                            document.getElementById('authorField').value = author;
-                            document.getElementById('decorationsField').value = JSON.stringify(decorations);
+                            const formData = new URLSearchParams();
+                            formData.append('token', '<%= shareToken %>');
+                            formData.append('content', message);
+                            formData.append('author', author);
+                            formData.append('decorations', JSON.stringify(decorations));
 
-                            console.log('Submitting autograph via form');
-                            document.getElementById('autographForm').submit();
+                            const submitBtn = document.getElementById('submitBtn');
+                            const originalBtnText = submitBtn.textContent;
+                            submitBtn.disabled = true;
+                            submitBtn.textContent = 'Uploading...';
+
+                            fetch('${pageContext.request.contextPath}/submit-autograph', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: formData
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert('Entry uploaded successfully!');
+                                        // Clear current entries to allow a fresh one
+                                        this.writingArea.innerHTML = '';
+                                        this.authorInput.value = '';
+                                        this.decorationsContainer.innerHTML = '';
+                                    } else {
+                                        alert('Error: ' + (data.message || 'Failed to save entry'));
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('An error occurred while submitting.');
+                                })
+                                .finally(() => {
+                                    submitBtn.disabled = false;
+                                    submitBtn.textContent = originalBtnText;
+                                });
                         }
                     }
 

@@ -1338,9 +1338,12 @@ public class FrontControllerServlet extends HttpServlet {
                 boolean success = entryDAO.createEntry(entry);
 
                 if (success) {
-                    response.sendRedirect(request.getContextPath() + "/sharedview/" + token);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"success\": true}");
                 } else {
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to save entry");
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"success\": false, \"message\": \"Failed to save entry\"}");
                 }
 
             } catch (SQLException e) {

@@ -1,4 +1,4 @@
-package com.demo.web.controller.Autographs;
+package com.demo.web.controller.autographs;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
