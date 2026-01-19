@@ -13,6 +13,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 
 public class userDAO {
 
@@ -27,7 +37,8 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+                    +
                     "FROM users WHERE username = ? AND is_active = true";
 
             stmt = conn.prepareStatement(sql);
@@ -59,7 +70,7 @@ public class userDAO {
      * NEW METHOD: Unlock user's master encryption key after authentication
      * Call this AFTER authenticateUser succeeds
      *
-     * @param userId The authenticated user's ID
+     * @param userId   The authenticated user's ID
      * @param password The user's password (plain text)
      * @return The unlocked master key (store in session, NOT database)
      */
@@ -121,13 +132,13 @@ public class userDAO {
         // Step 2: Unlock encryption keys
         try {
             SecretKey masterKey = unlockUserMasterKey(authenticatedUser.getId(), password);
-            return new Object[]{authenticatedUser, masterKey};
+            return new Object[] { authenticatedUser, masterKey };
         } catch (Exception e) {
             // Authentication succeeded but encryption keys failed
             // This might happen for old accounts created before encryption was added
             System.err.println("Warning: User authenticated but encryption keys unavailable: " + e.getMessage());
             // Return user without master key - handle this in your servlet
-            return new Object[]{authenticatedUser, null};
+            return new Object[] { authenticatedUser, null };
         }
     }
 
@@ -141,7 +152,8 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+                    +
                     "FROM users WHERE user_id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -173,7 +185,8 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+                    +
                     "FROM users WHERE email = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -204,7 +217,8 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+                    +
                     "FROM users WHERE username = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -279,14 +293,14 @@ public class userDAO {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getEmail());
-            stmt.setString(3, passwordHash);              // Auth password hash
-            stmt.setString(4, authSalt);                  // Auth salt
+            stmt.setString(3, passwordHash); // Auth password hash
+            stmt.setString(4, authSalt); // Auth salt
             stmt.setString(5, user.getBio());
             stmt.setString(6, user.getProfilePictureUrl());
             stmt.setBoolean(7, true);
             stmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
-            stmt.setBytes(9, keyData.getEncryptedMasterKey());  // NEW: Encryption master key
-            stmt.setBytes(10, keyData.getSalt());                // NEW: Encryption salt
+            stmt.setBytes(9, keyData.getEncryptedMasterKey()); // NEW: Encryption master key
+            stmt.setBytes(10, keyData.getSalt()); // NEW: Encryption salt
 
             generatedKeys = stmt.executeQuery();
 
@@ -306,7 +320,8 @@ public class userDAO {
 
         } catch (Exception e) {
             try {
-                if (conn != null) conn.rollback();
+                if (conn != null)
+                    conn.rollback();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -314,7 +329,8 @@ public class userDAO {
             throw new RuntimeException("Database error while creating user", e);
         } finally {
             try {
-                if (conn != null) conn.setAutoCommit(true);
+                if (conn != null)
+                    conn.setAutoCommit(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -364,7 +380,8 @@ public class userDAO {
 
     /**
      * NEW METHOD: Setup encryption for existing user (migration)
-     * Use this to add encryption to accounts created before encryption was implemented
+     * Use this to add encryption to accounts created before encryption was
+     * implemented
      */
     public boolean setupEncryptionForExistingUser(int userId, String password) {
         Connection conn = null;
@@ -398,7 +415,8 @@ public class userDAO {
 
         } catch (Exception e) {
             try {
-                if (conn != null) conn.rollback();
+                if (conn != null)
+                    conn.rollback();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -406,7 +424,8 @@ public class userDAO {
             return false;
         } finally {
             try {
-                if (conn != null) conn.setAutoCommit(true);
+                if (conn != null)
+                    conn.setAutoCommit(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -512,11 +531,191 @@ public class userDAO {
      */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
-            if (conn != null) conn.close();
+            if (rs != null)
+                rs.close();
+            if (stmt != null)
+                stmt.close();
+            if (conn != null)
+                conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    // ======================= ADMIN METHODS =======================
+
+    /**
+     * Get all users except admin user
+     */
+    public List<user> getAllUsersExceptAdmin() {
+        List<user> users = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+                    +
+                    "FROM users WHERE username != 'admin' ORDER BY joined_at DESC";
+
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Database error while getting all users", e);
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return users;
+    }
+
+    /**
+     * Delete a user by ID and cascade delete related data
+     */
+    public boolean deleteUser(int userId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            conn.setAutoCommit(false);
+
+            // Delete from memory_members first (collaborative memory memberships)
+            stmt = conn.prepareStatement("DELETE FROM memory_members WHERE user_id = ?");
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+            stmt.close();
+
+            // Delete from memory_media (media in user's memories)
+            stmt = conn.prepareStatement(
+                    "DELETE FROM memory_media WHERE memory_id IN (SELECT memory_id FROM memory WHERE user_id = ?)");
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+            stmt.close();
+
+            // Delete media items
+            stmt = conn.prepareStatement("DELETE FROM media_items WHERE user_id = ?");
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+            stmt.close();
+
+            // Delete memories
+            stmt = conn.prepareStatement("DELETE FROM memory WHERE user_id = ?");
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+            stmt.close();
+
+            // Delete encryption metadata
+            stmt = conn.prepareStatement("DELETE FROM encryption_metadata WHERE entity_id = ?");
+            stmt.setString(1, String.valueOf(userId));
+            stmt.executeUpdate();
+            stmt.close();
+
+            // Finally delete the user
+            stmt = conn.prepareStatement("DELETE FROM users WHERE user_id = ?");
+            stmt.setInt(1, userId);
+            int deleted = stmt.executeUpdate();
+
+            conn.commit();
+            return deleted > 0;
+
+        } catch (SQLException e) {
+            try {
+                if (conn != null)
+                    conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Database error while deleting user", e);
+        } finally {
+            try {
+                if (conn != null)
+                    conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Get users with activity stats (memory count)
+     * Returns a list of maps with user info and memory_count
+     */
+    public List<Map<String, Object>> getUsersWithActivityStats() {
+        List<Map<String, Object>> result = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT u.user_id, u.username, u.email, u.joined_at, u.last_login, u.is_active, " +
+                    "COALESCE(COUNT(m.memory_id), 0) as memory_count " +
+                    "FROM users u " +
+                    "LEFT JOIN memory m ON u.user_id = m.user_id " +
+                    "WHERE u.username != 'admin' " +
+                    "GROUP BY u.user_id, u.username, u.email, u.joined_at, u.last_login, u.is_active " +
+                    "ORDER BY memory_count DESC";
+
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> userStats = new HashMap<>();
+                userStats.put("userId", rs.getInt("user_id"));
+                userStats.put("username", rs.getString("username"));
+                userStats.put("email", rs.getString("email"));
+                userStats.put("joinedAt", rs.getTimestamp("joined_at"));
+                userStats.put("lastLogin", rs.getTimestamp("last_login"));
+                userStats.put("isActive", rs.getBoolean("is_active"));
+                userStats.put("memoryCount", rs.getInt("memory_count"));
+                result.add(userStats);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Database error while getting user activity stats", e);
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return result;
+    }
+
+    /**
+     * Get total user count (excluding admin)
+     */
+    public int getTotalUserCount() {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT COUNT(*) as count FROM users WHERE username != 'admin'";
+
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+            return 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            closeResources(rs, stmt, conn);
         }
     }
 }
