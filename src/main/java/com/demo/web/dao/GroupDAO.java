@@ -1,25 +1,21 @@
 package com.demo.web.dao;
 
 import com.demo.web.model.Group;
-import com.demo.web.model.GroupMember;
 import com.demo.web.util.DatabaseUtil;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class GroupDAO {
-    private static final Logger logger = Logger.getLogger(GroupDAO.class.getName());
-    // private GroupMemberDAO groupMemberDAO; // COMMENTED OUT TEMPORARILY
 
     public GroupDAO() {
-        // this.groupMemberDAO = new GroupMemberDAO(); // COMMENTED OUT TEMPORARILY
     }
 
     /**
      * Create a new group
      */
     public boolean createGroup(Group group) {
+        // ✅ Use unquoted table name (unless you explicitly created it with quotes)
         String sql = "INSERT INTO \"group\" (g_name, g_description, created_at, user_id, group_pic, group_url) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -33,9 +29,9 @@ public class GroupDAO {
             System.out.println("[DEBUG GroupDAO] createGroup affected " + rowsInserted + " rows.");
             return rowsInserted > 0;
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupDAO] Error while creating group: " + e.getMessage());
+            System.err.println("[ERROR GroupDAO] Error while creating group: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Error while creating group", e);
+            return false; // Avoid throwing exception in DAO; let controller handle
         }
     }
 
@@ -52,19 +48,16 @@ public class GroupDAO {
                 Group result = mapResultSetToGroup(rs);
                 System.out.println("[DEBUG GroupDAO] findById(" + groupId + ") returned: " + result);
                 return result;
-            } else {
-                System.out.println("[DEBUG GroupDAO] findById(" + groupId + ") returned null (record not found).");
             }
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupDAO] Error while fetching group by ID " + groupId + ": " + e.getMessage());
+            System.err.println("[ERROR GroupDAO] Error fetching group by ID " + groupId + ": " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Error while fetching group by ID", e);
         }
         return null;
     }
 
     /**
-     * Get all groups by a specific user
+     * Get all groups created by a user (owned only)
      */
     public List<Group> findByUserId(int userId) {
         String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE user_id = ?";
@@ -78,9 +71,36 @@ public class GroupDAO {
             }
             System.out.println("[DEBUG GroupDAO] findByUserId(" + userId + ") returned " + groups.size() + " records.");
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupDAO] Error while fetching groups by user ID " + userId + ": " + e.getMessage());
+            System.err.println("[ERROR GroupDAO] Error fetching groups by user ID " + userId + ": " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Error while fetching groups by user ID", e);
+        }
+        return groups;
+    }
+
+    // ✅ NEW METHOD: Get ALL groups user is part of (owned OR joined)
+    public List<Group> findGroupsByMemberId(int userId) {
+        String sql = """
+            SELECT DISTINCT g.group_id, g.g_name, g.g_description, g.created_at, 
+                   g.user_id, g.group_pic, g.group_url
+            FROM "group" g
+            LEFT JOIN group_member gm ON g.group_id = gm.group_id
+            WHERE g.user_id = ? OR gm.member_id = ?
+            ORDER BY g.created_at DESC
+            """;
+
+        List<Group> groups = new ArrayList<>();
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                groups.add(mapResultSetToGroup(rs));
+            }
+            System.out.println("[DEBUG GroupDAO] findGroupsByMemberId(" + userId + ") returned " + groups.size() + " groups.");
+        } catch (SQLException e) {
+            System.err.println("[ERROR GroupDAO] Error fetching groups for member ID " + userId + ": " + e.getMessage());
+            e.printStackTrace();
         }
         return groups;
     }
@@ -95,16 +115,11 @@ public class GroupDAO {
             stmt.setString(1, groupUrl);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                Group result = mapResultSetToGroup(rs);
-                System.out.println("[DEBUG GroupDAO] findByUrl('" + groupUrl + "') returned: " + result);
-                return result;
-            } else {
-                System.out.println("[DEBUG GroupDAO] findByUrl('" + groupUrl + "') returned null (record not found).");
+                return mapResultSetToGroup(rs);
             }
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupDAO] Error while fetching group by URL '" + groupUrl + "': " + e.getMessage());
+            System.err.println("[ERROR GroupDAO] Error fetching group by URL '" + groupUrl + "': " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Error while fetching group by URL", e);
         }
         return null;
     }
@@ -119,12 +134,10 @@ public class GroupDAO {
             stmt.setString(1, groupUrl);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                int count = rs.getInt("url_count");
-                System.out.println("[DEBUG GroupDAO] isUrlTaken('" + groupUrl + "') returned: " + (count > 0));
-                return count > 0;
+                return rs.getInt("url_count") > 0;
             }
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupDAO] Error while checking if URL is taken '" + groupUrl + "': " + e.getMessage());
+            System.err.println("[ERROR GroupDAO] Error checking URL '" + groupUrl + "': " + e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -132,8 +145,6 @@ public class GroupDAO {
 
     /**
      * Get member count for a specific group
-     * Note: Assumes 'group_member' table name is correct and not a reserved word needing quotes.
-     * If 'group_member' is also a reserved word or needs quoting, change it to "\"group_member\"".
      */
     public int getMemberCount(int groupId) {
         String sql = "SELECT COUNT(*) as member_count FROM group_member WHERE group_id = ?";
@@ -142,12 +153,10 @@ public class GroupDAO {
             stmt.setInt(1, groupId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                int count = rs.getInt("member_count");
-                System.out.println("[DEBUG GroupDAO] getMemberCount(" + groupId + ") returned: " + count);
-                return count;
+                return rs.getInt("member_count");
             }
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupDAO] Error while getting member count for group ID " + groupId + ": " + e.getMessage());
+            System.err.println("[ERROR GroupDAO] Error getting member count for group " + groupId + ": " + e.getMessage());
             e.printStackTrace();
         }
         return 0;
@@ -165,14 +174,13 @@ public class GroupDAO {
             stmt.setString(3, group.getGroupPicUrl());
             stmt.setString(4, group.getGroupUrl());
             stmt.setInt(5, group.getGroupId());
-            System.out.println("[DEBUG GroupDAO] updateGroup preparing statement with values - Name: '" + group.getName() + "', Description: '" + group.getDescription() + "', Pic URL: '" + group.getGroupPicUrl() + "', Group URL: '" + group.getGroupUrl() + "', ID: " + group.getGroupId());
             int rowsUpdated = stmt.executeUpdate();
-            System.out.println("[DEBUG GroupDAO] updateGroup executed. Rows affected: " + rowsUpdated + " for ID: " + group.getGroupId());
+            System.out.println("[DEBUG GroupDAO] updateGroup affected " + rowsUpdated + " rows.");
             return rowsUpdated > 0;
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupDAO] Error while updating group ID " + group.getGroupId() + ": " + e.getMessage());
+            System.err.println("[ERROR GroupDAO] Error updating group " + group.getGroupId() + ": " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Error while updating group", e);
+            return false;
         }
     }
 
@@ -180,29 +188,29 @@ public class GroupDAO {
      * Delete group by ID
      */
     public boolean deleteGroup(int groupId) {
-        // First delete all members directly without using GroupMemberDAO
-        String deleteMembersSql = "DELETE FROM group_member WHERE group_id = ?";
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(deleteMembersSql)) {
-            stmt.setInt(1, groupId);
-            int membersDeleted = stmt.executeUpdate();
-            System.out.println("[DEBUG GroupDAO] Deleted " + membersDeleted + " members for group ID: " + groupId);
-        } catch (SQLException e) {
-            System.out.println("[DEBUG GroupDAO] Error deleting members for group ID " + groupId + ": " + e.getMessage());
-        }
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            conn.setAutoCommit(false);
 
-        // Then delete the group
-        String sql = "DELETE FROM \"group\" WHERE group_id = ?";
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, groupId);
-            int rowsDeleted = stmt.executeUpdate();
-            System.out.println("[DEBUG GroupDAO] deleteGroup affected " + rowsDeleted + " rows for ID: " + groupId);
-            return rowsDeleted > 0;
+            // Delete members first
+            try (PreparedStatement stmt1 = conn.prepareStatement("DELETE FROM group_member WHERE group_id = ?")) {
+                stmt1.setInt(1, groupId);
+                stmt1.executeUpdate();
+            }
+
+            // Delete group
+            try (PreparedStatement stmt2 = conn.prepareStatement("DELETE FROM \"group\" WHERE group_id = ?")) {
+                stmt2.setInt(1, groupId);
+                int rows = stmt2.executeUpdate();
+                conn.commit();
+                return rows > 0;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
         } catch (SQLException e) {
-            System.out.println("[DEBUG GroupDAO] Error while deleting group ID " + groupId + ": " + e.getMessage());
+            System.err.println("[ERROR GroupDAO] Error deleting group " + groupId + ": " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Error while deleting group", e);
+            return false;
         }
     }
 

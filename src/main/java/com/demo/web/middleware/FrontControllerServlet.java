@@ -535,7 +535,7 @@ public class FrontControllerServlet extends HttpServlet {
 
             Integer userId = (Integer) session.getAttribute("user_id");
 
-            List<Group> groups = groupDAO.findByUserId(userId);
+            List<Group> groups = groupDAO.findGroupsByMemberId(userId);
 
             // Get member counts for each group
             for (Group group : groups) {

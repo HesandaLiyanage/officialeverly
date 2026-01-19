@@ -18,7 +18,6 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
         maxFileSize = 1024 * 1024 * 10,       // 10MB
@@ -39,14 +38,11 @@ public class CreateGroupServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Check if user is logged in
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-
-        // Forward to the create group JSP page
         request.getRequestDispatcher("/creategroup").forward(request, response);
     }
 
@@ -56,7 +52,6 @@ public class CreateGroupServlet extends HttpServlet {
 
         System.out.println("[DEBUG CreateGroupServlet] POST request received");
 
-        // Check if user is logged in
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             System.out.println("[DEBUG CreateGroupServlet] User not logged in, redirecting to login");
@@ -68,7 +63,6 @@ public class CreateGroupServlet extends HttpServlet {
         System.out.println("[DEBUG CreateGroupServlet] User ID from session: " + userId);
 
         try {
-            // Get form parameters
             String groupName = request.getParameter("g_name");
             String groupDescription = request.getParameter("g_description");
             String customLink = request.getParameter("customLink");
@@ -77,22 +71,18 @@ public class CreateGroupServlet extends HttpServlet {
             System.out.println("[DEBUG CreateGroupServlet] Group Description: " + groupDescription);
             System.out.println("[DEBUG CreateGroupServlet] Custom Link: " + customLink);
 
-            // Validate required fields
             if (groupName == null || groupName.trim().isEmpty()) {
-                System.out.println("[DEBUG CreateGroupServlet] Group name is empty");
                 request.setAttribute("error", "Group name is required");
                 request.getRequestDispatcher("/creategroup").forward(request, response);
                 return;
             }
 
             if (customLink == null || customLink.trim().isEmpty()) {
-                System.out.println("[DEBUG CreateGroupServlet] Custom link is empty");
                 request.setAttribute("error", "Group URL is required");
                 request.getRequestDispatcher("/creategroup").forward(request, response);
                 return;
             }
 
-            // Clean the custom link (remove special characters, convert to lowercase, replace spaces with hyphens)
             String cleanedLink = customLink.trim().toLowerCase()
                     .replaceAll("[^a-z0-9-]", "-")
                     .replaceAll("-+", "-")
@@ -100,18 +90,15 @@ public class CreateGroupServlet extends HttpServlet {
 
             System.out.println("[DEBUG CreateGroupServlet] Cleaned Link: " + cleanedLink);
 
-            // Check if URL is already taken
             if (groupDAO.isUrlTaken(cleanedLink)) {
-                System.out.println("[DEBUG CreateGroupServlet] URL already taken: " + cleanedLink);
                 request.setAttribute("error", "This group URL is already taken. Please choose another one.");
                 request.setAttribute("g_name", groupName);
                 request.setAttribute("g_description", groupDescription);
                 request.setAttribute("customLink", customLink);
-                request.getRequestDispatcher("creategroup").forward(request, response);
+                request.getRequestDispatcher("/creategroup").forward(request, response);
                 return;
             }
 
-            // Handle file upload
             String groupPicUrl = null;
             Part filePart = request.getPart("group_pic");
 
@@ -123,21 +110,18 @@ public class CreateGroupServlet extends HttpServlet {
                 String fileExtension = fileName.substring(fileName.lastIndexOf("."));
                 String uniqueFileName = "group_" + UUID.randomUUID().toString() + fileExtension;
 
-                // Get the real path to the uploads directory
                 String applicationPath = request.getServletContext().getRealPath("");
                 String uploadPath = applicationPath + File.separator + UPLOAD_DIR;
 
                 System.out.println("[DEBUG CreateGroupServlet] Application path: " + applicationPath);
                 System.out.println("[DEBUG CreateGroupServlet] Upload path: " + uploadPath);
 
-                // Create the upload directory if it doesn't exist
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     boolean created = uploadDir.mkdirs();
                     System.out.println("[DEBUG CreateGroupServlet] Upload directory created: " + created);
                 }
 
-                // Save the file
                 String filePath = uploadPath + File.separator + uniqueFileName;
                 System.out.println("[DEBUG CreateGroupServlet] Saving file to: " + filePath);
 
@@ -146,14 +130,12 @@ public class CreateGroupServlet extends HttpServlet {
                     System.out.println("[DEBUG CreateGroupServlet] File saved successfully");
                 }
 
-                // Set the URL for the database (relative path for web access)
                 groupPicUrl = request.getContextPath() + "/" + UPLOAD_DIR + "/" + uniqueFileName;
                 System.out.println("[DEBUG CreateGroupServlet] Group pic URL: " + groupPicUrl);
             } else {
                 System.out.println("[DEBUG CreateGroupServlet] No file uploaded");
             }
 
-            // Create Group object
             Group newGroup = new Group();
             newGroup.setName(groupName.trim());
             newGroup.setDescription(groupDescription != null ? groupDescription.trim() : "");
@@ -164,16 +146,13 @@ public class CreateGroupServlet extends HttpServlet {
 
             System.out.println("[DEBUG CreateGroupServlet] Group object created: " + newGroup);
 
-            // Save to database
             boolean success = groupDAO.createGroup(newGroup);
 
             if (success) {
                 System.out.println("[DEBUG CreateGroupServlet] Group created successfully");
-                
-                // Get the newly created group to get its ID
+
                 Group createdGroup = groupDAO.findByUrl(cleanedLink);
                 if (createdGroup != null) {
-                    // Add creator as admin member
                     GroupMember adminMember = new GroupMember();
                     adminMember.setGroupId(createdGroup.getGroupId());
                     user creatorUser = new user();
@@ -182,13 +161,22 @@ public class CreateGroupServlet extends HttpServlet {
                     adminMember.setRole("admin");
                     adminMember.setJoinedAt(new Timestamp(System.currentTimeMillis()));
                     adminMember.setStatus("active");
-                    groupMemberDAO.addGroupMember(adminMember);
-                    System.out.println("[DEBUG CreateGroupServlet] Added creator as admin member");
+
+                    boolean memberAdded = groupMemberDAO.addGroupMember(adminMember);
+                    if (memberAdded) {
+                        System.out.println("[DEBUG CreateGroupServlet] Successfully added creator as admin member");
+                    } else {
+                        System.err.println("[ERROR CreateGroupServlet] Failed to add creator as group member!");
+                        // Consider: log error, notify user, or rollback
+                    }
+                } else {
+                    System.err.println("[ERROR CreateGroupServlet] Could not retrieve created group by URL: " + cleanedLink);
                 }
-                
-                // Redirect to groups dashboard with success message
+
+                // ✅ Redirect AFTER the if block — this was the bug!
                 session.setAttribute("successMessage", "Group created successfully!");
                 response.sendRedirect(request.getContextPath() + "/groups");
+
             } else {
                 System.out.println("[DEBUG CreateGroupServlet] Failed to create group");
                 request.setAttribute("error", "Failed to create group. Please try again.");
