@@ -1,49 +1,90 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-    <jsp:include page="../../public/header2.jsp" />
     <!DOCTYPE html>
     <html lang="en">
 
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Everly Dashboard</title>
+        <title>Admin Dashboard - Everly</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard-styles.css">
+        <style>
+            /* Modern minimal header */
+            .admin-topbar {
+                position: fixed;
+                top: 0;
+                right: 0;
+                left: 260px;
+                height: 60px;
+                background: white;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                padding: 0 2rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+                z-index: 100;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+            }
+
+            .container {
+                margin-left: 260px;
+                padding-top: 60px;
+            }
+
+            .main-content {
+                padding: 2rem;
+            }
+
+            .sidebar-logo {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #5b4cdb;
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid #eee;
+            }
+
+            .nav-icon {
+                width: 20px;
+                text-align: center;
+            }
+        </style>
     </head>
 
     <body>
-        <div class="header">
-            <div class="logo">Everly</div>
-            <div class="header-right">
-                <div class="search-box">
-                    <input type="text" placeholder="Search..." id="searchInput">
-                    <span class="search-icon">⌕</span>
-                </div>
-                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        <!-- Minimal Top Bar -->
+        <div class="admin-topbar">
+            <button class="logout-btn" onclick="handleLogout()">
+                <span style="margin-right: 8px;">⎋</span> Logout
+            </button>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">Everly</div>
+            <div class="sidebar-title">Admin Panel</div>
+            <div class="nav-item active" onclick="window.location.href='${pageContext.request.contextPath}/admin'">
+                <span class="nav-icon">📊</span> Overview
+            </div>
+            <div class="nav-item" onclick="window.location.href='${pageContext.request.contextPath}/adminanalytics'">
+                <span class="nav-icon">📈</span> Analytics
+            </div>
+            <div class="nav-item" onclick="window.location.href='${pageContext.request.contextPath}/adminuser'">
+                <span class="nav-icon">👥</span> Users
+            </div>
+            <div class="nav-item" onclick="window.location.href='${pageContext.request.contextPath}/admincontent'">
+                <span class="nav-icon">📝</span> Content
+            </div>
+            <div class="nav-item" onclick="window.location.href='${pageContext.request.contextPath}/adminsettings'">
+                <span class="nav-icon">⚙️</span> Settings
             </div>
         </div>
 
         <div class="container">
-            <div class="sidebar">
-                <div class="sidebar-title">Dashboard</div>
-                <div class="nav-item active" onclick="window.location.href='${pageContext.request.contextPath}/admin'">
-                    <span>○</span> Overview
-                </div>
-                <div class="nav-item"
-                    onclick="window.location.href='${pageContext.request.contextPath}/adminanalytics'">
-                    <span>▢</span> Analytics and Reports
-                </div>
-                <div class="nav-item" onclick="window.location.href='${pageContext.request.contextPath}/adminuser'">
-                    <span>▢</span> User Management
-                </div>
-                <div class="nav-item" onclick="window.location.href='${pageContext.request.contextPath}/admincontent'">
-                    <span>▢</span> Content Management
-                </div>
-                <div class="nav-item" onclick="window.location.href='${pageContext.request.contextPath}/adminsettings'">
-                    <span>▢</span> Settings
-                </div>
-            </div>
-
             <div class="main-content">
                 <div class="page-header">
                     <h1 class="page-title">Overview</h1>
