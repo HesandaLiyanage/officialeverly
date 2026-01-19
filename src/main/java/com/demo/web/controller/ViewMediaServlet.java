@@ -1,7 +1,10 @@
 package com.demo.web.controller;
 
 import com.demo.web.dao.MediaDAO;
+import com.demo.web.dao.memoryDAO;
+import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.model.MediaItem;
+import com.demo.web.model.Memory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +18,8 @@ import java.io.*;
 public class ViewMediaServlet extends HttpServlet {
 
     private MediaDAO mediaDAO;
+    private memoryDAO memoryDao;
+    private MemoryMemberDAO memberDao;
 
     // Must match the physical path used in CreateMemoryServlet
     private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads";
@@ -23,6 +28,8 @@ public class ViewMediaServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         mediaDAO = new MediaDAO();
+        memoryDao = new memoryDAO();
+        memberDao = new MemoryMemberDAO();
     }
 
     @Override
@@ -69,10 +76,36 @@ public class ViewMediaServlet extends HttpServlet {
             System.out.println("  - mimeType: " + mediaItem.getMimeType());
             System.out.println("  - mediaUserId: " + mediaItem.getUserId());
 
-            // Security check: Verify user owns this media
-            if (mediaItem.getUserId() != userId) {
-                System.out.println("ERROR: Access denied. User " + userId + " doesn't own media (owned by "
-                        + mediaItem.getUserId() + ")");
+            // Security check: Verify user has access to this media
+            boolean hasAccess = false;
+
+            // Check 1: User owns this media
+            if (mediaItem.getUserId() == userId) {
+                hasAccess = true;
+                System.out.println("  - Access granted: User owns media");
+            }
+
+            // Check 2: Media belongs to a collaborative memory and user is a member
+            if (!hasAccess) {
+                try {
+                    int memoryId = mediaDAO.getMemoryIdForMedia(mediaId);
+                    if (memoryId > 0) {
+                        Memory memory = memoryDao.getMemoryById(memoryId);
+                        if (memory != null && memory.isCollaborative()) {
+                            if (memberDao.isMember(memory.getMemoryId(), userId)) {
+                                hasAccess = true;
+                                System.out.println(
+                                        "  - Access granted: User is member of collab memory " + memory.getMemoryId());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("  - Error checking collab membership: " + e.getMessage());
+                }
+            }
+
+            if (!hasAccess) {
+                System.out.println("ERROR: Access denied. User " + userId + " doesn't have access to media");
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
                 return;
             }
