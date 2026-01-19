@@ -314,6 +314,24 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>GroupProfileServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.GroupProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupProfileServlet</servlet-name>
+        <url-pattern>/groupprofileservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RemoveMemberServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.RemoveMemberServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RemoveMemberServlet</servlet-name>
+        <url-pattern>/removememberservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>UpdateEventServlet</servlet-name>
         <servlet-class>com.demo.web.controller.Events.UpdateEventServlet</servlet-class>
         <multipart-config>
