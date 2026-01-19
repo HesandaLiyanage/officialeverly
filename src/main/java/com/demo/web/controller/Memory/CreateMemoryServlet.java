@@ -2,6 +2,7 @@ package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.dao.MediaDAO;
+import com.demo.web.dao.MemoryMemberDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
 
@@ -22,6 +23,7 @@ public class CreateMemoryServlet extends HttpServlet {
 
     private memoryDAO memoryDAO;
     private MediaDAO mediaDAO;
+    private MemoryMemberDAO memberDAO;
 
     // Path where media files are saved
     private static final String UPLOAD_DIR = "media_uploads";
@@ -32,6 +34,7 @@ public class CreateMemoryServlet extends HttpServlet {
         super.init();
         memoryDAO = new memoryDAO();
         mediaDAO = new MediaDAO();
+        memberDAO = new MemoryMemberDAO();
 
         // Create the upload directory if it doesn't exist
         try {
@@ -50,6 +53,11 @@ public class CreateMemoryServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
+
+        // Check if creating a collab memory
+        String type = request.getParameter("type");
+        request.setAttribute("isCollaborative", "collab".equals(type));
+
         request.getRequestDispatcher("/WEB-INF/views/memories/createMemory.jsp").forward(request, response);
     }
 
@@ -70,6 +78,8 @@ public class CreateMemoryServlet extends HttpServlet {
         try {
             String memoryName = request.getParameter("memoryName");
             String memoryDate = request.getParameter("memoryDate");
+            String isCollabParam = request.getParameter("isCollaborative");
+            boolean isCollaborative = "true".equalsIgnoreCase(isCollabParam) || "on".equalsIgnoreCase(isCollabParam);
 
             if (memoryName == null || memoryName.trim().isEmpty()) {
                 response.setContentType("application/json;charset=UTF-8");
@@ -83,9 +93,20 @@ public class CreateMemoryServlet extends HttpServlet {
             memory.setDescription(memoryDate != null ? "Created on " + memoryDate : "");
             memory.setUserId(userId);
             memory.setPublic(false);
+            memory.setCollaborative(isCollaborative);
 
-            int memoryId = memoryDAO.createMemory(memory);
-            System.out.println("Memory created with ID: " + memoryId);
+            int memoryId;
+            if (isCollaborative) {
+                // Create collaborative memory
+                memoryId = memoryDAO.createCollabMemory(memory);
+                // Add creator as owner
+                memberDAO.addMember(memoryId, userId, "owner");
+                System.out.println("Collaborative memory created with ID: " + memoryId);
+            } else {
+                // Create regular memory
+                memoryId = memoryDAO.createMemory(memory);
+                System.out.println("Memory created with ID: " + memoryId);
+            }
 
             Collection<Part> fileParts = request.getParts();
             int uploadedCount = 0;
@@ -118,10 +139,10 @@ public class CreateMemoryServlet extends HttpServlet {
                 mediaItem.setMimeType(filePart.getContentType());
                 mediaItem.setMediaType(filePart.getContentType().startsWith("image/") ? "IMAGE" : "VIDEO");
                 mediaItem.setTitle(originalFilename);
-                mediaItem.setEncrypted(false); // No encryption
-                mediaItem.setEncryptionKeyId(null); // No encryption key
+                mediaItem.setEncrypted(false);
+                mediaItem.setEncryptionKeyId(null);
 
-                int mediaId = mediaDAO.createMediaItem(mediaItem, null); // No IV needed
+                int mediaId = mediaDAO.createMediaItem(mediaItem, null);
 
                 memoryDAO.linkMediaToMemory(memoryId, mediaId);
                 uploadedCount++;
@@ -133,8 +154,8 @@ public class CreateMemoryServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
             try (PrintWriter out = response.getWriter()) {
                 out.write(String.format(
-                        "{\"success\": true, \"memoryId\": %d, \"filesUploaded\": %d}",
-                        memoryId, uploadedCount));
+                        "{\"success\": true, \"memoryId\": %d, \"filesUploaded\": %d, \"isCollaborative\": %s}",
+                        memoryId, uploadedCount, isCollaborative));
             }
 
         } catch (Exception e) {
