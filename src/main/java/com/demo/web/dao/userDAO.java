@@ -11,18 +11,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 
 public class userDAO {
 
@@ -587,36 +580,122 @@ public class userDAO {
             conn = DatabaseUtil.getConnection();
             conn.setAutoCommit(false);
 
-            // Delete from memory_members first (collaborative memory memberships)
-            stmt = conn.prepareStatement("DELETE FROM memory_members WHERE user_id = ?");
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-            stmt.close();
+            // Delete from group_members first
+            try {
+                stmt = conn.prepareStatement("DELETE FROM group_members WHERE user_id = ?");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
+
+            // Delete groups created by user (and their members first)
+            try {
+                stmt = conn.prepareStatement(
+                        "DELETE FROM group_members WHERE group_id IN (SELECT group_id FROM \"group\" WHERE user_id = ?)");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+
+                stmt = conn.prepareStatement("DELETE FROM \"group\" WHERE user_id = ?");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
+
+            // Delete from memory_members (collaborative memory memberships)
+            try {
+                stmt = conn.prepareStatement("DELETE FROM memory_members WHERE user_id = ?");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
 
             // Delete from memory_media (media in user's memories)
-            stmt = conn.prepareStatement(
-                    "DELETE FROM memory_media WHERE memory_id IN (SELECT memory_id FROM memory WHERE user_id = ?)");
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-            stmt.close();
+            try {
+                stmt = conn.prepareStatement(
+                        "DELETE FROM memory_media WHERE memory_id IN (SELECT memory_id FROM memory WHERE user_id = ?)");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
+
+            // Delete encryption_keys for user's media
+            try {
+                stmt = conn.prepareStatement("DELETE FROM encryption_keys WHERE user_id = ?");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
 
             // Delete media items
-            stmt = conn.prepareStatement("DELETE FROM media_items WHERE user_id = ?");
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-            stmt.close();
+            try {
+                stmt = conn.prepareStatement("DELETE FROM media_items WHERE user_id = ?");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
 
             // Delete memories
-            stmt = conn.prepareStatement("DELETE FROM memory WHERE user_id = ?");
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-            stmt.close();
+            try {
+                stmt = conn.prepareStatement("DELETE FROM memory WHERE user_id = ?");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
+
+            // Delete journal streaks
+            try {
+                stmt = conn.prepareStatement("DELETE FROM journal_streaks WHERE user_id = ?");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
+
+            // Delete user sessions
+            try {
+                stmt = conn.prepareStatement("DELETE FROM user_sessions WHERE user_id = ?");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
+
+            // Delete remember me tokens
+            try {
+                stmt = conn.prepareStatement("DELETE FROM remember_me_tokens WHERE user_id = ?");
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
 
             // Delete encryption metadata
-            stmt = conn.prepareStatement("DELETE FROM encryption_metadata WHERE entity_id = ?");
-            stmt.setString(1, String.valueOf(userId));
-            stmt.executeUpdate();
-            stmt.close();
+            try {
+                stmt = conn.prepareStatement("DELETE FROM encryption_metadata WHERE entity_id = ?");
+                stmt.setString(1, String.valueOf(userId));
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (SQLException e) {
+                // Table might not exist, continue
+            }
 
             // Finally delete the user
             stmt = conn.prepareStatement("DELETE FROM users WHERE user_id = ?");
