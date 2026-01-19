@@ -166,7 +166,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/generateShareLink", new GenerateShareLinkLogicHandler());
 
         // Remove this if using servlet
-}
+    }
 
     /**
      * Generates a unique random token for share links
@@ -258,6 +258,43 @@ public class FrontControllerServlet extends HttpServlet {
         if ("/viewMedia".equals(path) || "/viewmedia".equals(path)) {
             logger.info("Routing " + path + " to ViewMediaServlet");
             request.getRequestDispatcher("/viewmedia").forward(request, response);
+            return;
+        }
+
+        // ===== COLLABORATIVE MEMORY ROUTES =====
+
+        // Route /collabmemories to CollabMemoriesServlet
+        if ("/collabmemories".equals(path)) {
+            logger.info("Routing /collabmemories to CollabMemoriesServlet");
+            request.getRequestDispatcher("/collabmemoriesview").forward(request, response);
+            return;
+        }
+
+        // Route /collabmemoryview to CollabMemoryViewServlet
+        if ("/collabmemoryview".equals(path)) {
+            logger.info("Routing /collabmemoryview to CollabMemoryViewServlet");
+            request.getRequestDispatcher("/collabmemoryviewservlet").forward(request, response);
+            return;
+        }
+
+        // Route /generateCollabShareLink to GenerateShareLinkServlet (POST)
+        if ("/generateCollabShareLink".equals(path)) {
+            logger.info("Routing /generateCollabShareLink to GenerateShareLinkServlet");
+            request.getRequestDispatcher("/generateCollabShareLink").forward(request, response);
+            return;
+        }
+
+        // Route /leavecollab to LeaveCollabServlet (POST)
+        if ("/leavecollab".equals(path)) {
+            logger.info("Routing /leavecollab to LeaveCollabServlet");
+            request.getRequestDispatcher("/leavecollab").forward(request, response);
+            return;
+        }
+
+        // Route /removecollabmember to RemoveCollabMemberServlet (POST)
+        if ("/removecollabmember".equals(path)) {
+            logger.info("Routing /removecollabmember to RemoveCollabMemberServlet");
+            request.getRequestDispatcher("/removecollabmember").forward(request, response);
             return;
         }
 
@@ -507,6 +544,7 @@ public class FrontControllerServlet extends HttpServlet {
             }
         }
     }
+
     // Inner class implementing the logic for generating share links
     private static class GenerateShareLinkLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
@@ -545,7 +583,9 @@ public class FrontControllerServlet extends HttpServlet {
                 String baseUrl = request.getScheme() + "://" +
                         request.getServerName() +
                         (request.getServerPort() != 80 && request.getServerPort() != 443
-                                ? ":" + request.getServerPort() : "") +
+                                ? ":" + request.getServerPort()
+                                : "")
+                        +
                         request.getContextPath();
 
                 String shareUrl = baseUrl + "/share/" + shareToken;
