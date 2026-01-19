@@ -545,8 +545,10 @@ public class FrontControllerServlet extends HttpServlet {
             }
 
             Integer userId = (Integer) session.getAttribute("user_id");
+            System.out.println("[DEBUG GroupListLogicHandler] Fetching groups for user: " + userId);
 
             List<Group> groups = groupDAO.findGroupsByMemberId(userId);
+            System.out.println("[DEBUG GroupListLogicHandler] Found " + groups.size() + " groups");
 
             // Get member counts for each group
             for (Group group : groups) {
@@ -599,8 +601,19 @@ public class FrontControllerServlet extends HttpServlet {
 
             Group groupDetail = groupDAO.findById(groupId);
 
-            if (groupDetail == null || groupDetail.getUserId() != userId) {
-                response.sendRedirect(request.getContextPath() + "/groups");
+            if (groupDetail == null) {
+                response.sendRedirect(request.getContextPath() + "/groups?error=Group not found");
+                return;
+            }
+
+            // Authorization: User must be either the creator OR a member of the group
+            GroupMemberDAO groupMemberDAO = new GroupMemberDAO();
+            boolean isMember = groupMemberDAO.isUserMember(groupId, userId);
+            boolean isCreator = (groupDetail.getUserId() == userId);
+
+            if (!isCreator && !isMember) {
+                System.out.println("[SECURITY] User " + userId + " attempted to access group " + groupId + " without permission");
+                response.sendRedirect(request.getContextPath() + "/groups?error=Access denied");
                 return;
             }
 

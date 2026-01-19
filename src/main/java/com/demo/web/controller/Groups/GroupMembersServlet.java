@@ -62,6 +62,13 @@ public class GroupMembersServlet extends HttpServlet {
             // Check if current user is a member
             boolean isMember = groupMemberDAO.isUserMember(groupId, userId);
 
+            // Authorization check
+            if (!isAdmin && !isMember) {
+                System.out.println("[SECURITY] User " + userId + " attempted to access members of group " + groupId + " without permission");
+                response.sendRedirect(request.getContextPath() + "/groups?error=Access denied");
+                return;
+            }
+
             // Set attributes for JSP
             request.setAttribute("group", group);
             request.setAttribute("members", members);
