@@ -163,8 +163,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/journalview", new JournalViewLogicHandler()); // ADD THIS LINE
         routeToLogic.put("/editjournal", new EditJournalLogicHandler());
         routeToLogic.put("/memories", new MemoryViewLogicHandler());
-
-        // Remove this if using servlet
+        routeToJsp.put("/removeMember", "/group/removeMember"); // Placeholder if needed
 
     }
 
@@ -263,6 +262,18 @@ public class FrontControllerServlet extends HttpServlet {
         if ("/viewannouncement".equals(path)) {
             logger.info("Routing /viewannouncement to ViewAnnouncementServlet");
             request.getRequestDispatcher("/viewannouncementservlet").forward(request, response);
+            return;
+        }
+
+        if ("/groupprofile".equals(path)) {
+            logger.info("Routing /groupprofile to GroupProfileServlet");
+            request.getRequestDispatcher("/groupprofileservlet").forward(request, response);
+            return;
+        }
+
+        if ("/group/removeMember".equals(path)) {
+            logger.info("Routing /group/removeMember to RemoveMemberServlet");
+            request.getRequestDispatcher("/removememberservlet").forward(request, response);
             return;
         }
 
