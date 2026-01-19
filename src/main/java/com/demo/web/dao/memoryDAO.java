@@ -101,7 +101,8 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
+                    "is_collaborative, collab_share_key " +
                     "FROM memory WHERE memory_id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -132,8 +133,10 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
+                    "is_collaborative, collab_share_key " +
                     "FROM memory WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL) " +
+                    "AND (is_collaborative = FALSE OR is_collaborative IS NULL) " +
                     "ORDER BY created_timestamp DESC";
 
             stmt = conn.prepareStatement(sql);
