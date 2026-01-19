@@ -68,6 +68,29 @@ public class memoryDAO {
     }
 
     /**
+     * Unlink media from memory (remove association)
+     */
+    public boolean unlinkMediaFromMemory(int memoryId, int mediaId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "DELETE FROM memory_media WHERE memory_id = ? AND media_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            stmt.setInt(2, mediaId);
+
+            int rowsDeleted = stmt.executeUpdate();
+            return rowsDeleted > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
      * Get memory by ID
      */
     public Memory getMemoryById(int memoryId) throws SQLException {
