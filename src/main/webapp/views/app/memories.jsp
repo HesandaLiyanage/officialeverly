@@ -38,16 +38,6 @@
                             </button>
                         </div>
 
-                        <!-- Show warning if encryption not available -->
-                        <c:if test="${not encryptionAvailable}">
-                            <div
-                                style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 8px;">
-                                <strong>⚠️ Encryption Not Available</strong>
-                                <p>Your encryption keys are not loaded. Please logout and login again to view encrypted
-                                    memories.</p>
-                            </div>
-                        </c:if>
-
                         <!-- Show error message if any -->
                         <c:if test="${not empty errorMessage}">
                             <div
@@ -85,15 +75,8 @@
                                         <div class="memory-card" data-title="${memory.title}"
                                             onclick="location.href='/memoryview?id=${memory.memoryId}'"
                                             style="cursor: pointer;">
-                                            <!-- Cover image - will be decrypted by ViewMediaServlet -->
+                                            <!-- Cover image served by ViewMediaServlet -->
                                             <div class="memory-image" style="background-image: url('${finalCover}');">
-                                                <!-- Encryption indicator -->
-                                                <c:if test="${encryptionAvailable}">
-                                                    <div
-                                                        style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px;">
-                                                        🔒 Encrypted
-                                                    </div>
-                                                </c:if>
                                             </div>
 
                                             <!-- Memory details -->

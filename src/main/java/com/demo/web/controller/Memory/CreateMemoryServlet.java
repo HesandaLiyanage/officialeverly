@@ -4,10 +4,7 @@ import com.demo.web.dao.memoryDAO;
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
-import com.demo.web.util.EncryptionService;
-import com.demo.web.util.EncryptionService.EncryptedData;
 
-import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
@@ -15,6 +12,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.UUID;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 50, // 50MB per file
@@ -25,11 +23,9 @@ public class CreateMemoryServlet extends HttpServlet {
     private memoryDAO memoryDAO;
     private MediaDAO mediaDAO;
 
-    // Logical path stored in DB (for future production use)
-    private static final String LOGICAL_UPLOAD_DIR = "encrypted_uploads";
-
-    // REAL physical path where encrypted files are saved (your dev path)
-    private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads_encrypted";
+    // Path where media files are saved
+    private static final String UPLOAD_DIR = "media_uploads";
+    private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads";
 
     @Override
     public void init() throws ServletException {
@@ -37,12 +33,12 @@ public class CreateMemoryServlet extends HttpServlet {
         memoryDAO = new memoryDAO();
         mediaDAO = new MediaDAO();
 
-        // Create the physical directory if it doesn't exist
+        // Create the upload directory if it doesn't exist
         try {
             Files.createDirectories(Paths.get(PHYSICAL_UPLOAD_PATH));
-            System.out.println("Encrypted upload directory ready: " + PHYSICAL_UPLOAD_PATH);
+            System.out.println("Media upload directory ready: " + PHYSICAL_UPLOAD_PATH);
         } catch (IOException e) {
-            throw new ServletException("Failed to create encrypted upload directory", e);
+            throw new ServletException("Failed to create upload directory", e);
         }
     }
 
@@ -70,13 +66,6 @@ public class CreateMemoryServlet extends HttpServlet {
         }
 
         Integer userId = (Integer) session.getAttribute("user_id");
-        SecretKey masterKey = (SecretKey) session.getAttribute("masterKey");
-        if (masterKey == null) {
-            response.setContentType("application/json;charset=UTF-8");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("{\"error\": \"Encryption key missing. Please log out and log in again.\"}");
-            return;
-        }
 
         try {
             String memoryName = request.getParameter("memoryName");
@@ -105,21 +94,39 @@ public class CreateMemoryServlet extends HttpServlet {
                 if (!"mediaFiles".equals(filePart.getName()) || filePart.getSize() == 0)
                     continue;
 
-                String fileName = getFileName(filePart);
-                if (fileName == null || fileName.isEmpty())
+                String originalFilename = getFileName(filePart);
+                if (originalFilename == null || originalFilename.isEmpty())
                     continue;
 
-                System.out.println("Processing file: " + fileName + " (" + filePart.getSize() + " bytes)");
+                System.out.println("Processing file: " + originalFilename + " (" + filePart.getSize() + " bytes)");
 
-                byte[] fileData = readFileData(filePart);
+                // Generate unique filename
+                String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
 
-                int mediaId = uploadEncryptedMedia(
-                        userId, masterKey, fileData, fileName, filePart.getContentType());
+                // Save file to disk
+                String physicalPath = PHYSICAL_UPLOAD_PATH + File.separator + uniqueFilename;
+                saveFile(filePart.getInputStream(), physicalPath);
+
+                // Create media item in database
+                MediaItem mediaItem = new MediaItem();
+                mediaItem.setUserId(userId);
+                mediaItem.setFilename(uniqueFilename);
+                mediaItem.setOriginalFilename(originalFilename);
+                mediaItem.setFilePath(UPLOAD_DIR + "/" + uniqueFilename);
+                mediaItem.setFileSize(filePart.getSize());
+                mediaItem.setOriginalFileSize(filePart.getSize());
+                mediaItem.setMimeType(filePart.getContentType());
+                mediaItem.setMediaType(filePart.getContentType().startsWith("image/") ? "IMAGE" : "VIDEO");
+                mediaItem.setTitle(originalFilename);
+                mediaItem.setEncrypted(false); // No encryption
+                mediaItem.setEncryptionKeyId(null); // No encryption key
+
+                int mediaId = mediaDAO.createMediaItem(mediaItem, null); // No IV needed
 
                 memoryDAO.linkMediaToMemory(memoryId, mediaId);
                 uploadedCount++;
 
-                System.out.println("Uploaded & encrypted: " + fileName + " (media_id: " + mediaId + ")");
+                System.out.println("Uploaded: " + originalFilename + " (media_id: " + mediaId + ")");
             }
 
             response.setContentType("application/json;charset=UTF-8");
@@ -138,58 +145,14 @@ public class CreateMemoryServlet extends HttpServlet {
         }
     }
 
-    private int uploadEncryptedMedia(int userId, SecretKey userMasterKey,
-            byte[] fileData, String originalFilename, String mimeType) throws Exception {
-
-        SecretKey mediaKey = EncryptionService.generateKey();
-        String keyId = EncryptionService.generateKeyId();
-
-        EncryptedData encryptedFile = EncryptionService.encrypt(fileData, mediaKey);
-
-        String encryptedFilename = keyId + ".enc";
-
-        // PHYSICAL SAVE LOCATION (your custom path)
-        String physicalPath = PHYSICAL_UPLOAD_PATH + File.separator + encryptedFilename;
-        saveEncryptedFile(encryptedFile.getEncryptedData(), physicalPath);
-
-        EncryptedData encryptedMediaKey = EncryptionService.encryptKey(mediaKey, userMasterKey);
-
-        mediaDAO.storeMediaEncryptionKey(
-                keyId, userId,
-                encryptedMediaKey.getEncryptedData(),
-                encryptedMediaKey.getIv());
-
-        MediaItem mediaItem = new MediaItem();
-        mediaItem.setUserId(userId);
-        mediaItem.setFilename(encryptedFilename);
-        mediaItem.setOriginalFilename(originalFilename);
-        // LOGICAL path stored in DB (so it works in production later)
-        mediaItem.setFilePath(LOGICAL_UPLOAD_DIR + "/" + encryptedFilename);
-        mediaItem.setFileSize(encryptedFile.getEncryptedData().length);
-        mediaItem.setOriginalFileSize(fileData.length);
-        mediaItem.setMimeType(mimeType);
-        mediaItem.setMediaType(mimeType.startsWith("image/") ? "IMAGE" : "VIDEO");
-        mediaItem.setTitle(originalFilename);
-        mediaItem.setEncrypted(true);
-        mediaItem.setEncryptionKeyId(keyId);
-
-        return mediaDAO.createMediaItem(mediaItem, encryptedFile.getIv());
-    }
-
-    private byte[] readFileData(Part filePart) throws IOException {
-        try (InputStream in = filePart.getInputStream();
-                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+    private void saveFile(InputStream inputStream, String filePath) throws IOException {
+        try (OutputStream out = new FileOutputStream(filePath)) {
             byte[] buffer = new byte[8192];
             int bytesRead;
-            while ((bytesRead = in.read(buffer)) != -1) {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesRead);
             }
-            return out.toByteArray();
         }
-    }
-
-    private void saveEncryptedFile(byte[] encryptedData, String filePath) throws IOException {
-        Files.write(Paths.get(filePath), encryptedData);
     }
 
     private String getFileName(Part part) {
