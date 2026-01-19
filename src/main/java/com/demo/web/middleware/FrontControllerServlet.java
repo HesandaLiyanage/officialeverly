@@ -5,6 +5,7 @@ import com.demo.web.dao.userDAO;
 import com.demo.web.dao.autographDAO;
 import com.demo.web.dao.userSessionDAO;
 import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.model.*;
 import com.demo.web.util.SessionUtil;
 import com.demo.web.dao.EventDAO;
