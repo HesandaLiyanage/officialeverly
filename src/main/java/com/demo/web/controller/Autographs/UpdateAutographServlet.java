@@ -1,5 +1,5 @@
 // File: com/demo/web/controller/UpdateAutographServlet.java (FIXED - Added @MultipartConfig)
-package com.demo.web.controller.autographs;
+package com.demo.web.controller.Autographs;
 
 import com.demo.web.dao.autographDAO;
 import com.demo.web.model.autograph;

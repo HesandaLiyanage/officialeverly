@@ -1,4 +1,4 @@
-package com.demo.web.controller.autographs;
+package com.demo.web.controller.Autographs;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -8,7 +8,6 @@ import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import com.demo.web.dao.autographDAO;
 import com.demo.web.model.autograph;
-
 
 @WebServlet("/write-autograph")
 public class WriteAutographServlet extends HttpServlet {
