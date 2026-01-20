@@ -61,9 +61,9 @@
                                     .rich-autograph-entry {
                                         position: relative;
                                         width: 100%;
-                                        height: 100%;
-                                        min-height: 400px;
-                                        padding: 20px;
+                                        height: 600px;
+                                        min-height: 600px;
+                                        box-sizing: border-box;
                                     }
 
                                     .message-text {
@@ -103,6 +103,17 @@
 
                                     .doodle {
                                         font-size: 3rem;
+                                    }
+
+                                    /* Styles for captured write page elements */
+                                    .author-input-wrapper {
+                                        position: absolute;
+                                        z-index: 10;
+                                    }
+
+                                    .writing-area {
+                                        position: absolute;
+                                        z-index: 2;
                                     }
                                 </style>
                             </head>

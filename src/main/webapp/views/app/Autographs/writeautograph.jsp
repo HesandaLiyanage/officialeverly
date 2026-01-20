@@ -346,8 +346,42 @@
                                 authorDiv.textContent = '- ' + author;
                                 authorWrapperClone.replaceChild(authorDiv, authorInputClone);
 
+                                // Ensure all positioning styles are set as inline styles (not relying on CSS)
+                                const decorationsContainerClone = pageClone.querySelector('.decorations-container');
+                                if (decorationsContainerClone) {
+                                    decorationsContainerClone.className = 'decorations'; // Match viewer CSS
+                                    decorationsContainerClone.style.position = 'absolute';
+                                    decorationsContainerClone.style.top = '0';
+                                    decorationsContainerClone.style.left = '0';
+                                    decorationsContainerClone.style.width = '100%';
+                                    decorationsContainerClone.style.height = '100%';
+                                    decorationsContainerClone.style.pointerEvents = 'none';
+
+                                    // Add position:absolute to each decoration
+                                    const decorations = decorationsContainerClone.querySelectorAll('.decoration');
+                                    decorations.forEach(d => {
+                                        d.style.position = 'absolute';
+                                        d.style.zIndex = '5';
+                                    });
+                                }
+
+                                // Ensure writing area and author also have explicit inline positioning
+                                if (writingAreaClone) {
+                                    writingAreaClone.style.position = 'absolute';
+                                    writingAreaClone.style.zIndex = '2';
+                                }
+                                if (authorWrapperClone) {
+                                    authorWrapperClone.style.position = 'absolute';
+                                    authorWrapperClone.style.zIndex = '10';
+                                }
+
                                 // Capture the full HTML content
                                 const fullContentHtml = pageClone.innerHTML;
+
+                                // DEBUG: Log the captured HTML to verify positioning is preserved
+                                console.log('=== Captured HTML Content ===');
+                                console.log(fullContentHtml);
+                                console.log('=== End Captured HTML ===');
 
                                 const formData = new URLSearchParams();
                                 formData.append('token', '<%= shareToken %>');
