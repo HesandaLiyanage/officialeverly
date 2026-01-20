@@ -104,17 +104,6 @@
                                     .doodle {
                                         font-size: 3rem;
                                     }
-
-                                    /* Styles for captured write page elements */
-                                    .author-input-wrapper {
-                                        position: absolute;
-                                        z-index: 10;
-                                    }
-
-                                    .writing-area {
-                                        position: absolute;
-                                        z-index: 2;
-                                    }
                                 </style>
                             </head>
 

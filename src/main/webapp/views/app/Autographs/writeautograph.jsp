@@ -349,11 +349,6 @@
                                 // Capture the full HTML content
                                 const fullContentHtml = pageClone.innerHTML;
 
-                                // DEBUG: Log the captured HTML to verify positioning is preserved
-                                console.log('=== Captured HTML Content ===');
-                                console.log(fullContentHtml);
-                                console.log('=== End Captured HTML ===');
-
                                 const formData = new URLSearchParams();
                                 formData.append('token', '<%= shareToken %>');
                                 formData.append('content', fullContentHtml);
