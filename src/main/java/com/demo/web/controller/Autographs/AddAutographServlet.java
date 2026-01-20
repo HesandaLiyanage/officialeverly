@@ -48,10 +48,7 @@ public class AddAutographServlet extends HttpServlet {
         // Get form data
         String title = request.getParameter("bookTitle");
         String description = request.getParameter("description");
-        String customLink = request.getParameter("customLink");
-
-        logger.info(
-                "AddAutographServlet: Received creation request. Title: " + title + ", Description: " + description);
+        String customLink = request.getParameter("customLink"); // You can store this if needed
 
         // Validate required fields
         if (title == null || title.trim().isEmpty()) {

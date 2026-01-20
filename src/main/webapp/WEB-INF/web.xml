@@ -68,7 +68,7 @@
     <!-- Add Autograph Servlet -->
     <servlet>
         <servlet-name>AddAutographServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.autographs.AddAutographServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.AddAutographServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AddAutographServlet</servlet-name>
@@ -140,7 +140,7 @@
 
     <servlet>
         <servlet-name>DeleteAutographServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.autographs.DeleteAutographServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.DeleteAutographServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DeleteAutographServlet</servlet-name>
@@ -220,7 +220,7 @@
     <!-- Servlet for updating autographs -->
     <servlet>
         <servlet-name>UpdateAutographServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.autographs.UpdateAutographServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.UpdateAutographServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UpdateAutographServlet</servlet-name>

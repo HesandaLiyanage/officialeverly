@@ -28,8 +28,7 @@
                         </div>
                         <% } %>
 
-                            <form class="autograph-form" id="autographForm"
-                                action="${pageContext.request.contextPath}/addautographservlet" method="post"
+                            <form class="autograph-form" id="autographForm" action="/addautographservlet" method="post"
                                 enctype="multipart/form-data">
 
                                 <!-- Book Title Input -->
