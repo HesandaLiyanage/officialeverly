@@ -238,7 +238,8 @@
 }
 
 /* Decorations - Static (no animation) */
-.decorations {
+.decorations,
+.decorations-container {
     position: absolute;
     top: 0;
     left: 0;
