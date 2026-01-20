@@ -70,38 +70,6 @@
                                         min-height: 600px !important;
                                     }
 
-                                    /* Styles for captured elements */
-                                    .message-text {
-                                        position: absolute;
-                                        z-index: 2;
-                                    }
-
-                                    .decorations-container {
-                                        position: absolute;
-                                        top: 0;
-                                        left: 0;
-                                        width: 100%;
-                                        height: 100%;
-                                        pointer-events: none;
-                                    }
-
-                                    .decoration {
-                                        position: absolute;
-                                        font-size: 2rem;
-                                    }
-
-                                    .author-input-wrapper {
-                                        position: absolute;
-                                        z-index: 10;
-                                    }
-
-                                    .author-signature {
-                                        position: absolute;
-                                        font-style: italic;
-                                        font-weight: 600;
-                                        color: #6b7280;
-                                    }
-
                                     .entry-date {
                                         font-size: 0.85rem;
                                         color: #888;

@@ -349,7 +349,6 @@
                                 // Ensure all positioning styles are set as inline styles (not relying on CSS)
                                 const decorationsContainerClone = pageClone.querySelector('.decorations-container');
                                 if (decorationsContainerClone) {
-                                    decorationsContainerClone.className = 'decorations'; // Match viewer CSS
                                     decorationsContainerClone.style.position = 'absolute';
                                     decorationsContainerClone.style.top = '0';
                                     decorationsContainerClone.style.left = '0';
@@ -361,18 +360,7 @@
                                     const decorations = decorationsContainerClone.querySelectorAll('.decoration');
                                     decorations.forEach(d => {
                                         d.style.position = 'absolute';
-                                        d.style.zIndex = '5';
                                     });
-                                }
-
-                                // Ensure writing area and author also have explicit inline positioning
-                                if (writingAreaClone) {
-                                    writingAreaClone.style.position = 'absolute';
-                                    writingAreaClone.style.zIndex = '2';
-                                }
-                                if (authorWrapperClone) {
-                                    authorWrapperClone.style.position = 'absolute';
-                                    authorWrapperClone.style.zIndex = '10';
                                 }
 
                                 // Capture the full HTML content
