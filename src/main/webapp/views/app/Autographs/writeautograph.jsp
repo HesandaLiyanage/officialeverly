@@ -346,23 +346,6 @@
                                 authorDiv.textContent = '- ' + author;
                                 authorWrapperClone.replaceChild(authorDiv, authorInputClone);
 
-                                // Ensure all positioning styles are set as inline styles (not relying on CSS)
-                                const decorationsContainerClone = pageClone.querySelector('.decorations-container');
-                                if (decorationsContainerClone) {
-                                    decorationsContainerClone.style.position = 'absolute';
-                                    decorationsContainerClone.style.top = '0';
-                                    decorationsContainerClone.style.left = '0';
-                                    decorationsContainerClone.style.width = '100%';
-                                    decorationsContainerClone.style.height = '100%';
-                                    decorationsContainerClone.style.pointerEvents = 'none';
-
-                                    // Add position:absolute to each decoration
-                                    const decorations = decorationsContainerClone.querySelectorAll('.decoration');
-                                    decorations.forEach(d => {
-                                        d.style.position = 'absolute';
-                                    });
-                                }
-
                                 // Capture the full HTML content
                                 const fullContentHtml = pageClone.innerHTML;
 
