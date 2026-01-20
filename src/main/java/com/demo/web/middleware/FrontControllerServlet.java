@@ -1311,7 +1311,7 @@ public class FrontControllerServlet extends HttpServlet {
                 }
 
                 // Use the full captured HTML directly
-                String richHtml = "<div class='rich-autograph-entry' style='position: relative; width: 100%; height: 600px; min-height: 600px;'>"
+                String richHtml = "<div class='rich-autograph-entry' style='position: relative; width: 100%; min-height: 600px;'>"
                         +
                         fullHtmlContent +
                         "</div>";

@@ -66,8 +66,8 @@
                                     /* Ensure generated absolute elements stay within the card */
                                     .rich-autograph-entry {
                                         position: relative !important;
-                                        height: 600px !important;
-                                        min-height: 600px !important;
+                                        height: 400px !important;
+                                        min-height: 400px !important;
                                     }
 
                                     .entry-date {
