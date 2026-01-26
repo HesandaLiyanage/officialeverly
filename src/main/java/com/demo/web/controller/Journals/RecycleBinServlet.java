@@ -26,7 +26,22 @@ public class RecycleBinServlet extends HttpServlet {
         }
 
         RecycleBinDAO rbDao = new RecycleBinDAO();
-        List<RecycleBinItem> trashItems = rbDao.findByUserId(userId);
+        List<RecycleBinItem> journalItems = rbDao.findByUserId(userId);
+        List<RecycleBinItem> autographItems = rbDao.findAutographsByUserId(userId);
+        
+        // Combine both lists
+        List<RecycleBinItem> trashItems = new java.util.ArrayList<>();
+        trashItems.addAll(journalItems);
+        trashItems.addAll(autographItems);
+        
+        // Sort by deleted date descending
+        trashItems.sort((a, b) -> {
+            if (a.getDeletedAt() == null && b.getDeletedAt() == null) return 0;
+            if (a.getDeletedAt() == null) return 1;
+            if (b.getDeletedAt() == null) return -1;
+            return b.getDeletedAt().compareTo(a.getDeletedAt());
+        });
+        
         request.setAttribute("trashItems", trashItems);
         request.getRequestDispatcher("/views/app/trashmgt.jsp").forward(request, response);
     }
