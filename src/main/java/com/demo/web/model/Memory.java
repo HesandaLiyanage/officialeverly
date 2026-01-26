@@ -14,6 +14,8 @@ public class Memory {
     private String shareKey;
     private Timestamp expiresAt;
     private boolean isLinkShared;
+    private boolean isCollaborative;
+    private String collabShareKey;
 
     // Constructors
     public Memory() {
@@ -116,10 +118,24 @@ public class Memory {
         isLinkShared = linkShared;
     }
 
+    public boolean isCollaborative() {
+        return isCollaborative;
+    }
+
+    public void setCollaborative(boolean collaborative) {
+        isCollaborative = collaborative;
+    }
+
+    public String getCollabShareKey() {
+        return collabShareKey;
+    }
+
+    public void setCollabShareKey(String collabShareKey) {
+        this.collabShareKey = collabShareKey;
+    }
+
     // Add to Memory.java
     private String coverUrl; // temporary for display
-
-
 
     public void setCoverUrl(String coverUrl) {
         this.coverUrl = coverUrl;
