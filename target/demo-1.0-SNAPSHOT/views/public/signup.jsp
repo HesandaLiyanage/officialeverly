@@ -27,7 +27,8 @@
                     </div>
                     <% } %>
 
-                        <form class="signup-form" action="/signupservlet" method="post" id="signupForm">
+                        <form class="signup-form" action="${pageContext.request.contextPath}/signupservlet"
+                            method="post" id="signupForm">
                             <input type="hidden" name="step" value="1">
 
                             <div class="form-group">

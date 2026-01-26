@@ -59,16 +59,49 @@ public class DebugServlet extends HttpServlet {
             }
             out.println("</table>");
 
-            if (!hasUsers) {
-                out.println("<p>❌ No users found in database!</p>");
-            }
-
         } catch (Exception e) {
-            out.println("<p>❌ Database Query Error: " + e.getMessage() + "</p>");
+            out.println("<p>❌ Database Query Error (Users): " + e.getMessage() + "</p>");
         }
 
-        // Test 3: Password hashing test
-        out.println("<h3>3. Password Hashing Test</h3>");
+        // Test 2b: Check group_member table structure
+        out.println("<h3>2b. Group Member Table Structure</h3>");
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            String sql = "SELECT * FROM group_member LIMIT 1";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            java.sql.ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            out.println("<p>Columns in group_member table:</p>");
+            out.println("<ul>");
+            for (int i = 1; i <= columnCount; i++) {
+                out.println("<li>" + metaData.getColumnName(i) + " (" + metaData.getColumnTypeName(i) + ")</li>");
+            }
+            out.println("</ul>");
+
+        } catch (Exception e) {
+            out.println("<p>❌ Database Query Error (group_member): " + e.getMessage() + "</p>");
+        }
+
+        // Test 2c: Check group_invite table structure
+        out.println("<h3>2c. Group Invite Table Structure</h3>");
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            String sql = "SELECT * FROM group_invite LIMIT 1";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            java.sql.ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            out.println("<p>Columns in group_invite table:</p>");
+            out.println("<ul>");
+            for (int i = 1; i <= columnCount; i++) {
+                out.println("<li>" + metaData.getColumnName(i) + " (" + metaData.getColumnTypeName(i) + ")</li>");
+            }
+            out.println("</ul>");
+
+        } catch (Exception e) {
+            out.println("<p>❌ Database Query Error (group_invite): " + e.getMessage() + "</p>");
+        }
         String testPassword = "password123";
         String testSalt = PasswordUtil.generateSalt();
         String testHash = PasswordUtil.hashPassword(testPassword, testSalt);

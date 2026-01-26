@@ -5,6 +5,7 @@ import com.demo.web.dao.userDAO;
 import com.demo.web.dao.autographDAO;
 import com.demo.web.dao.userSessionDAO;
 import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.model.*;
 import com.demo.web.util.SessionUtil;
 import com.demo.web.dao.EventDAO;
@@ -15,9 +16,7 @@ import com.demo.web.model.autograph;
 import com.demo.web.dao.JournalStreakDAO;
 import com.demo.web.model.JournalStreak;
 
-import java.security.SecureRandom;
-import java.util.Base64;
-import java.sql.SQLException;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -116,6 +115,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/groupmemories", "/views/app/groupmemories.jsp");
         routeToJsp.put("/groupmembers", "/views/app/groupmembers.jsp");
         routeToJsp.put("/groupannouncement", "/views/app/groupannouncement.jsp");
+        routeToJsp.put("/createannouncement", "/views/app/createannouncement.jsp");
+        routeToJsp.put("/viewannouncement", "/views/app/viewannouncement.jsp");
         routeToJsp.put("/writeautograph", "/views/app/writeautograph.jsp");
         routeToJsp.put("/eventinfo", "/views/app/eventinfo.jsp");
         routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
@@ -163,21 +164,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/journalview", new JournalViewLogicHandler()); // ADD THIS LINE
         routeToLogic.put("/editjournal", new EditJournalLogicHandler());
         routeToLogic.put("/memories", new MemoryViewLogicHandler());
-        routeToLogic.put("/generateShareLink", new GenerateShareLinkLogicHandler());
+        routeToJsp.put("/removeMember", "/group/removeMember"); // Placeholder if needed
 
-        // Remove this if using servlet
-    }
-
-    /**
-     * Generates a unique random token for share links
-     */
-    private String generateShareToken() {
-        SecureRandom random = new SecureRandom();
-        byte[] randomBytes = new byte[16];
-        random.nextBytes(randomBytes);
-        return Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(randomBytes);
     }
 
     private static class MemoryViewLogicHandler implements LogicHandler {
@@ -245,15 +233,6 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
-        // Route /share/* to handle share links
-        if (path.startsWith("/share/")) {
-            logger.info("Routing share link to ShareLinkViewLogicHandler");
-            String shareToken = path.substring("/share/".length());
-            request.setAttribute("shareToken", shareToken);
-            new ShareLinkViewLogicHandler().execute(request, response);
-            return;
-        }
-
         // Route /viewMedia to ViewMediaServlet (GET requests) - support both cases
         if ("/viewMedia".equals(path) || "/viewmedia".equals(path)) {
             logger.info("Routing " + path + " to ViewMediaServlet");
@@ -261,40 +240,41 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
-        // ===== COLLABORATIVE MEMORY ROUTES =====
-
-        // Route /collabmemories to CollabMemoriesServlet
-        if ("/collabmemories".equals(path)) {
-            logger.info("Routing /collabmemories to CollabMemoriesServlet");
-            request.getRequestDispatcher("/collabmemoriesview").forward(request, response);
+        // Route /groupmembers to GroupMembersServlet
+        if ("/groupmembers".equals(path)) {
+            logger.info("Routing /groupmembers to GroupMembersServlet");
+            request.getRequestDispatcher("/groupmembersservlet").forward(request, response);
             return;
         }
 
-        // Route /collabmemoryview to CollabMemoryViewServlet
-        if ("/collabmemoryview".equals(path)) {
-            logger.info("Routing /collabmemoryview to CollabMemoryViewServlet");
-            request.getRequestDispatcher("/collabmemoryviewservlet").forward(request, response);
+        // Group Announcement routes
+        if ("/groupannouncement".equals(path)) {
+            logger.info("Routing /groupannouncement to GroupAnnouncementServlet");
+            request.getRequestDispatcher("/groupannouncementservlet").forward(request, response);
             return;
         }
 
-        // Route /generateCollabShareLink to GenerateShareLinkServlet (POST)
-        if ("/generateCollabShareLink".equals(path)) {
-            logger.info("Routing /generateCollabShareLink to GenerateShareLinkServlet");
-            request.getRequestDispatcher("/generateCollabShareLink").forward(request, response);
+        if ("/createannouncement".equals(path)) {
+            logger.info("Routing /createannouncement to CreateAnnouncementServlet");
+            request.getRequestDispatcher("/createannouncementservlet").forward(request, response);
             return;
         }
 
-        // Route /leavecollab to LeaveCollabServlet (POST)
-        if ("/leavecollab".equals(path)) {
-            logger.info("Routing /leavecollab to LeaveCollabServlet");
-            request.getRequestDispatcher("/leavecollab").forward(request, response);
+        if ("/viewannouncement".equals(path)) {
+            logger.info("Routing /viewannouncement to ViewAnnouncementServlet");
+            request.getRequestDispatcher("/viewannouncementservlet").forward(request, response);
             return;
         }
 
-        // Route /removecollabmember to RemoveCollabMemberServlet (POST)
-        if ("/removecollabmember".equals(path)) {
-            logger.info("Routing /removecollabmember to RemoveCollabMemberServlet");
-            request.getRequestDispatcher("/removecollabmember").forward(request, response);
+        if ("/groupprofile".equals(path)) {
+            logger.info("Routing /groupprofile to GroupProfileServlet");
+            request.getRequestDispatcher("/groupprofileservlet").forward(request, response);
+            return;
+        }
+
+        if ("/group/removeMember".equals(path)) {
+            logger.info("Routing /group/removeMember to RemoveMemberServlet");
+            request.getRequestDispatcher("/removememberservlet").forward(request, response);
             return;
         }
 
@@ -502,109 +482,6 @@ public class FrontControllerServlet extends HttpServlet {
         }
     }
 
-    // Inner class implementing the logic for viewing shared autographs
-    private static class ShareLinkViewLogicHandler implements LogicHandler {
-        private autographDAO autographDAO;
-
-        public ShareLinkViewLogicHandler() {
-            this.autographDAO = new autographDAO();
-        }
-
-        @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response)
-                throws ServletException, IOException {
-
-            String shareToken = (String) request.getAttribute("shareToken");
-
-            if (shareToken == null || shareToken.trim().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid share link");
-                return;
-            }
-
-            try {
-                autograph ag = autographDAO.getAutographByShareToken(shareToken);
-
-                if (ag == null) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Autograph not found");
-                    return;
-                }
-
-                // Redirect to the autograph view page with ID
-                response.sendRedirect(request.getContextPath() +
-                        "/autographview?id=" + ag.getAutographId());
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "Error loading autograph");
-            } catch (Exception e) {
-                e.printStackTrace();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "Error loading autograph");
-            }
-        }
-    }
-
-    // Inner class implementing the logic for generating share links
-    private static class GenerateShareLinkLogicHandler implements LogicHandler {
-        private autographDAO autographDAO;
-
-        public GenerateShareLinkLogicHandler() {
-            this.autographDAO = new autographDAO();
-        }
-
-        @Override
-        public void execute(HttpServletRequest request, HttpServletResponse response)
-                throws ServletException, IOException {
-
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("user_id") == null) {
-                response.getWriter().write("{\"success\": false, \"message\": \"Not authenticated\"}");
-                return;
-            }
-
-            try {
-                String autographIdStr = request.getParameter("autographId");
-
-                if (autographIdStr == null || autographIdStr.isEmpty()) {
-                    response.getWriter().write("{\"success\": false, \"message\": \"Autograph ID is required\"}");
-                    return;
-                }
-
-                int autographId = Integer.parseInt(autographIdStr);
-
-                // Get or create share token
-                String shareToken = autographDAO.getOrCreateShareToken(autographId);
-
-                // Generate full share URL
-                String baseUrl = request.getScheme() + "://" +
-                        request.getServerName() +
-                        (request.getServerPort() != 80 && request.getServerPort() != 443
-                                ? ":" + request.getServerPort()
-                                : "")
-                        +
-                        request.getContextPath();
-
-                String shareUrl = baseUrl + "/share/" + shareToken;
-
-                // Return JSON response
-                response.getWriter().write("{\"success\": true, \"shareUrl\": \"" + shareUrl + "\"}");
-
-            } catch (NumberFormatException e) {
-                response.getWriter().write("{\"success\": false, \"message\": \"Invalid autograph ID\"}");
-            } catch (SQLException e) {
-                e.printStackTrace();
-                response.getWriter().write("{\"success\": false, \"message\": \"Database error occurred\"}");
-            } catch (Exception e) {
-                e.printStackTrace();
-                response.getWriter().write("{\"success\": false, \"message\": \"Error generating share link\"}");
-            }
-        }
-    }
-
     // Inner class implementing the logic for /editautograph
     private static class EditAutographLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
@@ -669,8 +546,10 @@ public class FrontControllerServlet extends HttpServlet {
             }
 
             Integer userId = (Integer) session.getAttribute("user_id");
+            System.out.println("[DEBUG GroupListLogicHandler] Fetching groups for user: " + userId);
 
-            List<Group> groups = groupDAO.findByUserId(userId);
+            List<Group> groups = groupDAO.findGroupsByMemberId(userId);
+            System.out.println("[DEBUG GroupListLogicHandler] Found " + groups.size() + " groups");
 
             // Get member counts for each group
             for (Group group : groups) {
@@ -723,8 +602,19 @@ public class FrontControllerServlet extends HttpServlet {
 
             Group groupDetail = groupDAO.findById(groupId);
 
-            if (groupDetail == null || groupDetail.getUserId() != userId) {
-                response.sendRedirect(request.getContextPath() + "/groups");
+            if (groupDetail == null) {
+                response.sendRedirect(request.getContextPath() + "/groups?error=Group not found");
+                return;
+            }
+
+            // Authorization: User must be either the creator OR a member of the group
+            GroupMemberDAO groupMemberDAO = new GroupMemberDAO();
+            boolean isMember = groupMemberDAO.isUserMember(groupId, userId);
+            boolean isCreator = (groupDetail.getUserId() == userId);
+
+            if (!isCreator && !isMember) {
+                System.out.println("[SECURITY] User " + userId + " attempted to access group " + groupId + " without permission");
+                response.sendRedirect(request.getContextPath() + "/groups?error=Access denied");
                 return;
             }
 

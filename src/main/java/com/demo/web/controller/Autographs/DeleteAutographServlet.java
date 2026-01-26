@@ -55,16 +55,16 @@ public class DeleteAutographServlet extends HttpServlet {
                 return;
             }
 
-            // Attempt to delete the autograph
-            boolean success = autographDAO.deleteAutograph(autographId);
+            // Attempt to move autograph to recycle bin (soft delete)
+            boolean success = autographDAO.deleteAutographToRecycleBin(autographId, userId);
 
             if (success) {
-                logger.info("Successfully deleted autograph ID: " + autographId + " by user ID: " + userId);
+                logger.info("Successfully moved autograph ID: " + autographId + " to recycle bin by user ID: " + userId);
                 // Redirect to the autographs list page on success
-                response.sendRedirect(request.getContextPath() + "/autographs");
+                response.sendRedirect(request.getContextPath() + "/autographs?msg=Autograph moved to Recycle Bin");
             } else {
                 // This might happen if the delete failed for reasons other than the record not existing
-                logger.warning("Failed to delete autograph ID: " + autographId + " by user ID: " + userId);
+                logger.warning("Failed to move autograph ID: " + autographId + " to recycle bin by user ID: " + userId);
                 // You could redirect back with an error, but often redirecting to the list is fine.
                 response.sendRedirect(request.getContextPath() + "/autographs?error=delete_failed");
             }
