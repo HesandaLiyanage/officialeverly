@@ -116,9 +116,6 @@
     height: calc(100vh - 200px);
     max-height: 650px;
     background: #e8e6e3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: 30px 20px;
 }
 
@@ -126,9 +123,7 @@
     width: 100%;
     max-width: 800px;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin: 0 auto;
 }
 
 /* Autograph Page - Lined Paper Look */
@@ -219,13 +214,10 @@
     height: 100%;
     padding-left: 25px;
     transition: opacity 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
 .message-text {
-    position: relative;
+    position: absolute;
     z-index: 2;
 }
 
@@ -574,4 +566,3 @@
         font-size: 18px !important;
     }
 }
-

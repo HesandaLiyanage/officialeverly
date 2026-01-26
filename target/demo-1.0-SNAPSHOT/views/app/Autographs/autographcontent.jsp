@@ -206,9 +206,23 @@
 
         // Create the share URL
         const baseUrl = window.location.origin;
-        const shareUrl = baseUrl + '/autographview?id=' + encodeURIComponent(autographId);
+            fetch('/generateShareLink?autographId=' + encodeURIComponent(autographId))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        window.currentShareUrl = data.shareUrl;
 
-        // Store for copy link function
+                        const whatsappText = 'Check out my autograph book: ' + title + ' - ' + data.shareUrl;
+                        whatsappShare.href = 'https://wa.me/?text=' + encodeURIComponent(whatsappText);
+
+                        document.getElementById('shareOverlay').style.display = 'flex';
+                    } else {
+                        alert('Unable to generate share link');
+                    }
+                });
+
+
+            // Store for copy link function
         window.currentShareUrl = shareUrl;
         window.currentShareTitle = title;
 
