@@ -5,6 +5,7 @@ import com.demo.web.dao.userDAO;
 import com.demo.web.dao.autographDAO;
 import com.demo.web.dao.userSessionDAO;
 import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.model.*;
 import com.demo.web.util.SessionUtil;
 import com.demo.web.dao.EventDAO;
@@ -163,8 +164,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/journalview", new JournalViewLogicHandler()); // ADD THIS LINE
         routeToLogic.put("/editjournal", new EditJournalLogicHandler());
         routeToLogic.put("/memories", new MemoryViewLogicHandler());
-
-        // Remove this if using servlet
+        routeToJsp.put("/removeMember", "/group/removeMember"); // Placeholder if needed
 
     }
 
@@ -263,6 +263,18 @@ public class FrontControllerServlet extends HttpServlet {
         if ("/viewannouncement".equals(path)) {
             logger.info("Routing /viewannouncement to ViewAnnouncementServlet");
             request.getRequestDispatcher("/viewannouncementservlet").forward(request, response);
+            return;
+        }
+
+        if ("/groupprofile".equals(path)) {
+            logger.info("Routing /groupprofile to GroupProfileServlet");
+            request.getRequestDispatcher("/groupprofileservlet").forward(request, response);
+            return;
+        }
+
+        if ("/group/removeMember".equals(path)) {
+            logger.info("Routing /group/removeMember to RemoveMemberServlet");
+            request.getRequestDispatcher("/removememberservlet").forward(request, response);
             return;
         }
 
@@ -534,8 +546,10 @@ public class FrontControllerServlet extends HttpServlet {
             }
 
             Integer userId = (Integer) session.getAttribute("user_id");
+            System.out.println("[DEBUG GroupListLogicHandler] Fetching groups for user: " + userId);
 
             List<Group> groups = groupDAO.findGroupsByMemberId(userId);
+            System.out.println("[DEBUG GroupListLogicHandler] Found " + groups.size() + " groups");
 
             // Get member counts for each group
             for (Group group : groups) {
@@ -588,8 +602,19 @@ public class FrontControllerServlet extends HttpServlet {
 
             Group groupDetail = groupDAO.findById(groupId);
 
-            if (groupDetail == null || groupDetail.getUserId() != userId) {
-                response.sendRedirect(request.getContextPath() + "/groups");
+            if (groupDetail == null) {
+                response.sendRedirect(request.getContextPath() + "/groups?error=Group not found");
+                return;
+            }
+
+            // Authorization: User must be either the creator OR a member of the group
+            GroupMemberDAO groupMemberDAO = new GroupMemberDAO();
+            boolean isMember = groupMemberDAO.isUserMember(groupId, userId);
+            boolean isCreator = (groupDetail.getUserId() == userId);
+
+            if (!isCreator && !isMember) {
+                System.out.println("[SECURITY] User " + userId + " attempted to access group " + groupId + " without permission");
+                response.sendRedirect(request.getContextPath() + "/groups?error=Access denied");
                 return;
             }
 

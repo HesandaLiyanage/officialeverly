@@ -80,12 +80,12 @@ public class GroupDAO {
     // ✅ NEW METHOD: Get ALL groups user is part of (owned OR joined)
     public List<Group> findGroupsByMemberId(int userId) {
         String sql = """
-            SELECT DISTINCT g.group_id, g.g_name, g.g_description, g.created_at, 
-                   g.user_id, g.group_pic, g.group_url
-            FROM "group" g
-            LEFT JOIN group_member gm ON g.group_id = gm.group_id
-            WHERE g.user_id = ? OR gm.member_id = ?
-            ORDER BY g.created_at DESC
+            SELECT group_id, g_name, g_description, created_at, 
+                   user_id, group_pic, group_url
+            FROM "group"
+            WHERE user_id = ? 
+            OR group_id IN (SELECT group_id FROM group_member WHERE member_id = ?)
+            ORDER BY created_at DESC
             """;
 
         List<Group> groups = new ArrayList<>();
