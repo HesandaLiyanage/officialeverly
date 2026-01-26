@@ -429,6 +429,67 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- View Controllers (Refactored from FrontController) -->
+    
+    <!-- Settings View Controllers -->
+    <servlet>
+        <servlet-name>LinkedDevicesViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Settings.LinkedDevicesViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LinkedDevicesViewController</servlet-name>
+        <url-pattern>/linkeddevicesview</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditProfileViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Settings.EditProfileViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditProfileViewController</servlet-name>
+        <url-pattern>/editprofileview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Autograph View Controller -->
+    <servlet>
+        <servlet-name>AutographViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Autographs.AutographViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AutographViewController</servlet-name>
+        <url-pattern>/autographsview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Group View Controller -->
+    <servlet>
+        <servlet-name>GroupViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.GroupViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupViewController</servlet-name>
+        <url-pattern>/groupsview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Event View Controller -->
+    <servlet>
+        <servlet-name>EventViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Events.EventViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EventViewController</servlet-name>
+        <url-pattern>/eventsview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Journal View Controller -->
+    <servlet>
+        <servlet-name>JournalViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Journals.JournalViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>JournalViewController</servlet-name>
+        <url-pattern>/journalsview</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>
