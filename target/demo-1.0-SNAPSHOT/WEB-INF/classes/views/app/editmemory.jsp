@@ -74,16 +74,9 @@
                         <div class="existing-file-preview" data-file-id="${media.mediaId}">
                           <c:choose>
                             <c:when test="${media.mediaType eq 'image' or media.mimeType.startsWith('image/')}">
-                              <c:choose>
-                                <c:when test="${media.encrypted}">
-                                  <img src="${pageContext.request.contextPath}/viewmedia?id=${media.mediaId}"
-                                    alt="${media.title}"
-                                    onerror="this.src='${pageContext.request.contextPath}/resources/images/default-memory.jpg'">
-                                </c:when>
-                                <c:otherwise>
-                                  <img src="${media.filePath}" alt="${media.title}">
-                                </c:otherwise>
-                              </c:choose>
+                              <img src="${pageContext.request.contextPath}/viewMedia?id=${media.mediaId}"
+                                alt="${media.title}"
+                                onerror="this.src='${pageContext.request.contextPath}/resources/images/default-memory.jpg'">
                             </c:when>
                             <c:otherwise>
                               <div class="video-placeholder">

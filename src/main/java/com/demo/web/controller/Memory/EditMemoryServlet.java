@@ -5,7 +5,6 @@ import com.demo.web.dao.memoryDAO;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Memory;
 
-import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -67,14 +66,9 @@ public class EditMemoryServlet extends HttpServlet {
             // Fetch associated media items
             List<MediaItem> mediaItems = mediaDao.getMediaByMemoryId(memoryId);
 
-            // Check encryption availability
-            SecretKey masterKey = (SecretKey) session.getAttribute("masterKey");
-            boolean encryptionAvailable = (masterKey != null);
-
             // Set attributes for JSP
             request.setAttribute("memory", memory);
             request.setAttribute("mediaItems", mediaItems);
-            request.setAttribute("encryptionAvailable", encryptionAvailable);
 
             // Forward to edit page
             request.getRequestDispatcher("/views/app/editmemory.jsp").forward(request, response);

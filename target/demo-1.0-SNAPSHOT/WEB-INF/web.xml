@@ -129,6 +129,61 @@
         <url-pattern>/deleteMemoryServlet</url-pattern>
     </servlet-mapping>
 
+    <!-- Collaborative Memory Servlets -->
+    <servlet>
+        <servlet-name>CollabMemoriesServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemoriesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CollabMemoriesServlet</servlet-name>
+        <url-pattern>/collabmemoriesview</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CollabMemoryViewServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemoryViewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CollabMemoryViewServlet</servlet-name>
+        <url-pattern>/collabmemoryviewservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GenerateShareLinkServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.GenerateShareLinkServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GenerateShareLinkServlet</servlet-name>
+        <url-pattern>/generateCollabShareLink</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>JoinCollabServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.JoinCollabServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>JoinCollabServlet</servlet-name>
+        <url-pattern>/memoryinvite</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LeaveCollabServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.LeaveCollabServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LeaveCollabServlet</servlet-name>
+        <url-pattern>/leavecollab</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RemoveCollabMemberServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.RemoveCollabMemberServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RemoveCollabMemberServlet</servlet-name>
+        <url-pattern>/removecollabmember</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>ViewMediaServlet</servlet-name>
         <servlet-class>com.demo.web.controller.ViewMediaServlet</servlet-class>

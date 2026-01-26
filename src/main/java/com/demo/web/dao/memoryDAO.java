@@ -68,6 +68,29 @@ public class memoryDAO {
     }
 
     /**
+     * Unlink media from memory (remove association)
+     */
+    public boolean unlinkMediaFromMemory(int memoryId, int mediaId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "DELETE FROM memory_media WHERE memory_id = ? AND media_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            stmt.setInt(2, mediaId);
+
+            int rowsDeleted = stmt.executeUpdate();
+            return rowsDeleted > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
      * Get memory by ID
      */
     public Memory getMemoryById(int memoryId) throws SQLException {
@@ -78,7 +101,8 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
+                    "is_collaborative, collab_share_key " +
                     "FROM memory WHERE memory_id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -98,7 +122,7 @@ public class memoryDAO {
     }
 
     /**
-     * Get all memories for a user
+     * Get all memories for a user (excluding vault items)
      */
     public List<Memory> getMemoriesByUserId(int userId) throws SQLException {
         List<Memory> memories = new ArrayList<>();
@@ -109,8 +133,11 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
-                    "FROM memory WHERE user_id = ? ORDER BY created_timestamp DESC";
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
+                    "is_collaborative, collab_share_key " +
+                    "FROM memory WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL) " +
+                    "AND (is_collaborative = FALSE OR is_collaborative IS NULL) " +
+                    "ORDER BY created_timestamp DESC";
 
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
@@ -259,6 +286,14 @@ public class memoryDAO {
         memory.setExpiresAt(rs.getTimestamp("expires_at"));
         memory.setLinkShared(rs.getBoolean("is_link_shared"));
 
+        // Collaborative fields
+        try {
+            memory.setCollaborative(rs.getBoolean("is_collaborative"));
+            memory.setCollabShareKey(rs.getString("collab_share_key"));
+        } catch (SQLException e) {
+            // Columns may not exist in older queries
+        }
+
         return memory;
     }
 
@@ -267,11 +302,253 @@ public class memoryDAO {
      */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
-            if (conn != null) conn.close();
+            if (rs != null)
+                rs.close();
+            if (stmt != null)
+                stmt.close();
+            if (conn != null)
+                conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    // ============================================
+    // VAULT METHODS
+    // ============================================
+
+    /**
+     * Get all vault memories for a user
+     */
+    public List<Memory> getVaultMemoriesByUserId(int userId) throws SQLException {
+        List<Memory> memories = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared " +
+                    "FROM memory WHERE user_id = ? AND is_in_vault = TRUE " +
+                    "ORDER BY created_timestamp DESC";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                memories.add(mapResultSetToMemory(rs));
+            }
+
+            return memories;
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    /**
+     * Move a memory to the vault
+     */
+    public boolean moveToVault(int memoryId, int userId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE memory SET is_in_vault = TRUE WHERE memory_id = ? AND user_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            stmt.setInt(2, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Remove a memory from the vault (restore to regular view)
+     */
+    public boolean removeFromVault(int memoryId, int userId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE memory SET is_in_vault = FALSE WHERE memory_id = ? AND user_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            stmt.setInt(2, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Check if a memory is in the vault
+     */
+    public boolean isMemoryInVault(int memoryId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT is_in_vault FROM memory WHERE memory_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getBoolean("is_in_vault");
+            }
+
+            return false;
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    // ============================================
+    // COLLABORATIVE MEMORY METHODS
+    // ============================================
+
+    /**
+     * Get all collaborative memories where user is owner or member
+     */
+    public List<Memory> getCollabMemoriesByUserId(int userId) throws SQLException {
+        List<Memory> memories = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT DISTINCT m.memory_id, m.title, m.description, m.updated_at, m.user_id, " +
+                    "m.cover_media_id, m.created_timestamp, m.is_public, m.share_key, m.expires_at, " +
+                    "m.is_link_shared, m.is_collaborative, m.collab_share_key " +
+                    "FROM memory m " +
+                    "JOIN memory_members mm ON m.memory_id = mm.memory_id " +
+                    "WHERE mm.user_id = ? AND m.is_collaborative = TRUE " +
+                    "AND (m.is_in_vault = FALSE OR m.is_in_vault IS NULL) " +
+                    "ORDER BY m.created_timestamp DESC";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                memories.add(mapResultSetToMemory(rs));
+            }
+
+            return memories;
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    /**
+     * Get memory by collab share key
+     */
+    public Memory getMemoryByShareKey(String shareKey) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, " +
+                    "is_link_shared, is_collaborative, collab_share_key " +
+                    "FROM memory WHERE collab_share_key = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, shareKey);
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return mapResultSetToMemory(rs);
+            }
+
+            return null;
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    /**
+     * Set or update collab share key
+     */
+    public boolean setCollabShareKey(int memoryId, String shareKey) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE memory SET collab_share_key = ? WHERE memory_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, shareKey);
+            stmt.setInt(2, memoryId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Create collaborative memory
+     */
+    public int createCollabMemory(Memory memory) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "INSERT INTO memory (title, description, user_id, updated_at, is_public, is_collaborative) " +
+                    "VALUES (?, ?, ?, ?, ?, TRUE) RETURNING memory_id";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, memory.getTitle());
+            stmt.setString(2, memory.getDescription());
+            stmt.setInt(3, memory.getUserId());
+            stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+            stmt.setBoolean(5, memory.isPublic());
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int memoryId = rs.getInt("memory_id");
+                memory.setMemoryId(memoryId);
+                return memoryId;
+            }
+
+            throw new SQLException("Failed to create collab memory, no ID obtained");
+
+        } finally {
+            closeResources(rs, stmt, conn);
         }
     }
 }

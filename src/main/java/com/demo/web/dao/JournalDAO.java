@@ -11,11 +11,14 @@ import java.util.List;
 
 public class JournalDAO {
 
+    /**
+     * Get all journals for a user (excluding vault items)
+     */
     public List<Journal> findByUserId(int userId) {
-        String sql = "SELECT * FROM journal WHERE user_id = ? ORDER BY journal_id DESC";
+        String sql = "SELECT * FROM journal WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL) ORDER BY journal_id DESC";
         List<Journal> journals = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -31,7 +34,7 @@ public class JournalDAO {
     public Journal findById(int journalId) {
         String sql = "SELECT * FROM journal WHERE journal_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, journalId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -47,7 +50,7 @@ public class JournalDAO {
     public boolean createJournal(Journal journal) {
         String sql = "INSERT INTO journal (j_title, j_content, user_id, journal_pic) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, journal.getTitle());
             pstmt.setString(2, journal.getContent());
             pstmt.setInt(3, journal.getUserId());
@@ -69,12 +72,11 @@ public class JournalDAO {
 
     // File: src/main/java/com/demo/web/dao/JournalDAO.java
 
-
     public int getJournalCount(int userId) {
         String sql = "SELECT COUNT(*) as count FROM journal WHERE user_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, userId);
 
@@ -99,7 +101,7 @@ public class JournalDAO {
                 "WHERE journal_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, journal.getTitle());
             pstmt.setString(2, journal.getContent());
@@ -135,11 +137,12 @@ public class JournalDAO {
 
         RecycleBinDAO rbDao = new RecycleBinDAO();
         int recycleId = rbDao.saveJournalToRecycleBin(item);
-        if (recycleId <= 0) return false;
+        if (recycleId <= 0)
+            return false;
 
         String deleteSql = "DELETE FROM journal WHERE journal_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
+                PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
             stmt.setInt(1, journalId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -190,5 +193,82 @@ public class JournalDAO {
         journal.setUserId(rs.getInt("user_id"));
         journal.setJournalPic(rs.getString("journal_pic"));
         return journal;
+    }
+
+    // ============================================
+    // VAULT METHODS
+    // ============================================
+
+    /**
+     * Get all vault journals for a user
+     */
+    public List<Journal> getVaultJournalsByUserId(int userId) {
+        String sql = "SELECT * FROM journal WHERE user_id = ? AND is_in_vault = TRUE ORDER BY journal_id DESC";
+        List<Journal> journals = new ArrayList<>();
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    journals.add(mapResultSetToJournal(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return journals;
+    }
+
+    /**
+     * Move a journal to the vault
+     */
+    public boolean moveToVault(int journalId, int userId) {
+        String sql = "UPDATE journal SET is_in_vault = TRUE WHERE journal_id = ? AND user_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, journalId);
+            pstmt.setInt(2, userId);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Remove a journal from the vault (restore to regular view)
+     */
+    public boolean removeFromVault(int journalId, int userId) {
+        String sql = "UPDATE journal SET is_in_vault = FALSE WHERE journal_id = ? AND user_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, journalId);
+            pstmt.setInt(2, userId);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Check if a journal is in the vault
+     */
+    public boolean isJournalInVault(int journalId) {
+        String sql = "SELECT is_in_vault FROM journal WHERE journal_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, journalId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean("is_in_vault");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

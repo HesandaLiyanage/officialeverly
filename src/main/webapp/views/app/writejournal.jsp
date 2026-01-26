@@ -79,16 +79,53 @@
                         <button class="doodle-btn" data-doodle="☆" data-type="star">☆</button>
                     </div>
                 </div>
+
+                <!-- Paper Themes -->
+                <div class="toolbar-section">
+                    <h3 class="toolbar-title">Themes</h3>
+
+                    <div class="paper-theme-grid">
+                        <button type="button" class="paper-theme-btn active" data-theme="theme-lined" data-bg="${pageContext.request.contextPath}/resources/assets/journal1.png" style="background-image: url('${pageContext.request.contextPath}/resources/assets/journal1.png');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                ">
+                        </button>
+
+                        <button type="button" class="paper-theme-btn" data-theme="theme-lined"  data-bg="${pageContext.request.contextPath}/resources/assets/journal3.jpg" style="background-image: url('${pageContext.request.contextPath}/resources/assets/journal3.jpg');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                ">
+                        </button>
+
+                        <button type="button" class="paper-theme-btn" data-theme="theme-lined" data-bg="${pageContext.request.contextPath}/resources/assets/journal2.jpg" style="background-image: url('${pageContext.request.contextPath}/resources/assets/journal2.jpg');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                ">
+                        </button>
+
+
+                        <button type="button" class="paper-theme-btn" data-theme="theme-lined" data-bg="${pageContext.request.contextPath}/resources/assets/journal4.jpg" style="background-image: url('${pageContext.request.contextPath}/resources/assets/journal4.jpg');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                ">
+                        </button>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Autograph Page -->
             <div class="page-area">
                 <div class="autograph-page" id="autographPage">
-                    <!-- Red margin line -->
+                <!-- Red margin line -->
                     <div class="margin-line"></div>
 
                     <!-- Writing Area -->
-                    <div class="writing-area" id="writingArea" contenteditable="true" data-placeholder="Start writing your message...">
+                    <div class="writing-area" id="writingArea" contenteditable="true">
                     </div>
 
                     <!-- Decorations Container -->
@@ -129,6 +166,8 @@
             this.initializeEmojis();
             this.initializeDoodles();
             this.initializeButtons();
+            this.initializePaperThemes();
+
         }
 
         initializeFormatting() {
@@ -173,6 +212,43 @@
                     this.addDecoration(doodle, 'doodle', type);
                 });
             });
+        }
+
+        initializePaperThemes() {
+            const buttons = document.querySelectorAll('.paper-theme-btn');
+            const writingArea = document.getElementById('writingArea');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const bgImage = btn.dataset.bg;
+
+                    if (bgImage) {
+                        writingArea.style.backgroundImage = `url('` + bgImage + `')`;
+                        writingArea.style.backgroundSize = 'cover';
+                        writingArea.style.backgroundPosition = 'center';
+                        writingArea.style.backgroundRepeat = 'no-repeat';
+                    } else {
+                        writingArea.style.backgroundImage = 'none';
+                        writingArea.style.backgroundColor = 'transparent';
+                    }
+                });
+            });
+
+            // Set the default theme on page load
+            const activeBtn = document.querySelector('.paper-theme-btn.active');
+            if (activeBtn) {
+                const bgImage = activeBtn.dataset.bg;
+                if (bgImage) {
+                    writingArea.style.backgroundImage = `url('` + bgImage + `')`;
+                    writingArea.style.backgroundSize = 'cover';
+                    writingArea.style.backgroundPosition = 'center';
+                    writingArea.style.backgroundRepeat = 'no-repeat';
+                }
+            }
         }
 
         addDecoration(content, className, type = '') {
