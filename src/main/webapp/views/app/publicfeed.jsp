@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <%@ page import="com.demo.web.model.FeedProfile" %>
-
         <% // Get feed profile from request or session FeedProfile feedProfile=(FeedProfile)
             request.getAttribute("feedProfile"); if (feedProfile==null) { feedProfile=(FeedProfile)
             session.getAttribute("feedProfile"); } String feedUsername=feedProfile !=null ?
