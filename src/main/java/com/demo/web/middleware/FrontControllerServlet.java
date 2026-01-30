@@ -5,6 +5,7 @@ import com.demo.web.dao.userDAO;
 import com.demo.web.dao.autographDAO;
 import com.demo.web.dao.userSessionDAO;
 import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.FeedProfileDAO;
 import com.demo.web.model.*;
 import com.demo.web.util.SessionUtil;
 import com.demo.web.dao.EventDAO;
@@ -12,9 +13,9 @@ import com.demo.web.dao.JournalDAO;
 import com.demo.web.model.Event;
 import com.demo.web.model.UserSession;
 import com.demo.web.model.autograph;
+import com.demo.web.model.FeedProfile;
 import com.demo.web.dao.JournalStreakDAO;
 import com.demo.web.model.JournalStreak;
-
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -124,7 +125,9 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/memoryrecap", "/views/app/memoryrecap.jsp");
         routeToJsp.put("/writejournal", "/views/app/writejournal.jsp");
         routeToJsp.put("/vaultjournals", "/views/app/vaultjournals.jsp");
-        routeToJsp.put("/feed", "/views/app/publicfeed.jsp");
+        // Feed routes - /feed now uses logic handler, others are static
+        routeToJsp.put("/feedWelcome", "/views/app/feedWelcome.jsp");
+        routeToJsp.put("/feedProfileSetup", "/views/app/feedProfileSetup.jsp");
         routeToJsp.put("/userprofile", "/views/app/userprofile.jsp");
         routeToJsp.put("/followers", "/views/app/followers.jsp");
         routeToJsp.put("/following", "/views/app/following.jsp");
@@ -161,6 +164,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/journalview", new JournalViewLogicHandler()); // ADD THIS LINE
         routeToLogic.put("/editjournal", new EditJournalLogicHandler());
         routeToLogic.put("/memories", new MemoryViewLogicHandler());
+        routeToLogic.put("/feed", new FeedLogicHandler());
 
         // Remove this if using servlet
 
@@ -172,6 +176,66 @@ public class FrontControllerServlet extends HttpServlet {
         public void execute(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
 
+        }
+    }
+
+    /**
+     * Logic handler for /feed route.
+     * Checks if user has a feed profile before showing the feed.
+     * If no profile exists, redirects to welcome page.
+     */
+    private static class FeedLogicHandler implements LogicHandler {
+        private FeedProfileDAO feedProfileDAO;
+
+        public FeedLogicHandler() {
+            this.feedProfileDAO = new FeedProfileDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            Integer userId = (Integer) session.getAttribute("user_id");
+            System.out.println("[DEBUG FeedLogicHandler] Checking feed profile for user: " + userId);
+
+            try {
+                // Check if user already has a feed profile in session
+                FeedProfile feedProfile = (FeedProfile) session.getAttribute("feedProfile");
+
+                // If not in session, check database
+                if (feedProfile == null) {
+                    feedProfile = feedProfileDAO.findByUserId(userId);
+
+                    if (feedProfile != null) {
+                        // Cache in session for future requests
+                        session.setAttribute("feedProfile", feedProfile);
+                    }
+                }
+
+                if (feedProfile == null) {
+                    // No feed profile exists, redirect to welcome page
+                    System.out.println("[DEBUG FeedLogicHandler] No feed profile, redirecting to welcome");
+                    response.sendRedirect(request.getContextPath() + "/feedWelcome");
+                    return;
+                }
+
+                // Feed profile exists, set it as request attribute and show feed
+                System.out.println("[DEBUG FeedLogicHandler] Feed profile found: @" + feedProfile.getFeedUsername());
+                request.setAttribute("feedProfile", feedProfile);
+                request.getRequestDispatcher("/views/app/publicfeed.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                System.err.println("[ERROR FeedLogicHandler] Error checking feed profile: " + e.getMessage());
+                e.printStackTrace();
+                // On error, just show the feed page
+                request.getRequestDispatcher("/views/app/publicfeed.jsp").forward(request, response);
+            }
         }
     }
 

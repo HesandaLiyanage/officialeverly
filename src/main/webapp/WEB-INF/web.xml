@@ -291,6 +291,22 @@
         <url-pattern>/linkeddevicesservlet</url-pattern>
     </servlet-mapping>
 
+    <!-- Feed Profile Setup Servlet -->
+    <servlet>
+        <servlet-name>FeedProfileSetupServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.FeedProfileSetupServlet</servlet-class>
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>        <!-- 10MB -->
+            <max-request-size>15728640</max-request-size>   <!-- 15MB -->
+            <file-size-threshold>1048576</file-size-threshold> <!-- 1MB -->
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FeedProfileSetupServlet</servlet-name>
+        <url-pattern>/feedProfileSetupServlet</url-pattern>
+    </servlet-mapping>
+
+
     <!-- Authentication Filter -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
