@@ -96,7 +96,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/memoryrecap", "/views/app/memoryrecap.jsp");
         routeToJsp.put("/writejournal", "/views/app/writejournal.jsp");
         routeToJsp.put("/vaultjournals", "/views/app/vaultjournals.jsp");
-        routeToJsp.put("/feed", "/views/app/publicfeed.jsp");
+        routeToJsp.put("/feedWelcome", "/views/app/feedWelcome.jsp");
+        routeToJsp.put("/feedProfileSetup", "/views/app/feedProfileSetup.jsp");
         routeToJsp.put("/userprofile", "/views/app/userprofile.jsp");
         routeToJsp.put("/followers", "/views/app/followers.jsp");
         routeToJsp.put("/following", "/views/app/following.jsp");
@@ -146,6 +147,9 @@ public class FrontControllerServlet extends HttpServlet {
         routeToController.put("/journals", "/journalsview");
         routeToController.put("/journalview", "/journalsview?action=view");
         routeToController.put("/editjournal", "/journalsview?action=edit");
+
+        // Feed route (checks for feed profile before showing)
+        routeToController.put("/feed", "/feedview");
     }
 
     @Override

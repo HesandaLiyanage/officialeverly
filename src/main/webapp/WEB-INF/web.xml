@@ -506,6 +506,16 @@
         <url-pattern>/journalsview</url-pattern>
     </servlet-mapping>
 
+    <!-- Feed View Controller -->
+    <servlet>
+        <servlet-name>FeedViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.FeedViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FeedViewController</servlet-name>
+        <url-pattern>/feedview</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>
