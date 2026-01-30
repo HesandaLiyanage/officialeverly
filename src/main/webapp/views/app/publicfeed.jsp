@@ -1,13 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <%@ page import="com.demo.web.model.FeedProfile" %>
-        <% // Get feed profile from request or session FeedProfile feedProfile=(FeedProfile)
-            request.getAttribute("feedProfile"); if (feedProfile==null) { feedProfile=(FeedProfile)
-            session.getAttribute("feedProfile"); } String feedUsername=feedProfile !=null ?
-            feedProfile.getFeedUsername() : "user" ; String feedProfilePic=feedProfile !=null &&
-            feedProfile.getFeedProfilePictureUrl() !=null ? feedProfile.getFeedProfilePictureUrl()
-            : "/resources/assets/default-feed-avatar.png" ; String feedInitials=feedProfile !=null ?
+        <% FeedProfile feedProfile=(FeedProfile) request.getAttribute("feedProfile"); if (feedProfile==null) {
+            feedProfile=(FeedProfile) session.getAttribute("feedProfile"); } String feedUsername=(feedProfile !=null) ?
+            feedProfile.getFeedUsername() : "user" ; String feedProfilePic=(feedProfile !=null &&
+            feedProfile.getFeedProfilePictureUrl() !=null) ? feedProfile.getFeedProfilePictureUrl()
+            : "/resources/assets/default-feed-avatar.png" ; String feedInitials=(feedProfile !=null) ?
             feedProfile.getInitials() : "U" ; %>
-
             <jsp:include page="../public/header2.jsp" />
             <html>
 
@@ -44,6 +42,7 @@
                                             <% } %>
                                 </a>
                             </div>
+
 
                             <!-- Search Bar -->
                             <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
