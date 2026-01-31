@@ -67,8 +67,13 @@ public class CreatePostServlet extends HttpServlet {
 
         if ("selectMemory".equals(action)) {
             // Show memory selector page
-            List<Memory> memories = memoryDao.getMemoriesByUserId(userId);
-            request.setAttribute("memories", memories);
+            try {
+                List<Memory> memories = memoryDao.getMemoriesByUserId(userId);
+                request.setAttribute("memories", memories);
+            } catch (java.sql.SQLException e) {
+                logger.severe("[CreatePostServlet] Error fetching memories: " + e.getMessage());
+                request.setAttribute("memories", new java.util.ArrayList<Memory>());
+            }
             request.setAttribute("feedProfile", feedProfile);
             request.getRequestDispatcher("/views/app/selectMemoryForPost.jsp").forward(request, response);
         } else {
