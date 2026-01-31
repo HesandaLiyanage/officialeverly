@@ -97,7 +97,8 @@ public class CreatePostServlet extends HttpServlet {
                 request.setAttribute("memories", new java.util.ArrayList<Memory>());
             }
             request.setAttribute("feedProfile", feedProfile);
-            request.getRequestDispatcher("/views/app/selectMemoryForPost.jsp").forward(request, response);
+            // TEMP: Using test JSP to debug blank page issue
+            request.getRequestDispatcher("/views/app/testSelectMemory.jsp").forward(request, response);
         } else {
             // Show main create post page with options
             logger.info("[CreatePostServlet] Showing create post page for user " + userId);

@@ -386,7 +386,13 @@
                         <h1 class="page-title">Select a Memory</h1>
                         <p class="page-subtitle">Choose a memory to share on your feed</p>
 
-                        <c:choose>
+                        <!-- TEMPORARY SIMPLE TEST -->
+                        <div style="background: #fff; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                            <p style="color: green; font-weight: bold;">Page is rendering correctly!</p>
+                            <p>Memories count: ${memories.size()}</p>
+                        </div>
+
+                        <%-- Temporarily commented out complex loop <c:choose>
                             <c:when test="${not empty memories}">
                                 <div class="memories-grid">
                                     <c:forEach var="memory" items="${memories}">
@@ -444,7 +450,7 @@
                                     </a>
                                 </div>
                             </c:otherwise>
-                        </c:choose>
+                            </c:choose>--%>
                     </div>
 
                     <!-- Action Bar -->
