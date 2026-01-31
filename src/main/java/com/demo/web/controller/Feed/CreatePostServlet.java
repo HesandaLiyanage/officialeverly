@@ -68,25 +68,37 @@ public class CreatePostServlet extends HttpServlet {
         if ("selectMemory".equals(action)) {
             // Show memory selector page
             try {
-                List<Memory> memories = memoryDao.getMemoriesByUserId(userId);
+                List<Memory> allMemories = memoryDao.getMemoriesByUserId(userId);
+                List<Memory> availableMemories = new java.util.ArrayList<>();
 
-                // Populate cover URLs for each memory
-                for (Memory memory : memories) {
-                    String coverUrl = feedPostDAO.getFirstMediaUrl(memory.getMemoryId());
-                    if (coverUrl != null) {
-                        memory.setCoverUrl(coverUrl);
+                logger.info("[CreatePostServlet] Found " + allMemories.size() + " total memories for user " + userId);
+
+                // Filter out already-posted memories and populate cover URLs
+                for (Memory memory : allMemories) {
+                    boolean isPosted = feedPostDAO.isMemoryPosted(memory.getMemoryId(), feedProfile.getFeedProfileId());
+
+                    if (!isPosted) {
+                        String coverUrl = feedPostDAO.getFirstMediaUrl(memory.getMemoryId());
+                        if (coverUrl != null) {
+                            memory.setCoverUrl(coverUrl);
+                        }
+                        availableMemories.add(memory);
                     }
                 }
 
-                request.setAttribute("memories", memories);
+                logger.info("[CreatePostServlet] " + availableMemories.size() + " memories available to post");
+
+                request.setAttribute("memories", availableMemories);
             } catch (java.sql.SQLException e) {
                 logger.severe("[CreatePostServlet] Error fetching memories: " + e.getMessage());
+                e.printStackTrace();
                 request.setAttribute("memories", new java.util.ArrayList<Memory>());
             }
             request.setAttribute("feedProfile", feedProfile);
             request.getRequestDispatcher("/views/app/selectMemoryForPost.jsp").forward(request, response);
         } else {
             // Show main create post page with options
+            logger.info("[CreatePostServlet] Showing create post page for user " + userId);
             request.setAttribute("feedProfile", feedProfile);
             request.getRequestDispatcher("/views/app/createPost.jsp").forward(request, response);
         }
