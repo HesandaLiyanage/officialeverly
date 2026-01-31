@@ -516,6 +516,16 @@
         <url-pattern>/feedview</url-pattern>
     </servlet-mapping>
 
+    <!-- Create Post Servlet -->
+    <servlet>
+        <servlet-name>CreatePostServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.CreatePostServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreatePostServlet</servlet-name>
+        <url-pattern>/createPostServlet</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>

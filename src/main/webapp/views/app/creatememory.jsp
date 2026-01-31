@@ -391,8 +391,36 @@
                                 // Show success message
                                 alert('Memory created successfully! ' + data.filesUploaded + ' files uploaded.');
 
-                                // Redirect based on memory type
-                                if (data.isCollaborative) {
+                                // Redirect based on memory type or source
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const source = urlParams.get('source');
+
+                                if (source === 'post') {
+                                    // Creating memory for a post - auto-post it
+                                    const postFormData = new FormData();
+                                    postFormData.append('memoryId', data.memoryId);
+                                    postFormData.append('caption', '');
+
+                                    fetch('${pageContext.request.contextPath}/createPost', {
+                                        method: 'POST',
+                                        body: postFormData
+                                    })
+                                        .then(response => response.json())
+                                        .then(postData => {
+                                            if (postData.success) {
+                                                alert('Memory created and posted to your feed!');
+                                                window.location.href = '${pageContext.request.contextPath}/feed';
+                                            } else {
+                                                alert('Memory created! ' + (postData.error || 'Could not create post automatically.'));
+                                                window.location.href = '${pageContext.request.contextPath}/feed';
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.error('Post error:', err);
+                                            alert('Memory created! Go to feed to see your posts.');
+                                            window.location.href = '${pageContext.request.contextPath}/feed';
+                                        });
+                                } else if (data.isCollaborative) {
                                     window.location.href = '${pageContext.request.contextPath}/collabmemoryview?id=' + data.memoryId;
                                 } else {
                                     window.location.href = '${pageContext.request.contextPath}/memories';

@@ -1,6 +1,8 @@
 package com.demo.web.controller.Feed;
 
+import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.FeedProfileDAO;
+import com.demo.web.model.FeedPost;
 import com.demo.web.model.FeedProfile;
 
 import javax.servlet.ServletException;
@@ -9,23 +11,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * FeedViewController - Handles feed page access with profile check.
  * 
  * Before showing the feed, this controller checks if the user has a feed
- * profile.
- * If no profile exists, redirects to the welcome/setup flow.
+ * profile. If no profile exists, redirects to the welcome/setup flow.
+ * Also fetches posts for the FYP.
  */
 public class FeedViewController extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FeedViewController.class.getName());
     private FeedProfileDAO feedProfileDAO;
+    private FeedPostDAO feedPostDAO;
 
     @Override
     public void init() throws ServletException {
         feedProfileDAO = new FeedProfileDAO();
+        feedPostDAO = new FeedPostDAO();
     }
 
     @Override
@@ -66,13 +71,29 @@ public class FeedViewController extends HttpServlet {
                 return;
             }
 
-            // Feed profile exists, set it as request attribute and show feed
-            logger.info("[FeedViewController] Feed profile found: @" + feedProfile.getFeedUsername());
+            // Fetch all posts for FYP (random order)
+            List<FeedPost> posts = feedPostDAO.findAllPosts();
+
+            // For posts without cover media, try to get first media
+            for (FeedPost post : posts) {
+                if (post.getCoverMediaUrl() == null) {
+                    String firstMedia = feedPostDAO.getFirstMediaUrl(post.getMemoryId());
+                    if (firstMedia != null) {
+                        post.setCoverMediaUrl(firstMedia);
+                    }
+                }
+            }
+
+            logger.info("[FeedViewController] Feed profile found: @" + feedProfile.getFeedUsername()
+                    + ", posts: " + posts.size());
+
+            // Set attributes and show feed
             request.setAttribute("feedProfile", feedProfile);
+            request.setAttribute("posts", posts);
             request.getRequestDispatcher("/views/app/publicfeed.jsp").forward(request, response);
 
         } catch (Exception e) {
-            logger.severe("[FeedViewController] Error checking feed profile: " + e.getMessage());
+            logger.severe("[FeedViewController] Error: " + e.getMessage());
             e.printStackTrace();
             // On error, just show the feed page with defaults
             request.getRequestDispatcher("/views/app/publicfeed.jsp").forward(request, response);

@@ -150,6 +150,9 @@ public class FrontControllerServlet extends HttpServlet {
 
         // Feed route (checks for feed profile before showing)
         routeToController.put("/feed", "/feedview");
+
+        // Create post route
+        routeToController.put("/createPost", "/createPostServlet");
     }
 
     @Override
