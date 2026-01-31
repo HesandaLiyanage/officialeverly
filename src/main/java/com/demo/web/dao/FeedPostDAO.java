@@ -51,7 +51,7 @@ public class FeedPostDAO {
                 "f.feed_username, f.feed_profile_picture_url, f.feed_bio, " +
                 "med.file_url as cover_url " +
                 "FROM feed_posts p " +
-                "JOIN memories m ON p.memory_id = m.memory_id " +
+                "JOIN memory m ON p.memory_id = m.memory_id " +
                 "JOIN feed_profiles f ON p.feed_profile_id = f.feed_profile_id " +
                 "LEFT JOIN media med ON m.cover_media_id = med.media_id " +
                 "WHERE p.post_id = ?";
@@ -82,7 +82,7 @@ public class FeedPostDAO {
                 "f.feed_username, f.feed_profile_picture_url, f.feed_bio, " +
                 "med.file_url as cover_url " +
                 "FROM feed_posts p " +
-                "JOIN memories m ON p.memory_id = m.memory_id " +
+                "JOIN memory m ON p.memory_id = m.memory_id " +
                 "JOIN feed_profiles f ON p.feed_profile_id = f.feed_profile_id " +
                 "LEFT JOIN media med ON m.cover_media_id = med.media_id " +
                 "ORDER BY RANDOM()";
@@ -112,7 +112,7 @@ public class FeedPostDAO {
                 "f.feed_username, f.feed_profile_picture_url, f.feed_bio, " +
                 "med.file_url as cover_url " +
                 "FROM feed_posts p " +
-                "JOIN memories m ON p.memory_id = m.memory_id " +
+                "JOIN memory m ON p.memory_id = m.memory_id " +
                 "JOIN feed_profiles f ON p.feed_profile_id = f.feed_profile_id " +
                 "LEFT JOIN media med ON m.cover_media_id = med.media_id " +
                 "WHERE p.feed_profile_id = ? " +
