@@ -179,11 +179,10 @@ public class FeedPostDAO {
     }
 
     /**
-     * Get first media URL for a memory (for post display)
+     * Get first media ID for a memory (for constructing viewMedia URL)
      */
-    public String getFirstMediaUrl(int memoryId) {
-        String sql = "SELECT med.file_path FROM memory_media mm " +
-                "JOIN media_items med ON mm.media_id = med.media_id " +
+    public Integer getFirstMediaId(int memoryId) {
+        String sql = "SELECT mm.media_id FROM memory_media mm " +
                 "WHERE mm.memory_id = ? " +
                 "ORDER BY mm.added_timestamp " +
                 "LIMIT 1";
@@ -195,10 +194,10 @@ public class FeedPostDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getString("file_path");
+                return rs.getInt("media_id");
             }
         } catch (SQLException e) {
-            logger.severe("[FeedPostDAO] Error getting first media: " + e.getMessage());
+            logger.severe("[FeedPostDAO] Error getting first media ID: " + e.getMessage());
             e.printStackTrace();
         }
         return null;

@@ -77,9 +77,10 @@ public class FeedViewController extends HttpServlet {
             // For posts without cover media, try to get first media
             for (FeedPost post : posts) {
                 if (post.getCoverMediaUrl() == null) {
-                    String firstMedia = feedPostDAO.getFirstMediaUrl(post.getMemoryId());
-                    if (firstMedia != null) {
-                        post.setCoverMediaUrl(firstMedia);
+                    Integer mediaId = feedPostDAO.getFirstMediaId(post.getMemoryId());
+                    if (mediaId != null) {
+                        // Construct viewMedia URL for browser
+                        post.setCoverMediaUrl(request.getContextPath() + "/viewMedia?mediaId=" + mediaId);
                     }
                 }
             }

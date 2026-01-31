@@ -78,8 +78,10 @@ public class CreatePostServlet extends HttpServlet {
                     boolean isPosted = feedPostDAO.isMemoryPosted(memory.getMemoryId(), feedProfile.getFeedProfileId());
 
                     if (!isPosted) {
-                        String coverUrl = feedPostDAO.getFirstMediaUrl(memory.getMemoryId());
-                        if (coverUrl != null) {
+                        Integer mediaId = feedPostDAO.getFirstMediaId(memory.getMemoryId());
+                        if (mediaId != null) {
+                            // Construct viewMedia URL for browser
+                            String coverUrl = request.getContextPath() + "/viewMedia?mediaId=" + mediaId;
                             memory.setCoverUrl(coverUrl);
                         }
                         availableMemories.add(memory);
