@@ -69,6 +69,15 @@ public class CreatePostServlet extends HttpServlet {
             // Show memory selector page
             try {
                 List<Memory> memories = memoryDao.getMemoriesByUserId(userId);
+
+                // Populate cover URLs for each memory
+                for (Memory memory : memories) {
+                    String coverUrl = feedPostDAO.getFirstMediaUrl(memory.getMemoryId());
+                    if (coverUrl != null) {
+                        memory.setCoverUrl(coverUrl);
+                    }
+                }
+
                 request.setAttribute("memories", memories);
             } catch (java.sql.SQLException e) {
                 logger.severe("[CreatePostServlet] Error fetching memories: " + e.getMessage());

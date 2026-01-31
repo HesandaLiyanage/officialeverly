@@ -47,13 +47,13 @@ public class FeedPostDAO {
      * Get post by ID with full details
      */
     public FeedPost findById(int postId) {
-        String sql = "SELECT p.*, m.title, m.description, m.cover_media_id, m.created_at as memory_created, " +
+        String sql = "SELECT p.*, m.title, m.description, m.cover_media_id, m.created_timestamp as memory_created, " +
                 "f.feed_username, f.feed_profile_picture_url, f.feed_bio, " +
-                "med.file_url as cover_url " +
+                "med.file_path as cover_url " +
                 "FROM feed_posts p " +
                 "JOIN memory m ON p.memory_id = m.memory_id " +
                 "JOIN feed_profiles f ON p.feed_profile_id = f.feed_profile_id " +
-                "LEFT JOIN media med ON m.cover_media_id = med.media_id " +
+                "LEFT JOIN media_items med ON m.cover_media_id = med.media_id " +
                 "WHERE p.post_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -78,13 +78,13 @@ public class FeedPostDAO {
     public List<FeedPost> findAllPosts() {
         List<FeedPost> posts = new ArrayList<>();
 
-        String sql = "SELECT p.*, m.title, m.description, m.cover_media_id, m.created_at as memory_created, " +
+        String sql = "SELECT p.*, m.title, m.description, m.cover_media_id, m.created_timestamp as memory_created, " +
                 "f.feed_username, f.feed_profile_picture_url, f.feed_bio, " +
-                "med.file_url as cover_url " +
+                "med.file_path as cover_url " +
                 "FROM feed_posts p " +
                 "JOIN memory m ON p.memory_id = m.memory_id " +
                 "JOIN feed_profiles f ON p.feed_profile_id = f.feed_profile_id " +
-                "LEFT JOIN media med ON m.cover_media_id = med.media_id " +
+                "LEFT JOIN media_items med ON m.cover_media_id = med.media_id " +
                 "ORDER BY RANDOM()";
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -108,13 +108,13 @@ public class FeedPostDAO {
     public List<FeedPost> findByFeedProfileId(int feedProfileId) {
         List<FeedPost> posts = new ArrayList<>();
 
-        String sql = "SELECT p.*, m.title, m.description, m.cover_media_id, m.created_at as memory_created, " +
+        String sql = "SELECT p.*, m.title, m.description, m.cover_media_id, m.created_timestamp as memory_created, " +
                 "f.feed_username, f.feed_profile_picture_url, f.feed_bio, " +
-                "med.file_url as cover_url " +
+                "med.file_path as cover_url " +
                 "FROM feed_posts p " +
                 "JOIN memory m ON p.memory_id = m.memory_id " +
                 "JOIN feed_profiles f ON p.feed_profile_id = f.feed_profile_id " +
-                "LEFT JOIN media med ON m.cover_media_id = med.media_id " +
+                "LEFT JOIN media_items med ON m.cover_media_id = med.media_id " +
                 "WHERE p.feed_profile_id = ? " +
                 "ORDER BY p.created_at DESC";
 
@@ -182,10 +182,10 @@ public class FeedPostDAO {
      * Get first media URL for a memory (for post display)
      */
     public String getFirstMediaUrl(int memoryId) {
-        String sql = "SELECT med.file_url FROM memory_media mm " +
-                "JOIN media med ON mm.media_id = med.media_id " +
+        String sql = "SELECT med.file_path FROM memory_media mm " +
+                "JOIN media_items med ON mm.media_id = med.media_id " +
                 "WHERE mm.memory_id = ? " +
-                "ORDER BY mm.display_order, med.created_at " +
+                "ORDER BY mm.added_timestamp " +
                 "LIMIT 1";
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -195,7 +195,7 @@ public class FeedPostDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getString("file_url");
+                return rs.getString("file_path");
             }
         } catch (SQLException e) {
             logger.severe("[FeedPostDAO] Error getting first media: " + e.getMessage());
