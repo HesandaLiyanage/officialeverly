@@ -89,8 +89,14 @@ public class FeedViewController extends HttpServlet {
             }
 
             // Get recommended users for sidebar (5 random users not followed)
-            List<FeedProfile> recommendedUsers = feedFollowDAO.getRecommendedUsers(
-                    feedProfile.getFeedProfileId(), 5);
+            List<FeedProfile> recommendedUsers;
+            try {
+                recommendedUsers = feedFollowDAO.getRecommendedUsers(feedProfile.getFeedProfileId(), 5);
+            } catch (Exception e) {
+                // Fallback: just get random profiles from the database
+                logger.warning("[FeedViewController] feed_follows table may not exist, using fallback");
+                recommendedUsers = feedProfileDAO.findRandomProfiles(feedProfile.getFeedProfileId(), 5);
+            }
 
             logger.info("[FeedViewController] Feed profile found: @" + feedProfile.getFeedUsername()
                     + ", posts: " + posts.size()

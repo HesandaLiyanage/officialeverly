@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -82,11 +83,34 @@ public class FeedProfileViewController extends HttpServlet {
             isOwnProfile = true;
         }
 
-        try {
-            // Get profile stats
-            int followerCount = feedFollowDAO.getFollowerCount(profileToView.getFeedProfileId());
-            int followingCount = feedFollowDAO.getFollowingCount(profileToView.getFeedProfileId());
+        // Get profile stats (with fallback for missing feed_follows table)
+        int followerCount = 0;
+        int followingCount = 0;
+        boolean isFollowing = false;
+        List<FeedProfile> recommendedUsers = new ArrayList<>();
 
+        try {
+            followerCount = feedFollowDAO.getFollowerCount(profileToView.getFeedProfileId());
+            followingCount = feedFollowDAO.getFollowingCount(profileToView.getFeedProfileId());
+
+            // Check if current user follows this profile (if not own profile)
+            if (!isOwnProfile) {
+                isFollowing = feedFollowDAO.isFollowing(
+                        currentUserProfile.getFeedProfileId(),
+                        profileToView.getFeedProfileId());
+            }
+
+            // Get recommended users for sidebar
+            recommendedUsers = feedFollowDAO.getRecommendedUsers(
+                    currentUserProfile.getFeedProfileId(), 5);
+        } catch (Exception e) {
+            logger.warning(
+                    "[FeedProfileViewController] feed_follows table may not exist, using fallback: " + e.getMessage());
+            // Use fallback for recommended users
+            recommendedUsers = feedProfileDAO.findRandomProfiles(currentUserProfile.getFeedProfileId(), 5);
+        }
+
+        try {
             // Get user's posts
             List<FeedPost> userPosts = feedPostDAO.findByFeedProfileId(profileToView.getFeedProfileId());
 
@@ -103,29 +127,22 @@ public class FeedProfileViewController extends HttpServlet {
             // Get saved posts (only for own profile)
             List<FeedPost> savedPosts = null;
             if (isOwnProfile) {
-                savedPosts = savedPostDAO.getSavedPosts(currentUserProfile.getFeedProfileId());
-                // Fix cover URLs for saved posts
-                for (FeedPost post : savedPosts) {
-                    if (post.getCoverMediaUrl() == null) {
-                        Integer mediaId = feedPostDAO.getFirstMediaId(post.getMemoryId());
-                        if (mediaId != null) {
-                            post.setCoverMediaUrl(request.getContextPath() + "/viewMedia?mediaId=" + mediaId);
+                try {
+                    savedPosts = savedPostDAO.getSavedPosts(currentUserProfile.getFeedProfileId());
+                    // Fix cover URLs for saved posts
+                    for (FeedPost post : savedPosts) {
+                        if (post.getCoverMediaUrl() == null) {
+                            Integer mediaId = feedPostDAO.getFirstMediaId(post.getMemoryId());
+                            if (mediaId != null) {
+                                post.setCoverMediaUrl(request.getContextPath() + "/viewMedia?mediaId=" + mediaId);
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    logger.warning("[FeedProfileViewController] saved_posts table may not exist: " + e.getMessage());
+                    savedPosts = new ArrayList<>();
                 }
             }
-
-            // Check if current user follows this profile (if not own profile)
-            boolean isFollowing = false;
-            if (!isOwnProfile) {
-                isFollowing = feedFollowDAO.isFollowing(
-                        currentUserProfile.getFeedProfileId(),
-                        profileToView.getFeedProfileId());
-            }
-
-            // Get recommended users for sidebar
-            List<FeedProfile> recommendedUsers = feedFollowDAO.getRecommendedUsers(
-                    currentUserProfile.getFeedProfileId(), 5);
 
             logger.info("[FeedProfileViewController] Displaying profile: @" + profileToView.getFeedUsername()
                     + ", posts: " + userPosts.size()

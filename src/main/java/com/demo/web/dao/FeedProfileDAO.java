@@ -305,6 +305,47 @@ public class FeedProfileDAO {
     }
 
     /**
+     * Get random profiles excluding a specific profile ID
+     * Used for "Suggested for you" section as a fallback
+     * 
+     * @param excludeProfileId Profile ID to exclude (current user)
+     * @param limit            Maximum number of profiles to return
+     * @return List of random FeedProfile objects
+     */
+    public java.util.List<FeedProfile> findRandomProfiles(int excludeProfileId, int limit) {
+        java.util.List<FeedProfile> profiles = new java.util.ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT feed_profile_id, user_id, feed_username, feed_profile_picture_url, " +
+                    "feed_bio, created_at, updated_at FROM feed_profiles " +
+                    "WHERE feed_profile_id != ? " +
+                    "ORDER BY RANDOM() LIMIT ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, excludeProfileId);
+            stmt.setInt(2, limit);
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                profiles.add(mapResultSetToFeedProfile(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Return empty list instead of throwing
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return profiles;
+    }
+
+    /**
      * Close database resources
      */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {

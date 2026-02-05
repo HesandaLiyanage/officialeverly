@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -59,6 +60,8 @@ public class FollowersViewController extends HttpServlet {
         String type = request.getParameter("type");
         String profileIdStr = request.getParameter("profileId");
 
+        logger.info("[FollowersViewController] Request received - type: " + type + ", profileId: " + profileIdStr);
+
         // Default to current user's profile if no profileId specified
         int profileId = currentUserProfile.getFeedProfileId();
         if (profileIdStr != null && !profileIdStr.isEmpty()) {
@@ -76,28 +79,33 @@ public class FollowersViewController extends HttpServlet {
         } else {
             profileToView = feedProfileDAO.findByFeedProfileId(profileId);
             if (profileToView == null) {
+                logger.warning("[FollowersViewController] Profile not found: " + profileId);
                 response.sendRedirect(request.getContextPath() + "/feed");
                 return;
             }
         }
 
-        try {
-            List<FeedProfile> userList;
-            String pageTitle;
-            String jspPage;
+        List<FeedProfile> userList = new ArrayList<>();
+        String pageTitle;
+        String jspPage;
 
+        if ("following".equals(type)) {
+            pageTitle = "Following";
+            jspPage = "/views/app/following.jsp";
+        } else {
+            pageTitle = "Followers";
+            jspPage = "/views/app/followers.jsp";
+        }
+
+        try {
             if ("following".equals(type)) {
                 // Get following list
                 userList = feedFollowDAO.getFollowing(profileId);
-                pageTitle = "Following";
-                jspPage = "/views/app/following.jsp";
                 logger.info("[FollowersViewController] Getting following for profile " + profileId
                         + ": " + userList.size() + " users");
             } else {
                 // Default to followers
                 userList = feedFollowDAO.getFollowers(profileId);
-                pageTitle = "Followers";
-                jspPage = "/views/app/followers.jsp";
                 logger.info("[FollowersViewController] Getting followers for profile " + profileId
                         + ": " + userList.size() + " users");
             }
@@ -110,19 +118,20 @@ public class FollowersViewController extends HttpServlet {
                 request.setAttribute("isFollowing_" + profile.getFeedProfileId(), isFollowing);
             }
 
-            // Set attributes
-            request.setAttribute("userList", userList);
-            request.setAttribute("pageTitle", pageTitle);
-            request.setAttribute("profileToView", profileToView);
-            request.setAttribute("currentUserProfile", currentUserProfile);
-            request.setAttribute("isOwnProfile", profileId == currentUserProfile.getFeedProfileId());
-
-            request.getRequestDispatcher(jspPage).forward(request, response);
-
         } catch (Exception e) {
-            logger.severe("[FollowersViewController] Error: " + e.getMessage());
-            e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/feed");
+            logger.warning(
+                    "[FollowersViewController] Error getting follow list (table may not exist): " + e.getMessage());
+            // Continue with empty list - page will show "no followers/following yet"
         }
+
+        // Set attributes
+        request.setAttribute("userList", userList);
+        request.setAttribute("pageTitle", pageTitle);
+        request.setAttribute("profileToView", profileToView);
+        request.setAttribute("currentUserProfile", currentUserProfile);
+        request.setAttribute("isOwnProfile", profileId == currentUserProfile.getFeedProfileId());
+
+        logger.info("[FollowersViewController] Forwarding to " + jspPage + " with " + userList.size() + " users");
+        request.getRequestDispatcher(jspPage).forward(request, response);
     }
 }
