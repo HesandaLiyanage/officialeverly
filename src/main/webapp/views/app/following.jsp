@@ -281,13 +281,14 @@
                                                 <% } else if (!isCurrentUser) { %>
                                                     <% Boolean isFollowingThisUser=(Boolean)
                                                         request.getAttribute("isFollowing_" + user.getFeedProfileId());
-                                                        if (isFollowingThisUser==null) isFollowingThisUser=false; %>
-                                                        <button class="follow-btn-list <%= isFollowingThisUser ? "
-                                                            following" : "" %>"
+                                                        if (isFollowingThisUser==null) isFollowingThisUser=false; String
+                                                        btnClass=isFollowingThisUser ? "follow-btn-list following"
+                                                        : "follow-btn-list" ; %>
+                                                        <button class="<%= btnClass %>"
                                                             data-profile-id="<%= user.getFeedProfileId() %>"
-                                                                data-is-following="<%= isFollowingThisUser %>"
-                                                                    onclick="handleFollow(this)">
-                                                                    <%= isFollowingThisUser ? "Following" : "Follow" %>
+                                                            data-is-following="<%= isFollowingThisUser %>"
+                                                            onclick="handleFollow(this)">
+                                                            <%= isFollowingThisUser ? "Following" : "Follow" %>
                                                         </button>
                                                         <% } %>
                                         </div>

@@ -256,13 +256,13 @@
                                                             <% } %>
                                                 </p>
                                             </div>
-                                            <% if (!isCurrentUser) { %>
-                                                <button class="follow-btn-list <%= isFollowingUser ? " following" : ""
-                                                    %>"
+                                            <% if (!isCurrentUser) { String btnClass=isFollowingUser
+                                                ? "follow-btn-list following" : "follow-btn-list" ; %>
+                                                <button class="<%= btnClass %>"
                                                     data-profile-id="<%= user.getFeedProfileId() %>"
-                                                        data-is-following="<%= isFollowingUser %>"
-                                                            onclick="handleFollow(this)">
-                                                            <%= isFollowingUser ? "Following" : "Follow" %>
+                                                    data-is-following="<%= isFollowingUser %>"
+                                                    onclick="handleFollow(this)">
+                                                    <%= isFollowingUser ? "Following" : "Follow" %>
                                                 </button>
                                                 <% } %>
                                         </div>
