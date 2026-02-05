@@ -99,14 +99,11 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/feedWelcome", "/views/app/feedWelcome.jsp");
         routeToJsp.put("/feedProfileSetup", "/views/app/feedProfileSetup.jsp");
         routeToJsp.put("/userprofile", "/views/app/userprofile.jsp");
-        routeToJsp.put("/followers", "/views/app/followers.jsp");
-        routeToJsp.put("/following", "/views/app/following.jsp");
         routeToJsp.put("/followerprofile", "/views/app/followerprofile.jsp");
         routeToJsp.put("/followingprofile", "/views/app/followingprofile.jsp");
         routeToJsp.put("/feedcomment", "/views/app/feedcomment.jsp");
         routeToJsp.put("/vaultpassword", "/views/app/vaultpassword.jsp");
         routeToJsp.put("/comments", "/views/app/feedcomment.jsp");
-        routeToJsp.put("/publicprofile", "/views/app/userprofile.jsp");
         routeToJsp.put("/feededitprofile", "/views/app/editpublicprofile.jsp");
         routeToJsp.put("/blockedusers", "/views/app/blockedusers.jsp");
         routeToJsp.put("/vaultentries", "/views/app/vaultentries.jsp");
@@ -150,6 +147,13 @@ public class FrontControllerServlet extends HttpServlet {
 
         // Feed route (checks for feed profile before showing)
         routeToController.put("/feed", "/feedview");
+
+        // Feed profile view route
+        routeToController.put("/publicprofile", "/feedprofileview");
+
+        // Followers/Following routes
+        routeToController.put("/followers", "/followersview?type=followers");
+        routeToController.put("/following", "/followersview?type=following");
 
         // Create post route
         routeToController.put("/createPost", "/createPostServlet");

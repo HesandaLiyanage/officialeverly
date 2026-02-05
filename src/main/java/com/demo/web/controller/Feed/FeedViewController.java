@@ -1,5 +1,6 @@
 package com.demo.web.controller.Feed;
 
+import com.demo.web.dao.FeedFollowDAO;
 import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.FeedProfileDAO;
 import com.demo.web.model.FeedPost;
@@ -19,18 +20,20 @@ import java.util.logging.Logger;
  * 
  * Before showing the feed, this controller checks if the user has a feed
  * profile. If no profile exists, redirects to the welcome/setup flow.
- * Also fetches posts for the FYP.
+ * Also fetches posts for the FYP and recommended users for sidebar.
  */
 public class FeedViewController extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FeedViewController.class.getName());
     private FeedProfileDAO feedProfileDAO;
     private FeedPostDAO feedPostDAO;
+    private FeedFollowDAO feedFollowDAO;
 
     @Override
     public void init() throws ServletException {
         feedProfileDAO = new FeedProfileDAO();
         feedPostDAO = new FeedPostDAO();
+        feedFollowDAO = new FeedFollowDAO();
     }
 
     @Override
@@ -85,12 +88,18 @@ public class FeedViewController extends HttpServlet {
                 }
             }
 
+            // Get recommended users for sidebar (5 random users not followed)
+            List<FeedProfile> recommendedUsers = feedFollowDAO.getRecommendedUsers(
+                    feedProfile.getFeedProfileId(), 5);
+
             logger.info("[FeedViewController] Feed profile found: @" + feedProfile.getFeedUsername()
-                    + ", posts: " + posts.size());
+                    + ", posts: " + posts.size()
+                    + ", recommended: " + recommendedUsers.size());
 
             // Set attributes and show feed
             request.setAttribute("feedProfile", feedProfile);
             request.setAttribute("posts", posts);
+            request.setAttribute("recommendedUsers", recommendedUsers);
             request.getRequestDispatcher("/views/app/publicfeed.jsp").forward(request, response);
 
         } catch (Exception e) {

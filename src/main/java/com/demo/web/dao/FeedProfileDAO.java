@@ -86,6 +86,41 @@ public class FeedProfileDAO {
     }
 
     /**
+     * Find a feed profile by feed profile ID
+     * 
+     * @param feedProfileId The feed profile ID
+     * @return FeedProfile if exists, null otherwise
+     */
+    public FeedProfile findByFeedProfileId(int feedProfileId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT feed_profile_id, user_id, feed_username, feed_profile_picture_url, " +
+                    "feed_bio, created_at, updated_at FROM feed_profiles WHERE feed_profile_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, feedProfileId);
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return mapResultSetToFeedProfile(rs);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Database error while finding feed profile by ID", e);
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return null;
+    }
+
+    /**
      * Check if a feed username is already taken
      * 
      * @param feedUsername The username to check

@@ -526,6 +526,36 @@
         <url-pattern>/createPostServlet</url-pattern>
     </servlet-mapping>
 
+    <!-- Feed Profile View Controller -->
+    <servlet>
+        <servlet-name>FeedProfileViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.FeedProfileViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FeedProfileViewController</servlet-name>
+        <url-pattern>/feedprofileview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Follow Servlet -->
+    <servlet>
+        <servlet-name>FollowServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.FollowServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FollowServlet</servlet-name>
+        <url-pattern>/followUser</url-pattern>
+    </servlet-mapping>
+
+    <!-- Followers View Controller -->
+    <servlet>
+        <servlet-name>FollowersViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.FollowersViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FollowersViewController</servlet-name>
+        <url-pattern>/followersview</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>

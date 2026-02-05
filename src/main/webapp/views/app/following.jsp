@@ -1,170 +1,352 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: nethm
-  Date: 10/22/2025
-  Time: 3:58 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Title</title>
-</head>
-<body>
+    <%@ page import="com.demo.web.model.FeedProfile" %>
+        <%@ page import="java.util.List" %>
+            <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+                <% List<FeedProfile> userList = (List<FeedProfile>) request.getAttribute("userList");
+                        FeedProfile profileToView = (FeedProfile) request.getAttribute("profileToView");
+                        FeedProfile currentUserProfile = (FeedProfile) request.getAttribute("currentUserProfile");
+                        Boolean isOwnProfile = (Boolean) request.getAttribute("isOwnProfile");
+                        String pageTitle = (String) request.getAttribute("pageTitle");
 
-</body><%@ page contentType="text/html;charset=UTF-8" language="java" %>
+                        if (pageTitle == null) pageTitle = "Following";
+                        if (isOwnProfile == null) isOwnProfile = true;
 
-<!-- Followers Page Content -->
-<jsp:include page="../public/header2.jsp" />
-<html>
-<body>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/follow.css">
+                        String profileUsername = (profileToView != null) ? profileToView.getFeedUsername() : "user";
+                        int currentProfileId = (currentUserProfile != null) ? currentUserProfile.getFeedProfileId() : 0;
+                        %>
 
-<!-- Followers Wrapper -->
-<div class="followers-wrapper">
-    <h1 class="followers-title">Following</h1>
+                        <jsp:include page="../public/header2.jsp" />
+                        <html>
 
-    <div class="followers-list">
-        <!-- Follower Item 1 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" alt="Sophia Bennett">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Sophia Bennett</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/followingprofile" class="view-profile-btn">View Profile</a>
-        </div>
+                        <head>
+                            <link rel="stylesheet" type="text/css"
+                                href="${pageContext.request.contextPath}/resources/css/follow.css">
+                            <style>
+                                .followers-wrapper {
+                                    max-width: 600px;
+                                    margin: 0 auto;
+                                    padding: 20px;
+                                }
 
-        <!-- Follower Item 2 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100" alt="Ethan Carter">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Ethan Carter</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
-        </div>
+                                .followers-header {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 16px;
+                                    margin-bottom: 24px;
+                                    padding-bottom: 16px;
+                                    border-bottom: 1px solid #e5e7eb;
+                                }
 
-        <!-- Follower Item 3 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100" alt="Olivia Davis">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Olivia Davis</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/followingprofile" class="view-profile-btn">View Profile</a>
-        </div>
+                                .back-btn {
+                                    background: none;
+                                    border: none;
+                                    cursor: pointer;
+                                    padding: 8px;
+                                    border-radius: 50%;
+                                    transition: background 0.2s;
+                                }
 
-        <!-- Follower Item 4 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Liam Foster">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Liam Foster</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
-        </div>
+                                .back-btn:hover {
+                                    background: #f3f4f6;
+                                }
 
-        <!-- Follower Item 5 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=100" alt="Ava Green">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Ava Green</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
-        </div>
+                                .back-btn svg {
+                                    width: 24px;
+                                    height: 24px;
+                                    stroke: #333;
+                                }
 
-        <!-- Follower Item 6 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100" alt="Noah Harris">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Noah Harris</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
-        </div>
+                                .followers-title {
+                                    font-size: 24px;
+                                    font-weight: 700;
+                                    color: #1f2937;
+                                    margin: 0;
+                                    font-family: "Plus Jakarta Sans", sans-serif;
+                                }
 
-        <!-- Follower Item 7 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Isabella Jones">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Isabella Jones</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
-        </div>
+                                .followers-subtitle {
+                                    font-size: 14px;
+                                    color: #6b7280;
+                                    margin: 0;
+                                }
 
-        <!-- Follower Item 8 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100" alt="Jackson King">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Jackson King</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
-        </div>
+                                .follower-item {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 14px;
+                                    padding: 14px 16px;
+                                    border-radius: 12px;
+                                    transition: all 0.2s ease;
+                                    margin-bottom: 8px;
+                                }
 
-        <!-- Follower Item 9 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100" alt="Mia Lewis">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Mia Lewis</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
-        </div>
+                                .follower-item:hover {
+                                    background: #f9fafb;
+                                }
 
-        <!-- Follower Item 10 -->
-        <div class="follower-item">
-            <div class="follower-avatar">
-                <img src="https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=100" alt="Lucas Morgan">
-            </div>
-            <div class="follower-info">
-                <h3 class="follower-name">Lucas Morgan</h3>
-                <p class="follower-status">Following</p>
-            </div>
-            <a href="/profile" class="view-profile-btn">View Profile</a>
-        </div>
-    </div>
-</div>
+                                .follower-avatar {
+                                    width: 50px;
+                                    height: 50px;
+                                    border-radius: 50%;
+                                    overflow: hidden;
+                                    flex-shrink: 0;
+                                }
 
-<jsp:include page="../public/footer.jsp" />
+                                .follower-avatar img {
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: cover;
+                                }
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add hover effects or click handlers if needed
-        const followerItems = document.querySelectorAll('.follower-item');
+                                .follower-avatar-initials {
+                                    width: 50px;
+                                    height: 50px;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-weight: 700;
+                                    color: white;
+                                    font-size: 16px;
+                                    font-family: "Plus Jakarta Sans", sans-serif;
+                                }
 
-        followerItems.forEach(item => {
-            item.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateX(5px)';
-            });
+                                .follower-info {
+                                    flex: 1;
+                                    min-width: 0;
+                                }
 
-            item.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateX(0)';
-            });
-        });
-    });
-</script>
-</body>
-</html>
-</html>
+                                .follower-name {
+                                    font-weight: 600;
+                                    color: #1f2937;
+                                    font-size: 15px;
+                                    margin: 0;
+                                    font-family: "Plus Jakarta Sans", sans-serif;
+                                }
+
+                                .follower-name a {
+                                    color: inherit;
+                                    text-decoration: none;
+                                }
+
+                                .follower-name a:hover {
+                                    text-decoration: underline;
+                                }
+
+                                .follower-status {
+                                    font-size: 13px;
+                                    color: #6b7280;
+                                    margin: 4px 0 0 0;
+                                }
+
+                                .follow-btn-list {
+                                    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                                    color: white;
+                                    border: none;
+                                    padding: 8px 20px;
+                                    border-radius: 8px;
+                                    font-size: 13px;
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    transition: all 0.3s ease;
+                                    font-family: "Plus Jakarta Sans", sans-serif;
+                                }
+
+                                .follow-btn-list:hover {
+                                    transform: translateY(-1px);
+                                    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+                                }
+
+                                .follow-btn-list.following {
+                                    background: transparent;
+                                    color: #374151;
+                                    border: 1.5px solid #d1d5db;
+                                }
+
+                                .follow-btn-list.following:hover {
+                                    border-color: #ed4956;
+                                    color: #ed4956;
+                                }
+
+                                .empty-list {
+                                    text-align: center;
+                                    padding: 60px 20px;
+                                    color: #6b7280;
+                                }
+
+                                .empty-list svg {
+                                    width: 64px;
+                                    height: 64px;
+                                    stroke: #d1d5db;
+                                    margin-bottom: 16px;
+                                }
+
+                                .empty-list h3 {
+                                    color: #374151;
+                                    margin: 0 0 8px 0;
+                                    font-family: "Plus Jakarta Sans", sans-serif;
+                                }
+
+                                .empty-list p {
+                                    margin: 0;
+                                    font-family: "Plus Jakarta Sans", sans-serif;
+                                }
+
+                                .find-users-btn {
+                                    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                                    color: white;
+                                    border: none;
+                                    padding: 12px 28px;
+                                    border-radius: 10px;
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    transition: all 0.3s ease;
+                                    text-decoration: none;
+                                    display: inline-block;
+                                    margin-top: 16px;
+                                }
+
+                                .find-users-btn:hover {
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+                                }
+                            </style>
+                        </head>
+
+                        <body>
+
+                            <div class="followers-wrapper">
+                                <div class="followers-header">
+                                    <button class="back-btn" onclick="history.back()">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="19" y1="12" x2="5" y2="12" />
+                                            <polyline points="12 19 5 12 12 5" />
+                                        </svg>
+                                    </button>
+                                    <div>
+                                        <h1 class="followers-title">
+                                            <%= pageTitle %>
+                                        </h1>
+                                        <% if (!isOwnProfile) { %>
+                                            <p class="followers-subtitle">@<%= profileUsername %>
+                                            </p>
+                                            <% } %>
+                                    </div>
+                                </div>
+
+                                <div class="followers-list">
+                                    <% String[] gradients={ "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
+                                        , "linear-gradient(135deg, #30cfd0 0%, #330867 100%)"
+                                        , "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+                                        , "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)"
+                                        , "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)"
+                                        , "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }; int gradientIndex=0; if
+                                        (userList !=null && !userList.isEmpty()) { for (FeedProfile user : userList) {
+                                        String gradient=gradients[gradientIndex % gradients.length]; gradientIndex++; //
+                                        In following page, all users in the list are being followed by the profile owner
+                                        boolean isFollowingUser=true; boolean
+                                        isCurrentUser=(user.getFeedProfileId()==currentProfileId); %>
+                                        <div class="follower-item">
+                                            <div class="follower-avatar">
+                                                <% if (user.getFeedProfilePictureUrl() !=null &&
+                                                    !user.getFeedProfilePictureUrl().contains("default")) { %>
+                                                    <img src="<%= user.getFeedProfilePictureUrl() %>"
+                                                        alt="@<%= user.getFeedUsername() %>">
+                                                    <% } else { %>
+                                                        <div class="follower-avatar-initials"
+                                                            style="background: <%= gradient %>;">
+                                                            <%= user.getInitials() %>
+                                                        </div>
+                                                        <% } %>
+                                            </div>
+                                            <div class="follower-info">
+                                                <h3 class="follower-name">
+                                                    <a
+                                                        href="${pageContext.request.contextPath}/publicprofile?username=<%= user.getFeedUsername() %>">
+                                                        <%= user.getFeedUsername() %>
+                                                    </a>
+                                                </h3>
+                                                <p class="follower-status">
+                                                    <%= user.getFeedBio() !=null ? user.getFeedBio() : "Everly user" %>
+                                                </p>
+                                            </div>
+                                            <% if (!isCurrentUser && isOwnProfile) { %>
+                                                <button class="follow-btn-list following"
+                                                    data-profile-id="<%= user.getFeedProfileId() %>"
+                                                    data-is-following="true" onclick="handleFollow(this)">
+                                                    Following
+                                                </button>
+                                                <% } else if (!isCurrentUser) { %>
+                                                    <% Boolean isFollowingThisUser=(Boolean)
+                                                        request.getAttribute("isFollowing_" + user.getFeedProfileId());
+                                                        if (isFollowingThisUser==null) isFollowingThisUser=false; %>
+                                                        <button class="follow-btn-list <%= isFollowingThisUser ? "
+                                                            following" : "" %>"
+                                                            data-profile-id="<%= user.getFeedProfileId() %>"
+                                                                data-is-following="<%= isFollowingThisUser %>"
+                                                                    onclick="handleFollow(this)">
+                                                                    <%= isFollowingThisUser ? "Following" : "Follow" %>
+                                                        </button>
+                                                        <% } %>
+                                        </div>
+                                        <% } } else { %>
+                                            <div class="empty-list">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="1.5">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                                    <circle cx="9" cy="7" r="4" />
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                                </svg>
+                                                <h3>Not following anyone yet</h3>
+                                                <p>
+                                                    <% if (isOwnProfile) { %>
+                                                        Start following people to see their posts in your feed!
+                                                        <% } else { %>
+                                                            @<%= profileUsername %> isn't following anyone yet.
+                                                                <% } %>
+                                                </p>
+                                                <% if (isOwnProfile) { %>
+                                                    <a href="${pageContext.request.contextPath}/feed"
+                                                        class="find-users-btn">Find People</a>
+                                                    <% } %>
+                                            </div>
+                                            <% } %>
+                                </div>
+                            </div>
+
+                            <jsp:include page="../public/footer.jsp" />
+
+                            <script>
+                                function handleFollow(btn) {
+                                    const profileId = btn.dataset.profileId;
+                                    const isFollowing = btn.dataset.isFollowing === 'true';
+                                    const action = isFollowing ? 'unfollow' : 'follow';
+
+                                    fetch('${pageContext.request.contextPath}/followUser?action=' + action + '&targetProfileId=' + profileId, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        }
+                                    })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                btn.dataset.isFollowing = data.isFollowing.toString();
+                                                if (data.isFollowing) {
+                                                    btn.classList.add('following');
+                                                    btn.textContent = 'Following';
+                                                } else {
+                                                    btn.classList.remove('following');
+                                                    btn.textContent = 'Follow';
+                                                }
+                                            }
+                                        })
+                                        .catch(error => console.error('Error:', error));
+                                }
+                            </script>
+                        </body>
+
+                        </html>
