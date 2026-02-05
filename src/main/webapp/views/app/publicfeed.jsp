@@ -299,7 +299,8 @@
                                                                             </svg>
                                                                         </button>
                                                                     </div>
-                                                                    <button class="action-btn bookmark-btn">
+                                                                    <button class="action-btn bookmark-btn"
+                                                                        data-post-id="<%= post.getPostId() %>">
                                                                         <svg width="24" height="24" viewBox="0 0 24 24"
                                                                             fill="none" stroke="currentColor"
                                                                             stroke-width="2">
@@ -467,12 +468,33 @@
                                                     });
                                                 });
 
-                                                // Bookmark button
+                                                // Bookmark button - save post functionality
                                                 document.querySelectorAll('.bookmark-btn').forEach(btn => {
                                                     btn.addEventListener('click', function () {
-                                                        this.classList.toggle('bookmarked');
-                                                        const svg = this.querySelector('svg');
-                                                        svg.style.fill = this.classList.contains('bookmarked') ? '#262626' : 'none';
+                                                        const postId = this.dataset.postId;
+                                                        const isSaved = this.classList.contains('bookmarked');
+                                                        const action = isSaved ? 'unsave' : 'save';
+
+                                                        fetch('${pageContext.request.contextPath}/savePost?action=' + action + '&postId=' + postId, {
+                                                            method: 'POST',
+                                                            headers: {
+                                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                                            }
+                                                        })
+                                                            .then(response => response.json())
+                                                            .then(data => {
+                                                                if (data.success) {
+                                                                    const svg = this.querySelector('svg');
+                                                                    if (data.isSaved) {
+                                                                        this.classList.add('bookmarked');
+                                                                        svg.style.fill = '#262626';
+                                                                    } else {
+                                                                        this.classList.remove('bookmarked');
+                                                                        svg.style.fill = 'none';
+                                                                    }
+                                                                }
+                                                            })
+                                                            .catch(error => console.error('Error saving post:', error));
                                                     });
                                                 });
                                             });

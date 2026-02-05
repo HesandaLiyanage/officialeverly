@@ -151,6 +151,9 @@ public class FrontControllerServlet extends HttpServlet {
         // Feed profile view route
         routeToController.put("/publicprofile", "/feedprofileview");
 
+        // Edit feed profile route
+        routeToController.put("/feededitprofile", "/feededitprofileview");
+
         // Followers/Following routes
         routeToController.put("/followers", "/followersview?type=followers");
         routeToController.put("/following", "/followersview?type=following");

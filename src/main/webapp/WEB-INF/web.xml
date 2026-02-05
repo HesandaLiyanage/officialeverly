@@ -556,6 +556,36 @@
         <url-pattern>/followersview</url-pattern>
     </servlet-mapping>
 
+    <!-- Edit Feed Profile View Controller -->
+    <servlet>
+        <servlet-name>EditFeedProfileViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.EditFeedProfileViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditFeedProfileViewController</servlet-name>
+        <url-pattern>/feededitprofileview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Update Feed Profile Servlet -->
+    <servlet>
+        <servlet-name>UpdateFeedProfileServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.UpdateFeedProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateFeedProfileServlet</servlet-name>
+        <url-pattern>/updateFeedProfile</url-pattern>
+    </servlet-mapping>
+
+    <!-- Save Post Servlet (Bookmark) -->
+    <servlet>
+        <servlet-name>SavePostServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.SavePostServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SavePostServlet</servlet-name>
+        <url-pattern>/savePost</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>

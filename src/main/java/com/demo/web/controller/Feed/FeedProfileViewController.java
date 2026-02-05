@@ -3,6 +3,7 @@ package com.demo.web.controller.Feed;
 import com.demo.web.dao.FeedFollowDAO;
 import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.FeedProfileDAO;
+import com.demo.web.dao.SavedPostDAO;
 import com.demo.web.model.FeedPost;
 import com.demo.web.model.FeedProfile;
 
@@ -28,12 +29,14 @@ public class FeedProfileViewController extends HttpServlet {
     private FeedProfileDAO feedProfileDAO;
     private FeedPostDAO feedPostDAO;
     private FeedFollowDAO feedFollowDAO;
+    private SavedPostDAO savedPostDAO;
 
     @Override
     public void init() throws ServletException {
         feedProfileDAO = new FeedProfileDAO();
         feedPostDAO = new FeedPostDAO();
         feedFollowDAO = new FeedFollowDAO();
+        savedPostDAO = new SavedPostDAO();
     }
 
     @Override
@@ -97,6 +100,21 @@ public class FeedProfileViewController extends HttpServlet {
                 }
             }
 
+            // Get saved posts (only for own profile)
+            List<FeedPost> savedPosts = null;
+            if (isOwnProfile) {
+                savedPosts = savedPostDAO.getSavedPosts(currentUserProfile.getFeedProfileId());
+                // Fix cover URLs for saved posts
+                for (FeedPost post : savedPosts) {
+                    if (post.getCoverMediaUrl() == null) {
+                        Integer mediaId = feedPostDAO.getFirstMediaId(post.getMemoryId());
+                        if (mediaId != null) {
+                            post.setCoverMediaUrl(request.getContextPath() + "/viewMedia?mediaId=" + mediaId);
+                        }
+                    }
+                }
+            }
+
             // Check if current user follows this profile (if not own profile)
             boolean isFollowing = false;
             if (!isOwnProfile) {
@@ -112,7 +130,8 @@ public class FeedProfileViewController extends HttpServlet {
             logger.info("[FeedProfileViewController] Displaying profile: @" + profileToView.getFeedUsername()
                     + ", posts: " + userPosts.size()
                     + ", followers: " + followerCount
-                    + ", following: " + followingCount);
+                    + ", following: " + followingCount
+                    + (savedPosts != null ? ", saved: " + savedPosts.size() : ""));
 
             // Set attributes
             request.setAttribute("profileToView", profileToView);
@@ -122,6 +141,7 @@ public class FeedProfileViewController extends HttpServlet {
             request.setAttribute("followingCount", followingCount);
             request.setAttribute("postCount", userPosts.size());
             request.setAttribute("userPosts", userPosts);
+            request.setAttribute("savedPosts", savedPosts);
             request.setAttribute("recommendedUsers", recommendedUsers);
             request.setAttribute("currentUserProfile", currentUserProfile);
 
