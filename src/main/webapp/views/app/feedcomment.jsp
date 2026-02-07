@@ -82,65 +82,64 @@
 
                         <div class="post-comments-wrapper">
                           <div class="post-image-section">
-                            <% if (mediaItems !=null && !mediaItems.isEmpty()) { %>
-                              <% MediaItem firstMedia=mediaItems.get(0); %>
-                                <% if (firstMedia.getMediaType() !=null &&
-                                  firstMedia.getMediaType().startsWith("video")) { %>
-                                  <video src="<%= firstMedia.getMediaUrl() %>" controls
-                                    style="width: 100%; height: 100%; object-fit: cover;"></video>
+                            <% if (mediaItems !=null && !mediaItems.isEmpty()) { MediaItem firstMedia=mediaItems.get(0);
+                              if (firstMedia.getMediaType() !=null && firstMedia.getMediaType().startsWith("video")) {
+                              %>
+                              <video src="<%= firstMedia.getMediaUrl() %>" controls
+                                style="width: 100%; height: 100%; object-fit: cover;"></video>
+                              <% } else { %>
+                                <img src="<%= firstMedia.getMediaUrl() %>" alt="Post image" id="postImage">
+                                <% } } else if (post.getCoverMediaUrl() !=null) { %>
+                                  <img src="<%= post.getCoverMediaUrl() %>" alt="Post image" id="postImage">
                                   <% } else { %>
-                                    <img src="<%= firstMedia.getMediaUrl() %>" alt="Post image" id="postImage">
+                                    <div
+                                      style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
+                                      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                      </svg>
+                                    </div>
                                     <% } %>
-                                      <% } else if (post.getCoverMediaUrl() !=null) { %>
-                                        <img src="<%= post.getCoverMediaUrl() %>" alt="Post image" id="postImage">
-                                        <% } else { %>
-                                          <div
-                                            style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
-                                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
-                                              stroke="currentColor" stroke-width="2">
-                                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                              <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                              <polyline points="21 15 16 10 5 21"></polyline>
-                                            </svg>
-                                          </div>
-                                          <% } %>
                           </div>
 
                           <div class="post-details-section">
                             <div class="post-detail-header">
                               <div class="user-info">
-                                <% if (postOwner.getFeedProfilePictureUrl() !=null &&
-                                  !postOwner.getFeedProfilePictureUrl().contains("default")) { %>
-                                  <img src="<%= postOwner.getFeedProfilePictureUrl() %>"
-                                    alt="<%= postOwner.getFeedUsername() %>" class="user-avatar"
-                                    style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                                  <% } else { %>
-                                    <div class="user-avatar" style="background: <%= gradients[0] %>;">
-                                      <span>
-                                        <%= postOwner.getInitials() %>
-                                      </span>
-                                    </div>
-                                    <% } %>
-                                      <div class="user-details">
-                                        <h4 class="username">
-                                          <%= postOwner.getFeedUsername() %>
-                                        </h4>
-                                        <% if (post.getMemory() !=null && post.getMemory().getMemoryTitle() !=null) { %>
-                                          <p class="post-location">
-                                            <%= post.getMemory().getMemoryTitle() %>
-                                          </p>
-                                          <% } %>
+                                <% String ownerPic=postOwner.getFeedProfilePictureUrl(); boolean hasOwnerPic=ownerPic
+                                  !=null && !ownerPic.isEmpty() && !ownerPic.contains("default"); %>
+                                  <% if (hasOwnerPic) { %>
+                                    <img src="<%= ownerPic %>" alt="<%= postOwner.getFeedUsername() %>"
+                                      class="user-avatar"
+                                      style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                    <% } else { %>
+                                      <div class="user-avatar" style="background: <%= gradients[0] %>;">
+                                        <span>
+                                          <%= postOwner.getInitials() %>
+                                        </span>
                                       </div>
+                                      <% } %>
+                                        <div class="user-details">
+                                          <h4 class="username">
+                                            <%= postOwner.getFeedUsername() %>
+                                          </h4>
+                                          <% if (post.getMemory() !=null && post.getMemory().getMemoryTitle() !=null) {
+                                            %>
+                                            <p class="post-location">
+                                              <%= post.getMemory().getMemoryTitle() %>
+                                            </p>
+                                            <% } %>
+                                        </div>
                               </div>
                             </div>
 
                             <div class="comments-list-container" id="commentsContainer">
                               <% if (post.getCaption() !=null && !post.getCaption().isEmpty()) { %>
                                 <div class="comment-item original-caption">
-                                  <% if (postOwner.getFeedProfilePictureUrl() !=null &&
-                                    !postOwner.getFeedProfilePictureUrl().contains("default")) { %>
-                                    <img src="<%= postOwner.getFeedProfilePictureUrl() %>"
-                                      alt="<%= postOwner.getFeedUsername() %>" class="comment-avatar"
+                                  <% if (hasOwnerPic) { %>
+                                    <img src="<%= ownerPic %>" alt="<%= postOwner.getFeedUsername() %>"
+                                      class="comment-avatar"
                                       style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
                                     <% } else { %>
                                       <div class="comment-avatar" style="background: <%= gradients[0] %>;">
@@ -169,12 +168,20 @@
                                     FeedProfile commenter=comment.getFeedProfile(); String
                                     gradient=gradients[gradientIndex % gradients.length]; gradientIndex++; boolean
                                     canDelete=isPostOwner ||
-                                    (comment.getFeedProfileId()==currentProfile.getFeedProfileId()); %>
+                                    (comment.getFeedProfileId()==currentProfile.getFeedProfileId()); String
+                                    commenterPic=commenter.getFeedProfilePictureUrl(); boolean
+                                    hasCommenterPic=commenterPic !=null && !commenterPic.isEmpty() &&
+                                    !commenterPic.contains("default"); boolean
+                                    commentLiked=comment.isLikedByCurrentUser(); String likedClass=commentLiked
+                                    ? "liked" : "" ; String fillColor=commentLiked ? "#ed4956" : "none" ; String
+                                    strokeColor=commentLiked ? "#ed4956" : "currentColor" ; int
+                                    cLikeCount=comment.getLikeCount(); String likesText=cLikeCount> 0 ? cLikeCount + "
+                                    likes" : "";
+                                    %>
                                     <div class="comment-item" data-comment-id="<%= comment.getCommentId() %>">
-                                      <% if (commenter.getFeedProfilePictureUrl() !=null &&
-                                        !commenter.getFeedProfilePictureUrl().contains("default")) { %>
-                                        <img src="<%= commenter.getFeedProfilePictureUrl() %>"
-                                          alt="<%= commenter.getFeedUsername() %>" class="comment-avatar"
+                                      <% if (hasCommenterPic) { %>
+                                        <img src="<%= commenterPic %>" alt="<%= commenter.getFeedUsername() %>"
+                                          class="comment-avatar"
                                           style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
                                         <% } else { %>
                                           <div class="comment-avatar" style="background: <%= gradient %>;">
@@ -196,22 +203,18 @@
                                                 <%= comment.getCommentText() %>
                                               </p>
                                               <div class="comment-actions">
-                                                <button class="comment-like-btn <%= comment.isLikedByCurrentUser() ? "
-                                                  liked" : "" %>"
+                                                <button class="comment-like-btn <%= likedClass %>"
                                                   data-comment-id="<%= comment.getCommentId() %>">
-                                                    <svg class="svg-heart" width="12" height="12" viewBox="0 0 24 24"
-                                                      fill="<%= comment.isLikedByCurrentUser() ? " #ed4956" : "none" %>"
-                                                      stroke="<%= comment.isLikedByCurrentUser() ? "#ed4956"
-                                                        : "currentColor" %>"
-                                                        stroke-width="2">
-                                                        <path
-                                                          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                                        </path>
-                                                    </svg>
+                                                  <svg class="svg-heart" width="12" height="12" viewBox="0 0 24 24"
+                                                    fill="<%= fillColor %>" stroke="<%= strokeColor %>"
+                                                    stroke-width="2">
+                                                    <path
+                                                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                                    </path>
+                                                  </svg>
                                                 </button>
                                                 <span class="comment-likes">
-                                                  <%= comment.getLikeCount()> 0 ? comment.getLikeCount() + " likes" : ""
-                                                    %>
+                                                  <%= likesText %>
                                                 </span>
                                                 <% if (canDelete) { %>
                                                   <button class="delete-comment-btn"
@@ -223,204 +226,205 @@
                                     <% } } %>
                             </div>
 
-                            <div class="post-actions-bar">
-                              <div class="post-actions">
-                                <div class="action-buttons">
-                                  <button class="action-btn like-btn <%= isLikedByUser ? " liked" : "" %>"
-                                    data-post-id="<%= post.getPostId() %>">
+                            <% String postLikedClass=isLikedByUser ? "liked" : "" ; String postFillColor=isLikedByUser
+                              ? "#ed4956" : "none" ; String postStrokeColor=isLikedByUser ? "#ed4956" : "currentColor" ;
+                              %>
+                              <div class="post-actions-bar">
+                                <div class="post-actions">
+                                  <div class="action-buttons">
+                                    <button class="action-btn like-btn <%= postLikedClass %>"
+                                      data-post-id="<%= post.getPostId() %>">
                                       <svg class="svg-heart" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="<%= isLikedByUser ? " #ed4956" : "none" %>"
-                                        stroke="<%= isLikedByUser ? "#ed4956" : "currentColor" %>"
-                                          stroke-width="2">
-                                          <path
-                                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                          </path>
+                                        fill="<%= postFillColor %>" stroke="<%= postStrokeColor %>" stroke-width="2">
+                                        <path
+                                          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                        </path>
                                       </svg>
-                                  </button>
-                                  <button class="action-btn">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                      stroke-width="2">
-                                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                                    </svg>
-                                  </button>
+                                    </button>
+                                    <button class="action-btn">
+                                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </div>
+                                <div class="post-stats">
+                                  <p class="likes-count" id="likesCount">
+                                    <%= likeCount %> likes
+                                  </p>
+                                  <p class="post-time-stamp">
+                                    <%= post.getRelativeTime().toUpperCase() %>
+                                  </p>
                                 </div>
                               </div>
-                              <div class="post-stats">
-                                <p class="likes-count" id="likesCount">
-                                  <%= likeCount %> likes
-                                </p>
-                                <p class="post-time-stamp">
-                                  <%= post.getRelativeTime().toUpperCase() %>
-                                </p>
-                              </div>
-                            </div>
 
-                            <div class="add-comment-section">
-                              <button class="emoji-btn">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                  stroke-width="2">
-                                  <circle cx="12" cy="12" r="10"></circle>
-                                  <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                                  <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                                  <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                                </svg>
-                              </button>
-                              <input type="text" placeholder="Add a comment..." id="commentInput">
-                              <button class="post-comment-btn" id="postCommentBtn"
-                                data-post-id="<%= post.getPostId() %>">Post</button>
-                            </div>
+                              <div class="add-comment-section">
+                                <button class="emoji-btn">
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                                  </svg>
+                                </button>
+                                <input type="text" placeholder="Add a comment..." id="commentInput">
+                                <button class="post-comment-btn" id="postCommentBtn"
+                                  data-post-id="<%= post.getPostId() %>">Post</button>
+                              </div>
                           </div>
                         </div>
                       </div>
 
                       <script>
-                        const contextPath = '${pageContext.request.contextPath}';
-                        const currentUserInitials = '<%= currentProfile.getInitials() %>';
-                        const currentUsername = '<%= currentProfile.getFeedUsername() %>';
-                        const currentProfilePicUrl = '<%= currentProfile.getFeedProfilePictureUrl() != null ? currentProfile.getFeedProfilePictureUrl() : "" %>';
+                        var contextPath = '${pageContext.request.contextPath}';
+                        var currentUserInitials = '<%= currentProfile.getInitials() %>';
+                        var currentUsername = '<%= currentProfile.getFeedUsername() %>';
+    <% String cpUrl = currentProfile.getFeedProfilePictureUrl(); %>
+    var currentProfilePicUrl = '<%= cpUrl != null ? cpUrl : "" %>';
 
                         document.addEventListener('DOMContentLoaded', function () {
-                          // Like post button
-                          const likeBtn = document.querySelector('.like-btn');
-                          likeBtn.addEventListener('click', function () {
-                            const postId = this.dataset.postId;
-                            const isLiked = this.classList.contains('liked');
-                            const action = isLiked ? 'unlike' : 'like';
+                          var likeBtn = document.querySelector('.like-btn');
+                          if (likeBtn) {
+                            likeBtn.addEventListener('click', function () {
+                              var postId = this.dataset.postId;
+                              var isLiked = this.classList.contains('liked');
+                              var action = isLiked ? 'unlike' : 'like';
 
-                            fetch(contextPath + '/postLike?postId=' + postId + '&action=' + action, {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                            })
-                              .then(response => response.json())
-                              .then(data => {
-                                if (data.success) {
-                                  const svg = this.querySelector('svg');
-                                  if (data.isLiked) {
-                                    this.classList.add('liked');
-                                    svg.style.fill = '#ed4956';
-                                    svg.style.stroke = '#ed4956';
-                                  } else {
-                                    this.classList.remove('liked');
-                                    svg.style.fill = 'none';
-                                    svg.style.stroke = 'currentColor';
-                                  }
-                                  document.getElementById('likesCount').textContent = data.likeCount + ' likes';
-                                }
+                              fetch(contextPath + '/postLike?postId=' + postId + '&action=' + action, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                               })
-                              .catch(error => console.error('Error:', error));
-                          });
+                                .then(function (response) { return response.json(); })
+                                .then(function (data) {
+                                  if (data.success) {
+                                    var btn = document.querySelector('.like-btn');
+                                    var svg = btn.querySelector('svg');
+                                    if (data.isLiked) {
+                                      btn.classList.add('liked');
+                                      svg.style.fill = '#ed4956';
+                                      svg.style.stroke = '#ed4956';
+                                    } else {
+                                      btn.classList.remove('liked');
+                                      svg.style.fill = 'none';
+                                      svg.style.stroke = 'currentColor';
+                                    }
+                                    document.getElementById('likesCount').textContent = data.likeCount + ' likes';
+                                  }
+                                })
+                                .catch(function (error) { console.error('Error:', error); });
+                            });
+                          }
 
-                          // Comment like buttons
-                          document.querySelectorAll('.comment-like-btn').forEach(btn => {
+                          document.querySelectorAll('.comment-like-btn').forEach(function (btn) {
                             btn.addEventListener('click', handleCommentLike);
                           });
 
-                          // Delete comment buttons
-                          document.querySelectorAll('.delete-comment-btn').forEach(btn => {
+                          document.querySelectorAll('.delete-comment-btn').forEach(function (btn) {
                             btn.addEventListener('click', handleDeleteComment);
                           });
 
-                          // Post comment functionality
-                          const commentInput = document.getElementById('commentInput');
-                          const postCommentBtn = document.getElementById('postCommentBtn');
+                          var commentInput = document.getElementById('commentInput');
+                          var postCommentBtn = document.getElementById('postCommentBtn');
 
-                          commentInput.addEventListener('input', function () {
-                            if (this.value.trim().length > 0) {
-                              postCommentBtn.style.opacity = '1';
-                              postCommentBtn.style.cursor = 'pointer';
-                            } else {
-                              postCommentBtn.style.opacity = '0.3';
-                              postCommentBtn.style.cursor = 'default';
-                            }
-                          });
+                          if (commentInput) {
+                            commentInput.addEventListener('input', function () {
+                              if (this.value.trim().length > 0) {
+                                postCommentBtn.style.opacity = '1';
+                                postCommentBtn.style.cursor = 'pointer';
+                              } else {
+                                postCommentBtn.style.opacity = '0.3';
+                                postCommentBtn.style.cursor = 'default';
+                              }
+                            });
 
-                          postCommentBtn.addEventListener('click', function () {
-                            const commentText = commentInput.value.trim();
-                            if (commentText.length === 0) return;
+                            commentInput.addEventListener('keypress', function (e) {
+                              if (e.key === 'Enter' && this.value.trim().length > 0) {
+                                postCommentBtn.click();
+                              }
+                            });
+                          }
 
-                            const postId = this.dataset.postId;
+                          if (postCommentBtn) {
+                            postCommentBtn.addEventListener('click', function () {
+                              var commentText = commentInput.value.trim();
+                              if (commentText.length === 0) return;
 
-                            fetch(contextPath + '/commentAction?action=add&postId=' + postId + '&commentText=' + encodeURIComponent(commentText), {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                            })
-                              .then(response => response.json())
-                              .then(data => {
-                                if (data.success) {
-                                  const commentsContainer = document.getElementById('commentsContainer');
-                                  const newComment = document.createElement('div');
-                                  newComment.className = 'comment-item';
-                                  newComment.dataset.commentId = data.comment.commentId;
+                              var postId = this.dataset.postId;
 
-                                  const avatarHtml = currentProfilePicUrl && !currentProfilePicUrl.includes('default')
-                                    ? `<img src="${currentProfilePicUrl}" alt="${currentUsername}" class="comment-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">`
-                                    : `<div class="comment-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);"><span>${currentUserInitials}</span></div>`;
-
-                                  newComment.innerHTML = `
-                        ${avatarHtml}
-                        <div class="comment-content">
-                            <div class="comment-header">
-                                <span class="comment-username">${currentUsername}</span>
-                                <span class="comment-time">Just now</span>
-                            </div>
-                            <p class="comment-text">${data.comment.commentText}</p>
-                            <div class="comment-actions">
-                                <button class="comment-like-btn" data-comment-id="${data.comment.commentId}">
-                                    <svg class="svg-heart" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                    </svg>
-                                </button>
-                                <span class="comment-likes"></span>
-                                <button class="delete-comment-btn" data-comment-id="${data.comment.commentId}">Delete</button>
-                            </div>
-                        </div>
-                    `;
-
-                                  commentsContainer.appendChild(newComment);
-                                  commentInput.value = '';
-                                  postCommentBtn.style.opacity = '0.3';
-                                  postCommentBtn.style.cursor = 'default';
-
-                                  // Add event listeners to new buttons
-                                  newComment.querySelector('.comment-like-btn').addEventListener('click', handleCommentLike);
-                                  newComment.querySelector('.delete-comment-btn').addEventListener('click', handleDeleteComment);
-
-                                  // Scroll to bottom
-                                  commentsContainer.scrollTop = commentsContainer.scrollHeight;
-                                }
+                              fetch(contextPath + '/commentAction?action=add&postId=' + postId + '&commentText=' + encodeURIComponent(commentText), {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                               })
-                              .catch(error => console.error('Error:', error));
-                          });
+                                .then(function (response) { return response.json(); })
+                                .then(function (data) {
+                                  if (data.success) {
+                                    var commentsContainer = document.getElementById('commentsContainer');
+                                    var newComment = document.createElement('div');
+                                    newComment.className = 'comment-item';
+                                    newComment.dataset.commentId = data.comment.commentId;
 
-                          // Enter key to post comment
-                          commentInput.addEventListener('keypress', function (e) {
-                            if (e.key === 'Enter' && this.value.trim().length > 0) {
-                              postCommentBtn.click();
-                            }
-                          });
+                                    var avatarHtml = (currentProfilePicUrl && currentProfilePicUrl.indexOf('default') === -1)
+                                      ? '<img src="' + currentProfilePicUrl + '" alt="' + currentUsername + '" class="comment-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">'
+                                      : '<div class="comment-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);"><span>' + currentUserInitials + '</span></div>';
+
+                                    newComment.innerHTML = avatarHtml +
+                                      '<div class="comment-content">' +
+                                      '<div class="comment-header">' +
+                                      '<span class="comment-username">' + currentUsername + '</span>' +
+                                      '<span class="comment-time">Just now</span>' +
+                                      '</div>' +
+                                      '<p class="comment-text">' + data.comment.commentText + '</p>' +
+                                      '<div class="comment-actions">' +
+                                      '<button class="comment-like-btn" data-comment-id="' + data.comment.commentId + '">' +
+                                      '<svg class="svg-heart" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                                      '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>' +
+                                      '</svg>' +
+                                      '</button>' +
+                                      '<span class="comment-likes"></span>' +
+                                      '<button class="delete-comment-btn" data-comment-id="' + data.comment.commentId + '">Delete</button>' +
+                                      '</div>' +
+                                      '</div>';
+
+                                    commentsContainer.appendChild(newComment);
+                                    commentInput.value = '';
+                                    postCommentBtn.style.opacity = '0.3';
+                                    postCommentBtn.style.cursor = 'default';
+
+                                    newComment.querySelector('.comment-like-btn').addEventListener('click', handleCommentLike);
+                                    newComment.querySelector('.delete-comment-btn').addEventListener('click', handleDeleteComment);
+
+                                    commentsContainer.scrollTop = commentsContainer.scrollHeight;
+                                  }
+                                })
+                                .catch(function (error) { console.error('Error:', error); });
+                            });
+                          }
                         });
 
                         function handleCommentLike() {
-                          const commentId = this.dataset.commentId;
-                          const isLiked = this.classList.contains('liked');
-                          const action = isLiked ? 'unlike' : 'like';
+                          var btn = this;
+                          var commentId = btn.dataset.commentId;
+                          var isLiked = btn.classList.contains('liked');
+                          var action = isLiked ? 'unlike' : 'like';
 
                           fetch(contextPath + '/commentAction?action=' + action + '&commentId=' + commentId, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                           })
-                            .then(response => response.json())
-                            .then(data => {
+                            .then(function (response) { return response.json(); })
+                            .then(function (data) {
                               if (data.success) {
-                                const svg = this.querySelector('svg');
-                                const likesSpan = this.nextElementSibling;
+                                var svg = btn.querySelector('svg');
+                                var likesSpan = btn.nextElementSibling;
 
                                 if (data.isLiked) {
-                                  this.classList.add('liked');
+                                  btn.classList.add('liked');
                                   svg.style.fill = '#ed4956';
                                   svg.style.stroke = '#ed4956';
                                 } else {
-                                  this.classList.remove('liked');
+                                  btn.classList.remove('liked');
                                   svg.style.fill = 'none';
                                   svg.style.stroke = 'currentColor';
                                 }
@@ -428,11 +432,12 @@
                                 likesSpan.textContent = data.likeCount > 0 ? data.likeCount + ' likes' : '';
                               }
                             })
-                            .catch(error => console.error('Error:', error));
+                            .catch(function (error) { console.error('Error:', error); });
                         }
 
                         function handleDeleteComment() {
-                          const commentId = this.dataset.commentId;
+                          var btn = this;
+                          var commentId = btn.dataset.commentId;
 
                           if (!confirm('Are you sure you want to delete this comment?')) {
                             return;
@@ -442,10 +447,10 @@
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                           })
-                            .then(response => response.json())
-                            .then(data => {
+                            .then(function (response) { return response.json(); })
+                            .then(function (data) {
                               if (data.success) {
-                                const commentItem = document.querySelector(`.comment-item[data-comment-id="${commentId}"]`);
+                                var commentItem = document.querySelector('.comment-item[data-comment-id="' + commentId + '"]');
                                 if (commentItem) {
                                   commentItem.remove();
                                 }
@@ -453,7 +458,7 @@
                                 alert('Failed to delete comment: ' + (data.error || 'Unknown error'));
                               }
                             })
-                            .catch(error => console.error('Error:', error));
+                            .catch(function (error) { console.error('Error:', error); });
                         }
                       </script>
 
