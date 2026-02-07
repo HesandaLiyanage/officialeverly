@@ -101,9 +101,11 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/userprofile", "/views/app/userprofile.jsp");
         routeToJsp.put("/followerprofile", "/views/app/followerprofile.jsp");
         routeToJsp.put("/followingprofile", "/views/app/followingprofile.jsp");
-        routeToJsp.put("/feedcomment", "/views/app/feedcomment.jsp");
         routeToJsp.put("/vaultpassword", "/views/app/vaultpassword.jsp");
-        routeToJsp.put("/comments", "/views/app/feedcomment.jsp");
+
+        // Comment routes - use controller for data loading
+        routeToController.put("/feedcomment", "/viewComments");
+        routeToController.put("/comments", "/viewComments");
         routeToJsp.put("/feededitprofile", "/views/app/editpublicprofile.jsp");
         routeToJsp.put("/blockedusers", "/views/app/blockedusers.jsp");
         routeToJsp.put("/vaultentries", "/views/app/vaultentries.jsp");

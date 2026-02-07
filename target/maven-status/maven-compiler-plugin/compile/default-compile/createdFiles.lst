@@ -11,12 +11,14 @@ com/demo/web/service/LinkedDeviceService.class
 com/demo/web/controller/Feed/FeedViewController.class
 com/demo/web/controller/Memory/RemoveCollabMemberServlet.class
 com/demo/web/controller/Feed/FollowServlet.class
+com/demo/web/controller/Feed/FeedCommentServlet.class
 com/demo/web/controller/Groups/GroupProfileServlet.class
 com/demo/web/service/GroupService.class
 com/demo/web/controller/Groups/GroupAnnouncementServlet.class
 com/demo/web/controller/Autographs/AutographViewController.class
 com/demo/web/dao/MediaDAO$EncryptionKeyData.class
 com/demo/web/dao/MediaDAO.class
+com/demo/web/model/FeedComment.class
 com/demo/web/controller/Settings/EditProfileViewController.class
 com/demo/web/controller/Groups/GenerateInviteLinkServlet.class
 com/demo/web/model/GroupAnnouncement.class
@@ -61,6 +63,7 @@ com/demo/web/dao/autographDAO.class
 com/demo/web/filter/AuthenticationFilter.class
 com/demo/web/service/ProfileService.class
 com/demo/web/controller/Groups/ViewAnnouncementServlet.class
+com/demo/web/dao/FeedPostLikeDAO.class
 com/demo/web/model/FeedPost.class
 com/demo/web/controller/Groups/DeleteGroupServlet.class
 com/demo/web/controller/editprofileservlet.class
@@ -68,6 +71,7 @@ com/demo/web/controller/LoginServlet.class
 com/demo/web/service/UserService.class
 com/demo/web/dao/postDAO.class
 com/demo/web/controller/Settings/LinkedDevicesViewController.class
+com/demo/web/dao/FeedCommentDAO.class
 com/demo/web/dao/FeedPostDAO.class
 com/demo/web/model/JournalStreak.class
 com/demo/web/dao/EventDAO.class
@@ -80,6 +84,7 @@ com/demo/web/controller/Journals/DeleteJournalServlet.class
 com/demo/web/controller/ViewMediaServlet.class
 com/demo/web/controller/Feed/SavePostServlet.class
 com/demo/web/controller/Events/CreateEventServlet.class
+com/demo/web/controller/Feed/PostLikeServlet.class
 com/demo/web/util/EncryptionService$UserMasterKeyData.class
 com/demo/web/controller/Autographs/AddAutographServlet.class
 com/demo/web/controller/Feed/FollowersViewController.class
@@ -122,6 +127,7 @@ com/demo/web/controller/Feed/UpdateFeedProfileServlet.class
 com/demo/web/dao/GroupDAO.class
 com/demo/web/controller/Journals/CreateJournalServlet.class
 com/demo/web/controller/Journals/EditJournalServlet.class
+com/demo/web/controller/Feed/CommentsViewController.class
 com/demo/web/controller/Groups/InviteServlet.class
 com/demo/web/dao/SavedPostDAO.class
 com/demo/web/controller/GoogleCallback.class
