@@ -3,7 +3,6 @@ package com.demo.web.controller.Feed;
 import com.demo.web.dao.FeedPostLikeDAO;
 import com.demo.web.dao.FeedProfileDAO;
 import com.demo.web.model.FeedProfile;
-import com.demo.web.model.user;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,14 +34,18 @@ public class PostLikeServlet extends HttpServlet {
 
         // Check authentication
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
+        if (session == null || session.getAttribute("user_id") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             out.print("{\"success\": false, \"error\": \"Not authenticated\"}");
             return;
         }
 
-        user currentUser = (user) session.getAttribute("user");
-        FeedProfile currentProfile = profileDAO.findByUserId(currentUser.getId());
+        Integer userId = (Integer) session.getAttribute("user_id");
+        FeedProfile currentProfile = (FeedProfile) session.getAttribute("feedProfile");
+
+        if (currentProfile == null) {
+            currentProfile = profileDAO.findByUserId(userId);
+        }
 
         if (currentProfile == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

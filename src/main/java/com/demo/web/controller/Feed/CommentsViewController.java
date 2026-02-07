@@ -9,7 +9,6 @@ import com.demo.web.model.FeedComment;
 import com.demo.web.model.FeedPost;
 import com.demo.web.model.FeedProfile;
 import com.demo.web.model.MediaItem;
-import com.demo.web.model.user;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -41,13 +40,17 @@ public class CommentsViewController extends HttpServlet {
 
         // Check authentication
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
+        if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        user currentUser = (user) session.getAttribute("user");
-        FeedProfile currentProfile = profileDAO.findByUserId(currentUser.getId());
+        Integer userId = (Integer) session.getAttribute("user_id");
+        FeedProfile currentProfile = (FeedProfile) session.getAttribute("feedProfile");
+
+        if (currentProfile == null) {
+            currentProfile = profileDAO.findByUserId(userId);
+        }
 
         if (currentProfile == null) {
             response.sendRedirect(request.getContextPath() + "/feedprofile/setup");
