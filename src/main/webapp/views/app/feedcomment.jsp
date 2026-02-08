@@ -23,6 +23,11 @@
                                                 }
 
                                                 FeedProfile postOwner = post.getFeedProfile();
+                                                if (postOwner == null) {
+                                                response.sendRedirect(request.getContextPath() + "/feed");
+                                                return;
+                                                }
+
                                                 if (likeCount == null) likeCount = 0;
                                                 if (isLikedByUser == null) isLikedByUser = false;
                                                 if (commentCount == null) commentCount = 0;
@@ -36,7 +41,8 @@
                                                 String postLikedClass = isLikedByUser ? "liked" : "";
                                                 String postFillColor = isLikedByUser ? "#ed4956" : "none";
                                                 String postStrokeColor = isLikedByUser ? "#ed4956" : "currentColor";
-                                                String cpUrl = currentProfile.getFeedProfilePictureUrl();
+                                                String cpUrl = currentProfile != null ?
+                                                currentProfile.getFeedProfilePictureUrl() : null;
                                                 String cpUrlSafe = (cpUrl != null) ? cpUrl : "";
 
                                                 request.setAttribute("ownerPic", ownerPic);
@@ -53,16 +59,20 @@
                                                 request.setAttribute("currentProfile", currentProfile);
                                                 request.setAttribute("comments", comments);
                                                 %>
-                                                <jsp:include page="../public/header2.jsp" />
                                                 <!DOCTYPE html>
-                                                <html>
+                                                <html lang="en">
 
                                                 <head>
                                                     <meta charset="UTF-8">
                                                     <meta name="viewport"
                                                         content="width=device-width, initial-scale=1.0">
                                                     <title>Comments - Everly</title>
-                                                    <link rel="stylesheet" type="text/css"
+                                                    <link
+                                                        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+                                                        rel="stylesheet">
+                                                    <link rel="stylesheet"
+                                                        href="${pageContext.request.contextPath}/resources/css/base.css">
+                                                    <link rel="stylesheet"
                                                         href="${pageContext.request.contextPath}/resources/css/postcomments.css">
                                                     <style>
                                                         .delete-comment-btn {
