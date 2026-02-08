@@ -43,6 +43,7 @@
                                                 String cpUrl = currentProfile != null ?
                                                 currentProfile.getFeedProfilePictureUrl() : null;
                                                 String cpUrlSafe = (cpUrl != null) ? cpUrl : "";
+                                                boolean hasMultipleMedia = mediaItems != null && mediaItems.size() > 1;
 
                                                 request.setAttribute("ownerPic", ownerPic);
                                                 request.setAttribute("hasOwnerPic", hasOwnerPic);
@@ -57,6 +58,7 @@
                                                 request.setAttribute("isPostOwner", isPostOwner);
                                                 request.setAttribute("currentProfile", currentProfile);
                                                 request.setAttribute("comments", comments);
+                                                request.setAttribute("hasMultipleMedia", hasMultipleMedia);
                                                 %>
                                                 <!DOCTYPE html>
                                                 <html lang="en">
@@ -137,6 +139,97 @@
                                                         .reply-btn:hover {
                                                             color: #262626;
                                                         }
+
+                                                        /* Carousel Styles */
+                                                        .carousel-container {
+                                                            position: relative;
+                                                            width: 100%;
+                                                            height: 100%;
+                                                            overflow: hidden;
+                                                        }
+
+                                                        .carousel-track {
+                                                            display: flex;
+                                                            transition: transform 0.3s ease;
+                                                            height: 100%;
+                                                        }
+
+                                                        .carousel-slide {
+                                                            min-width: 100%;
+                                                            height: 100%;
+                                                            display: flex;
+                                                            align-items: center;
+                                                            justify-content: center;
+                                                        }
+
+                                                        .carousel-slide img,
+                                                        .carousel-slide video {
+                                                            width: 100%;
+                                                            height: 100%;
+                                                            object-fit: contain;
+                                                        }
+
+                                                        .carousel-btn {
+                                                            position: absolute;
+                                                            top: 50%;
+                                                            transform: translateY(-50%);
+                                                            width: 32px;
+                                                            height: 32px;
+                                                            border-radius: 50%;
+                                                            background: rgba(255, 255, 255, 0.9);
+                                                            border: none;
+                                                            cursor: pointer;
+                                                            display: flex;
+                                                            align-items: center;
+                                                            justify-content: center;
+                                                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                                                            z-index: 10;
+                                                            opacity: 0;
+                                                            transition: opacity 0.2s;
+                                                        }
+
+                                                        .carousel-container:hover .carousel-btn {
+                                                            opacity: 1;
+                                                        }
+
+                                                        .carousel-btn:hover {
+                                                            background: white;
+                                                        }
+
+                                                        .carousel-btn.prev {
+                                                            left: 12px;
+                                                        }
+
+                                                        .carousel-btn.next {
+                                                            right: 12px;
+                                                        }
+
+                                                        .carousel-btn svg {
+                                                            width: 16px;
+                                                            height: 16px;
+                                                            color: #262626;
+                                                        }
+
+                                                        .carousel-dots {
+                                                            position: absolute;
+                                                            bottom: 12px;
+                                                            left: 50%;
+                                                            transform: translateX(-50%);
+                                                            display: flex;
+                                                            gap: 4px;
+                                                        }
+
+                                                        .carousel-dot {
+                                                            width: 6px;
+                                                            height: 6px;
+                                                            border-radius: 50%;
+                                                            background: rgba(255, 255, 255, 0.5);
+                                                            transition: background 0.2s;
+                                                        }
+
+                                                        .carousel-dot.active {
+                                                            background: white;
+                                                        }
                                                     </style>
                                                 </head>
 
@@ -152,46 +245,84 @@
                                                         </a>
 
                                                         <div class="post-comments-wrapper">
-                                                            <!-- Left Side - Post Image/Video -->
+                                                            <!-- Left Side - Post Image/Video Carousel -->
                                                             <div class="post-image-section">
-                                                                <c:choose>
-                                                                    <c:when test="${not empty mediaItems}">
-                                                                        <c:set var="firstMedia"
-                                                                            value="${mediaItems[0]}" />
+                                                                <div class="carousel-container" data-current-slide="0">
+                                                                    <div class="carousel-track">
                                                                         <c:choose>
+                                                                            <c:when test="${not empty mediaItems}">
+                                                                                <c:forEach var="media"
+                                                                                    items="${mediaItems}">
+                                                                                    <div class="carousel-slide">
+                                                                                        <c:choose>
+                                                                                            <c:when
+                                                                                                test="${media.mediaType eq 'video' or fn:startsWith(media.mimeType, 'video/')}">
+                                                                                                <video
+                                                                                                    src="${pageContext.request.contextPath}/viewmedia?id=${media.mediaId}"
+                                                                                                    controls></video>
+                                                                                            </c:when>
+                                                                                            <c:otherwise>
+                                                                                                <img src="${pageContext.request.contextPath}/viewmedia?id=${media.mediaId}"
+                                                                                                    alt="Post image">
+                                                                                            </c:otherwise>
+                                                                                        </c:choose>
+                                                                                    </div>
+                                                                                </c:forEach>
+                                                                            </c:when>
                                                                             <c:when
-                                                                                test="${firstMedia.mediaType eq 'video' or fn:startsWith(firstMedia.mimeType, 'video/')}">
-                                                                                <video
-                                                                                    src="${pageContext.request.contextPath}/viewmedia?id=${firstMedia.mediaId}"
-                                                                                    controls
-                                                                                    style="width:100%;height:100%;object-fit:contain"></video>
+                                                                                test="${not empty post.coverMediaUrl}">
+                                                                                <div class="carousel-slide">
+                                                                                    <img src="${post.coverMediaUrl}"
+                                                                                        alt="Post image">
+                                                                                </div>
                                                                             </c:when>
                                                                             <c:otherwise>
-                                                                                <img src="${pageContext.request.contextPath}/viewmedia?id=${firstMedia.mediaId}"
-                                                                                    alt="Post image" id="postImage">
+                                                                                <div class="carousel-slide"
+                                                                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                                                                    <svg width="64" height="64"
+                                                                                        viewBox="0 0 24 24" fill="none"
+                                                                                        stroke="white" stroke-width="2">
+                                                                                        <rect x="3" y="3" width="18"
+                                                                                            height="18" rx="2" ry="2">
+                                                                                        </rect>
+                                                                                        <circle cx="8.5" cy="8.5"
+                                                                                            r="1.5"></circle>
+                                                                                        <polyline
+                                                                                            points="21 15 16 10 5 21">
+                                                                                        </polyline>
+                                                                                    </svg>
+                                                                                </div>
                                                                             </c:otherwise>
                                                                         </c:choose>
-                                                                    </c:when>
-                                                                    <c:when test="${not empty post.coverMediaUrl}">
-                                                                        <img src="${post.coverMediaUrl}"
-                                                                            alt="Post image" id="postImage">
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <div
-                                                                            style="width:100%;height:100%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;color:white">
-                                                                            <svg width="64" height="64"
-                                                                                viewBox="0 0 24 24" fill="none"
+                                                                    </div>
+
+                                                                    <c:if test="${hasMultipleMedia}">
+                                                                        <button class="carousel-btn prev"
+                                                                            onclick="moveCarousel(this, -1)">
+                                                                            <svg viewBox="0 0 24 24" fill="none"
                                                                                 stroke="currentColor" stroke-width="2">
-                                                                                <rect x="3" y="3" width="18" height="18"
-                                                                                    rx="2" ry="2"></rect>
-                                                                                <circle cx="8.5" cy="8.5" r="1.5">
-                                                                                </circle>
-                                                                                <polyline points="21 15 16 10 5 21">
+                                                                                <polyline points="15 18 9 12 15 6">
                                                                                 </polyline>
                                                                             </svg>
+                                                                        </button>
+                                                                        <button class="carousel-btn next"
+                                                                            onclick="moveCarousel(this, 1)">
+                                                                            <svg viewBox="0 0 24 24" fill="none"
+                                                                                stroke="currentColor" stroke-width="2">
+                                                                                <polyline points="9 18 15 12 9 6">
+                                                                                </polyline>
+                                                                            </svg>
+                                                                        </button>
+                                                                        <div class="carousel-dots">
+                                                                            <c:forEach var="media" items="${mediaItems}"
+                                                                                varStatus="idx">
+                                                                                <div
+                                                                                    class="carousel-dot${idx.index == 0 ? ' active' : ''}">
+                                                                                </div>
+                                                                            </c:forEach>
                                                                         </div>
-                                                                    </c:otherwise>
-                                                                </c:choose>
+                                                                    </c:if>
+                                                                </div>
                                                             </div>
 
                                                             <!-- Right Side - Comments Section -->
@@ -309,7 +440,7 @@
                                                                                 </c:when>
                                                                                 <c:otherwise>
                                                                                     <div class="comment-avatar"
-                                                                                        style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)">
+                                                                                        style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
                                                                                         <span>${commenter.initials}</span>
                                                                                     </div>
                                                                                 </c:otherwise>
@@ -421,6 +552,26 @@
                                                         var currentUsername = '${currentProfile.feedUsername}';
                                                         var currentProfilePicUrl = '${cpUrlSafe}';
 
+                                                        // Carousel Navigation
+                                                        function moveCarousel(btn, direction) {
+                                                            var container = btn.closest('.carousel-container');
+                                                            var track = container.querySelector('.carousel-track');
+                                                            var slides = container.querySelectorAll('.carousel-slide');
+                                                            var dots = container.querySelectorAll('.carousel-dot');
+                                                            var currentSlide = parseInt(container.dataset.currentSlide);
+
+                                                            var newSlide = currentSlide + direction;
+                                                            if (newSlide < 0) newSlide = slides.length - 1;
+                                                            if (newSlide >= slides.length) newSlide = 0;
+
+                                                            track.style.transform = 'translateX(-' + (newSlide * 100) + '%)';
+                                                            container.dataset.currentSlide = newSlide;
+
+                                                            dots.forEach(function (dot, index) {
+                                                                dot.classList.toggle('active', index === newSlide);
+                                                            });
+                                                        }
+
                                                         document.addEventListener('DOMContentLoaded', function () {
                                                             // Like Post Button
                                                             var likeBtn = document.querySelector('.like-btn');
@@ -516,7 +667,7 @@
 
                                                                                 var avatarHtml = (currentProfilePicUrl && currentProfilePicUrl.indexOf('default') === -1)
                                                                                     ? '<img src="' + currentProfilePicUrl + '" alt="' + currentUsername + '" class="comment-avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover">'
-                                                                                    : '<div class="comment-avatar" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)"><span>' + currentUserInitials + '</span></div>';
+                                                                                    : '<div class="comment-avatar" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%)"><span>' + currentUserInitials + '</span></div>';
 
                                                                                 newComment.innerHTML = avatarHtml +
                                                                                     '<div class="comment-content">' +
