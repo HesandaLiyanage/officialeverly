@@ -3,6 +3,7 @@
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/Autographs/DeleteAutographServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/Autographs/RestoreAutographServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/Autographs/UpdateAutographServlet.java
+/Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/Autographs/WriteAutographServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/ChangeVaultPasswordServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/DebugServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/DeleteJournalServlet.java
