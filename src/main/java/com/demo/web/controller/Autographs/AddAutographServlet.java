@@ -14,10 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-        maxFileSize = 1024 * 1024 * 10,      // 10MB
-        maxRequestSize = 1024 * 1024 * 50    // 50MB
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
 )
 public class AddAutographServlet extends HttpServlet {
 
@@ -37,7 +36,8 @@ public class AddAutographServlet extends HttpServlet {
         // Check if user is logged in (you might want to centralize this check too)
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
-            // Should ideally not happen if AuthenticationFilter works correctly, but good to check
+            // Should ideally not happen if AuthenticationFilter works correctly, but good
+            // to check
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -48,7 +48,6 @@ public class AddAutographServlet extends HttpServlet {
         // Get form data
         String title = request.getParameter("bookTitle");
         String description = request.getParameter("description");
-        String customLink = request.getParameter("customLink"); // You can store this if needed
 
         // Validate required fields
         if (title == null || title.trim().isEmpty()) {

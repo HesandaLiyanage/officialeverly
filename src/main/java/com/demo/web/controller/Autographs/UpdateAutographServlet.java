@@ -16,10 +16,9 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 // CRITICAL: This annotation is REQUIRED for multipart/form-data forms
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-        maxFileSize = 1024 * 1024 * 10,      // 10MB
-        maxRequestSize = 1024 * 1024 * 50    // 50MB
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
 )
 public class UpdateAutographServlet extends HttpServlet {
 
@@ -73,16 +72,19 @@ public class UpdateAutographServlet extends HttpServlet {
             // Verify the autograph belongs to the current user for security
             autograph existingAutograph = autographDAO.findById(autographId);
             if (existingAutograph == null) {
-                System.out.println("[DEBUG UpdateAutographServlet] Autograph ID " + autographId + " does not exist in DB.");
+                System.out.println(
+                        "[DEBUG UpdateAutographServlet] Autograph ID " + autographId + " does not exist in DB.");
                 response.sendRedirect(request.getContextPath() + "/autographs");
                 return;
             }
             if (existingAutograph.getUserId() != userId) {
-                System.out.println("[DEBUG UpdateAutographServlet] User " + userId + " attempted to update autograph " + autographId + " which does not belong to them.");
+                System.out.println("[DEBUG UpdateAutographServlet] User " + userId + " attempted to update autograph "
+                        + autographId + " which does not belong to them.");
                 response.sendRedirect(request.getContextPath() + "/autographs");
                 return;
             }
-            System.out.println("[DEBUG UpdateAutographServlet] Autograph ID " + autographId + " belongs to user ID " + userId + ". Existing autograph: " + existingAutograph);
+            System.out.println("[DEBUG UpdateAutographServlet] Autograph ID " + autographId + " belongs to user ID "
+                    + userId + ". Existing autograph: " + existingAutograph);
 
             // Get the existing picture URL as a fallback
             String existingPicUrl = existingAutograph.getAutographPicUrl();
@@ -117,7 +119,8 @@ public class UpdateAutographServlet extends HttpServlet {
                     e.printStackTrace();
                 }
             } else {
-                System.out.println("[DEBUG UpdateAutographServlet] No new file uploaded, keeping existing Pic URL: '" + newPicUrl + "'");
+                System.out.println("[DEBUG UpdateAutographServlet] No new file uploaded, keeping existing Pic URL: '"
+                        + newPicUrl + "'");
             }
 
             // Create an autograph object with the updated data
@@ -128,27 +131,32 @@ public class UpdateAutographServlet extends HttpServlet {
             updatedAutograph.setAutographPicUrl(newPicUrl);
             updatedAutograph.setUserId(userId);
 
-            System.out.println("[DEBUG UpdateAutographServlet] Prepared autograph object for update: " + updatedAutograph);
+            System.out.println(
+                    "[DEBUG UpdateAutographServlet] Prepared autograph object for update: " + updatedAutograph);
 
             // Attempt to update the autograph
             boolean success = autographDAO.updateAutograph(updatedAutograph);
             System.out.println("[DEBUG UpdateAutographServlet] DAO updateAutograph returned: " + success);
 
             if (success) {
-                System.out.println("[DEBUG UpdateAutographServlet] Successfully updated autograph ID: " + autographId + " by user ID: " + userId);
+                System.out.println("[DEBUG UpdateAutographServlet] Successfully updated autograph ID: " + autographId
+                        + " by user ID: " + userId);
                 // Redirect to the view page for the updated autograph on success
                 response.sendRedirect(request.getContextPath() + "/autographview?id=" + autographId);
             } else {
-                System.out.println("[DEBUG UpdateAutographServlet] Failed to update autograph ID: " + autographId + " by user ID: " + userId);
+                System.out.println("[DEBUG UpdateAutographServlet] Failed to update autograph ID: " + autographId
+                        + " by user ID: " + userId);
                 response.sendRedirect(request.getContextPath() + "/autographs?error=update_failed");
             }
 
         } catch (NumberFormatException e) {
-            System.out.println("[DEBUG UpdateAutographServlet] Invalid autograph ID format: '" + request.getParameter("autographId") + "'");
+            System.out.println("[DEBUG UpdateAutographServlet] Invalid autograph ID format: '"
+                    + request.getParameter("autographId") + "'");
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/autographs");
         } catch (Exception e) {
-            System.out.println("[DEBUG UpdateAutographServlet] Unexpected error while updating autograph: " + e.getMessage());
+            System.out.println(
+                    "[DEBUG UpdateAutographServlet] Unexpected error while updating autograph: " + e.getMessage());
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/autographs?error=unexpected_error");
         }
