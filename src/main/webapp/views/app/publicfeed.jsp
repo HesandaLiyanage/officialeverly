@@ -23,7 +23,6 @@
                                                 <link rel="stylesheet" type="text/css"
                                                     href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
                                                 <style>
-                                                    /* Floating Create Button */
                                                     .fab-create {
                                                         position: fixed;
                                                         bottom: 24px;
@@ -53,7 +52,6 @@
                                                         color: white;
                                                     }
 
-                                                    /* Empty State */
                                                     .empty-feed {
                                                         text-align: center;
                                                         padding: 80px 20px;
@@ -107,7 +105,6 @@
                                                         box-shadow: 0 8px 24px rgba(154, 116, 216, 0.4);
                                                     }
 
-                                                    /* Post placeholder image */
                                                     .post-image-placeholder {
                                                         width: 100%;
                                                         height: 300px;
@@ -123,7 +120,6 @@
                                                         color: #94a3b8;
                                                     }
 
-                                                    /* Carousel Styles */
                                                     .carousel-container {
                                                         position: relative;
                                                         width: 100%;
@@ -212,7 +208,6 @@
                                                         background: white;
                                                     }
 
-                                                    /* Comment Input Bar */
                                                     .add-comment-bar {
                                                         display: flex;
                                                         align-items: center;
@@ -254,9 +249,7 @@
                                             <body>
                                                 <div class="page-wrapper">
                                                     <main class="main-content">
-                                                        <!-- Fixed Top Section: Tabs + Search -->
                                                         <div class="fixed-top-section">
-                                                            <!-- Tab Navigation -->
                                                             <div class="tab-nav">
                                                                 <div class="tab-buttons">
                                                                     <div>
@@ -281,8 +274,6 @@
                                                                             <% } %>
                                                                 </a>
                                                             </div>
-
-                                                            <!-- Search Bar -->
                                                             <div class="search-filters"
                                                                 style="margin-top: 10px; margin-bottom: 15px;">
                                                                 <div class="memories-search-container">
@@ -300,10 +291,8 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Scrollable Feed -->
                                                         <div class="scrollable-feed" id="feedContainer">
                                                             <% if (posts==null || posts.isEmpty()) { %>
-                                                                <!-- Empty State -->
                                                                 <div class="empty-feed">
                                                                     <div class="empty-feed-icon">
                                                                         <svg viewBox="0 0 24 24" fill="none"
@@ -344,8 +333,9 @@
                                                                     mediaItems = post.getMediaItems();
                                                                     boolean hasMultipleMedia = mediaItems != null &&
                                                                     mediaItems.size() > 1;
+                                                                    int mediaCount = (mediaItems != null) ?
+                                                                    mediaItems.size() : 0;
                                                                     %>
-                                                                    <!-- Dynamic Post -->
                                                                     <div class="feed-post"
                                                                         data-post-id="<%= post.getPostId() %>">
                                                                         <div class="post-header">
@@ -390,7 +380,6 @@
                                                                             </button>
                                                                         </div>
 
-                                                                        <!-- Carousel for Multiple Media -->
                                                                         <div class="carousel-container"
                                                                             data-current-slide="0">
                                                                             <div class="carousel-track">
@@ -460,9 +449,9 @@
                                                                                     </svg>
                                                                                 </button>
                                                                                 <div class="carousel-dots">
-                                                                                    <% for (int i=0; i <
-                                                                                        mediaItems.size(); i++) { %>
-                                                                                        <div class="carousel-dot<%= i == 0 ? "
+                                                                                    <% for (int i=0; i < mediaCount;
+                                                                                        i++) { %>
+                                                                                        <div class="carousel-dot<%= (i == 0) ? "
                                                                                             active" : "" %>"></div>
                                                                                         <% } %>
                                                                                 </div>
@@ -538,7 +527,6 @@
                                                                                 comments</button>
                                                                         </div>
 
-                                                                        <!-- Add Comment Bar -->
                                                                         <div class="add-comment-bar">
                                                                             <input type="text"
                                                                                 placeholder="Add a comment..."
@@ -552,7 +540,6 @@
                                                         </div>
                                                     </main>
 
-                                                    <!-- Sidebar with Recommended Users -->
                                                     <aside class="sidebar"
                                                         style="width: 280px; flex-shrink: 0; display: none;">
                                                         <div class="sidebar-section"
@@ -615,7 +602,6 @@
                                                     </aside>
                                                 </div>
 
-                                                <!-- Floating Action Button -->
                                                 <a href="${pageContext.request.contextPath}/createPost"
                                                     class="fab-create" title="Create Post">
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -630,7 +616,6 @@
                                                 <script>
                                                     var contextPath = '${pageContext.request.contextPath}';
 
-                                                    // Carousel Navigation
                                                     function moveCarousel(btn, direction) {
                                                         var container = btn.closest('.carousel-container');
                                                         var track = container.querySelector('.carousel-track');
@@ -651,7 +636,6 @@
                                                     }
 
                                                     document.addEventListener('DOMContentLoaded', function () {
-                                                        // Search functionality
                                                         var memoriesSearchBtn = document.getElementById('memoriesSearchBtn');
                                                         if (memoriesSearchBtn) {
                                                             memoriesSearchBtn.addEventListener('click', function () {
@@ -662,7 +646,6 @@
                                                                 searchContainer.replaceChild(searchBox, this);
                                                                 var input = searchBox.querySelector('input');
                                                                 input.focus();
-
                                                                 var closeSearch = function () {
                                                                     var newBtn = document.createElement('button');
                                                                     newBtn.className = 'memories-search-btn';
@@ -671,9 +654,7 @@
                                                                     searchContainer.replaceChild(newBtn, searchBox);
                                                                     location.reload();
                                                                 };
-
                                                                 searchBox.querySelector('.memories-search-close').addEventListener('click', closeSearch);
-
                                                                 input.addEventListener('input', function (e) {
                                                                     var query = e.target.value.toLowerCase();
                                                                     document.querySelectorAll('.feed-post').forEach(function (post) {
@@ -684,7 +665,6 @@
                                                             });
                                                         }
 
-                                                        // Tab switching
                                                         document.querySelectorAll('.tab-nav button').forEach(function (btn) {
                                                             btn.addEventListener('click', function () {
                                                                 var tab = this.dataset.tab;
@@ -694,14 +674,12 @@
                                                             });
                                                         });
 
-                                                        // Like button
                                                         document.querySelectorAll('.like-btn').forEach(function (btn) {
                                                             btn.addEventListener('click', function () {
                                                                 var postId = this.dataset.postId;
                                                                 var isLiked = this.classList.contains('liked');
                                                                 var action = isLiked ? 'unlike' : 'like';
                                                                 var likeBtn = this;
-
                                                                 fetch(contextPath + '/postLike?postId=' + postId + '&action=' + action, {
                                                                     method: 'POST',
                                                                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -727,14 +705,12 @@
                                                             });
                                                         });
 
-                                                        // Bookmark button
                                                         document.querySelectorAll('.bookmark-btn').forEach(function (btn) {
                                                             btn.addEventListener('click', function () {
                                                                 var postId = this.dataset.postId;
                                                                 var isSaved = this.classList.contains('bookmarked');
                                                                 var action = isSaved ? 'unsave' : 'save';
                                                                 var bookmarkBtn = this;
-
                                                                 fetch(contextPath + '/savePost?action=' + action + '&postId=' + postId, {
                                                                     method: 'POST',
                                                                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -756,7 +732,6 @@
                                                             });
                                                         });
 
-                                                        // Comment input activation
                                                         document.querySelectorAll('.comment-input').forEach(function (input) {
                                                             var postBtn = input.nextElementSibling;
                                                             input.addEventListener('input', function () {
@@ -769,14 +744,12 @@
                                                             });
                                                         });
 
-                                                        // Post comment button
                                                         document.querySelectorAll('.add-comment-bar .post-btn').forEach(function (btn) {
                                                             btn.addEventListener('click', function () {
                                                                 var postId = this.dataset.postId;
                                                                 var input = this.previousElementSibling;
                                                                 var commentText = input.value.trim();
                                                                 if (commentText.length === 0) return;
-
                                                                 fetch(contextPath + '/commentAction?action=add&postId=' + postId + '&commentText=' + encodeURIComponent(commentText), {
                                                                     method: 'POST',
                                                                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -786,7 +759,6 @@
                                                                         if (data.success) {
                                                                             input.value = '';
                                                                             btn.classList.remove('active');
-                                                                            // Show a brief success message or redirect to comments
                                                                             window.location.href = contextPath + '/comments?postId=' + postId;
                                                                         }
                                                                     })
@@ -795,11 +767,9 @@
                                                         });
                                                     });
 
-                                                    // Handle follow for recommended users in sidebar
                                                     function handleFollowSidebar(btn, profileId) {
                                                         var isFollowing = btn.textContent.trim() === 'Following';
                                                         var action = isFollowing ? 'unfollow' : 'follow';
-
                                                         fetch(contextPath + '/followUser?action=' + action + '&targetProfileId=' + profileId, {
                                                             method: 'POST',
                                                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
