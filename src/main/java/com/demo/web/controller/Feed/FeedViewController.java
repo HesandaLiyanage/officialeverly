@@ -3,8 +3,10 @@ package com.demo.web.controller.Feed;
 import com.demo.web.dao.FeedFollowDAO;
 import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.FeedProfileDAO;
+import com.demo.web.dao.MediaDAO;
 import com.demo.web.model.FeedPost;
 import com.demo.web.model.FeedProfile;
+import com.demo.web.model.MediaItem;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,12 +30,14 @@ public class FeedViewController extends HttpServlet {
     private FeedProfileDAO feedProfileDAO;
     private FeedPostDAO feedPostDAO;
     private FeedFollowDAO feedFollowDAO;
+    private MediaDAO mediaDAO;
 
     @Override
     public void init() throws ServletException {
         feedProfileDAO = new FeedProfileDAO();
         feedPostDAO = new FeedPostDAO();
         feedFollowDAO = new FeedFollowDAO();
+        mediaDAO = new MediaDAO();
     }
 
     @Override
@@ -77,14 +81,20 @@ public class FeedViewController extends HttpServlet {
             // Fetch all posts for FYP (random order)
             List<FeedPost> posts = feedPostDAO.findAllPosts();
 
-            // For posts without cover media, try to get first media
+            // Load all media items for each post (for carousel)
             for (FeedPost post : posts) {
-                if (post.getCoverMediaUrl() == null) {
-                    Integer mediaId = feedPostDAO.getFirstMediaId(post.getMemoryId());
-                    if (mediaId != null) {
-                        // Construct viewMedia URL for browser
-                        post.setCoverMediaUrl(request.getContextPath() + "/viewMedia?mediaId=" + mediaId);
+                try {
+                    List<MediaItem> mediaItems = mediaDAO.getMediaByMemoryId(post.getMemoryId());
+                    post.setMediaItems(mediaItems);
+
+                    // Set cover URL from first media if not set
+                    if (post.getCoverMediaUrl() == null && mediaItems != null && !mediaItems.isEmpty()) {
+                        post.setCoverMediaUrl(
+                                request.getContextPath() + "/viewmedia?id=" + mediaItems.get(0).getMediaId());
                     }
+                } catch (Exception e) {
+                    logger.warning("[FeedViewController] Error loading media for post " + post.getPostId() + ": "
+                            + e.getMessage());
                 }
             }
 
