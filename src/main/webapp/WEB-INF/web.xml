@@ -419,6 +419,22 @@
         <url-pattern>/linkeddevicesservlet</url-pattern>
     </servlet-mapping>
 
+    <!-- Feed Profile Setup Servlet -->
+    <servlet>
+        <servlet-name>FeedProfileSetupServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.FeedProfileSetupServlet</servlet-class>
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>        <!-- 10MB -->
+            <max-request-size>15728640</max-request-size>   <!-- 15MB -->
+            <file-size-threshold>1048576</file-size-threshold> <!-- 1MB -->
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FeedProfileSetupServlet</servlet-name>
+        <url-pattern>/feedProfileSetupServlet</url-pattern>
+    </servlet-mapping>
+
+
     <!-- Authentication Filter -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
@@ -428,6 +444,147 @@
         <filter-name>AuthenticationFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <!-- View Controllers (Refactored from FrontController) -->
+    
+    <!-- Settings View Controllers -->
+    <servlet>
+        <servlet-name>LinkedDevicesViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Settings.LinkedDevicesViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LinkedDevicesViewController</servlet-name>
+        <url-pattern>/linkeddevicesview</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditProfileViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Settings.EditProfileViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditProfileViewController</servlet-name>
+        <url-pattern>/editprofileview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Autograph View Controller -->
+    <servlet>
+        <servlet-name>AutographViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Autographs.AutographViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AutographViewController</servlet-name>
+        <url-pattern>/autographsview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Group View Controller -->
+    <servlet>
+        <servlet-name>GroupViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.GroupViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupViewController</servlet-name>
+        <url-pattern>/groupsview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Event View Controller -->
+    <servlet>
+        <servlet-name>EventViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Events.EventViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EventViewController</servlet-name>
+        <url-pattern>/eventsview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Journal View Controller -->
+    <servlet>
+        <servlet-name>JournalViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Journals.JournalViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>JournalViewController</servlet-name>
+        <url-pattern>/journalsview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Feed View Controller -->
+    <servlet>
+        <servlet-name>FeedViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.FeedViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FeedViewController</servlet-name>
+        <url-pattern>/feedview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Create Post Servlet -->
+    <servlet>
+        <servlet-name>CreatePostServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.CreatePostServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreatePostServlet</servlet-name>
+        <url-pattern>/createPostServlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- Feed Profile View Controller -->
+    <servlet>
+        <servlet-name>FeedProfileViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.FeedProfileViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FeedProfileViewController</servlet-name>
+        <url-pattern>/feedprofileview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Follow Servlet -->
+    <servlet>
+        <servlet-name>FollowServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.FollowServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FollowServlet</servlet-name>
+        <url-pattern>/followUser</url-pattern>
+    </servlet-mapping>
+
+    <!-- Followers View Controller -->
+    <servlet>
+        <servlet-name>FollowersViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.FollowersViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FollowersViewController</servlet-name>
+        <url-pattern>/followersview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Edit Feed Profile View Controller -->
+    <servlet>
+        <servlet-name>EditFeedProfileViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.EditFeedProfileViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditFeedProfileViewController</servlet-name>
+        <url-pattern>/feededitprofileview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Update Feed Profile Servlet -->
+    <servlet>
+        <servlet-name>UpdateFeedProfileServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.UpdateFeedProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateFeedProfileServlet</servlet-name>
+        <url-pattern>/updateFeedProfile</url-pattern>
+    </servlet-mapping>
+
+    <!-- Save Post Servlet (Bookmark) -->
+    <servlet>
+        <servlet-name>SavePostServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.SavePostServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SavePostServlet</servlet-name>
+        <url-pattern>/savePost</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>FrontController</servlet-name>
