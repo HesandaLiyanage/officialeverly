@@ -9,7 +9,7 @@ D:\officialeverly\src\main\java\com\demo\web\controller\Memory\CreateMemoryServl
 D:\officialeverly\src\main\java\com\demo\web\filter\AuthenticationFilter.java
 D:\officialeverly\src\main\java\com\demo\web\controller\GoogleCallback.java
 D:\officialeverly\src\main\java\com\demo\web\controller\Memory\DeleteMemoryServlet.java
-D:\officialeverly\src\main\java\com\demo\web\controller\autographs\WriteAutographServlet.java
+D:\officialeverly\src\main\java\com\demo\web\controller\Autographs\WriteAutographServlet.java
 D:\officialeverly\src\main\java\com\demo\web\controller\ShareAccessServlet.java
 D:\officialeverly\src\main\java\com\demo\web\controller\Memory\UpdateMemoryServlet.java
 D:\officialeverly\src\main\java\com\demo\web\model\MediaItem.java
@@ -27,7 +27,7 @@ D:\officialeverly\src\main\java\com\demo\web\controller\VaultJournalsServlet.jav
 D:\officialeverly\src\main\java\com\demo\web\model\EncryptionKey.java
 D:\officialeverly\src\main\java\com\demo\web\model\user.java
 D:\officialeverly\src\main\java\com\demo\web\controller\VaultMemoriesServlet.java
-D:\officialeverly\src\main\java\com\demo\web\controller\autographs\AddAutographServlet.java
+D:\officialeverly\src\main\java\com\demo\web\controller\Autographs\AddAutographServlet.java
 D:\officialeverly\src\main\java\com\demo\web\dao\GroupDAO.java
 D:\officialeverly\src\main\java\com\demo\web\model\post.java
 D:\officialeverly\src\main\java\com\demo\web\controller\signupservlet.java
@@ -39,7 +39,7 @@ D:\officialeverly\src\main\java\com\demo\web\dao\AutographEntryDAO.java
 D:\officialeverly\src\main\java\com\demo\web\model\Group.java
 D:\officialeverly\src\main\java\com\demo\web\model\UserSession.java
 D:\officialeverly\src\main\java\com\demo\web\service\MemoryService.java
-D:\officialeverly\src\main\java\com\demo\web\controller\autographs\UpdateAutographServlet.java
+D:\officialeverly\src\main\java\com\demo\web\controller\Autographs\UpdateAutographServlet.java
 D:\officialeverly\src\main\java\com\demo\web\controller\GoogleLoginServlet.java
 D:\officialeverly\src\main\java\com\demo\web\model\Memory.java
 D:\officialeverly\src\main\java\com\demo\web\dao\memoryDAO.java
@@ -55,6 +55,7 @@ D:\officialeverly\src\main\java\com\demo\web\controller\Journals\CreateJournalSe
 D:\officialeverly\src\main\java\com\demo\web\controller\VaultSetupServlet.java
 D:\officialeverly\src\main\java\com\demo\web\dao\GroupMemberDAO.java
 D:\officialeverly\src\main\java\com\demo\web\model\JournalStreak.java
+D:\officialeverly\src\main\java\com\demo\web\model\AutographActivity.java
 D:\officialeverly\src\main\java\com\demo\web\dao\RecycleBinDAO.java
 D:\officialeverly\src\main\java\com\demo\web\controller\ChangeVaultPasswordServlet.java
 D:\officialeverly\src\main\java\com\demo\web\model\autograph.java
@@ -75,8 +76,9 @@ D:\officialeverly\src\main\java\com\demo\web\model\Event.java
 D:\officialeverly\src\main\java\com\demo\web\util\SessionUtil.java
 D:\officialeverly\src\main\java\com\demo\web\util\ValidationUtil.java
 D:\officialeverly\src\main\java\com\demo\web\controller\VaultEntryServlet.java
-D:\officialeverly\src\main\java\com\demo\web\controller\autographs\DeleteAutographServlet.java
+D:\officialeverly\src\main\java\com\demo\web\controller\Autographs\DeleteAutographServlet.java
 D:\officialeverly\src\main\java\com\demo\web\dao\userSessionDAO.java
 D:\officialeverly\src\main\java\com\demo\web\controller\DebugServlet.java
+D:\officialeverly\src\main\java\com\demo\web\dao\AutographActivityDAO.java
 D:\officialeverly\src\main\java\com\demo\web\dao\autographDAO.java
 D:\officialeverly\src\main\java\com\demo\web\controller\ProfilePictureServlet.java

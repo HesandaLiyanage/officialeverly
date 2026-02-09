@@ -14,8 +14,10 @@ import com.demo.web.model.UserSession;
 import com.demo.web.model.autograph;
 import com.demo.web.dao.JournalStreakDAO;
 import com.demo.web.dao.AutographEntryDAO;
+import com.demo.web.dao.AutographActivityDAO;
 import com.demo.web.model.JournalStreak;
 import com.demo.web.model.AutographEntry;
+import com.demo.web.model.AutographActivity;
 
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -449,9 +451,11 @@ public class FrontControllerServlet extends HttpServlet {
     // Inner class implementing the logic for /autographs
     private static class AutographListLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
+        private AutographActivityDAO activityDAO;
 
         public AutographListLogicHandler() {
             this.autographDAO = new autographDAO();
+            this.activityDAO = new AutographActivityDAO();
         }
 
         @Override
@@ -466,8 +470,18 @@ public class FrontControllerServlet extends HttpServlet {
             Integer userId = (Integer) session.getAttribute("user_id");
 
             List<autograph> autographs = autographDAO.findByUserId(userId);
-
             request.setAttribute("autographs", autographs);
+
+            // Fetch recent activities for the user's autograph books
+            try {
+                List<AutographActivity> recentActivities = activityDAO.findByAutographOwner(userId, 10);
+                request.setAttribute("recentActivities", recentActivities);
+                System.out.println(
+                        "[DEBUG AutographListLogicHandler] Loaded " + recentActivities.size() + " recent activities");
+            } catch (SQLException e) {
+                System.out.println("[DEBUG AutographListLogicHandler] Error loading activities: " + e.getMessage());
+                e.printStackTrace();
+            }
 
             request.getRequestDispatcher("/views/app/Autographs/autographcontent.jsp").forward(request, response);
         }
@@ -1312,10 +1326,12 @@ public class FrontControllerServlet extends HttpServlet {
     class SubmitAutographEntryLogicHandler implements LogicHandler {
         private autographDAO autoDAO;
         private AutographEntryDAO entryDAO;
+        private AutographActivityDAO activityDAO;
 
         public SubmitAutographEntryLogicHandler() {
             this.autoDAO = new autographDAO();
             this.entryDAO = new AutographEntryDAO();
+            this.activityDAO = new AutographActivityDAO();
         }
 
         @Override
@@ -1363,6 +1379,24 @@ public class FrontControllerServlet extends HttpServlet {
                 boolean success = entryDAO.createEntry(entry);
 
                 if (success) {
+                    // Log the activity for the Recent Activity tab
+                    try {
+                        AutographActivity activity = new AutographActivity();
+                        activity.setActivityType("autograph_written");
+                        activity.setAutographId(ag.getAutographId());
+                        activity.setEntryId(entry.getEntryId());
+                        activity.setInviteeUserId(userId);
+                        activity.setBookTitle(ag.getTitle());
+
+                        activityDAO.createActivity(activity);
+                        System.out.println("[DEBUG SubmitAutographEntryLogicHandler] Created activity for entry: "
+                                + entry.getEntryId());
+                    } catch (SQLException activityEx) {
+                        // Don't fail the whole operation if activity logging fails
+                        System.out.println("[DEBUG SubmitAutographEntryLogicHandler] Failed to log activity: "
+                                + activityEx.getMessage());
+                    }
+
                     response.setContentType("application/json");
                     response.getWriter().write("{\"success\": true}");
                 } else {
