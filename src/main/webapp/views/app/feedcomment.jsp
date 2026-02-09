@@ -36,7 +36,8 @@
                                                 String ownerPic = postOwner.getFeedProfilePictureUrl();
                                                 boolean hasOwnerPic = ownerPic != null && !ownerPic.isEmpty() &&
                                                 !ownerPic.contains("default");
-                                                String ownerGradient = "linear-gradient(135deg, #667eea 0%, #764ba2100%)";
+                                                String ownerGradient = "linear-gradient(135deg, #667eea 0%,
+                                                #764ba2100%)";
                                                 String postLikedClass = isLikedByUser ? "liked" : "";
                                                 String postFillColor = isLikedByUser ? "#ed4956" : "none";
                                                 String postStrokeColor = isLikedByUser ? "#ed4956" : "currentColor";
@@ -70,7 +71,7 @@
 
                                                         body {
                                                             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-                                                            background: #000;
+                                                            background: rgba(0, 0, 0, 0.65);
                                                             min-height: 100vh;
                                                         }
 
@@ -567,7 +568,8 @@
                                                                         </button>
                                                                         <div class="carousel-dots">
                                                                             <% for (int i=0; i < mediaCount; i++) { %>
-                                                                                <div class="carousel-dot<%= i == 0 ? "active" : "" %>"></div>
+                                                                                <div class="carousel-dot<%= i == 0 ? "
+                                                                                    active" : "" %>"></div>
                                                                                 <% } %>
                                                                         </div>
                                                                         <% } %>
@@ -587,7 +589,8 @@
                                                                                     style="background:<%= ownerGradient %>;width:40px;height:40px;">
                                                                                     <span>
                                                                                         <%= postOwner.getInitials() %>
-                                                                                    </span></div>
+                                                                                    </span>
+                                                                                </div>
                                                                                 <% } %>
                                                                                     <div class="user-details">
                                                                                         <h4 class="username">
@@ -622,7 +625,8 @@
                                                                                         <span>
                                                                                             <%= postOwner.getInitials()
                                                                                                 %>
-                                                                                        </span></div>
+                                                                                        </span>
+                                                                                    </div>
                                                                                     <% } %>
                                                                                         <div class="comment-content">
                                                                                             <div class="comment-header">
@@ -702,7 +706,8 @@
                                                                                                     <span>
                                                                                                         <%= commenterInitials
                                                                                                             %>
-                                                                                                    </span></div>
+                                                                                                    </span>
+                                                                                                </div>
                                                                                                 <% } %>
                                                                                                     <div
                                                                                                         class="comment-content">
