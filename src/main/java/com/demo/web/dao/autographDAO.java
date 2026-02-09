@@ -2,6 +2,7 @@
 package com.demo.web.dao;
 
 import com.demo.web.model.autograph;
+import com.demo.web.model.RecycleBinItem;
 import com.demo.web.util.DatabaseUtil;
 import java.sql.*;
 import java.util.ArrayList;
@@ -34,35 +35,6 @@ public class autographDAO {
             throw new RuntimeException("Error while creating autograph", e);
         }
     }
-    public String getOrCreateShareToken(int autographId) throws SQLException {
-        String selectSql = "SELECT share_token FROM autograph WHERE autograph_id = ?";
-        String updateSql = "UPDATE autograph SET share_token = ? WHERE autograph_id = ?";
-        String newToken = generateToken();
-
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
-
-            selectStmt.setInt(1, autographId);
-            ResultSet rs = selectStmt.executeQuery();
-
-            if (rs.next()) {
-                String existingToken = rs.getString("share_token");
-                if (existingToken != null && !existingToken.isEmpty()) {
-                    return existingToken;
-                }
-            }
-
-            // Generate new token
-
-            try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-                updateStmt.setString(1, newToken);
-                updateStmt.setInt(2, autographId);
-                updateStmt.executeUpdate();
-            }
-
-            return newToken;
-        }
-    }
 
     /**
      * Get autograph by ID
@@ -85,36 +57,6 @@ public class autographDAO {
             e.printStackTrace();
             throw new RuntimeException("Error while fetching autograph by ID", e);
         }
-        return null;
-    }
-    /**
-     * Get autograph by share token
-     */
-    public autograph getAutographByShareToken(String shareToken) throws SQLException {
-
-        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url, share_token " +
-                "FROM autograph WHERE share_token = ?";
-
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, shareToken);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                autograph ag = new autograph();
-                ag.setAutographId(rs.getInt("autograph_id"));
-                ag.setTitle(rs.getString("a_title"));
-                ag.setDescription(rs.getString("a_description"));
-                ag.setCreatedAt(rs.getTimestamp("created_at"));
-                ag.setUserId(rs.getInt("user_id"));
-                ag.setAutographPicUrl(rs.getString("autograph_pic_url"));
-                ag.setShareToken(rs.getString("share_token"));
-                return ag;
-            }
-        }
-
         return null;
     }
 
@@ -199,16 +141,75 @@ public class autographDAO {
         autograph.setAutographPicUrl(rs.getString("autograph_pic_url"));
         return autograph;
     }
-    // ✅ ADD THIS HERE (outside all other methods)
-    private String generateToken() {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder token = new StringBuilder();
-        java.util.Random random = new java.util.Random();
 
-        for (int i = 0; i < 12; i++) {
-            token.append(chars.charAt(random.nextInt(chars.length())));
+    /**
+     * Move autograph to recycle bin (soft delete)
+     */
+    public boolean deleteAutographToRecycleBin(int autographId, int userId) {
+        autograph autograph = findById(autographId);
+        if (autograph == null || autograph.getUserId() != userId) {
+            return false;
         }
-        return token.toString();
+
+        RecycleBinItem item = new RecycleBinItem();
+        item.setOriginalId(autograph.getAutographId());
+        item.setUserId(userId);
+        item.setTitle(autograph.getTitle());
+        item.setContent(autograph.getDescription());
+        String metadata = "{\"autographPicUrl\": \"" +
+                (autograph.getAutographPicUrl() != null ? autograph.getAutographPicUrl() : "") +
+                "\"}";
+        item.setMetadata(metadata);
+
+        RecycleBinDAO rbDao = new RecycleBinDAO();
+        int recycleId = rbDao.saveAutographToRecycleBin(item);
+        if (recycleId <= 0) return false;
+
+        String deleteSql = "DELETE FROM autograph WHERE autograph_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
+            stmt.setInt(1, autographId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
+    /**
+     * Restore autograph from recycle bin
+     */
+    public boolean restoreAutographFromRecycleBin(int recycleBinId, int userId) {
+        RecycleBinDAO rbDao = new RecycleBinDAO();
+        RecycleBinItem item = rbDao.findById(recycleBinId);
+        if (item == null || !"autograph".equals(item.getItemType()) || item.getUserId() != userId) {
+            return false;
+        }
+
+        autograph autograph = new autograph();
+        autograph.setTitle(item.getTitle());
+        autograph.setDescription(item.getContent());
+        autograph.setUserId(userId);
+
+        String autographPicUrl = "";
+        if (item.getMetadata() != null) {
+            String meta = item.getMetadata();
+            int start = meta.indexOf("\"autographPicUrl\": \"");
+            if (start != -1) {
+                start += 20;
+                int end = meta.indexOf("\"", start);
+                if (end != -1) {
+                    autographPicUrl = meta.substring(start, end);
+                }
+            }
+        }
+        autograph.setAutographPicUrl(autographPicUrl);
+
+        boolean restored = createAutograph(autograph);
+        if (restored) {
+            rbDao.deleteFromRecycleBin(recycleBinId);
+            return true;
+        }
+        return false;
+    }
 }

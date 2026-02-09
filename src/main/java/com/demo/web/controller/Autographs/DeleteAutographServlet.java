@@ -50,31 +50,27 @@ public class DeleteAutographServlet extends HttpServlet {
             // Optional: Verify the autograph belongs to the current user for security
             autograph existingAutograph = autographDAO.findById(autographId);
             if (existingAutograph == null || existingAutograph.getUserId() != userId) {
-                logger.warning("DeleteAutographServlet: User " + userId + " attempted to delete autograph "
-                        + autographId + " which does not exist or does not belong to them.");
+                logger.warning("DeleteAutographServlet: User " + userId + " attempted to delete autograph " + autographId + " which does not exist or does not belong to them.");
                 response.sendRedirect(request.getContextPath() + "/autographs"); // Redirect if unauthorized
                 return;
             }
 
-            // Attempt to delete the autograph
-            boolean success = autographDAO.deleteAutograph(autographId);
+            // Attempt to move autograph to recycle bin (soft delete)
+            boolean success = autographDAO.deleteAutographToRecycleBin(autographId, userId);
 
             if (success) {
-                logger.info("Successfully deleted autograph ID: " + autographId + " by user ID: " + userId);
+                logger.info("Successfully moved autograph ID: " + autographId + " to recycle bin by user ID: " + userId);
                 // Redirect to the autographs list page on success
-                response.sendRedirect(request.getContextPath() + "/autographs");
+                response.sendRedirect(request.getContextPath() + "/autographs?msg=Autograph moved to Recycle Bin");
             } else {
-                // This might happen if the delete failed for reasons other than the record not
-                // existing
-                logger.warning("Failed to delete autograph ID: " + autographId + " by user ID: " + userId);
-                // You could redirect back with an error, but often redirecting to the list is
-                // fine.
+                // This might happen if the delete failed for reasons other than the record not existing
+                logger.warning("Failed to move autograph ID: " + autographId + " to recycle bin by user ID: " + userId);
+                // You could redirect back with an error, but often redirecting to the list is fine.
                 response.sendRedirect(request.getContextPath() + "/autographs?error=delete_failed");
             }
 
         } catch (NumberFormatException e) {
-            logger.severe(
-                    "DeleteAutographServlet: Invalid autograph ID format: " + request.getParameter("autographId"));
+            logger.severe("DeleteAutographServlet: Invalid autograph ID format: " + request.getParameter("autographId"));
             response.sendRedirect(request.getContextPath() + "/autographs"); // Redirect on invalid ID format
         } catch (Exception e) {
             logger.severe("Database error while deleting autograph: " + e.getMessage());

@@ -280,6 +280,43 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
+        // ===== COLLABORATIVE MEMORY ROUTES =====
+
+        // Route /collabmemories to CollabMemoriesServlet
+        if ("/collabmemories".equals(path)) {
+            logger.info("Routing /collabmemories to CollabMemoriesServlet");
+            request.getRequestDispatcher("/collabmemoriesview").forward(request, response);
+            return;
+        }
+
+        // Route /collabmemoryview to CollabMemoryViewServlet
+        if ("/collabmemoryview".equals(path)) {
+            logger.info("Routing /collabmemoryview to CollabMemoryViewServlet");
+            request.getRequestDispatcher("/collabmemoryviewservlet").forward(request, response);
+            return;
+        }
+
+        // Route /generateCollabShareLink to GenerateShareLinkServlet (POST)
+        if ("/generateCollabShareLink".equals(path)) {
+            logger.info("Routing /generateCollabShareLink to GenerateShareLinkServlet");
+            request.getRequestDispatcher("/generateCollabShareLink").forward(request, response);
+            return;
+        }
+
+        // Route /leavecollab to LeaveCollabServlet (POST)
+        if ("/leavecollab".equals(path)) {
+            logger.info("Routing /leavecollab to LeaveCollabServlet");
+            request.getRequestDispatcher("/leavecollab").forward(request, response);
+            return;
+        }
+
+        // Route /removecollabmember to RemoveCollabMemberServlet (POST)
+        if ("/removecollabmember".equals(path)) {
+            logger.info("Routing /removecollabmember to RemoveCollabMemberServlet");
+            request.getRequestDispatcher("/removecollabmember").forward(request, response);
+            return;
+        }
+
         logger.info("FrontController: Handling GET/POST request for path: " + path);
 
         if ("POST".equals(request.getMethod())) {

@@ -129,6 +129,61 @@
         <url-pattern>/deleteMemoryServlet</url-pattern>
     </servlet-mapping>
 
+    <!-- Collaborative Memory Servlets -->
+    <servlet>
+        <servlet-name>CollabMemoriesServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemoriesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CollabMemoriesServlet</servlet-name>
+        <url-pattern>/collabmemoriesview</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CollabMemoryViewServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemoryViewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CollabMemoryViewServlet</servlet-name>
+        <url-pattern>/collabmemoryviewservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GenerateShareLinkServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.GenerateShareLinkServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GenerateShareLinkServlet</servlet-name>
+        <url-pattern>/generateCollabShareLink</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>JoinCollabServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.JoinCollabServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>JoinCollabServlet</servlet-name>
+        <url-pattern>/memoryinvite</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LeaveCollabServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.LeaveCollabServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LeaveCollabServlet</servlet-name>
+        <url-pattern>/leavecollab</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RemoveCollabMemberServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.RemoveCollabMemberServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RemoveCollabMemberServlet</servlet-name>
+        <url-pattern>/removecollabmember</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>ViewMediaServlet</servlet-name>
         <servlet-class>com.demo.web.controller.ViewMediaServlet</servlet-class>
@@ -255,7 +310,80 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>editgroupservlet</servlet-name>
-        <url-pattern>/editgroupservlet</url-pattern>  <!-- or /process-login if you want different URL -->
+        <url-pattern>/editgroupservlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- Group Invite Servlets -->
+    <servlet>
+        <servlet-name>InviteServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.InviteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InviteServlet</servlet-name>
+        <url-pattern>/invite/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GenerateInviteLinkServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.GenerateInviteLinkServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GenerateInviteLinkServlet</servlet-name>
+        <url-pattern>/group/invite/generate</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GroupMembersServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.GroupMembersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupMembersServlet</servlet-name>
+        <url-pattern>/groupmembersservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GroupAnnouncementServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.GroupAnnouncementServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupAnnouncementServlet</servlet-name>
+        <url-pattern>/groupannouncementservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CreateAnnouncementServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.CreateAnnouncementServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateAnnouncementServlet</servlet-name>
+        <url-pattern>/createannouncementservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ViewAnnouncementServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.ViewAnnouncementServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewAnnouncementServlet</servlet-name>
+        <url-pattern>/viewannouncementservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GroupProfileServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.GroupProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupProfileServlet</servlet-name>
+        <url-pattern>/groupprofileservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RemoveMemberServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Groups.RemoveMemberServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RemoveMemberServlet</servlet-name>
+        <url-pattern>/removememberservlet</url-pattern>
     </servlet-mapping>
 
     <servlet>

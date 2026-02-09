@@ -115,10 +115,27 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
+            // Check for pending invite token (from group invite link)
+            HttpSession session = request.getSession();
+            String pendingInviteToken = (String) session.getAttribute("pendingInviteToken");
+            if (pendingInviteToken != null) {
+                session.removeAttribute("pendingInviteToken");
+                response.sendRedirect(request.getContextPath() + "/invite/" + pendingInviteToken);
+                return;
+            }
+
             // Redirect to original page or /memories
-            String returnUrl = request.getParameter("return");
+            String returnUrl = request.getParameter("redirect");
+            if (returnUrl == null || returnUrl.isEmpty()) {
+                returnUrl = request.getParameter("return");
+            }
             if (returnUrl != null && !returnUrl.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + returnUrl);
+                // Validate redirect URL to prevent open redirect vulnerabilities
+                if (returnUrl.startsWith("/") || returnUrl.startsWith(request.getContextPath())) {
+                    response.sendRedirect(returnUrl);
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/memories");
+                }
             } else {
                 response.sendRedirect(request.getContextPath() + "/memories");
             }
@@ -185,6 +202,7 @@ public class LoginServlet extends HttpServlet {
  * - If fails: logs warning but login still succeeds
  *
  * BACKWARD COMPATIBLE:
- * - Old accounts without encryption: login still works (just can't encrypt files)
+ * - Old accounts without encryption: login still works (just can't encrypt
+ * files)
  * - New accounts with encryption: login works + can encrypt files
  */
