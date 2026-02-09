@@ -50,8 +50,7 @@
                                 <% List<autograph> autographs = (List<autograph>) request.getAttribute("autographs");
                                         if (autographs != null && !autographs.isEmpty()) {
                                         for (autograph ag : autographs) {
-                                        // Format the date (assuming you have a way to format it, or use a simple
-                                        toString)
+                                        // Format the date
                                         String formattedDate = ag.getCreatedAt() != null ?
                                         ag.getCreatedAt().toString().substring(0, 10) : "Unknown Date";
                                         %>
