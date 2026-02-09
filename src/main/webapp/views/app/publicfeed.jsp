@@ -449,34 +449,19 @@
                                                                                     </svg>
                                                                                 </button>
                                                                                 <div class="carousel-dots">
-                                                                                    <% for (int i=0; i < mediaCount;
-                                                                                        i++) { %>
-                                                                                        <div class="carousel-dot<%= (i == 0) ? "
-                                                                                            active" : "" %>"></div>
-                                                                                        <% } %>
+                                                                                    <% for (int i=0; i < mediaCount; i++) { %>
+                                                                                    <div class="carousel-dot<%= (i == 0) ? " active" : "" %>"></div>
+                                                                                    <% } %>
                                                                                 </div>
                                                                                 <% } %>
                                                                         </div>
 
                                                                         <div class="post-actions">
                                                                             <div class="action-buttons">
-                                                                                <button
-                                                                                    class="action-btn like-btn<%= post.isLikedByCurrentUser() ? "
-                                                                                    liked" : "" %>" data-post-id="<%=
-                                                                                        post.getPostId() %>">
-                                                                                        <svg width="24" height="24"
-                                                                                            viewBox="0 0 24 24"
-                                                                                            fill="<%= post.isLikedByCurrentUser() ? "
-                                                                                            #ed4956" : "none" %>"
-                                                                                            stroke="<%=
-                                                                                                post.isLikedByCurrentUser()
-                                                                                                ? "#ed4956"
-                                                                                                : "currentColor" %>"
-                                                                                                stroke-width="2">
-                                                                                                <path
-                                                                                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                                                                                </path>
-                                                                                        </svg>
+                                                                                <button class="action-btn like-btn<%= post.isLikedByCurrentUser() ? " liked" : "" %>" data-post-id="<%= post.getPostId() %>">
+                                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="<%= post.isLikedByCurrentUser() ? "#ed4956" : "none" %>" stroke="<%= post.isLikedByCurrentUser() ? "#ed4956" : "currentColor" %>" stroke-width="2">
+                                                                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                                                    </svg>
                                                                                 </button>
                                                                                 <button class="action-btn comment-btn"
                                                                                     onclick="window.location.href='${pageContext.request.contextPath}/comments?postId=<%= post.getPostId() %>'">
