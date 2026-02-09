@@ -2,6 +2,7 @@ package com.demo.web.controller.Feed;
 
 import com.demo.web.dao.FeedFollowDAO;
 import com.demo.web.dao.FeedPostDAO;
+import com.demo.web.dao.FeedPostLikeDAO;
 import com.demo.web.dao.FeedProfileDAO;
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.model.FeedPost;
@@ -30,6 +31,7 @@ public class FeedViewController extends HttpServlet {
     private FeedProfileDAO feedProfileDAO;
     private FeedPostDAO feedPostDAO;
     private FeedFollowDAO feedFollowDAO;
+    private FeedPostLikeDAO feedPostLikeDAO;
     private MediaDAO mediaDAO;
 
     @Override
@@ -37,6 +39,7 @@ public class FeedViewController extends HttpServlet {
         feedProfileDAO = new FeedProfileDAO();
         feedPostDAO = new FeedPostDAO();
         feedFollowDAO = new FeedFollowDAO();
+        feedPostLikeDAO = new FeedPostLikeDAO();
         mediaDAO = new MediaDAO();
     }
 
@@ -92,6 +95,11 @@ public class FeedViewController extends HttpServlet {
                         post.setCoverMediaUrl(
                                 request.getContextPath() + "/viewmedia?id=" + mediaItems.get(0).getMediaId());
                     }
+
+                    // Load like data for this post
+                    post.setLikeCount(feedPostLikeDAO.getLikeCount(post.getPostId()));
+                    post.setLikedByCurrentUser(
+                            feedPostLikeDAO.hasLikedPost(post.getPostId(), feedProfile.getFeedProfileId()));
                 } catch (Exception e) {
                     logger.warning("[FeedViewController] Error loading media for post " + post.getPostId() + ": "
                             + e.getMessage());

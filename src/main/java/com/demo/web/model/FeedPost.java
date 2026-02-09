@@ -20,6 +20,8 @@ public class FeedPost {
     private FeedProfile feedProfile;
     private String coverMediaUrl; // First media URL for display
     private List<MediaItem> mediaItems; // All media items for carousel display
+    private int likeCount; // Number of likes on this post
+    private boolean likedByCurrentUser; // Whether current user has liked this post
 
     // Default constructor
     public FeedPost() {
@@ -111,6 +113,22 @@ public class FeedPost {
 
     public void setMediaItems(List<MediaItem> mediaItems) {
         this.mediaItems = mediaItems;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public boolean isLikedByCurrentUser() {
+        return likedByCurrentUser;
+    }
+
+    public void setLikedByCurrentUser(boolean likedByCurrentUser) {
+        this.likedByCurrentUser = likedByCurrentUser;
     }
 
     /**
