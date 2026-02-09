@@ -73,6 +73,9 @@ public class FeedCommentServlet extends HttpServlet {
                 case "unlike":
                     handleUnlikeComment(request, response, currentProfile);
                     break;
+                case "getReplies":
+                    handleGetReplies(request, response, currentProfile);
+                    break;
                 default:
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     out.print("{\"success\": false, \"error\": \"Invalid action\"}");
@@ -222,6 +225,47 @@ public class FeedCommentServlet extends HttpServlet {
         int newLikeCount = commentDAO.getCommentLikeCount(commentId);
 
         out.print(String.format("{\"success\": true, \"isLiked\": false, \"likeCount\": %d}", newLikeCount));
+    }
+
+    private void handleGetReplies(HttpServletRequest request, HttpServletResponse response, FeedProfile currentProfile)
+            throws IOException {
+        PrintWriter out = response.getWriter();
+
+        String commentIdStr = request.getParameter("commentId");
+
+        if (commentIdStr == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.print("{\"success\": false, \"error\": \"Missing comment ID\"}");
+            return;
+        }
+
+        int commentId = Integer.parseInt(commentIdStr);
+        java.util.List<FeedComment> replies = commentDAO.getRepliesForComment(commentId,
+                currentProfile.getFeedProfileId());
+
+        StringBuilder json = new StringBuilder("{\"success\": true, \"replies\": [");
+        for (int i = 0; i < replies.size(); i++) {
+            FeedComment reply = replies.get(i);
+            FeedProfile replyProfile = reply.getFeedProfile();
+            if (i > 0)
+                json.append(",");
+            json.append(String.format(
+                    "{\"commentId\": %d, \"commentText\": \"%s\", \"username\": \"%s\", \"initials\": \"%s\", " +
+                            "\"profilePictureUrl\": %s, \"relativeTime\": \"%s\", \"likeCount\": %d, \"isLiked\": %b, \"feedProfileId\": %d}",
+                    reply.getCommentId(),
+                    escapeJson(reply.getCommentText()),
+                    escapeJson(replyProfile != null ? replyProfile.getFeedUsername() : "unknown"),
+                    escapeJson(replyProfile != null ? replyProfile.getInitials() : "?"),
+                    replyProfile != null && replyProfile.getFeedProfilePictureUrl() != null
+                            ? "\"" + escapeJson(replyProfile.getFeedProfilePictureUrl()) + "\""
+                            : "null",
+                    reply.getRelativeTime(),
+                    reply.getLikeCount(),
+                    reply.isLikedByCurrentUser(),
+                    reply.getFeedProfileId()));
+        }
+        json.append("]}");
+        out.print(json.toString());
     }
 
     /**

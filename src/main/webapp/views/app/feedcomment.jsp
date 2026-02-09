@@ -36,7 +36,8 @@
                                                 String ownerPic = postOwner.getFeedProfilePictureUrl();
                                                 boolean hasOwnerPic = ownerPic != null && !ownerPic.isEmpty() &&
                                                 !ownerPic.contains("default");
-                                                String ownerGradient = "linear-gradient(135deg, #667eea 0%, #764ba2100%)";
+                                                String ownerGradient = "linear-gradient(135deg, #667eea 0%, #764ba2
+                                                100%)";
                                                 String postLikedClass = isLikedByUser ? "liked" : "";
                                                 String postFillColor = isLikedByUser ? "#ed4956" : "none";
                                                 String postStrokeColor = isLikedByUser ? "#ed4956" : "currentColor";
@@ -45,6 +46,8 @@
                                                 String cpUrlSafe = (cpUrl != null) ? cpUrl : "";
                                                 boolean hasMultipleMedia = mediaItems != null && mediaItems.size() > 1;
                                                 int mediaCount = (mediaItems != null) ? mediaItems.size() : 0;
+                                                int currentProfileId = (currentProfile != null) ?
+                                                currentProfile.getFeedProfileId() : 0;
                                                 %>
                                                 <!DOCTYPE html>
                                                 <html lang="en">
@@ -58,9 +61,7 @@
                                                         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
                                                         rel="stylesheet">
                                                     <link rel="stylesheet"
-                                                        href="${pageContext.request.contextPath}/resources/css/base.css">
-                                                    <link rel="stylesheet"
-                                                        href="${pageContext.request.contextPath}/resources/css/postcomments.css">
+                                                        href="<%= request.getContextPath() %>/resources/css/base.css">
                                                     <style>
                                                         * {
                                                             margin: 0;
@@ -237,11 +238,13 @@
                                                             font-weight: 600;
                                                             font-size: 14px;
                                                             color: #262626;
+                                                            margin: 0;
                                                         }
 
                                                         .user-details .post-location {
                                                             font-size: 12px;
                                                             color: #8e8e8e;
+                                                            margin: 0;
                                                         }
 
                                                         .comments-list-container {
@@ -267,6 +270,7 @@
                                                             font-size: 11px;
                                                             font-weight: 600;
                                                             color: white;
+                                                            object-fit: cover;
                                                         }
 
                                                         .comment-content {
@@ -296,6 +300,7 @@
                                                             color: #262626;
                                                             line-height: 1.4;
                                                             margin: 0;
+                                                            word-break: break-word;
                                                         }
 
                                                         .comment-actions {
@@ -324,7 +329,8 @@
                                                         }
 
                                                         .reply-btn,
-                                                        .delete-comment-btn {
+                                                        .delete-comment-btn,
+                                                        .view-replies-btn {
                                                             background: none;
                                                             border: none;
                                                             color: #8e8e8e;
@@ -334,7 +340,8 @@
                                                             padding: 0;
                                                         }
 
-                                                        .reply-btn:hover {
+                                                        .reply-btn:hover,
+                                                        .view-replies-btn:hover {
                                                             color: #262626;
                                                         }
 
@@ -454,12 +461,37 @@
                                                         .post-comment-btn.active {
                                                             opacity: 1;
                                                         }
+
+                                                        .replies-container {
+                                                            margin-left: 44px;
+                                                            margin-top: 8px;
+                                                        }
+
+                                                        .reply-item {
+                                                            display: flex;
+                                                            gap: 10px;
+                                                            margin-bottom: 12px;
+                                                        }
+
+                                                        .reply-avatar {
+                                                            width: 24px;
+                                                            height: 24px;
+                                                            border-radius: 50%;
+                                                            flex-shrink: 0;
+                                                            display: flex;
+                                                            align-items: center;
+                                                            justify-content: center;
+                                                            font-size: 9px;
+                                                            font-weight: 600;
+                                                            color: white;
+                                                            object-fit: cover;
+                                                        }
                                                     </style>
                                                 </head>
 
                                                 <body>
                                                     <div class="comments-page-container">
-                                                        <a href="${pageContext.request.contextPath}/feed"
+                                                        <a href="<%= request.getContextPath() %>/feed"
                                                             class="close-post-btn">
                                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                                 stroke="currentColor" stroke-width="2">
@@ -469,7 +501,6 @@
                                                         </a>
 
                                                         <div class="post-comments-wrapper">
-                                                            <!-- Left Side - Post Media Carousel -->
                                                             <div class="post-image-section">
                                                                 <div class="carousel-container" data-current-slide="0">
                                                                     <div class="carousel-track">
@@ -501,7 +532,7 @@
                                                                                 </div>
                                                                                 <% } else { %>
                                                                                     <div class="carousel-slide"
-                                                                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                                                                        style="background: <%= ownerGradient %>;">
                                                                                         <svg width="64" height="64"
                                                                                             viewBox="0 0 24 24"
                                                                                             fill="none" stroke="white"
@@ -518,7 +549,6 @@
                                                                                     </div>
                                                                                     <% } %>
                                                                     </div>
-
                                                                     <% if (hasMultipleMedia) { %>
                                                                         <button class="carousel-btn prev" type="button"
                                                                             onclick="moveCarousel(-1)">
@@ -538,30 +568,28 @@
                                                                         </button>
                                                                         <div class="carousel-dots">
                                                                             <% for (int i=0; i < mediaCount; i++) { %>
-                                                                                <div class="carousel-dot<%= (i == 0) ? "active" : "" %>"></div>
+                                                                                <div class="carousel-dot<%= i == 0 ? "
+                                                                                    active" : "" %>"></div>
                                                                                 <% } %>
                                                                         </div>
                                                                         <% } %>
                                                                 </div>
                                                             </div>
 
-                                                            <!-- Right Side - Comments Section -->
                                                             <div class="post-details-section">
-                                                                <!-- Post Owner Header -->
                                                                 <div class="post-detail-header">
                                                                     <div class="user-info">
                                                                         <% if (hasOwnerPic) { %>
                                                                             <img src="<%= ownerPic %>"
                                                                                 alt="<%= postOwner.getFeedUsername() %>"
                                                                                 class="user-avatar"
-                                                                                style="width:40px;height:40px;border-radius:50%;object-fit:cover">
+                                                                                style="width:40px;height:40px;object-fit:cover">
                                                                             <% } else { %>
                                                                                 <div class="user-avatar"
                                                                                     style="background:<%= ownerGradient %>;width:40px;height:40px;">
                                                                                     <span>
                                                                                         <%= postOwner.getInitials() %>
-                                                                                    </span>
-                                                                                </div>
+                                                                                    </span></div>
                                                                                 <% } %>
                                                                                     <div class="user-details">
                                                                                         <h4 class="username">
@@ -581,26 +609,22 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <!-- Comments List -->
                                                                 <div class="comments-list-container"
                                                                     id="commentsContainer">
-                                                                    <!-- Original Caption -->
                                                                     <% if (post.getCaption() !=null &&
                                                                         !post.getCaption().isEmpty()) { %>
                                                                         <div class="comment-item original-caption">
                                                                             <% if (hasOwnerPic) { %>
                                                                                 <img src="<%= ownerPic %>"
                                                                                     alt="<%= postOwner.getFeedUsername() %>"
-                                                                                    class="comment-avatar"
-                                                                                    style="width:32px;height:32px;border-radius:50%;object-fit:cover">
+                                                                                    class="comment-avatar">
                                                                                 <% } else { %>
                                                                                     <div class="comment-avatar"
                                                                                         style="background:<%= ownerGradient %>">
                                                                                         <span>
                                                                                             <%= postOwner.getInitials()
                                                                                                 %>
-                                                                                        </span>
-                                                                                    </div>
+                                                                                        </span></div>
                                                                                     <% } %>
                                                                                         <div class="comment-content">
                                                                                             <div class="comment-header">
@@ -622,7 +646,6 @@
                                                                         </div>
                                                                         <% } %>
 
-                                                                            <!-- No Comments Message -->
                                                                             <% if (comments==null || comments.isEmpty())
                                                                                 { %>
                                                                                 <div class="no-comments">
@@ -640,7 +663,9 @@
                                                                                         Start the conversation.</p>
                                                                                 </div>
                                                                                 <% } else { for (FeedComment comment :
-                                                                                    comments) { FeedProfile
+                                                                                    comments) { if
+                                                                                    (comment.getParentCommentId()
+                                                                                    !=null) continue; FeedProfile
                                                                                     commenter=comment.getFeedProfile();
                                                                                     String commenterPic=(commenter
                                                                                     !=null) ?
@@ -661,22 +686,25 @@
                                                                                     boolean canDelete=isPostOwner ||
                                                                                     (currentProfile !=null &&
                                                                                     comment.getFeedProfileId()==currentProfile.getFeedProfileId());
-                                                                                    %>
+                                                                                    String likedClass=commentLiked
+                                                                                    ? " liked" : "" ; String
+                                                                                    fillCol=commentLiked ? "#ed4956"
+                                                                                    : "none" ; String
+                                                                                    strokeCol=commentLiked ? "#ed4956"
+                                                                                    : "currentColor" ; %>
                                                                                     <div class="comment-item"
                                                                                         data-comment-id="<%= comment.getCommentId() %>">
                                                                                         <% if (hasCommenterPic) { %>
                                                                                             <img src="<%= commenterPic %>"
                                                                                                 alt="<%= commenterUsername %>"
-                                                                                                class="comment-avatar"
-                                                                                                style="width:32px;height:32px;border-radius:50%;object-fit:cover">
+                                                                                                class="comment-avatar">
                                                                                             <% } else { %>
                                                                                                 <div class="comment-avatar"
-                                                                                                    style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+                                                                                                    style="background:<%= ownerGradient %>">
                                                                                                     <span>
                                                                                                         <%= commenterInitials
                                                                                                             %>
-                                                                                                    </span>
-                                                                                                </div>
+                                                                                                    </span></div>
                                                                                                 <% } %>
                                                                                                     <div
                                                                                                         class="comment-content">
@@ -701,33 +729,23 @@
                                                                                                         <div
                                                                                                             class="comment-actions">
                                                                                                             <button
-                                                                                                                class="comment-like-btn<%= commentLiked ? "liked"
-                                                                                                                : "" %>"
-                                                                                                                data-comment-id="
-                                                                                                                <%= comment.getCommentId()
-                                                                                                                    %>">
-                                                                                                                    <svg width="12"
-                                                                                                                        height="12"
-                                                                                                                        viewBox="0 0 24 24"
-                                                                                                                        fill="<%= commentLiked ? "#ed4956"
-                                                                                                                        : "none"
-                                                                                                                        %>"
-                                                                                                                        stroke="
-                                                                                                                        <%= commentLiked
-                                                                                                                            ? "#ed4956"
-                                                                                                                            : "currentColor"
-                                                                                                                            %>
-                                                                                                                            "
-                                                                                                                            stroke-width="2">
-                                                                                                                            <path
-                                                                                                                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                                                                                                            </path>
-                                                                                                                    </svg>
+                                                                                                                class="comment-like-btn<%= likedClass %>"
+                                                                                                                data-comment-id="<%= comment.getCommentId() %>">
+                                                                                                                <svg width="12"
+                                                                                                                    height="12"
+                                                                                                                    viewBox="0 0 24 24"
+                                                                                                                    fill="<%= fillCol %>"
+                                                                                                                    stroke="<%= strokeCol %>"
+                                                                                                                    stroke-width="2">
+                                                                                                                    <path
+                                                                                                                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                                                                                                    </path>
+                                                                                                                </svg>
                                                                                                             </button>
                                                                                                             <% if
                                                                                                                 (cLikeCount>
-                                                                                                                0) { %>
-                                                                                                                <span
+                                                                                                                0) {
+                                                                                                                %><span
                                                                                                                     class="comment-likes">
                                                                                                                     <%= cLikeCount
                                                                                                                         %>
@@ -736,7 +754,8 @@
                                                                                                                 <% } %>
                                                                                                                     <button
                                                                                                                         class="reply-btn"
-                                                                                                                        data-username="<%= commenterUsername %>">Reply</button>
+                                                                                                                        data-username="<%= commenterUsername %>"
+                                                                                                                        data-comment-id="<%= comment.getCommentId() %>">Reply</button>
                                                                                                                     <% if
                                                                                                                         (canDelete)
                                                                                                                         {
@@ -747,12 +766,14 @@
                                                                                                                         <% }
                                                                                                                             %>
                                                                                                         </div>
+                                                                                                        <div class="replies-container"
+                                                                                                            id="replies-<%= comment.getCommentId() %>">
+                                                                                                        </div>
                                                                                                     </div>
                                                                                     </div>
                                                                                     <% }} %>
                                                                 </div>
 
-                                                                <!-- Post Actions Bar -->
                                                                 <div class="post-actions-bar">
                                                                     <div class="post-actions">
                                                                         <div class="action-buttons">
@@ -791,7 +812,6 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <!-- Add Comment Section -->
                                                                 <div class="add-comment-section">
                                                                     <button class="emoji-btn" type="button">
                                                                         <svg width="24" height="24" viewBox="0 0 24 24"
@@ -806,6 +826,7 @@
                                                                     </button>
                                                                     <input type="text" placeholder="Add a comment..."
                                                                         id="commentInput">
+                                                                    <input type="hidden" id="parentCommentId" value="">
                                                                     <button class="post-comment-btn" id="postCommentBtn"
                                                                         type="button"
                                                                         data-post-id="<%= post.getPostId() %>">Post</button>
@@ -819,28 +840,22 @@
                                                         var currentUserInitials = '<%= (currentProfile != null) ? currentProfile.getInitials() : "" %>';
                                                         var currentUsername = '<%= (currentProfile != null) ? currentProfile.getFeedUsername() : "" %>';
                                                         var currentProfilePicUrl = '<%= cpUrlSafe %>';
+                                                        var currentProfileId = <%= currentProfileId %>;
+                                                        var isPostOwner = <%= isPostOwner %>;
 
-                                                        // Carousel Navigation
                                                         function moveCarousel(direction) {
                                                             var container = document.querySelector('.carousel-container');
                                                             var track = container.querySelector('.carousel-track');
                                                             var slides = container.querySelectorAll('.carousel-slide');
                                                             var dots = container.querySelectorAll('.carousel-dot');
                                                             var currentSlide = parseInt(container.dataset.currentSlide) || 0;
-
                                                             var newSlide = currentSlide + direction;
                                                             if (newSlide < 0) newSlide = slides.length - 1;
                                                             if (newSlide >= slides.length) newSlide = 0;
-
                                                             track.style.transform = 'translateX(-' + (newSlide * 100) + '%)';
                                                             container.dataset.currentSlide = newSlide;
-
                                                             for (var i = 0; i < dots.length; i++) {
-                                                                if (i === newSlide) {
-                                                                    dots[i].classList.add('active');
-                                                                } else {
-                                                                    dots[i].classList.remove('active');
-                                                                }
+                                                                dots[i].classList.toggle('active', i === newSlide);
                                                             }
                                                         }
 
@@ -853,7 +868,6 @@
                                                                     var isLiked = this.classList.contains('liked');
                                                                     var action = isLiked ? 'unlike' : 'like';
                                                                     var btn = this;
-
                                                                     fetch(contextPath + '/postLike?postId=' + postId + '&action=' + action, {
                                                                         method: 'POST',
                                                                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -873,89 +887,29 @@
                                                                                 }
                                                                                 document.getElementById('likesCount').textContent = data.likeCount + ' likes';
                                                                             }
-                                                                        })
-                                                                        .catch(function (error) { console.error('Error:', error); });
+                                                                        });
                                                                 });
                                                             }
 
                                                             // Comment Like Buttons
                                                             document.querySelectorAll('.comment-like-btn').forEach(function (btn) {
-                                                                btn.addEventListener('click', function () {
-                                                                    var commentId = this.dataset.commentId;
-                                                                    var isLiked = this.classList.contains('liked');
-                                                                    var action = isLiked ? 'unlike' : 'like';
-                                                                    var likeBtn = this;
-
-                                                                    fetch(contextPath + '/commentAction?action=' + action + '&commentId=' + commentId, {
-                                                                        method: 'POST',
-                                                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                                                                    })
-                                                                        .then(function (response) { return response.json(); })
-                                                                        .then(function (data) {
-                                                                            if (data.success) {
-                                                                                var svg = likeBtn.querySelector('svg');
-                                                                                var commentItem = likeBtn.closest('.comment-item');
-                                                                                var likesSpan = commentItem.querySelector('.comment-likes');
-
-                                                                                if (data.isLiked) {
-                                                                                    likeBtn.classList.add('liked');
-                                                                                    svg.style.fill = '#ed4956';
-                                                                                    svg.style.stroke = '#ed4956';
-                                                                                } else {
-                                                                                    likeBtn.classList.remove('liked');
-                                                                                    svg.style.fill = 'none';
-                                                                                    svg.style.stroke = 'currentColor';
-                                                                                }
-
-                                                                                if (data.likeCount > 0) {
-                                                                                    if (!likesSpan) {
-                                                                                        likesSpan = document.createElement('span');
-                                                                                        likesSpan.className = 'comment-likes';
-                                                                                        likeBtn.parentNode.insertBefore(likesSpan, likeBtn.nextSibling);
-                                                                                    }
-                                                                                    likesSpan.textContent = data.likeCount + ' likes';
-                                                                                } else if (likesSpan) {
-                                                                                    likesSpan.remove();
-                                                                                }
-                                                                            }
-                                                                        })
-                                                                        .catch(function (error) { console.error('Error:', error); });
-                                                                });
+                                                                btn.addEventListener('click', handleCommentLike);
                                                             });
 
                                                             // Delete Comment Buttons
                                                             document.querySelectorAll('.delete-comment-btn').forEach(function (btn) {
-                                                                btn.addEventListener('click', function () {
-                                                                    var commentId = this.dataset.commentId;
-                                                                    if (!confirm('Are you sure you want to delete this comment?')) return;
-
-                                                                    fetch(contextPath + '/commentAction?action=delete&commentId=' + commentId, {
-                                                                        method: 'POST',
-                                                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                                                                    })
-                                                                        .then(function (response) { return response.json(); })
-                                                                        .then(function (data) {
-                                                                            if (data.success) {
-                                                                                var commentItem = document.querySelector('.comment-item[data-comment-id="' + commentId + '"]');
-                                                                                if (commentItem) {
-                                                                                    commentItem.style.opacity = '0';
-                                                                                    commentItem.style.transform = 'translateX(-20px)';
-                                                                                    setTimeout(function () { commentItem.remove(); }, 300);
-                                                                                }
-                                                                            } else {
-                                                                                alert('Failed to delete comment: ' + (data.error || 'Unknown error'));
-                                                                            }
-                                                                        })
-                                                                        .catch(function (error) { console.error('Error:', error); });
-                                                                });
+                                                                btn.addEventListener('click', handleDeleteComment);
                                                             });
 
                                                             // Reply Buttons
                                                             document.querySelectorAll('.reply-btn').forEach(function (btn) {
                                                                 btn.addEventListener('click', function () {
                                                                     var username = this.dataset.username;
+                                                                    var parentId = this.dataset.commentId;
                                                                     var commentInput = document.getElementById('commentInput');
+                                                                    var parentInput = document.getElementById('parentCommentId');
                                                                     commentInput.value = '@' + username + ' ';
+                                                                    parentInput.value = parentId;
                                                                     commentInput.focus();
                                                                 });
                                                             });
@@ -966,10 +920,9 @@
 
                                                             if (commentInput && postCommentBtn) {
                                                                 commentInput.addEventListener('input', function () {
-                                                                    if (this.value.trim().length > 0) {
-                                                                        postCommentBtn.classList.add('active');
-                                                                    } else {
-                                                                        postCommentBtn.classList.remove('active');
+                                                                    postCommentBtn.classList.toggle('active', this.value.trim().length > 0);
+                                                                    if (this.value.indexOf('@') !== 0) {
+                                                                        document.getElementById('parentCommentId').value = '';
                                                                     }
                                                                 });
 
@@ -983,57 +936,149 @@
                                                                     var commentText = commentInput.value.trim();
                                                                     if (commentText.length === 0) return;
                                                                     var postId = this.dataset.postId;
+                                                                    var parentCommentId = document.getElementById('parentCommentId').value;
 
-                                                                    fetch(contextPath + '/commentAction?action=add&postId=' + postId + '&commentText=' + encodeURIComponent(commentText), {
+                                                                    var url = contextPath + '/commentAction?action=add&postId=' + postId + '&commentText=' + encodeURIComponent(commentText);
+                                                                    if (parentCommentId) url += '&parentCommentId=' + parentCommentId;
+
+                                                                    fetch(url, {
                                                                         method: 'POST',
                                                                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                                                                     })
                                                                         .then(function (response) { return response.json(); })
                                                                         .then(function (data) {
                                                                             if (data.success) {
-                                                                                // Remove "No comments" message if it exists
                                                                                 var noComments = document.querySelector('.no-comments');
                                                                                 if (noComments) noComments.remove();
 
-                                                                                var commentsContainer = document.getElementById('commentsContainer');
-                                                                                var newComment = document.createElement('div');
-                                                                                newComment.className = 'comment-item';
-                                                                                newComment.dataset.commentId = data.comment.commentId;
-
                                                                                 var avatarHtml = (currentProfilePicUrl && currentProfilePicUrl.indexOf('default') === -1 && currentProfilePicUrl !== '')
-                                                                                    ? '<img src="' + currentProfilePicUrl + '" alt="' + currentUsername + '" class="comment-avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover">'
+                                                                                    ? '<img src="' + currentProfilePicUrl + '" alt="' + currentUsername + '" class="comment-avatar">'
                                                                                     : '<div class="comment-avatar" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%)"><span>' + currentUserInitials + '</span></div>';
 
-                                                                                newComment.innerHTML = avatarHtml +
-                                                                                    '<div class="comment-content">' +
-                                                                                    '<div class="comment-header">' +
-                                                                                    '<span class="comment-username">' + currentUsername + '</span>' +
-                                                                                    '<span class="comment-time">Just now</span>' +
-                                                                                    '</div>' +
-                                                                                    '<p class="comment-text">' + escapeHtml(data.comment.commentText) + '</p>' +
-                                                                                    '<div class="comment-actions">' +
-                                                                                    '<button class="comment-like-btn" data-comment-id="' + data.comment.commentId + '">' +
-                                                                                    '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                                                                                    '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>' +
-                                                                                    '</svg>' +
-                                                                                    '</button>' +
-                                                                                    '<button class="reply-btn" data-username="' + currentUsername + '">Reply</button>' +
-                                                                                    '<button class="delete-comment-btn" data-comment-id="' + data.comment.commentId + '">Delete</button>' +
-                                                                                    '</div>' +
-                                                                                    '</div>';
+                                                                                if (parentCommentId) {
+                                                                                    var repliesContainer = document.getElementById('replies-' + parentCommentId);
+                                                                                    if (repliesContainer) {
+                                                                                        var replyHtml = '<div class="reply-item" data-comment-id="' + data.comment.commentId + '">' +
+                                                                                            avatarHtml.replace('comment-avatar', 'reply-avatar') +
+                                                                                            '<div class="comment-content">' +
+                                                                                            '<div class="comment-header">' +
+                                                                                            '<span class="comment-username">' + currentUsername + '</span>' +
+                                                                                            '<span class="comment-time">Just now</span>' +
+                                                                                            '</div>' +
+                                                                                            '<p class="comment-text">' + escapeHtml(data.comment.commentText) + '</p>' +
+                                                                                            '<div class="comment-actions">' +
+                                                                                            '<button class="comment-like-btn" data-comment-id="' + data.comment.commentId + '">' +
+                                                                                            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>' +
+                                                                                            '</button>' +
+                                                                                            '<button class="delete-comment-btn" data-comment-id="' + data.comment.commentId + '">Delete</button>' +
+                                                                                            '</div>' +
+                                                                                            '</div>' +
+                                                                                            '</div>';
+                                                                                        repliesContainer.insertAdjacentHTML('beforeend', replyHtml);
+                                                                                        repliesContainer.querySelector('.reply-item:last-child .comment-like-btn').addEventListener('click', handleCommentLike);
+                                                                                        repliesContainer.querySelector('.reply-item:last-child .delete-comment-btn').addEventListener('click', handleDeleteComment);
+                                                                                    }
+                                                                                } else {
+                                                                                    var commentsContainer = document.getElementById('commentsContainer');
+                                                                                    var newComment = document.createElement('div');
+                                                                                    newComment.className = 'comment-item';
+                                                                                    newComment.dataset.commentId = data.comment.commentId;
+                                                                                    newComment.innerHTML = avatarHtml +
+                                                                                        '<div class="comment-content">' +
+                                                                                        '<div class="comment-header">' +
+                                                                                        '<span class="comment-username">' + currentUsername + '</span>' +
+                                                                                        '<span class="comment-time">Just now</span>' +
+                                                                                        '</div>' +
+                                                                                        '<p class="comment-text">' + escapeHtml(data.comment.commentText) + '</p>' +
+                                                                                        '<div class="comment-actions">' +
+                                                                                        '<button class="comment-like-btn" data-comment-id="' + data.comment.commentId + '">' +
+                                                                                        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>' +
+                                                                                        '</button>' +
+                                                                                        '<button class="reply-btn" data-username="' + currentUsername + '" data-comment-id="' + data.comment.commentId + '">Reply</button>' +
+                                                                                        '<button class="delete-comment-btn" data-comment-id="' + data.comment.commentId + '">Delete</button>' +
+                                                                                        '</div>' +
+                                                                                        '<div class="replies-container" id="replies-' + data.comment.commentId + '"></div>' +
+                                                                                        '</div>';
+                                                                                    commentsContainer.appendChild(newComment);
+                                                                                    newComment.querySelector('.comment-like-btn').addEventListener('click', handleCommentLike);
+                                                                                    newComment.querySelector('.delete-comment-btn').addEventListener('click', handleDeleteComment);
+                                                                                    newComment.querySelector('.reply-btn').addEventListener('click', function () {
+                                                                                        commentInput.value = '@' + currentUsername + ' ';
+                                                                                        document.getElementById('parentCommentId').value = data.comment.commentId;
+                                                                                        commentInput.focus();
+                                                                                    });
+                                                                                }
 
-                                                                                commentsContainer.appendChild(newComment);
                                                                                 commentInput.value = '';
+                                                                                document.getElementById('parentCommentId').value = '';
                                                                                 postCommentBtn.classList.remove('active');
-
-                                                                                // Scroll to bottom
-                                                                                commentsContainer.scrollTop = commentsContainer.scrollHeight;
+                                                                                document.getElementById('commentsContainer').scrollTop = document.getElementById('commentsContainer').scrollHeight;
                                                                             }
-                                                                        })
-                                                                        .catch(function (error) { console.error('Error:', error); });
+                                                                        });
                                                                 });
                                                             }
                                                         });
+
+                                                        function handleCommentLike() {
+                                                            var btn = this;
+                                                            var commentId = btn.dataset.commentId;
+                                                            var isLiked = btn.classList.contains('liked');
+                                                            var action = isLiked ? 'unlike' : 'like';
+                                                            fetch(contextPath + '/commentAction?action=' + action + '&commentId=' + commentId, {
+                                                                method: 'POST',
+                                                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                                                            })
+                                                                .then(function (response) { return response.json(); })
+                                                                .then(function (data) {
+                                                                    if (data.success) {
+                                                                        var svg = btn.querySelector('svg');
+                                                                        var commentItem = btn.closest('.comment-item') || btn.closest('.reply-item');
+                                                                        var likesSpan = commentItem.querySelector('.comment-likes');
+                                                                        if (data.isLiked) {
+                                                                            btn.classList.add('liked');
+                                                                            svg.style.fill = '#ed4956';
+                                                                            svg.style.stroke = '#ed4956';
+                                                                        } else {
+                                                                            btn.classList.remove('liked');
+                                                                            svg.style.fill = 'none';
+                                                                            svg.style.stroke = 'currentColor';
+                                                                        }
+                                                                        if (data.likeCount > 0) {
+                                                                            if (!likesSpan) {
+                                                                                likesSpan = document.createElement('span');
+                                                                                likesSpan.className = 'comment-likes';
+                                                                                btn.parentNode.insertBefore(likesSpan, btn.nextSibling);
+                                                                            }
+                                                                            likesSpan.textContent = data.likeCount + ' likes';
+                                                                        } else if (likesSpan) {
+                                                                            likesSpan.remove();
+                                                                        }
+                                                                    }
+                                                                });
+                                                        }
+
+                                                        function handleDeleteComment() {
+                                                            var btn = this;
+                                                            var commentId = btn.dataset.commentId;
+                                                            if (!confirm('Are you sure you want to delete this comment?')) return;
+                                                            fetch(contextPath + '/commentAction?action=delete&commentId=' + commentId, {
+                                                                method: 'POST',
+                                                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                                                            })
+                                                                .then(function (response) { return response.json(); })
+                                                                .then(function (data) {
+                                                                    if (data.success) {
+                                                                        var commentItem = document.querySelector('.comment-item[data-comment-id="' + commentId + '"]') || document.querySelector('.reply-item[data-comment-id="' + commentId + '"]');
+                                                                        if (commentItem) {
+                                                                            commentItem.style.opacity = '0';
+                                                                            commentItem.style.transform = 'translateX(-20px)';
+                                                                            setTimeout(function () { commentItem.remove(); }, 300);
+                                                                        }
+                                                                    } else {
+                                                                        alert('Failed to delete comment: ' + (data.error || 'Unknown error'));
+                                                                    }
+                                                                });
+                                                        }
 
                                                         function escapeHtml(text) {
                                                             var div = document.createElement('div');

@@ -261,6 +261,68 @@ public class FeedCommentDAO {
     }
 
     /**
+     * Get replies for a specific comment
+     */
+    public List<FeedComment> getRepliesForComment(int parentCommentId, int currentProfileId) {
+        List<FeedComment> replies = new ArrayList<>();
+
+        String sql = "SELECT c.comment_id, c.post_id, c.feed_profile_id, c.parent_comment_id, " +
+                "c.comment_text, c.created_at, c.updated_at, " +
+                "fp.feed_username, fp.feed_profile_picture_url, fp.feed_bio, " +
+                "(SELECT COUNT(*) FROM feed_comment_likes WHERE comment_id = c.comment_id) as like_count, " +
+                "(SELECT COUNT(*) > 0 FROM feed_comment_likes WHERE comment_id = c.comment_id AND feed_profile_id = ?) as liked_by_user "
+                +
+                "FROM feed_post_comments c " +
+                "JOIN feed_profiles fp ON c.feed_profile_id = fp.feed_profile_id " +
+                "WHERE c.parent_comment_id = ? " +
+                "ORDER BY c.created_at ASC";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, currentProfileId);
+            stmt.setInt(2, parentCommentId);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                replies.add(mapResultSetToComment(rs));
+            }
+
+            logger.info("[FeedCommentDAO] Retrieved " + replies.size() + " replies for comment " + parentCommentId);
+
+        } catch (SQLException e) {
+            logger.severe("[FeedCommentDAO] Error getting replies: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return replies;
+    }
+
+    /**
+     * Get reply count for a comment
+     */
+    public int getReplyCount(int parentCommentId) {
+        String sql = "SELECT COUNT(*) FROM feed_post_comments WHERE parent_comment_id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, parentCommentId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            logger.severe("[FeedCommentDAO] Error getting reply count: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
      * Map ResultSet to FeedComment with FeedProfile
      */
     private FeedComment mapResultSetToComment(ResultSet rs) throws SQLException {
