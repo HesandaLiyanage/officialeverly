@@ -538,8 +538,7 @@
                                                                         </button>
                                                                         <div class="carousel-dots">
                                                                             <% for (int i=0; i < mediaCount; i++) { %>
-                                                                                <div class="carousel-dot<%= (i == 0) ? "
-                                                                                    active" : "" %>"></div>
+                                                                                <div class="carousel-dot<%= (i == 0) ? "active" : "" %>"></div>
                                                                                 <% } %>
                                                                         </div>
                                                                         <% } %>
@@ -702,8 +701,7 @@
                                                                                                         <div
                                                                                                             class="comment-actions">
                                                                                                             <button
-                                                                                                                class="comment-like-btn<%= commentLiked ? "
-                                                                                                                liked"
+                                                                                                                class="comment-like-btn<%= commentLiked ? "liked"
                                                                                                                 : "" %>"
                                                                                                                 data-comment-id="
                                                                                                                 <%= comment.getCommentId()
@@ -711,8 +709,7 @@
                                                                                                                     <svg width="12"
                                                                                                                         height="12"
                                                                                                                         viewBox="0 0 24 24"
-                                                                                                                        fill="<%= commentLiked ? "
-                                                                                                                        #ed4956"
+                                                                                                                        fill="<%= commentLiked ? "#ed4956"
                                                                                                                         : "none"
                                                                                                                         %>"
                                                                                                                         stroke="

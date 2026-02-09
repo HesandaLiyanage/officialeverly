@@ -451,8 +451,7 @@
                                                                                 <div class="carousel-dots">
                                                                                     <% for (int i=0; i < mediaCount;
                                                                                         i++) { %>
-                                                                                        <div class="carousel-dot<%= (i == 0) ? "
-                                                                                            active" : "" %>"></div>
+                                                                                        <div class="carousel-dot<%= (i == 0) ? "active" : "" %>"></div>
                                                                                         <% } %>
                                                                                 </div>
                                                                                 <% } %>
