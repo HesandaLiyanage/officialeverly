@@ -41,7 +41,9 @@ public class FeedCommentDAO {
                 comment.setCreatedAt(rs.getTimestamp("created_at"));
             }
 
-            logger.info("[FeedCommentDAO] Created comment ID: " + comment.getCommentId());
+            logger.info("[FeedCommentDAO] Created comment ID: " + comment.getCommentId() +
+                    " for post: " + comment.getPostId() +
+                    " by profile: " + comment.getFeedProfileId());
             return comment;
 
         } catch (SQLException e) {

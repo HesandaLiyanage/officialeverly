@@ -677,11 +677,14 @@
                                                                                     && !commenterPic.isEmpty() &&
                                                                                     !commenterPic.contains("default");
                                                                                     String commenterInitials=(commenter
+                                                                                    !=null && commenter.getInitials()
                                                                                     !=null) ? commenter.getInitials()
                                                                                     : "?" ; String
-                                                                                    commenterUsername=(commenter !=null)
-                                                                                    ? commenter.getFeedUsername()
-                                                                                    : "unknown" ; boolean
+                                                                                    commenterUsername=(commenter !=null
+                                                                                    && commenter.getFeedUsername()
+                                                                                    !=null) ?
+                                                                                    commenter.getFeedUsername()
+                                                                                    : "Unknown" ;
                                                                                     commentLiked=comment.isLikedByCurrentUser();
                                                                                     int
                                                                                     cLikeCount=comment.getLikeCount();
