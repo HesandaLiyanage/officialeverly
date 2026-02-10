@@ -36,8 +36,7 @@
                                                 String ownerPic = postOwner.getFeedProfilePictureUrl();
                                                 boolean hasOwnerPic = ownerPic != null && !ownerPic.isEmpty() &&
                                                 !ownerPic.contains("default");
-                                                String ownerGradient = "linear-gradient(135deg, #667eea 0%,
-                                                #764ba2100%)";
+                                                String ownerGradient = "linear-gradient(135deg, #667eea 0%,#764ba2100%)";
                                                 String postLikedClass = isLikedByUser ? "liked" : "";
                                                 String postFillColor = isLikedByUser ? "#ed4956" : "none";
                                                 String postStrokeColor = isLikedByUser ? "#ed4956" : "currentColor";
@@ -568,8 +567,7 @@
                                                                         </button>
                                                                         <div class="carousel-dots">
                                                                             <% for (int i=0; i < mediaCount; i++) { %>
-                                                                                <div class="carousel-dot<%= i == 0 ? "
-                                                                                    active" : "" %>"></div>
+                                                                                <div class="carousel-dot<%= i == 0 ? "active" : "" %>"></div>
                                                                                 <% } %>
                                                                         </div>
                                                                         <% } %>
