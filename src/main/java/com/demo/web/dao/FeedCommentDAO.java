@@ -64,7 +64,7 @@ public class FeedCommentDAO {
                 "(SELECT COUNT(*) > 0 FROM feed_comment_likes WHERE comment_id = c.comment_id AND feed_profile_id = ?) as liked_by_user "
                 +
                 "FROM feed_post_comments c " +
-                "JOIN feed_profiles fp ON c.feed_profile_id = fp.feed_profile_id " +
+                "LEFT JOIN feed_profiles fp ON c.feed_profile_id = fp.feed_profile_id " +
                 "WHERE c.post_id = ? " +
                 "ORDER BY c.created_at ASC";
 
