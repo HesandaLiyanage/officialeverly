@@ -3,6 +3,7 @@
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/Autographs/DeleteAutographServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/Autographs/RestoreAutographServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/Autographs/UpdateAutographServlet.java
+/Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/Autographs/WriteAutographServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/ChangeVaultPasswordServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/DebugServlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/DeleteJournalServlet.java
@@ -74,6 +75,7 @@
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/editprofileservlet.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/route.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/controller/signupservlet.java
+/Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/dao/AutographEntryDAO.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/dao/EventDAO.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/dao/FeedCommentDAO.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/dao/FeedFollowDAO.java
@@ -98,6 +100,7 @@
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/dao/userSessionDAO.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/filter/AuthenticationFilter.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/middleware/FrontControllerServlet.java
+/Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/model/AutographEntry.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/model/EncryptionKey.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/model/Event.java
 /Users/hesandaliyanage/Documents/officialeverly/src/main/java/com/demo/web/model/FeedComment.java

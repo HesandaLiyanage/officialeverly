@@ -20,7 +20,7 @@ public class autographDAO {
     public boolean createAutograph(autograph autograph) {
         String sql = "INSERT INTO autograph (a_title, a_description, created_at, user_id, autograph_pic_url) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, autograph.getTitle());
             stmt.setString(2, autograph.getDescription());
             stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
@@ -42,7 +42,7 @@ public class autographDAO {
     public autograph findById(int autographId) {
         String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url FROM autograph WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, autographId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -50,12 +50,41 @@ public class autographDAO {
                 System.out.println("[DEBUG autographDAO] findById(" + autographId + ") returned: " + result);
                 return result;
             } else {
-                System.out.println("[DEBUG autographDAO] findById(" + autographId + ") returned null (record not found).");
+                System.out.println(
+                        "[DEBUG autographDAO] findById(" + autographId + ") returned null (record not found).");
             }
         } catch (SQLException e) {
-            System.out.println("[DEBUG autographDAO] Error while fetching autograph by ID " + autographId + ": " + e.getMessage());
+            System.out.println(
+                    "[DEBUG autographDAO] Error while fetching autograph by ID " + autographId + ": " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error while fetching autograph by ID", e);
+        }
+        return null;
+    }
+
+    /**
+     * Get autograph by share token
+     */
+    public autograph getAutographByShareToken(String shareToken) {
+        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url, share_token FROM autograph WHERE share_token = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, shareToken);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                autograph result = mapResultSetToAutograph(rs);
+                System.out.println(
+                        "[DEBUG autographDAO] getAutographByShareToken(" + shareToken + ") returned: " + result);
+                return result;
+            } else {
+                System.out.println("[DEBUG autographDAO] getAutographByShareToken(" + shareToken
+                        + ") returned null (record not found).");
+            }
+        } catch (SQLException e) {
+            System.out.println("[DEBUG autographDAO] Error while fetching autograph by share token " + shareToken + ": "
+                    + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error while fetching autograph by share token", e);
         }
         return null;
     }
@@ -67,15 +96,17 @@ public class autographDAO {
         String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url FROM autograph WHERE user_id = ?";
         List<autograph> autographs = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 autographs.add(mapResultSetToAutograph(rs));
             }
-            System.out.println("[DEBUG autographDAO] findByUserId(" + userId + ") returned " + autographs.size() + " records.");
+            System.out.println(
+                    "[DEBUG autographDAO] findByUserId(" + userId + ") returned " + autographs.size() + " records.");
         } catch (SQLException e) {
-            System.out.println("[DEBUG autographDAO] Error while fetching autographs by user ID " + userId + ": " + e.getMessage());
+            System.out.println("[DEBUG autographDAO] Error while fetching autographs by user ID " + userId + ": "
+                    + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error while fetching autographs by user ID", e);
         }
@@ -90,21 +121,25 @@ public class autographDAO {
         // Ensure the WHERE clause uses autograph_id
         String sql = "UPDATE autograph SET a_title = ?, a_description = ?, autograph_pic_url = ? WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, autograph.getTitle());      // Parameter 1: new title
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, autograph.getTitle()); // Parameter 1: new title
             stmt.setString(2, autograph.getDescription()); // Parameter 2: new description
             stmt.setString(3, autograph.getAutographPicUrl()); // Parameter 3: new pic URL
-            stmt.setInt(4, autograph.getAutographId());   // Parameter 4: WHERE autograph_id
+            stmt.setInt(4, autograph.getAutographId()); // Parameter 4: WHERE autograph_id
 
-            System.out.println("[DEBUG autographDAO] updateAutograph preparing statement with values - Title: '" + autograph.getTitle() + "', Description: '" + autograph.getDescription() + "', Pic URL: '" + autograph.getAutographPicUrl() + "', ID: " + autograph.getAutographId());
+            System.out.println("[DEBUG autographDAO] updateAutograph preparing statement with values - Title: '"
+                    + autograph.getTitle() + "', Description: '" + autograph.getDescription() + "', Pic URL: '"
+                    + autograph.getAutographPicUrl() + "', ID: " + autograph.getAutographId());
 
             int rowsUpdated = stmt.executeUpdate();
 
-            System.out.println("[DEBUG autographDAO] updateAutograph executed. Rows affected: " + rowsUpdated + " for ID: " + autograph.getAutographId());
+            System.out.println("[DEBUG autographDAO] updateAutograph executed. Rows affected: " + rowsUpdated
+                    + " for ID: " + autograph.getAutographId());
 
             return rowsUpdated > 0;
         } catch (SQLException e) {
-            System.out.println("[DEBUG autographDAO] Error while updating autograph ID " + autograph.getAutographId() + ": " + e.getMessage());
+            System.out.println("[DEBUG autographDAO] Error while updating autograph ID " + autograph.getAutographId()
+                    + ": " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error while updating autograph", e);
         }
@@ -116,13 +151,15 @@ public class autographDAO {
     public boolean deleteAutograph(int autographId) {
         String sql = "DELETE FROM autograph WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, autographId);
             int rowsDeleted = stmt.executeUpdate();
-            System.out.println("[DEBUG autographDAO] deleteAutograph affected " + rowsDeleted + " rows for ID: " + autographId);
+            System.out.println(
+                    "[DEBUG autographDAO] deleteAutograph affected " + rowsDeleted + " rows for ID: " + autographId);
             return rowsDeleted > 0;
         } catch (SQLException e) {
-            System.out.println("[DEBUG autographDAO] Error while deleting autograph ID " + autographId + ": " + e.getMessage());
+            System.out.println(
+                    "[DEBUG autographDAO] Error while deleting autograph ID " + autographId + ": " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error while deleting autograph", e);
         }
@@ -139,6 +176,12 @@ public class autographDAO {
         autograph.setCreatedAt(rs.getTimestamp("created_at"));
         autograph.setUserId(rs.getInt("user_id"));
         autograph.setAutographPicUrl(rs.getString("autograph_pic_url"));
+        // Try to get share_token if it exists in the result set
+        try {
+            autograph.setShareToken(rs.getString("share_token"));
+        } catch (SQLException e) {
+            // Column doesn't exist in this query, ignore
+        }
         return autograph;
     }
 
@@ -163,11 +206,12 @@ public class autographDAO {
 
         RecycleBinDAO rbDao = new RecycleBinDAO();
         int recycleId = rbDao.saveAutographToRecycleBin(item);
-        if (recycleId <= 0) return false;
+        if (recycleId <= 0)
+            return false;
 
         String deleteSql = "DELETE FROM autograph WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
+                PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
             stmt.setInt(1, autographId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {

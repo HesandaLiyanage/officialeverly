@@ -1,6 +1,7 @@
 package com.demo.web.model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Model class for Feed Post data.
@@ -18,6 +19,9 @@ public class FeedPost {
     private Memory memory;
     private FeedProfile feedProfile;
     private String coverMediaUrl; // First media URL for display
+    private List<MediaItem> mediaItems; // All media items for carousel display
+    private int likeCount; // Number of likes on this post
+    private boolean likedByCurrentUser; // Whether current user has liked this post
 
     // Default constructor
     public FeedPost() {
@@ -101,6 +105,30 @@ public class FeedPost {
 
     public void setCoverMediaUrl(String coverMediaUrl) {
         this.coverMediaUrl = coverMediaUrl;
+    }
+
+    public List<MediaItem> getMediaItems() {
+        return mediaItems;
+    }
+
+    public void setMediaItems(List<MediaItem> mediaItems) {
+        this.mediaItems = mediaItems;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public boolean isLikedByCurrentUser() {
+        return likedByCurrentUser;
+    }
+
+    public void setLikedByCurrentUser(boolean likedByCurrentUser) {
+        this.likedByCurrentUser = likedByCurrentUser;
     }
 
     /**
