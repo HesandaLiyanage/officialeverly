@@ -30,8 +30,7 @@
                             eventPicUrl=event.getEventPicUrl(); if (eventPicUrl==null || eventPicUrl.isEmpty()) {
                             eventPicUrl="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1200" ; } else {
                             eventPicUrl=request.getContextPath() + "/" + eventPicUrl; } // Check if this is a past event
-                            (for conditional "Go to Memory" button) boolean isPastEvent=event.getEventDate().before(new
-                            java.util.Date()); %>
+                            boolean isPastEvent=event.getEventDate().before(new java.util.Date()); %>
 
                             <jsp:include page="../public/header2.jsp" />
                             <html>
