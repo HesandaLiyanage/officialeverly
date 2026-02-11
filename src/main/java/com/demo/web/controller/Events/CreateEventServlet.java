@@ -1,9 +1,11 @@
 package com.demo.web.controller.Events;
 
 import com.demo.web.dao.EventDAO;
+import com.demo.web.dao.GroupAnnouncementDAO;
 import com.demo.web.dao.GroupDAO;
 import com.demo.web.model.Event;
 import com.demo.web.model.Group;
+import com.demo.web.model.GroupAnnouncement;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -25,11 +27,13 @@ public class CreateEventServlet extends HttpServlet {
 
     private EventDAO eventDAO;
     private GroupDAO groupDAO;
+    private GroupAnnouncementDAO announcementDAO;
 
     @Override
     public void init() throws ServletException {
         this.eventDAO = new EventDAO();
         this.groupDAO = new GroupDAO();
+        this.announcementDAO = new GroupAnnouncementDAO();
     }
 
     /**
@@ -133,6 +137,24 @@ public class CreateEventServlet extends HttpServlet {
             boolean success = eventDAO.createEvent(newEvent);
 
             if (success) {
+                // Auto-create announcement for the group
+                try {
+                    String announcementTitle = "New Event: " + newEvent.getTitle();
+                    String announcementContent = "A new event '" + newEvent.getTitle() + "' has been scheduled for " + dateStr + ".\n\n" +
+                            (newEvent.getDescription() != null && !newEvent.getDescription().isEmpty()
+                                    ? "Details: " + newEvent.getDescription()
+                                    : "");
+
+                    System.out.println("[DEBUG SaveEventServlet] Creating auto-announcement - groupId: " + groupId + ", userId: " + userId + ", title: " + announcementTitle);
+                    GroupAnnouncement announcement = new GroupAnnouncement(groupId, userId, announcementTitle, announcementContent);
+                    boolean announcementCreated = announcementDAO.createAnnouncement(announcement);
+                    System.out.println("[DEBUG SaveEventServlet] Auto-announcement created: " + announcementCreated + " for event: " + newEvent.getTitle());
+                } catch (Exception e) {
+                    System.err.println("[DEBUG SaveEventServlet] Failed to create auto-announcement: " + e.getMessage());
+                    e.printStackTrace();
+                    // We don't want to fail the event creation if announcement fails
+                }
+
                 System.out.println("[DEBUG SaveEventServlet] Event created successfully");
                 session.setAttribute("successMessage", "Event created successfully!");
                 response.sendRedirect(request.getContextPath() + "/events");
