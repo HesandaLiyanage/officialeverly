@@ -60,43 +60,47 @@
                                             <!-- Added data-autograph-id attribute -->
                                             <div class="autograph-card" data-autograph-id="<%= ag.getAutographId() %>"
                                                 data-title="<%= ag.getTitle() %>">
-                                                <div class="autograph-image"
-                                                    style="background-image: url('<%= request.getContextPath() %>/dbimages/<%= ag.getAutographPicUrl() != null ? ag.getAutographPicUrl() : "
-                                                    default.jpg" %>')"></div>
-                                                <div class="autograph-content">
-                                                    <h3 class="autograph-title">
-                                                        <%= ag.getTitle() %>
-                                                    </h3>
-                                                    <p class="autograph-date">
-                                                        <%= formattedDate %>
-                                                    </p>
-                                                    <div class="autograph-meta">
-                                                        <span class="autograph-count">
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                                                stroke="currentColor" stroke-width="2">
-                                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2">
-                                                                </path>
-                                                                <circle cx="9" cy="7" r="4"></circle>
-                                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                                            </svg>
-                                                            <%= "N/A" %> signatures
-                                                                <!-- You might need to calculate the signature count from another table -->
-                                                        </span>
-                                                        <button class="share-btn"
-                                                            onclick="openSharePopup(event, '<%= ag.getAutographId() %>', '<%= ag.getTitle() %>')">
-                                                            <svg viewBox="0 0 24 24" stroke-width="2"
-                                                                stroke-linecap="round" stroke-linejoin="round">
-                                                                <circle cx="18" cy="5" r="3"></circle>
-                                                                <circle cx="6" cy="12" r="3"></circle>
-                                                                <circle cx="18" cy="19" r="3"></circle>
-                                                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                                                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                                                            </svg>
-                                                            Share
-                                                        </button>
+                                                <% String picUrl=ag.getAutographPicUrl(); String bgUrl=(picUrl !=null &&
+                                                    !picUrl.isEmpty()) ? picUrl : "default.jpg" ; %>
+                                                    <div class="autograph-image"
+                                                        style="background-image: url('<%= request.getContextPath() %>/dbimages/<%= bgUrl %>')">
                                                     </div>
-                                                </div>
+                                                    <div class="autograph-content">
+                                                        <h3 class="autograph-title">
+                                                            <%= ag.getTitle() %>
+                                                        </h3>
+                                                        <p class="autograph-date">
+                                                            <%= formattedDate %>
+                                                        </p>
+                                                        <div class="autograph-meta">
+                                                            <span class="autograph-count">
+                                                                <svg width="16" height="16" viewBox="0 0 24 24"
+                                                                    fill="none" stroke="currentColor" stroke-width="2">
+                                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2">
+                                                                    </path>
+                                                                    <circle cx="9" cy="7" r="4"></circle>
+                                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                                </svg>
+                                                                <%= "N/A" %> signatures
+                                                                    <!-- You might need to calculate the signature count from another table -->
+                                                            </span>
+                                                            <button class="share-btn"
+                                                                onclick="openSharePopup(event, '<%= ag.getAutographId() %>', '<%= ag.getTitle() %>')">
+                                                                <svg viewBox="0 0 24 24" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round">
+                                                                    <circle cx="18" cy="5" r="3"></circle>
+                                                                    <circle cx="6" cy="12" r="3"></circle>
+                                                                    <circle cx="18" cy="19" r="3"></circle>
+                                                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49">
+                                                                    </line>
+                                                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49">
+                                                                    </line>
+                                                                </svg>
+                                                                Share
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                             </div>
                                             <% } } else { %>
                                                 <div style="text-align: center; padding: 40px; color: #6b7280;">
@@ -154,47 +158,46 @@
                                             if (diffMin < 1) { relativeTime="Just now" ; } else if (diffMin < 60) {
                                                 relativeTime=diffMin + " min ago" ; } else if (diffHour < 24) {
                                                 relativeTime=diffHour + " hour" + (diffHour> 1 ? "s" : "") + " ago";
-                                                } else if (diffDay < 7) { relativeTime=diffDay + " day" + (diffDay> 1 ?
-                                                    "s" : "") + " ago";
-                                                    relativeTime = new SimpleDateFormat("MMM
-                                                    d").format(activity.getCreatedAt());
-                                                    }
+                                                } else {
+                                                String pattern = "MMM d";
+                                                relativeTime = new
+                                                SimpleDateFormat(pattern).format(activity.getCreatedAt());
+                                                }
 
-                                                    String gradient = gradients[colorIndex % gradients.length];
-                                                    colorIndex++;
-                                                    %>
-                                                    <div class="activity-item">
-                                                        <div class="activity-avatar"
-                                                            style="background: <%= gradient %>;">
-                                                            <span>
-                                                                <%= activity.getInitials() %>
-                                                            </span>
-                                                        </div>
-                                                        <div class="activity-info">
-                                                            <p class="activity-text"><strong>
-                                                                    <%= activity.getInviteeUsername() %>
-                                                                </strong> wrote in <%= activity.getBookTitle() %>
-                                                            </p>
-                                                            <span class="activity-time">
-                                                                <%= relativeTime %>
-                                                            </span>
-                                                        </div>
+                                                String gradient = gradients[colorIndex % gradients.length];
+                                                colorIndex++;
+                                                %>
+                                                <div class="activity-item">
+                                                    <div class="activity-avatar" style="background: <%= gradient %>;">
+                                                        <span>
+                                                            <%= activity.getInitials() %>
+                                                        </span>
                                                     </div>
-                                                    <% } } else { %>
-                                                        <div style="text-align: center; padding: 20px; color: #9ca3af;">
-                                                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-                                                                stroke="currentColor" stroke-width="1.5"
-                                                                style="margin: 0 auto 10px; opacity: 0.5;">
-                                                                <circle cx="12" cy="12" r="10"></circle>
-                                                                <polyline points="12,6 12,12 16,14"></polyline>
-                                                            </svg>
-                                                            <p style="margin: 0; font-size: 14px;">No recent activity
-                                                            </p>
-                                                            <p style="margin: 5px 0 0; font-size: 12px; opacity: 0.7;">
-                                                                Share your autograph books to start collecting
-                                                                signatures!</p>
-                                                        </div>
-                                                        <% } %>
+                                                    <div class="activity-info">
+                                                        <p class="activity-text"><strong>
+                                                                <%= activity.getInviteeUsername() %>
+                                                            </strong> wrote in <%= activity.getBookTitle() %>
+                                                        </p>
+                                                        <span class="activity-time">
+                                                            <%= relativeTime %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <% } } else { %>
+                                                    <div style="text-align: center; padding: 20px; color: #9ca3af;">
+                                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="1.5"
+                                                            style="margin: 0 auto 10px; opacity: 0.5;">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <polyline points="12,6 12,12 16,14"></polyline>
+                                                        </svg>
+                                                        <p style="margin: 0; font-size: 14px;">No recent activity
+                                                        </p>
+                                                        <p style="margin: 5px 0 0; font-size: 12px; opacity: 0.7;">
+                                                            Share your autograph books to start collecting
+                                                            signatures!</p>
+                                                    </div>
+                                                    <% } %>
 
                                 </div>
                             </div>
