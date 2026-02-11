@@ -156,7 +156,6 @@
                                                 relativeTime=diffHour + " hour" + (diffHour> 1 ? "s" : "") + " ago";
                                                 } else if (diffDay < 7) { relativeTime=diffDay + " day" + (diffDay> 1 ?
                                                     "s" : "") + " ago";
-                                                    } else {
                                                     relativeTime = new SimpleDateFormat("MMM
                                                     d").format(activity.getCreatedAt());
                                                     }
