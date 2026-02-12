@@ -141,7 +141,6 @@
                         <!-- Hidden field for collaborative -->
                         <input type="hidden" name="isCollaborative" id="isCollaborative"
                             value="${param.type == 'collab' ? 'true' : 'false'}">
-
                         <!-- Memory Name Input -->
                         <div class="form-group">
                             <label class="form-label">Name of the memory</label>

@@ -9,6 +9,7 @@ public class GroupAnnouncement {
     private String title;
     private String content;
     private Timestamp createdAt;
+    private Integer eventId; // optional, links to the event that triggered this announcement
     
     // Virtual field for easy display
     private user postedBy;
@@ -76,6 +77,14 @@ public class GroupAnnouncement {
 
     public void setPostedBy(user postedBy) {
         this.postedBy = postedBy;
+    }
+
+    public Integer getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Integer eventId) {
+        this.eventId = eventId;
     }
 
     @Override

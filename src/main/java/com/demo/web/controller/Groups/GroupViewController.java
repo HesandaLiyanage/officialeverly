@@ -3,6 +3,7 @@ package com.demo.web.controller.Groups;
 import com.demo.web.model.Group;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.GroupService;
+import com.demo.web.dao.GroupDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,12 +20,14 @@ public class GroupViewController extends HttpServlet {
 
     private AuthService authService;
     private GroupService groupService;
+    private GroupDAO groupDAO;
 
     @Override
     public void init() throws ServletException {
         super.init();
         authService = new AuthService();
         groupService = new GroupService();
+        groupDAO = new GroupDAO();
     }
 
     @Override
@@ -72,7 +75,8 @@ public class GroupViewController extends HttpServlet {
             int userId, String groupIdParam) throws ServletException, IOException {
         try {
             int groupId = Integer.parseInt(groupIdParam);
-            Group groupDetail = groupService.getGroupById(groupId, userId);
+            // Use groupDAO.findById (no ownership check) so all group members can access
+            Group groupDetail = groupDAO.findById(groupId);
 
             if (groupDetail == null) {
                 response.sendRedirect(request.getContextPath() + "/groups");
