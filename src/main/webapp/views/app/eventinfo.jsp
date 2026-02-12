@@ -5,19 +5,21 @@
                 <%@ page import="com.demo.web.dao.GroupDAO" %>
                     <%@ page import="java.text.SimpleDateFormat" %>
 
-                        <% // Check session Integer userId=(Integer) session.getAttribute("user_id"); if (userId==null)
-                            { response.sendRedirect(request.getContextPath() + "/login" ); return; } // Get event ID
-                            from URL parameter String eventIdParam=request.getParameter("id"); if (eventIdParam==null ||
-                            eventIdParam.trim().isEmpty()) { session.setAttribute("errorMessage", "Event ID is required"
-                            ); response.sendRedirect(request.getContextPath() + "/events" ); return; } // Fetch event
-                            data Event event=null; Group group=null; try { int eventId=Integer.parseInt(eventIdParam);
+                        <% /* Check session */ Integer userId=(Integer) session.getAttribute("user_id"); if
+                            (userId==null) { response.sendRedirect(request.getContextPath() + "/login" ); return; } /*
+                            Get event ID from URL parameter */ String eventIdParam=request.getParameter("id"); if
+                            (eventIdParam==null || eventIdParam.trim().isEmpty()) {
+                            session.setAttribute("errorMessage", "Event ID is required" );
+                            response.sendRedirect(request.getContextPath() + "/events" ); return; } /* Fetch event data
+                            */ Event event=null; Group group=null; try { int eventId=Integer.parseInt(eventIdParam);
                             EventDAO eventDAO=new EventDAO(); event=eventDAO.findById(eventId); if (event==null) {
                             session.setAttribute("errorMessage", "Event not found" );
-                            response.sendRedirect(request.getContextPath() + "/events" ); return; } // Get group
-                            information GroupDAO groupDAO=new GroupDAO(); group=groupDAO.findById(event.getGroupId());
-                            if (group==null) { session.setAttribute("errorMessage", "Group not found for this event" );
-                            response.sendRedirect(request.getContextPath() + "/events" ); return; } // Security check:
-                            Verify the group belongs to this user if (group.getUserId() !=userId) {
+                            response.sendRedirect(request.getContextPath() + "/events" ); return; } /* Get group
+                            information */ GroupDAO groupDAO=new GroupDAO();
+                            group=groupDAO.findById(event.getGroupId()); if (group==null) {
+                            session.setAttribute("errorMessage", "Group not found for this event" );
+                            response.sendRedirect(request.getContextPath() + "/events" ); return; } /* Security check:
+                            Verify the group belongs to this user */ if (group.getUserId() !=userId) {
                             session.setAttribute("errorMessage", "You don't have permission to view this event" );
                             response.sendRedirect(request.getContextPath() + "/events" ); return; } } catch
                             (NumberFormatException e) { session.setAttribute("errorMessage", "Invalid event ID" );
@@ -29,8 +31,8 @@
                             formattedDate=dateFormat.format(event.getEventDate()); String
                             eventPicUrl=event.getEventPicUrl(); if (eventPicUrl==null || eventPicUrl.isEmpty()) {
                             eventPicUrl="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1200" ; } else {
-                            eventPicUrl=request.getContextPath() + "/" + eventPicUrl; } // Check if this is a past event
-                            boolean isPastEvent=event.getEventDate().before(new java.util.Date()); %>
+                            eventPicUrl=request.getContextPath() + "/" + eventPicUrl; } /* Check if this is a past event
+                            */ boolean isPastEvent=event.getEventDate().before(new java.util.Date()); %>
 
                             <jsp:include page="../public/header2.jsp" />
                             <html>
@@ -174,6 +176,7 @@
                                     document.addEventListener('DOMContentLoaded', () => {
                                         const eventId = '<%= eventIdParam %>';
                                         const contextPath = '${pageContext.request.contextPath}';
+                                        const groupId = '<%= event.getGroupId() %>';
 
                                         console.log('[DEBUG] Event ID from URL:', eventId);
 
@@ -181,7 +184,7 @@
                                         const goToMemoryBtn = document.getElementById('goToMemoryBtn');
                                         if (goToMemoryBtn) {
                                             goToMemoryBtn.addEventListener('click', () => {
-                                                window.location.href = contextPath + '/groupmemories?groupId=<%= event.getGroupId() %>';
+                                                window.location.href = contextPath + '/groupmemories?groupId=' + groupId;
                                             });
                                         }
 
@@ -192,11 +195,8 @@
 
                                         // Delete Event button
                                         document.getElementById('deleteEventBtn').addEventListener('click', () => {
-                                            const eventTitle = '<%= event.getTitle().replace("'", "\\'") %>';
-
-                                            if (confirm('Are you sure you want to delete "' + eventTitle + '"?\n\nThis action cannot be undone and will also delete all associated memories.')) {
+                                            if (confirm('Are you sure you want to delete this event?\n\nThis action cannot be undone and will also delete all associated memories.')) {
                                                 console.log('[DEBUG] Deleting event with ID:', eventId);
-                                                // Submit the hidden form
                                                 document.getElementById('deleteEventForm').submit();
                                             }
                                         });

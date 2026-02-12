@@ -134,9 +134,9 @@ public class CreateEventServlet extends HttpServlet {
             System.out.println("[DEBUG SaveEventServlet] Creating event: " + newEvent);
 
             // Save to database
-            boolean success = eventDAO.createEvent(newEvent);
+            int eventId = eventDAO.createEvent(newEvent);
 
-            if (success) {
+            if (eventId > 0) {
                 // Auto-create announcement for the group
                 try {
                     String announcementTitle = "New Event: " + newEvent.getTitle();
@@ -147,6 +147,7 @@ public class CreateEventServlet extends HttpServlet {
 
                     System.out.println("[DEBUG SaveEventServlet] Creating auto-announcement - groupId: " + groupId + ", userId: " + userId + ", title: " + announcementTitle);
                     GroupAnnouncement announcement = new GroupAnnouncement(groupId, userId, announcementTitle, announcementContent);
+                    announcement.setEventId(eventId);
                     boolean announcementCreated = announcementDAO.createAnnouncement(announcement);
                     System.out.println("[DEBUG SaveEventServlet] Auto-announcement created: " + announcementCreated + " for event: " + newEvent.getTitle());
                 } catch (Exception e) {

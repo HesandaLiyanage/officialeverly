@@ -10,7 +10,7 @@ import java.util.List;
 public class GroupAnnouncementDAO {
 
     public boolean createAnnouncement(GroupAnnouncement announcement) {
-        String sql = "INSERT INTO group_announcement (group_id, user_id, title, content, created_at) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO group_announcement (group_id, user_id, title, content, created_at, event_id) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, announcement.getGroupId());
@@ -18,6 +18,11 @@ public class GroupAnnouncementDAO {
             stmt.setString(3, announcement.getTitle());
             stmt.setString(4, announcement.getContent());
             stmt.setTimestamp(5, announcement.getCreatedAt() != null ? announcement.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
+            if (announcement.getEventId() != null) {
+                stmt.setInt(6, announcement.getEventId());
+            } else {
+                stmt.setNull(6, java.sql.Types.INTEGER);
+            }
             
             int rows = stmt.executeUpdate();
             return rows > 0;
@@ -76,6 +81,16 @@ public class GroupAnnouncementDAO {
         ga.setTitle(rs.getString("title"));
         ga.setContent(rs.getString("content"));
         ga.setCreatedAt(rs.getTimestamp("created_at"));
+
+        // Read event_id (nullable)
+        try {
+            int eid = rs.getInt("event_id");
+            if (!rs.wasNull()) {
+                ga.setEventId(eid);
+            }
+        } catch (SQLException e) {
+            // Column may not exist yet
+        }
 
         // Map user data
         user u = new user();

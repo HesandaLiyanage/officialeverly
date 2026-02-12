@@ -127,17 +127,37 @@
                                 <%= ga !=null ? ga.getContent() : "" %>
                             </div>
 
-                            <div class="detail-footer">
-                                <a href="${pageContext.request.contextPath}/groupannouncementservlet?groupId=<%= ga != null ? ga.getGroupId() : "" %>"
-                                    class="back-link">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                                        <polyline points="12 19 5 12 12 5"></polyline>
-                                    </svg>
-                                    Back to All Announcements
-                                </a>
-                            </div>
+                            <% if (ga !=null && ga.getEventId() !=null) { %>
+                                <div style="margin-bottom: 30px;">
+                                    <a href="${pageContext.request.contextPath}/eventinfo?id=<%= ga.getEventId() %>"
+                                        style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; background: linear-gradient(135deg, #9A74D8, #7c5cbf); color: white; text-decoration: none; border-radius: 14px; font-weight: 700; font-size: 15px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(154, 116, 216, 0.3);"
+                                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(154, 116, 216, 0.4)';"
+                                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(154, 116, 216, 0.3)';">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
+                                        Go to Event
+                                    </a>
+                                </div>
+                                <% } %>
+
+                                    <div class="detail-footer">
+                                        <a href="${pageContext.request.contextPath}/groupannouncement?groupId=<%= ga != null ? ga.getGroupId() : "" %>"
+                                            class="back-link">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                                <polyline points="12 19 5 12 12 5"></polyline>
+                                            </svg>
+                                            Back to All Announcements
+                                        </a>
+                                    </div>
                         </div>
                     </div>
                     <jsp:include page="../public/footer.jsp" />
