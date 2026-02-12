@@ -244,4 +244,26 @@ public class FeedPostDAO {
 
         return post;
     }
+
+    /**
+     * Check if a memory is shared in a feed post
+     */
+    public boolean isMemorySharedInFeed(int memoryId) {
+        String sql = "SELECT COUNT(*) FROM feed_posts WHERE memory_id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, memoryId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            logger.severe("[FeedPostDAO] Error checking if memory shared in feed: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

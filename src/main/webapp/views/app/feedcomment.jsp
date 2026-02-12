@@ -36,7 +36,7 @@
                                                 String ownerPic = postOwner.getFeedProfilePictureUrl();
                                                 boolean hasOwnerPic = ownerPic != null && !ownerPic.isEmpty() &&
                                                 !ownerPic.contains("default");
-                                                String ownerGradient = "linear-gradient(135deg, #667eea 0%,#764ba2100%)";
+                                                String ownerGradient = "linear-gradient(135deg, #667eea0%,#764ba2100%)";
                                                 String postLikedClass = isLikedByUser ? "liked" : "";
                                                 String postFillColor = isLikedByUser ? "#ed4956" : "none";
                                                 String postStrokeColor = isLikedByUser ? "#ed4956" : "currentColor";
@@ -682,7 +682,7 @@
                                                                                     && commenter.getFeedUsername()
                                                                                     !=null) ?
                                                                                     commenter.getFeedUsername()
-                                                                                    : "Unknown" ;
+                                                                                    : "Unknown" ; boolean
                                                                                     commentLiked=comment.isLikedByCurrentUser();
                                                                                     int
                                                                                     cLikeCount=comment.getLikeCount();
@@ -925,6 +925,12 @@
                                                             if (commentInput && postCommentBtn) {
                                                                 commentInput.addEventListener('input', function () {
                                                                     postCommentBtn.classList.toggle('active', this.value.trim().length > 0);
+                                                                    if (this.value.trim().length === 0 || this.value.indexOf('@') !== 0) {
+                                                                        document.getElementById('parentCommentId').value = '';
+                                                                    }
+                                                                });
+
+                                                                commentInput.addEventListener('blur', function () {
                                                                     if (this.value.indexOf('@') !== 0) {
                                                                         document.getElementById('parentCommentId').value = '';
                                                                     }
@@ -1016,6 +1022,8 @@
                                                                                 commentInput.value = '';
                                                                                 document.getElementById('parentCommentId').value = '';
                                                                                 postCommentBtn.classList.remove('active');
+                                                                                // Force reset again to be sure
+                                                                                setTimeout(function () { document.getElementById('parentCommentId').value = ''; }, 100);
                                                                                 document.getElementById('commentsContainer').scrollTop = document.getElementById('commentsContainer').scrollHeight;
                                                                             }
                                                                         });

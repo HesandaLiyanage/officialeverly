@@ -1,5 +1,6 @@
 package com.demo.web.controller;
 
+import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.dao.MemoryMemberDAO;
@@ -20,6 +21,7 @@ public class ViewMediaServlet extends HttpServlet {
     private MediaDAO mediaDAO;
     private memoryDAO memoryDao;
     private MemoryMemberDAO memberDao;
+    private FeedPostDAO feedPostDAO;
 
     // Must match the physical path used in CreateMemoryServlet
     private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads";
@@ -30,6 +32,7 @@ public class ViewMediaServlet extends HttpServlet {
         mediaDAO = new MediaDAO();
         memoryDao = new memoryDAO();
         memberDao = new MemoryMemberDAO();
+        feedPostDAO = new FeedPostDAO();
     }
 
     @Override
@@ -90,6 +93,7 @@ public class ViewMediaServlet extends HttpServlet {
                 try {
                     int memoryId = mediaDAO.getMemoryIdForMedia(mediaId);
                     if (memoryId > 0) {
+                        // Check if collaborative memory and user is member
                         Memory memory = memoryDao.getMemoryById(memoryId);
                         if (memory != null && memory.isCollaborative()) {
                             if (memberDao.isMember(memory.getMemoryId(), userId)) {
@@ -98,9 +102,15 @@ public class ViewMediaServlet extends HttpServlet {
                                         "  - Access granted: User is member of collab memory " + memory.getMemoryId());
                             }
                         }
+
+                        // Check 3: Media is part of a public feed post
+                        if (!hasAccess && feedPostDAO.isMemorySharedInFeed(memoryId)) {
+                            hasAccess = true;
+                            System.out.println("  - Access granted: Media is part of a public feed post");
+                        }
                     }
                 } catch (Exception e) {
-                    System.out.println("  - Error checking collab membership: " + e.getMessage());
+                    System.out.println("  - Error checking memory access: " + e.getMessage());
                 }
             }
 

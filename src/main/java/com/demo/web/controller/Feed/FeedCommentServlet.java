@@ -110,7 +110,15 @@ public class FeedCommentServlet extends HttpServlet {
         comment.setCommentText(commentText.trim());
 
         if (parentCommentIdStr != null && !parentCommentIdStr.isEmpty()) {
-            comment.setParentCommentId(Integer.parseInt(parentCommentIdStr));
+            try {
+                int pid = Integer.parseInt(parentCommentIdStr);
+                if (pid > 0) {
+                    comment.setParentCommentId(pid);
+                }
+            } catch (NumberFormatException e) {
+                // Ignore invalid parent ID format
+                logger.warning("[FeedCommentServlet] Invalid parentCommentId format: " + parentCommentIdStr);
+            }
         }
 
         FeedComment createdComment = commentDAO.createComment(comment);
