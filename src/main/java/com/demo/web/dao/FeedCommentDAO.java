@@ -43,7 +43,8 @@ public class FeedCommentDAO {
 
             logger.info("[FeedCommentDAO] Created comment ID: " + comment.getCommentId() +
                     " for post: " + comment.getPostId() +
-                    " by profile: " + comment.getFeedProfileId());
+                    " by profile: " + comment.getFeedProfileId() +
+                    " (Parent: " + comment.getParentCommentId() + ")");
             return comment;
 
         } catch (SQLException e) {
@@ -76,9 +77,15 @@ public class FeedCommentDAO {
             stmt.setInt(1, currentProfileId);
             stmt.setInt(2, postId);
 
+            logger.info("[FeedCommentDAO] Executing getCommentsForPost for postId: " + postId + ", currentProfileId: "
+                    + currentProfileId);
+
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                comments.add(mapResultSetToComment(rs));
+                FeedComment c = mapResultSetToComment(rs);
+                comments.add(c);
+                logger.info("[FeedCommentDAO] Found comment: " + c.getCommentId() + ", Profile: " + c.getFeedProfileId()
+                        + ", Post: " + c.getPostId());
             }
 
             logger.info("[FeedCommentDAO] Retrieved " + comments.size() + " comments for post " + postId);
@@ -99,7 +106,7 @@ public class FeedCommentDAO {
                 "c.comment_text, c.created_at, c.updated_at, " +
                 "fp.feed_username, fp.feed_profile_picture_url, fp.feed_bio " +
                 "FROM feed_post_comments c " +
-                "JOIN feed_profiles fp ON c.feed_profile_id = fp.feed_profile_id " +
+                "LEFT JOIN feed_profiles fp ON c.feed_profile_id = fp.feed_profile_id " +
                 "WHERE c.comment_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -275,7 +282,7 @@ public class FeedCommentDAO {
                 "(SELECT COUNT(*) > 0 FROM feed_comment_likes WHERE comment_id = c.comment_id AND feed_profile_id = ?) as liked_by_user "
                 +
                 "FROM feed_post_comments c " +
-                "JOIN feed_profiles fp ON c.feed_profile_id = fp.feed_profile_id " +
+                "LEFT JOIN feed_profiles fp ON c.feed_profile_id = fp.feed_profile_id " +
                 "WHERE c.parent_comment_id = ? " +
                 "ORDER BY c.created_at ASC";
 
