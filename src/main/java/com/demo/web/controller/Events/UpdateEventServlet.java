@@ -114,9 +114,8 @@ public class UpdateEventServlet extends HttpServlet {
                 String fileExtension = fileName.substring(fileName.lastIndexOf("."));
                 String uniqueFileName = "event_" + UUID.randomUUID().toString() + fileExtension;
 
-                // Define upload path
-                String uploadPath = getServletContext().getRealPath("") + File.separator + "resources" +
-                        File.separator + "db_images";
+                // Define upload path - using media_uploads (persistent directory)
+                String uploadPath = getServletContext().getRealPath("") + File.separator + "media_uploads";
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
@@ -127,7 +126,7 @@ public class UpdateEventServlet extends HttpServlet {
                 filePart.write(filePath);
 
                 // Store relative path
-                eventPicUrl = "resources/db_images/" + uniqueFileName;
+                eventPicUrl = "media_uploads/" + uniqueFileName;
                 System.out.println("[DEBUG UpdateEventServlet] New file saved to: " + eventPicUrl);
             }
 

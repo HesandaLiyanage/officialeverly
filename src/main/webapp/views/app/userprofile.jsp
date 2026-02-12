@@ -1,307 +1,484 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+  <%@ page import="com.demo.web.model.FeedProfile" %>
+    <%@ page import="com.demo.web.model.FeedPost" %>
+      <%@ page import="java.util.List" %>
+        <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+          <% FeedProfile profileToView=(FeedProfile) request.getAttribute("profileToView"); FeedProfile
+            currentUserProfile=(FeedProfile) request.getAttribute("currentUserProfile"); Boolean isOwnProfile=(Boolean)
+            request.getAttribute("isOwnProfile"); Boolean isFollowing=(Boolean) request.getAttribute("isFollowing");
+            Integer followerCount=(Integer) request.getAttribute("followerCount"); Integer followingCount=(Integer)
+            request.getAttribute("followingCount"); Integer postCount=(Integer) request.getAttribute("postCount");
+            List<FeedPost> userPosts = (List<FeedPost>) request.getAttribute("userPosts");
+              List<FeedPost> savedPosts = (List<FeedPost>) request.getAttribute("savedPosts");
+                  List<FeedProfile> recommendedUsers = (List<FeedProfile>) request.getAttribute("recommendedUsers");
 
-<jsp:include page="../public/header2.jsp" />
-<html>
-<head>
-  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
-</head>
-<body>
+                      // Fallback values
+                      if (profileToView == null && currentUserProfile != null) {
+                      profileToView = currentUserProfile;
+                      isOwnProfile = true;
+                      }
+                      if (followerCount == null) followerCount = 0;
+                      if (followingCount == null) followingCount = 0;
+                      if (postCount == null) postCount = 0;
+                      if (isOwnProfile == null) isOwnProfile = true;
+                      if (isFollowing == null) isFollowing = false;
 
-<!-- Wrap everything after header -->
-<div class="page-wrapper">
-  <main class="main-content">
-    <!-- Fixed Top Section: Tabs + Search -->
-    <div class="fixed-top-section">
-      <!-- Tab Navigation -->
-      <div class="tab-nav">
-        </a>
-      </div>
+                      String profileUsername = (profileToView != null) ? profileToView.getFeedUsername() : "user";
+                      String profilePic = (profileToView != null && profileToView.getFeedProfilePictureUrl() != null)
+                      ? profileToView.getFeedProfilePictureUrl() : null;
+                      String profileBio = (profileToView != null && profileToView.getFeedBio() != null)
+                      ? profileToView.getFeedBio() : "No bio yet";
+                      String profileInitials = (profileToView != null) ? profileToView.getInitials() : "U";
+                      int profileId = (profileToView != null) ? profileToView.getFeedProfileId() : 0;
+                      %>
 
-      <!-- Search Bar -->
-      <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
-        <div class="memories-search-container">
-          </button>
-        </div>
-      </div>
-    </div>
+                      <jsp:include page="../public/header2.jsp" />
+                      <!DOCTYPE html>
+                      <html lang="en">
 
-    <!-- Scrollable Profile Content -->
-    <div class="scrollable-feed" id="feedContainer">
+                      <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>@<%= profileUsername %> - Everly</title>
+                        <link rel="stylesheet" type="text/css"
+                          href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
+                        <style>
+                          /* Profile page styles */
+                          .follow-btn {
+                            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                            color: white;
+                            border: none;
+                            padding: 10px 28px;
+                            border-radius: 10px;
+                            font-size: 14px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            text-decoration: none;
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 6px;
+                          }
 
-      <!-- Profile Header -->
-      <div class="profile-header">
-        <div class="profile-avatar">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="Sophia Bennett">
-        </div>
-        <div class="profile-info">
-          <div class="profile-name">
-            <h1>Sophia Bennett</h1>
-            <a href="/feededitprofile" class="edit-profile-btn">Edit profile</a>
-          </div>
-          <div class="profile-stats">
-            <span><strong>1,234</strong> posts</span>
-            <a href="/followers"><strong>5,678</strong> followers</a>
-            <a href="/following"><strong>1,234</strong> following</a>
-          </div>
-          <div class="profile-bio">
-            Travel enthusiast | Photographer | Sharing my adventures around the globe
-          </div>
-        </div>
-      </div>
+                          .follow-btn:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+                          }
 
-      <!-- Posts/Saved Tabs -->
-      <div class="profile-tabs">
-        <button class="active" data-tab="posts">Posts</button>
-        <button data-tab="saved">Saved</button>
-      </div>
+                          .follow-btn.following {
+                            background: transparent;
+                            color: #333;
+                            border: 2px solid #dbdbdb;
+                          }
 
-      <!-- Posts Grid -->
-      <div class="profile-posts-grid">
-        <!-- Post 1 -->
-        <div class="profile-post-item">
-          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" alt="Beach sunset">
-        </div>
-        <!-- Post 2 -->
-        <div class="profile-post-item">
-          <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800" alt="City skyline">
-        </div>
-        <!-- Post 3 -->
-        <div class="profile-post-item">
-          <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800" alt="Coffee cup">
-        </div>
-        <!-- Post 4 -->
-        <div class="profile-post-item">
-          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800" alt="Mountain landscape">
-        </div>
-        <!-- Post 5 -->
-        <div class="profile-post-item">
-          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" alt="Beach sunset">
-        </div>
-        <!-- Post 6 -->
-        <div class="profile-post-item">
-          <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800" alt="City skyline">
-        </div>
-        <!-- Post 7 -->
-        <div class="profile-post-item">
-          <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800" alt="Coffee cup">
-        </div>
-        <!-- Post 8 -->
-        <div class="profile-post-item">
-          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800" alt="Mountain landscape">
-        </div>
-        <!-- Post 9 -->
-        <div class="profile-post-item">
-          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" alt="Beach sunset">
-        </div>
-      </div>
+                          .follow-btn.following:hover {
+                            border-color: #ed4956;
+                            color: #ed4956;
+                            background: rgba(237, 73, 86, 0.05);
+                          }
 
-    </div>
-  </main>
+                          .profile-avatar-large {
+                            width: 120px;
+                            height: 120px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 36px;
+                            font-weight: 700;
+                            color: white;
+                            background: linear-gradient(135deg, #9A74D8 0%, #764ba2 100%);
+                            box-shadow: 0 4px 20px rgba(154, 116, 216, 0.3);
+                          }
 
-  <aside class="sidebar">
-    <!-- Suggested Section -->
-    <div class="sidebar-section">
-      <h3 class="sidebar-title">Suggested For You</h3>
-      <ul class="favorites-list">
-        <li class="favorite-item">
-          <div class="favorite-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">JD</div>
-          <div class="favorite-content">
-            <span class="favorite-name">jessica_doe</span>
-            <span class="follower-info">Followed by 3 friends</span>
-          </div>
-          <button class="follow-btn-small">Follow</button>
-        </li>
-        <li class="favorite-item">
-          <div class="favorite-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">MS</div>
-          <div class="favorite-content">
-            <span class="favorite-name">mike_smith</span>
-            <span class="follower-info">Followed by 5 friends</span>
-          </div>
-          <button class="follow-btn-small">Follow</button>
-        </li>
-        <li class="favorite-item">
-          <div class="favorite-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">EW</div>
-          <div class="favorite-content">
-            <span class="favorite-name">emma_wilson</span>
-            <span class="follower-info">Followed by 2 friends</span>
-          </div>
-          <button class="follow-btn-small">Follow</button>
-        </li>
-        <li class="favorite-item">
-          <div class="favorite-icon" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);">AB</div>
-          <div class="favorite-content">
-            <span class="favorite-name">alex_brown</span>
-            <span class="follower-info">Followed by 4 friends</span>
-          </div>
-          <button class="follow-btn-small">Follow</button>
-        </li>
-        <li class="favorite-item">
-          <div class="favorite-icon" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">ST</div>
-          <div class="favorite-content">
-            <span class="favorite-name">sarah_taylor</span>
-            <span class="follower-info">Followed by 6 friends</span>
-          </div>
-          <button class="follow-btn-small">Follow</button>
-        </li>
-      </ul>
-    </div>
-  </aside>
-</div>
+                          .profile-avatar-large img {
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 50%;
+                            object-fit: cover;
+                          }
 
-<jsp:include page="../public/footer.jsp" />
+                          .empty-posts {
+                            text-align: center;
+                            padding: 60px 20px;
+                            color: #6c757d;
+                          }
 
-<script>
-  // Modern Search Functionality (same as before)
-  document.addEventListener('DOMContentLoaded', function() {
-    const memoriesSearchBtn = document.getElementById('memoriesSearchBtn');
+                          .empty-posts svg {
+                            width: 80px;
+                            height: 80px;
+                            stroke: #d1d5db;
+                            margin-bottom: 20px;
+                          }
 
-    if (memoriesSearchBtn) {
-      memoriesSearchBtn.addEventListener('click', function(event) {
-        event.stopPropagation();
+                          .empty-posts h3 {
+                            color: #374151;
+                            margin-bottom: 8px;
+                          }
 
-        const searchBtnElement = this;
-        const searchContainer = searchBtnElement.parentElement;
+                          .profile-post-overlay {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            background: rgba(0, 0, 0, 0.3);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                          }
 
-        const searchBox = document.createElement('div');
-        searchBox.className = 'memories-search-expanded';
-        searchBox.innerHTML = `
-          <div class="memories-search-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          </div>
-          <input type="text" id="searchInput" placeholder="Search posts..." autofocus>
-          <button class="memories-search-close">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        `;
+                          .profile-post-item:hover .profile-post-overlay {
+                            opacity: 1;
+                          }
 
-        searchContainer.replaceChild(searchBox, searchBtnElement);
+                          .profile-post-overlay svg {
+                            width: 24px;
+                            height: 24px;
+                            color: white;
+                          }
 
-        const input = searchBox.querySelector('input');
-        input.focus();
+                          .posts-container {
+                            display: block;
+                          }
 
-        const closeSearch = () => {
-          const newSearchBtn = document.createElement('button');
-          newSearchBtn.className = 'memories-search-btn';
-          newSearchBtn.id = 'memoriesSearchBtn';
-          newSearchBtn.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          `;
-          searchContainer.replaceChild(newSearchBtn, searchBox);
-          newSearchBtn.addEventListener('click', arguments.callee);
-        };
+                          .posts-container.hidden {
+                            display: none;
+                          }
 
-        searchBox.querySelector('.memories-search-close').addEventListener('click', closeSearch);
+                          .profile-tabs button.active {
+                            border-bottom: 2px solid #262626;
+                            color: #262626;
+                          }
+                        </style>
+                      </head>
 
-        input.addEventListener('blur', function() {
-          setTimeout(() => {
-            if (!document.activeElement.closest('.memories-search-expanded')) {
-              closeSearch();
-            }
-          }, 150);
-        });
+                      <body>
 
-        searchBox.addEventListener('mousedown', function(e) {
-          e.preventDefault();
-          input.focus();
-        });
+                        <div class="page-wrapper">
+                          <main class="main-content">
+                            <!-- Fixed Top Section -->
+                            <div class="fixed-top-section">
+                              <div class="tab-nav">
+                                <div class="tab-buttons">
+                                  <a href="${pageContext.request.contextPath}/feed" style="text-decoration: none;">
+                                    <button>← Feed</button>
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
 
-        input.addEventListener('input', function(e) {
-          const query = e.target.value.toLowerCase();
-          const feedPosts = document.querySelectorAll('.feed-post');
-          feedPosts.forEach(post => {
-            const username = post.querySelector('.username').textContent.toLowerCase();
-            const caption = post.querySelector('.post-caption').textContent.toLowerCase();
-            post.style.display = (username.includes(query) || caption.includes(query)) ? 'block' : 'none';
-          });
-        });
-      });
-    }
+                            <!-- Scrollable Profile Content -->
+                            <div class="scrollable-feed" id="feedContainer">
+                              <!-- Profile Header -->
+                              <div class="profile-header">
+                                <div class="profile-avatar">
+                                  <% if (profilePic !=null && !profilePic.contains("default")) { %>
+                                    <div class="profile-avatar-large">
+                                      <img src="<%= profilePic %>" alt="@<%= profileUsername %>">
+                                    </div>
+                                    <% } else { %>
+                                      <div class="profile-avatar-large">
+                                        <%= profileInitials %>
+                                      </div>
+                                      <% } %>
+                                </div>
+                                <div class="profile-info">
+                                  <div class="profile-name">
+                                    <h1>@<%= profileUsername %>
+                                    </h1>
+                                    <% if (isOwnProfile) { %>
+                                      <a href="${pageContext.request.contextPath}/feededitprofile"
+                                        class="edit-profile-btn">Edit profile</a>
+                                      <% } else { %>
+                                        <button class="follow-btn <%= isFollowing ? " following" : "" %>"
+                                          id="followBtn"
+                                          data-profile-id="<%= profileId %>"
+                                            data-is-following="<%= isFollowing %>">
+                                              <% if (isFollowing) { %>
+                                                Following
+                                                <% } else { %>
+                                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                                    <circle cx="8.5" cy="7" r="4" />
+                                                    <line x1="20" y1="8" x2="20" y2="14" />
+                                                    <line x1="23" y1="11" x2="17" y2="11" />
+                                                  </svg>
+                                                  Follow
+                                                  <% } %>
+                                        </button>
+                                        <% } %>
+                                  </div>
+                                  <div class="profile-stats">
+                                    <span><strong id="postCount">
+                                        <%= postCount %>
+                                      </strong> posts</span>
+                                    <a href="${pageContext.request.contextPath}/followers?profileId=<%= profileId %>">
+                                      <strong id="followerCount">
+                                        <%= followerCount %>
+                                      </strong> followers
+                                    </a>
+                                    <a href="${pageContext.request.contextPath}/following?profileId=<%= profileId %>">
+                                      <strong id="followingCount">
+                                        <%= followingCount %>
+                                      </strong> following
+                                    </a>
+                                  </div>
+                                  <div class="profile-bio">
+                                    <%= profileBio %>
+                                  </div>
+                                </div>
+                              </div>
 
-    // Tab switching functionality
-    const tabButtons = document.querySelectorAll('.tab-nav button');
-    const feedContainer = document.getElementById('feedContainer');
+                              <!-- Posts/Saved Tabs -->
+                              <div class="profile-tabs">
+                                <button class="active" data-tab="posts" onclick="showTab('posts')">Posts</button>
+                                <% if (isOwnProfile) { %>
+                                  <button data-tab="saved" onclick="showTab('saved')">Saved</button>
+                                  <% } %>
+                              </div>
 
-    tabButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const tab = this.getAttribute('data-tab');
+                              <!-- Posts Section -->
+                              <div id="postsSection" class="posts-container">
+                                <% if (userPosts==null || userPosts.isEmpty()) { %>
+                                  <div class="empty-posts">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                      <circle cx="8.5" cy="8.5" r="1.5" />
+                                      <polyline points="21 15 16 10 5 21" />
+                                    </svg>
+                                    <h3>
+                                      <%= isOwnProfile ? "No posts yet" : "No posts yet" %>
+                                    </h3>
+                                    <p>
+                                      <%= isOwnProfile ? "Share your first memory to the feed!"
+                                        : "This user hasn't shared any posts yet." %>
+                                    </p>
+                                    <% if (isOwnProfile) { %>
+                                      <a href="${pageContext.request.contextPath}/createPost" class="empty-feed-btn"
+                                        style="margin-top: 16px; display: inline-flex;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                          stroke="currentColor" stroke-width="2">
+                                          <circle cx="12" cy="12" r="10" />
+                                          <line x1="12" y1="8" x2="12" y2="16" />
+                                          <line x1="8" y1="12" x2="16" y2="12" />
+                                        </svg>
+                                        Create Post
+                                      </a>
+                                      <% } %>
+                                  </div>
+                                  <% } else { %>
+                                    <div class="profile-posts-grid">
+                                      <% for (FeedPost post : userPosts) { String coverUrl=post.getCoverMediaUrl(); %>
+                                        <div class="profile-post-item"
+                                          onclick="window.location.href='${pageContext.request.contextPath}/comments?postId=<%= post.getPostId() %>'">
+                                          <% if (coverUrl !=null && !coverUrl.isEmpty()) { %>
+                                            <img src="<%= coverUrl %>" alt="Post">
+                                            <% } else { %>
+                                              <div
+                                                style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%); display: flex; align-items: center; justify-content: center;">
+                                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                                                  stroke="#94a3b8" stroke-width="1.5">
+                                                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                                  <circle cx="8.5" cy="8.5" r="1.5" />
+                                                  <polyline points="21 15 16 10 5 21" />
+                                                </svg>
+                                              </div>
+                                              <% } %>
+                                                <div class="profile-post-overlay">
+                                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                                    <circle cx="12" cy="12" r="3" />
+                                                  </svg>
+                                                </div>
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                    <% } %>
+                              </div>
 
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
+                              <!-- Saved Section (only for own profile) -->
+                              <% if (isOwnProfile) { %>
+                                <div id="savedSection" class="posts-container hidden">
+                                  <% if (savedPosts==null || savedPosts.isEmpty()) { %>
+                                    <div class="empty-posts">
+                                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                                      </svg>
+                                      <h3>No saved posts yet</h3>
+                                      <p>Save posts to view them later. Only you can see what you've saved.</p>
+                                    </div>
+                                    <% } else { %>
+                                      <div class="profile-posts-grid">
+                                        <% for (FeedPost post : savedPosts) { String coverUrl=post.getCoverMediaUrl();
+                                          %>
+                                          <div class="profile-post-item"
+                                            onclick="window.location.href='${pageContext.request.contextPath}/comments?postId=<%= post.getPostId() %>'">
+                                            <% if (coverUrl !=null && !coverUrl.isEmpty()) { %>
+                                              <img src="<%= coverUrl %>" alt="Saved Post">
+                                              <% } else { %>
+                                                <div
+                                                  style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%); display: flex; align-items: center; justify-content: center;">
+                                                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                                                    stroke="#94a3b8" stroke-width="1.5">
+                                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                                    <circle cx="8.5" cy="8.5" r="1.5" />
+                                                    <polyline points="21 15 16 10 5 21" />
+                                                  </svg>
+                                                </div>
+                                                <% } %>
+                                                  <div class="profile-post-overlay">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                      stroke-width="2">
+                                                      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                                                    </svg>
+                                                  </div>
+                                          </div>
+                                          <% } %>
+                                      </div>
+                                      <% } %>
+                                </div>
+                                <% } %>
+                            </div>
+                          </main>
 
-        if (tab === 'home') {
-          location.reload();
-        } else if (tab === 'explore') {
-          feedContainer.innerHTML = '<p style="text-align: center; color: #6c757d; margin: 40px 0; font-size: 16px;">Discover new content and explore amazing posts!</p>';
-        }
-      });
-    });
+                          <aside class="sidebar">
+                            <!-- Suggested Section -->
+                            <div class="sidebar-section">
+                              <h3 class="sidebar-title">Suggested For You</h3>
+                              <ul class="favorites-list">
+                                <% String[] gradients={ "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
+                                  , "linear-gradient(135deg, #30cfd0 0%, #330867 100%)"
+                                  , "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+                                  , "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)"
+                                  , "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" }; int gradientIndex=0; if
+                                  (recommendedUsers !=null && !recommendedUsers.isEmpty()) { for (FeedProfile user :
+                                  recommendedUsers) { String gradient=gradients[gradientIndex % gradients.length];
+                                  gradientIndex++; %>
+                                  <li class="favorite-item">
+                                    <% if (user.getFeedProfilePictureUrl() !=null &&
+                                      !user.getFeedProfilePictureUrl().contains("default")) { %>
+                                      <img src="<%= user.getFeedProfilePictureUrl() %>"
+                                        alt="@<%= user.getFeedUsername() %>"
+                                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                                      <% } else { %>
+                                        <div class="favorite-icon" style="background: <%= gradient %>;">
+                                          <%= user.getInitials() %>
+                                        </div>
+                                        <% } %>
+                                          <div class="favorite-content">
+                                            <a href="${pageContext.request.contextPath}/publicprofile?username=<%= user.getFeedUsername() %>"
+                                              style="text-decoration: none;">
+                                              <span class="favorite-name">
+                                                <%= user.getFeedUsername() %>
+                                              </span>
+                                            </a>
+                                            <span class="follower-info">Suggested for you</span>
+                                          </div>
+                                          <button class="follow-btn-small"
+                                            data-profile-id="<%= user.getFeedProfileId() %>"
+                                            onclick="handleFollow(this, <%= user.getFeedProfileId() %>)">Follow</button>
+                                  </li>
+                                  <% } } else { %>
+                                    <li style="text-align: center; color: #6c757d; padding: 20px 0;">
+                                      No suggestions available
+                                    </li>
+                                    <% } %>
+                              </ul>
+                            </div>
+                          </aside>
+                        </div>
 
-    // Profile Tabs (Posts / Saved)
-    const profileTabButtons = document.querySelectorAll('.profile-tabs button');
-    profileTabButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        profileTabButtons.forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
+                        <jsp:include page="../public/footer.jsp" />
 
-    // Like button functionality
-    const likeButtons = document.querySelectorAll('.like-btn');
-    likeButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-        this.classList.toggle('liked');
-        const svg = this.querySelector('svg');
-        if (this.classList.contains('liked')) {
-          svg.style.fill = '#ed4956';
-          svg.style.stroke = '#ed4956';
-        } else {
-          svg.style.fill = 'none';
-          svg.style.stroke = 'currentColor';
-        }
-      });
-    });
+                        <script>
+                          // Tab switching for posts/saved
+                          function showTab(tab) {
+                            const tabs = document.querySelectorAll('.profile-tabs button');
+                            const postsSection = document.getElementById('postsSection');
+                            const savedSection = document.getElementById('savedSection');
 
-    // Bookmark button functionality
-    const bookmarkButtons = document.querySelectorAll('.bookmark-btn');
-    bookmarkButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-        this.classList.toggle('bookmarked');
-        const svg = this.querySelector('svg');
-        if (this.classList.contains('bookmarked')) {
-          svg.style.fill = '#262626';
-        } else {
-          svg.style.fill = 'none';
-        }
-      });
-    });
+                            tabs.forEach(t => t.classList.remove('active'));
+                            document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
 
-    // Follow button functionality
-    const followButtons = document.querySelectorAll('.follow-btn-small');
-    followButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-        if (this.textContent === 'Follow') {
-          this.textContent = 'Following';
-          this.style.background = 'transparent';
-          this.style.color = '#333';
-          this.style.border = '1px solid #dbdbdb';
-        } else {
-          this.textContent = 'Follow';
-          this.style.background = '#6366f1';
-          this.style.color = 'white';
-          this.style.border = 'none';
-        }
-      });
-    });
-  });
-</script>
-</body>
-</html>
+                            if (tab === 'posts') {
+                              postsSection.classList.remove('hidden');
+                              if (savedSection) savedSection.classList.add('hidden');
+                            } else if (tab === 'saved') {
+                              postsSection.classList.add('hidden');
+                              if (savedSection) savedSection.classList.remove('hidden');
+                            }
+                          }
+
+                          document.addEventListener('DOMContentLoaded', function () {
+                            // Follow button functionality for main profile
+                            const followBtn = document.getElementById('followBtn');
+                            if (followBtn) {
+                              followBtn.addEventListener('click', function () {
+                                const profileId = this.dataset.profileId;
+                                const isFollowing = this.dataset.isFollowing === 'true';
+                                const action = isFollowing ? 'unfollow' : 'follow';
+
+                                fetch('${pageContext.request.contextPath}/followUser?action=' + action + '&targetProfileId=' + profileId, {
+                                  method: 'POST',
+                                  headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                  }
+                                })
+                                  .then(response => response.json())
+                                  .then(data => {
+                                    if (data.success) {
+                                      this.dataset.isFollowing = data.isFollowing.toString();
+                                      if (data.isFollowing) {
+                                        this.classList.add('following');
+                                        this.innerHTML = 'Following';
+                                      } else {
+                                        this.classList.remove('following');
+                                        this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> Follow';
+                                      }
+                                      // Update follower count
+                                      document.getElementById('followerCount').textContent = data.followerCount;
+                                    }
+                                  })
+                                  .catch(error => console.error('Error:', error));
+                              });
+                            }
+                          });
+
+                          // Handle follow for recommended users
+                          function handleFollow(btn, profileId) {
+                            const isFollowing = btn.textContent.trim() === 'Following';
+                            const action = isFollowing ? 'unfollow' : 'follow';
+
+                            fetch('${pageContext.request.contextPath}/followUser?action=' + action + '&targetProfileId=' + profileId, {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                              }
+                            })
+                              .then(response => response.json())
+                              .then(data => {
+                                if (data.success) {
+                                  if (data.isFollowing) {
+                                    btn.textContent = 'Following';
+                                    btn.style.background = 'transparent';
+                                    btn.style.color = '#333';
+                                    btn.style.border = '1px solid #dbdbdb';
+                                  } else {
+                                    btn.textContent = 'Follow';
+                                    btn.style.background = '#6366f1';
+                                    btn.style.color = 'white';
+                                    btn.style.border = 'none';
+                                  }
+                                }
+                              })
+                              .catch(error => console.error('Error:', error));
+                          }
+                        </script>
+                      </body>
+
+                      </html>

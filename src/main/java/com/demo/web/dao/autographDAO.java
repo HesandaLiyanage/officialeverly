@@ -122,6 +122,33 @@ public class autographDAO {
     }
 
     /**
+     * Get autograph by share token
+     */
+    public autograph getAutographByShareToken(String shareToken) {
+        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url, share_token FROM autograph WHERE share_token = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, shareToken);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                autograph result = mapResultSetToAutograph(rs);
+                System.out.println(
+                        "[DEBUG autographDAO] getAutographByShareToken(" + shareToken + ") returned: " + result);
+                return result;
+            } else {
+                System.out.println("[DEBUG autographDAO] getAutographByShareToken(" + shareToken
+                        + ") returned null (record not found).");
+            }
+        } catch (SQLException e) {
+            System.out.println("[DEBUG autographDAO] Error while fetching autograph by share token " + shareToken + ": "
+                    + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error while fetching autograph by share token", e);
+        }
+        return null;
+    }
+
+    /**
      * Get all autographs by a specific user
      */
     public List<autograph> findByUserId(int userId) {
@@ -208,6 +235,12 @@ public class autographDAO {
         autograph.setCreatedAt(rs.getTimestamp("created_at"));
         autograph.setUserId(rs.getInt("user_id"));
         autograph.setAutographPicUrl(rs.getString("autograph_pic_url"));
+        // Try to get share_token if it exists in the result set
+        try {
+            autograph.setShareToken(rs.getString("share_token"));
+        } catch (SQLException e) {
+            // Column doesn't exist in this query, ignore
+        }
         return autograph;
     }
 

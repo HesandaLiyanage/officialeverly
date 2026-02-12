@@ -15,8 +15,9 @@ public class EventDAO {
 
     /**
      * Create a new event
+     * @return the generated event_id, or -1 on failure
      */
-    public boolean createEvent(Event event) {
+    public int createEvent(Event event) {
         String sql = "INSERT INTO event (e_title, e_description, e_date, created_at, group_id, event_pic) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -28,7 +29,15 @@ public class EventDAO {
             stmt.setString(6, event.getEventPicUrl());
             int rowsInserted = stmt.executeUpdate();
             System.out.println("[DEBUG EventDAO] createEvent affected " + rowsInserted + " rows.");
-            return rowsInserted > 0;
+            if (rowsInserted > 0) {
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int eventId = generatedKeys.getInt(1);
+                    event.setEventId(eventId);
+                    return eventId;
+                }
+            }
+            return -1;
         } catch (SQLException e) {
             System.out.println("[DEBUG EventDAO] Error while creating event: " + e.getMessage());
             e.printStackTrace();

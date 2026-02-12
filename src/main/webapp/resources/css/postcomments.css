@@ -3,18 +3,19 @@
  * Depends on base.css for reset, variables, and base styles
  */
 
-/* Main Container */
+/* Main Container - Popup Overlay */
 .comments-page-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background: #fafafa;
+    background: rgba(0, 0, 0, 0.65);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    backdrop-filter: blur(2px);
 }
 
 /* Close Button */
@@ -83,6 +84,7 @@
     flex-direction: column;
     background: white;
     max-width: 500px;
+    border-left: 1px solid #dbdbdb;
 }
 
 /* Post Header */
@@ -91,7 +93,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border-bottom: 1px solid #efefef;
+    border-bottom: 1px solid #dbdbdb;
+    margin: 0;
 }
 
 .user-info {
@@ -310,8 +313,9 @@
 
 /* Post Actions Bar */
 .post-actions-bar {
-    border-top: 1px solid #efefef;
+    border-top: 1px solid #dbdbdb;
     padding: 12px 20px;
+    margin: 0;
 }
 
 .post-actions {
@@ -371,7 +375,8 @@
     align-items: center;
     gap: 12px;
     padding: 16px 20px;
-    border-top: 1px solid #efefef;
+    border-top: 1px solid #dbdbdb;
+    margin: 0;
 }
 
 .emoji-btn {
