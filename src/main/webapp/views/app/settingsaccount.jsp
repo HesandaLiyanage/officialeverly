@@ -15,6 +15,7 @@
             <h2>Settings</h2>
             <div class="settings-tabs">
                 <a href="${pageContext.request.contextPath}/settingsaccount" class="tab active">Account</a>
+                <a href="${pageContext.request.contextPath}/settingssubscription" class="tab">Subscription</a>
                 <a href="${pageContext.request.contextPath}/settingsprivacy" class="tab">Privacy & Security</a>
                 <a href="${pageContext.request.contextPath}/storagesense" class="tab">Storage Sense</a>
                 <a href="${pageContext.request.contextPath}/settingsnotifications" class="tab">Notifications</a>
@@ -47,6 +48,17 @@
                                     <a href="${pageContext.request.contextPath}/feededitprofile">
                                         <p class="title">Feed Profile</p>
                                         <p class="desc">Manage your public profile information</p>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="icon">💎</div>
+                                <div>
+                                    <a href="${pageContext.request.contextPath}/settingssubscription"
+                                        style="text-decoration: none;">
+                                        <p class="title">Manage Subscription</p>
+                                        <p class="desc">View plan, billing, and storage details</p>
                                     </a>
                                 </div>
                             </div>
