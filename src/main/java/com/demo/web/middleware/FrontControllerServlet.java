@@ -70,7 +70,7 @@ public class FrontControllerServlet extends HttpServlet {
         // ========================================
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
         routeToJsp.put("/profile", "/views/app/profile.jsp");
-        routeToJsp.put("/collabmemories", "/views/app/collabmemories.jsp");
+        routeToController.put("/collabmemories", "/collabmemoriesview");
         routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp");
         routeToJsp.put("/settingsnotifications", "/views/app/settingsnotifications.jsp");
         routeToJsp.put("/settingsprivacy", "/views/app/settingsprivacy.jsp");
@@ -111,7 +111,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/feededitprofile", "/views/app/editpublicprofile.jsp");
         routeToJsp.put("/blockedusers", "/views/app/blockedusers.jsp");
         routeToJsp.put("/vaultentries", "/views/app/vaultentries.jsp");
-        routeToJsp.put("/collabmemoryview", "/views/app/collabmemoryview.jsp");
+        routeToController.put("/collabmemoryview", "/collabmemoryviewservlet");
 
         // Admin pages
         routeToJsp.put("/admin", "/views/app/Admin/admindahboard.jsp");

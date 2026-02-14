@@ -1,7 +1,10 @@
 package com.demo.web.controller.Memory;
 
+import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.dao.memoryDAO;
+import com.demo.web.model.Group;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Memory;
 
@@ -14,17 +17,22 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Servlet for viewing a single memory with its associated media
+ * Servlet for viewing a single memory with its associated media.
+ * Supports personal memories and group memories with role-based access.
  */
 public class MemoryViewServlet extends HttpServlet {
 
     private memoryDAO memoryDao;
     private MediaDAO mediaDao;
+    private GroupDAO groupDAO;
+    private GroupMemberDAO groupMemberDAO;
 
     @Override
     public void init() throws ServletException {
         memoryDao = new memoryDAO();
         mediaDao = new MediaDAO();
+        groupDAO = new GroupDAO();
+        groupMemberDAO = new GroupMemberDAO();
     }
 
     @Override
@@ -56,8 +64,28 @@ public class MemoryViewServlet extends HttpServlet {
                 return;
             }
 
-            // Check if user owns this memory
-            if (memory.getUserId() != userId) {
+            // Check access permissions
+            boolean isOwner = (memory.getUserId() == userId);
+            boolean isGroupMemory = (memory.getGroupId() != null);
+            boolean hasAccess = isOwner;
+            boolean isAdmin = false;
+            boolean canEdit = isOwner;
+            String userRole = isOwner ? "admin" : null;
+            Group group = null;
+
+            if (isGroupMemory) {
+                int groupId = memory.getGroupId();
+                group = groupDAO.findById(groupId);
+                isAdmin = (group != null && group.getUserId() == userId);
+                boolean isMember = groupMemberDAO.isUserMember(groupId, userId);
+                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
+
+                hasAccess = isAdmin || isMember;
+                userRole = isAdmin ? "admin" : memberRole;
+                canEdit = isAdmin || "editor".equals(memberRole);
+            }
+
+            if (!hasAccess) {
                 request.setAttribute("errorMessage", "You don't have permission to view this memory");
                 request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
                 return;
@@ -69,6 +97,13 @@ public class MemoryViewServlet extends HttpServlet {
             // Set attributes for JSP
             request.setAttribute("memory", memory);
             request.setAttribute("mediaItems", mediaItems);
+            request.setAttribute("isGroupMemory", isGroupMemory);
+            request.setAttribute("canEdit", canEdit);
+            request.setAttribute("userRole", userRole);
+            request.setAttribute("isAdmin", isAdmin || isOwner);
+            if (group != null) {
+                request.setAttribute("group", group);
+            }
 
             // Forward to view page
             request.getRequestDispatcher("/views/app/memoryview.jsp").forward(request, response);

@@ -1,322 +1,355 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="com.demo.web.model.Group" %>
-        <% String groupId=request.getParameter("groupId"); Group group=(Group) request.getAttribute("group"); if
-            (groupId==null || groupId.isEmpty() || group==null) { response.sendRedirect(request.getContextPath()
-            + "/groups" ); return; } %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+            <%@ page import="com.demo.web.model.Group" %>
 
-            <jsp:include page="../public/header2.jsp" />
-            <html>
+                <jsp:include page="../public/header2.jsp" />
+                <html>
 
-            <head>
-                <link rel="stylesheet" type="text/css"
-                    href="${pageContext.request.contextPath}/resources/css/groupcontent.css">
-            </head>
-            <script>
-                // Group Search Functionality
-                document.addEventListener('DOMContentLoaded', function () {
-                    const memoriesSearchBtn = document.getElementById('memoriesSearchBtn');
+                <body>
+                    <link rel="stylesheet" type="text/css"
+                        href="${pageContext.request.contextPath}/resources/css/groupcontent.css">
+                    <link rel="stylesheet" type="text/css"
+                        href="${pageContext.request.contextPath}/resources/css/memories.css">
 
-                    if (memoriesSearchBtn) {
-                        memoriesSearchBtn.addEventListener('click', function (event) {
-                            event.stopPropagation();
+                    <style>
+                        /* Group Memories Specific Overrides */
+                        .group-memories-header {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            margin-bottom: 8px;
+                        }
 
-                            const searchBtnElement = this;
-                            const searchContainer = searchBtnElement.parentElement;
+                        .group-memories-count {
+                            font-size: 14px;
+                            color: #6b7280;
+                            font-weight: 500;
+                        }
 
-                            const searchBox = document.createElement('div');
-                            searchBox.className = 'memories-search-expanded';
-                            searchBox.innerHTML = `
-                <div class="memories-search-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        .memory-card {
+                            transition: transform 0.2s ease, box-shadow 0.2s ease;
+                        }
+
+                        .memory-card:hover {
+                            transform: translateY(-4px);
+                            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+                        }
+
+                        .memory-card .memory-creator {
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                            margin-top: 6px;
+                            font-size: 12px;
+                            color: #9ca3af;
+                        }
+
+                        .memory-card .memory-creator .creator-dot {
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: #6366f1;
+                        }
+
+                        .viewer-notice {
+                            background: linear-gradient(135deg, #fef3c7, #fde68a);
+                            border: 1px solid #f59e0b;
+                            border-radius: 12px;
+                            padding: 14px 20px;
+                            margin-bottom: 16px;
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            color: #92400e;
+                            font-size: 14px;
+                        }
+
+                        .viewer-notice svg {
+                            flex-shrink: 0;
+                        }
+                    </style>
+
+                    <% Group group=(Group) request.getAttribute("group"); String currentUserRole=(String)
+                        request.getAttribute("currentUserRole"); Boolean isAdmin=(Boolean)
+                        request.getAttribute("isAdmin"); int groupId=group !=null ? group.getGroupId() : 0; String
+                        groupName=group !=null ? group.getName() : "Group" ; boolean canCreate=isAdmin !=null && isAdmin
+                        || "editor" .equals(currentUserRole); %>
+
+                        <div class="page-wrapper">
+                            <main class="main-content">
+                                <!-- Page Header -->
+                                <div class="page-header">
+                                    <h1 class="group-name">
+                                        <%= groupName %>
+                                    </h1>
+                                    <p class="group-creator">
+                                        <% if (group !=null && group.getDescription() !=null &&
+                                            !group.getDescription().isEmpty()) { %>
+                                            <%= group.getDescription() %>
+                                                <% } else { %>
+                                                    Group Memories
+                                                    <% } %>
+                                    </p>
+                                </div>
+
+                                <!-- Tab Navigation -->
+                                <div class="tab-nav">
+                                    <a href="${pageContext.request.contextPath}/groupmemories?groupId=<%= groupId %>"
+                                        class="tab-link active">Memories</a>
+                                    <a href="${pageContext.request.contextPath}/groupannouncement?groupId=<%= groupId %>"
+                                        class="tab-link">Announcements</a>
+                                    <a href="${pageContext.request.contextPath}/groupmembers?groupId=<%= groupId %>"
+                                        class="tab-link">Members</a>
+                                </div>
+
+                                <!-- Viewer Notice -->
+                                <% if ("viewer".equals(currentUserRole)) { %>
+                                    <div class="viewer-notice">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                        </svg>
+                                        You have viewer access. You can view memories but cannot add or edit them.
+                                        Contact the group admin to request editor access.
+                                    </div>
+                                    <% } %>
+
+                                        <!-- Search and Filters -->
+                                        <div class="search-filters" style="margin-top: 10px; margin-bottom: 15px;">
+                                            <div class="memories-search-container">
+                                                <button class="memories-search-btn" id="memoriesSearchBtn">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <circle cx="11" cy="11" r="8"></circle>
+                                                        <path d="m21 21-4.35-4.35"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="group-memories-count">
+                                                <c:if test="${not empty memories}">
+                                                    ${memories.size()} ${memories.size() == 1 ? 'memory' : 'memories'}
+                                                </c:if>
+                                            </div>
+                                        </div>
+
+                                        <!-- Error Messages -->
+                                        <c:if test="${not empty errorMessage}">
+                                            <div
+                                                style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; margin: 15px 0; border-radius: 8px;">
+                                                <strong>Error:</strong> ${errorMessage}
+                                            </div>
+                                        </c:if>
+
+                                        <!-- Memories Grid -->
+                                        <div class="memories-grid" id="memoriesGrid"
+                                            style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
+                                            <c:choose>
+                                                <c:when test="${empty memories}">
+                                                    <div
+                                                        style="grid-column: 1/-1; text-align: center; padding: 60px; color: #888;">
+                                                        <div style="font-size: 64px; margin-bottom: 20px;">📸</div>
+                                                        <h3 style="margin-bottom: 10px;">No group memories yet</h3>
+                                                        <% if (canCreate) { %>
+                                                            <p style="margin-bottom: 30px;">Be the first to add a memory
+                                                                to this group!</p>
+                                                            <a href="${pageContext.request.contextPath}/creatememory?groupId=<%= groupId %>"
+                                                                class="floating-btn"
+                                                                style="display: inline-block; padding: 12px 30px; text-decoration: none;">
+                                                                Create First Memory
+                                                            </a>
+                                                            <% } else { %>
+                                                                <p>This group doesn't have any memories yet. An admin or
+                                                                    editor can create them.</p>
+                                                                <% } %>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:forEach var="memory" items="${memories}">
+                                                        <c:set var="coverUrl"
+                                                            value="${requestScope['cover_'.concat(memory.memoryId)]}" />
+                                                        <c:set var="finalCover"
+                                                            value="${not empty coverUrl ? coverUrl : pageContext.request.contextPath.concat('/resources/images/default-memory.jpg')}" />
+
+                                                        <div class="memory-card" data-title="${memory.title}"
+                                                            onclick="location.href='${pageContext.request.contextPath}/memoryview?id=${memory.memoryId}'"
+                                                            style="cursor: pointer;">
+                                                            <div class="memory-image"
+                                                                style="background-image: url('${finalCover}');">
+                                                            </div>
+                                                            <div class="memory-content">
+                                                                <h3 class="memory-title">${memory.title}</h3>
+                                                                <p class="memory-date">
+                                                                    <fmt:formatDate value="${memory.createdTimestamp}"
+                                                                        pattern="MMMM d, yyyy" />
+                                                                </p>
+                                                                <c:if test="${not empty memory.description}">
+                                                                    <p class="memory-description"
+                                                                        style="margin: 8px 0 0 0; color: #888; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                                        ${memory.description}
+                                                                    </p>
+                                                                </c:if>
+                                                            </div>
+                                                        </div>
+                                                    </c:forEach>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+
+                                        <!-- Empty state container for search -->
+                                        <div id="emptyStateContainer" style="display: none; min-height: 600px;">
+                                            <p
+                                                style="text-align: center; color: #6c757d; margin: 40px 0; font-size: 16px;">
+                                                No memories found</p>
+                                        </div>
+                            </main>
+
+                            <aside class="sidebar">
+                                <!-- Group Info -->
+                                <div class="sidebar-section">
+                                    <h3 class="sidebar-title">Group Info</h3>
+                                    <ul class="favorites-list">
+                                        <li class="favorite-item">
+                                            <div class="favorite-icon"
+                                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+                                                📷</div>
+                                            <span class="favorite-name">Memories:
+                                                <c:out value="${memories.size()}" default="0" />
+                                            </span>
+                                        </li>
+                                        <li class="favorite-item">
+                                            <div class="favorite-icon"
+                                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+                                                👤</div>
+                                            <span class="favorite-name">Your Role:
+                                                <strong style="text-transform: capitalize;">
+                                                    <%= currentUserRole !=null ? currentUserRole : "member" %>
+                                                </strong>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Floating Action Buttons -->
+                                <div class="floating-buttons" id="floatingButtons"
+                                    style="position: static; margin-top: 20px;">
+                                    <% if (canCreate) { %>
+                                        <a href="${pageContext.request.contextPath}/creatememory?groupId=<%= groupId %>"
+                                            class="floating-btn">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                            Add Memory
+                                        </a>
+                                        <% } %>
+                                            <a href="${pageContext.request.contextPath}/groupmembers?groupId=<%= groupId %>"
+                                                class="floating-btn" style="background: #6366f1;">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="9" cy="7" r="4"></circle>
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                </svg>
+                                                Members
+                                            </a>
+                                </div>
+                            </aside>
+                        </div>
+
+                        <jsp:include page="../public/footer.jsp" />
+
+                        <!-- Search functionality -->
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const memoriesSearchBtn = document.getElementById('memoriesSearchBtn');
+                                const memoriesGrid = document.getElementById('memoriesGrid');
+                                const emptyStateContainer = document.getElementById('emptyStateContainer');
+
+                                if (memoriesSearchBtn) {
+                                    memoriesSearchBtn.addEventListener('click', function (event) {
+                                        event.stopPropagation();
+
+                                        const searchBtnElement = this;
+                                        const searchContainer = searchBtnElement.parentElement;
+
+                                        const searchBox = document.createElement('div');
+                                        searchBox.className = 'memories-search-expanded';
+                                        searchBox.innerHTML = `
+                    <div class="memories-search-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
-                    </svg>
-                </div>
-                <input type="text" id="searchInput" placeholder="Search memories..." autofocus>
-                <button class="memories-search-close">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      </svg>
+                    </div>
+                    <input type="text" id="searchInput" placeholder="Search group memories..." autofocus>
+                    <button class="memories-search-close">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            `;
+                      </svg>
+                    </button>
+                  `;
 
-                            searchContainer.replaceChild(searchBox, searchBtnElement);
+                                        searchContainer.replaceChild(searchBox, searchBtnElement);
 
-                            const input = searchBox.querySelector('input');
-                            input.focus();
+                                        const input = searchBox.querySelector('input');
+                                        input.focus();
 
-                            const closeSearch = () => {
-                                const newSearchBtn = document.createElement('button');
-                                newSearchBtn.className = 'memories-search-btn';
-                                newSearchBtn.id = 'memoriesSearchBtn';
-                                newSearchBtn.innerHTML = `
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        const closeSearch = () => {
+                                            const newSearchBtn = document.createElement('button');
+                                            newSearchBtn.className = 'memories-search-btn';
+                                            newSearchBtn.id = 'memoriesSearchBtn';
+                                            newSearchBtn.innerHTML = `
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
-                    </svg>
-                `;
-                                searchContainer.replaceChild(newSearchBtn, searchBox);
-                                newSearchBtn.addEventListener('click', arguments.callee);
-                            };
+                      </svg>
+                    `;
+                                            searchContainer.replaceChild(newSearchBtn, searchBox);
+                                            const cards = document.querySelectorAll('.memory-card');
+                                            cards.forEach(card => card.style.display = 'block');
+                                            if (memoriesGrid) memoriesGrid.style.display = 'grid';
+                                            if (emptyStateContainer) emptyStateContainer.style.display = 'none';
+                                        };
 
-                            searchBox.querySelector('.memories-search-close').addEventListener('click', closeSearch);
+                                        searchBox.querySelector('.memories-search-close').addEventListener('click', closeSearch);
 
-                            input.addEventListener('blur', function () {
-                                setTimeout(() => {
-                                    if (!document.activeElement.closest('.memories-search-expanded')) {
-                                        closeSearch();
-                                    }
-                                }, 150);
+                                        input.addEventListener('input', function (e) {
+                                            const query = e.target.value.toLowerCase();
+                                            const memoryCards = document.querySelectorAll('.memory-card');
+                                            let visibleCount = 0;
+
+                                            memoryCards.forEach(card => {
+                                                const title = card.getAttribute('data-title')?.toLowerCase() || '';
+                                                const matches = title.includes(query);
+
+                                                if (matches) {
+                                                    card.style.display = 'block';
+                                                    visibleCount++;
+                                                } else {
+                                                    card.style.display = 'none';
+                                                }
+                                            });
+
+                                            if (visibleCount === 0 && query !== '') {
+                                                if (memoriesGrid) memoriesGrid.style.display = 'none';
+                                                if (emptyStateContainer) emptyStateContainer.style.display = 'block';
+                                            } else {
+                                                if (memoriesGrid) memoriesGrid.style.display = 'grid';
+                                                if (emptyStateContainer) emptyStateContainer.style.display = 'none';
+                                            }
+                                        });
+                                    });
+                                }
                             });
+                        </script>
+                </body>
 
-                            searchBox.addEventListener('mousedown', function (e) {
-                                e.preventDefault();
-                                input.focus();
-                            });
-
-                            // Search functionality
-                            input.addEventListener('input', function (e) {
-                                const query = e.target.value.toLowerCase();
-                                const memoryCards = document.querySelectorAll('.memory-card');
-                                memoryCards.forEach(card => {
-                                    const title = card.querySelector('.memory-title')?.textContent?.toLowerCase() || '';
-                                    card.style.display = title.includes(query) ? 'block' : 'none';
-                                });
-                            });
-                        });
-                    }
-                });
-
-                // Handle floating buttons position on scroll
-                document.addEventListener('DOMContentLoaded', function () {
-                    function handleFloatingButtons() {
-                        const footer = document.querySelector('footer');
-                        const floatingButtons = document.getElementById('floatingButtons');
-
-                        if (!footer || !floatingButtons) return;
-
-                        const footerRect = footer.getBoundingClientRect();
-                        const windowHeight = window.innerHeight;
-                        const buttonHeight = floatingButtons.offsetHeight;
-
-                        if (footerRect.top < windowHeight - buttonHeight - 40) {
-                            const stopPosition = footer.offsetTop - buttonHeight - 40;
-                            floatingButtons.style.position = 'absolute';
-                            floatingButtons.style.bottom = 'auto';
-                            floatingButtons.style.top = stopPosition + 'px';
-                        } else {
-                            floatingButtons.style.position = 'fixed';
-                            floatingButtons.style.bottom = '40px';
-                            floatingButtons.style.top = 'auto';
-                            floatingButtons.style.right = '40px';
-                        }
-                    }
-
-                    window.addEventListener('scroll', handleFloatingButtons);
-                    window.addEventListener('resize', handleFloatingButtons);
-                    handleFloatingButtons();
-                });
-            </script>
-
-            <body>
-
-                <!-- Page Wrapper -->
-                <div class="page-wrapper">
-                    <main class="main-content">
-                        <!-- Page Header -->
-                        <div class="page-header">
-                            <h1 class="group-name">
-                                <%= group.getName()%>
-                            </h1>
-                            <p class="group-creator">Created by You</p>
-                        </div>
-
-                        <!-- Tab Navigation -->
-                        <!-- Tab Navigation -->
-                        <div class="tab-nav">
-                            <a href="${pageContext.request.contextPath}/groupmemories?groupId=<%= groupId %>"
-                                class="tab-link active">Memories</a>
-                            <a href="${pageContext.request.contextPath}/groupannouncement?groupId=<%= groupId %>"
-                                class="tab-link">Announcements</a>
-                            <a href="${pageContext.request.contextPath}/groupmembers?groupId=<%= groupId %>"
-                                class="tab-link">Members</a>
-                        </div>
-
-                        <!-- Search and Filters -->
-                        <div class="search-filters">
-                            <div class="memories-search-container">
-                                <button class="memories-search-btn" id="memoriesSearchBtn">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="11" cy="11" r="8"></circle>
-                                        <path d="m21 21-4.35-4.35"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            <button class="filter-btn" id="dateFilter">Date</button>
-                            <button class="filter-btn" id="locationFilter">Location</button>
-                        </div>
-
-                        <!-- Memories Grid -->
-                        <div class="memories-grid" id="memoriesGrid">
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=1" class="memory-card">
-                                <div class="memory-image summer-beach"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Summer Beach Trip</h3>
-                                    <p class="memory-date">June 15, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=2" class="memory-card">
-                                <div class="memory-image holiday-dinner"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Holiday Dinner</h3>
-                                    <p class="memory-date">December 24, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=3" class="memory-card">
-                                <div class="memory-image safe-vacation"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Safe Vacation</h3>
-                                    <p class="memory-date">August 5, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=4" class="memory-card">
-                                <div class="memory-image beach-walk"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Beach Walk</h3>
-                                    <p class="memory-date">July 22, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=5" class="memory-card">
-                                <div class="memory-image photo-shoot"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Photo Shoot Day</h3>
-                                    <p class="memory-date">May 10, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=6" class="memory-card">
-                                <div class="memory-image picnic"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Picnic in Park</h3>
-                                    <p class="memory-date">September 3, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=7" class="memory-card">
-                                <div class="memory-image mountain-hike"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Mountain Hike</h3>
-                                    <p class="memory-date">October 12, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=8" class="memory-card">
-                                <div class="memory-image reunion"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Grand Reunion</h3>
-                                    <p class="memory-date">November 1, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=9" class="memory-card">
-                                <div class="memory-image wedding"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Cousin's Wedding</h3>
-                                    <p class="memory-date">April 20, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=10" class="memory-card">
-                                <div class="memory-image road-trip"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Road Trip Adventure</h3>
-                                    <p class="memory-date">March 8, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=11" class="memory-card">
-                                <div class="memory-image camping"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Camping Weekend</h3>
-                                    <p class="memory-date">February 14, 2023</p>
-                                </div>
-                            </a>
-
-                            <a href="${pageContext.request.contextPath}/memoryview?memoryId=12" class="memory-card">
-                                <div class="memory-image birthday"></div>
-                                <div class="memory-content">
-                                    <h3 class="memory-title">Birthday Celebration</h3>
-                                    <p class="memory-date">January 18, 2023</p>
-                                </div>
-                            </a>
-                        </div>
-
-                        <!-- Floating Add Memory Button -->
-                        <div class="floating-buttons" id="floatingButtons">
-                            <a href="${pageContext.request.contextPath}/creatememory?groupId=<%= groupId %>"
-                                class="floating-btn">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                                Add Memory
-                            </a>
-                            <a href="${pageContext.request.contextPath}/editgroup?groupId=<%= groupId %>"
-                                class="floating-btn edit-btn">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                </svg>
-                                Edit Group
-                            </a>
-                            <button onclick="confirmDeleteGroup(<%= groupId %>)" class="floating-btn delete-btn">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path
-                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                    </path>
-                                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                                </svg>
-                                Delete Group
-                            </button>
-                        </div>
-                    </main>
-                </div>
-
-                <script>
-                    function confirmDeleteGroup(groupId) {
-                        if (confirm('Are you sure you want to delete this group? This action cannot be undone and will delete all memories, announcements, and members associated with this group.')) {
-                            // Create a form dynamically to submit POST request
-                            const form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = '/deletegroupservlet';
-
-                            const input = document.createElement('input');
-                            input.type = 'hidden';
-                            input.name = 'groupId';
-                            input.value = groupId;
-
-                            form.appendChild(input);
-                            document.body.appendChild(form);
-                            form.submit();
-                        }
-                    }
-                </script>
-
-                <jsp:include page="../public/footer.jsp" />
-
-                <script src="${pageContext.request.contextPath}/resources/js/groupsearch.js"></script>
-                <script src="${pageContext.request.contextPath}/resources/js/groupfloating.js"></script>
-
-            </body>
-
-            </html>
+                </html>

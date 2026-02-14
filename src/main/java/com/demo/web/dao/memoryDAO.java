@@ -19,8 +19,8 @@ public class memoryDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "INSERT INTO memory (title, description, user_id, updated_at, is_public) " +
-                    "VALUES (?, ?, ?, ?, ?) RETURNING memory_id";
+            String sql = "INSERT INTO memory (title, description, user_id, updated_at, is_public, group_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?) RETURNING memory_id";
 
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, memory.getTitle());
@@ -28,6 +28,11 @@ public class memoryDAO {
             stmt.setInt(3, memory.getUserId());
             stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
             stmt.setBoolean(5, memory.isPublic());
+            if (memory.getGroupId() != null) {
+                stmt.setInt(6, memory.getGroupId());
+            } else {
+                stmt.setNull(6, java.sql.Types.INTEGER);
+            }
 
             rs = stmt.executeQuery();
 
@@ -134,13 +139,47 @@ public class memoryDAO {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
                     "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
-                    "is_collaborative, collab_share_key " +
+                    "is_collaborative, collab_share_key, group_id " +
                     "FROM memory WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL) " +
                     "AND (is_collaborative = FALSE OR is_collaborative IS NULL) " +
+                    "AND (group_id IS NULL) " +
                     "ORDER BY created_timestamp DESC";
 
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                memories.add(mapResultSetToMemory(rs));
+            }
+
+            return memories;
+
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+    }
+
+    /**
+     * Get all memories for a specific group
+     */
+    public List<Memory> getMemoriesByGroupId(int groupId) throws SQLException {
+        List<Memory> memories = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
+                    "is_collaborative, collab_share_key, group_id " +
+                    "FROM memory WHERE group_id = ? " +
+                    "ORDER BY created_timestamp DESC";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, groupId);
 
             rs = stmt.executeQuery();
 
@@ -292,6 +331,16 @@ public class memoryDAO {
             memory.setCollabShareKey(rs.getString("collab_share_key"));
         } catch (SQLException e) {
             // Columns may not exist in older queries
+        }
+
+        // Group field
+        try {
+            int gid = rs.getInt("group_id");
+            if (!rs.wasNull()) {
+                memory.setGroupId(gid);
+            }
+        } catch (SQLException e) {
+            // Column may not exist in older queries
         }
 
         return memory;

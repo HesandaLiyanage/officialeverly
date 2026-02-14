@@ -2,8 +2,11 @@ package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.dao.MediaDAO;
+import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
+import com.demo.web.model.Group;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -87,12 +90,30 @@ public class UpdateMemoryServlet extends HttpServlet {
                 return;
             }
 
-            // Check ownership
-            if (memory.getUserId() != userId) {
-                System.out.println("ERROR: User " + userId + " doesn't own memory " + memoryId + " (owned by "
-                        + memory.getUserId() + ")");
+            // Check edit permissions
+            boolean canEdit = false;
+            boolean isGroupMemory = (memory.getGroupId() != null);
+
+            if (isGroupMemory) {
+                int groupId = memory.getGroupId();
+                GroupDAO groupDAO = new GroupDAO();
+                GroupMemberDAO groupMemberDAO = new GroupMemberDAO();
+                Group group = groupDAO.findById(groupId);
+                boolean isAdmin = (group != null && group.getUserId() == userId);
+                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
+                canEdit = isAdmin || "editor".equals(memberRole);
+            } else {
+                canEdit = (memory.getUserId() == userId);
+            }
+
+            if (!canEdit) {
+                System.out.println("ERROR: User " + userId + " doesn't have edit permission for memory " + memoryId);
                 request.setAttribute("errorMessage", "You don't have permission to edit this memory");
-                response.sendRedirect("/memories");
+                if (isGroupMemory) {
+                    response.sendRedirect("/groupmemories?groupId=" + memory.getGroupId());
+                } else {
+                    response.sendRedirect("/memories");
+                }
                 return;
             }
 

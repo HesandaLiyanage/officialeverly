@@ -348,6 +348,13 @@
                         const formData = new FormData(memoryForm);
                         const isCollab = document.getElementById('isCollaborative').value === 'true';
 
+                        // Pass groupId if present in URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const groupId = urlParams.get('groupId');
+                        if (groupId) {
+                            formData.append('groupId', groupId);
+                        }
+
                         // Validate
                         const memoryName = formData.get('memoryName');
                         if (!memoryName || memoryName.trim() === '') {
@@ -365,8 +372,7 @@
                         submitBtn.disabled = true;
                         btnText.textContent = 'Creating...';
 
-                        console.log('Uploading memory:', memoryName, 'Collab:', isCollab);
-                        console.log('Files:', fileInput.files.length);
+                        console.log('Uploading memory:', memoryName, 'Collab:', isCollab, 'GroupId:', groupId);
 
                         // Submit via AJAX
                         fetch('${pageContext.request.contextPath}/createMemoryServlet', {
@@ -421,6 +427,8 @@
                                         });
                                 } else if (data.isCollaborative) {
                                     window.location.href = '${pageContext.request.contextPath}/collabmemoryview?id=' + data.memoryId;
+                                } else if (data.groupId && data.groupId !== 'null') {
+                                    window.location.href = '${pageContext.request.contextPath}/groupmemories?groupId=' + data.groupId;
                                 } else {
                                     window.location.href = '${pageContext.request.contextPath}/memories';
                                 }

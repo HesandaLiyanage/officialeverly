@@ -16,6 +16,7 @@ public class Memory {
     private boolean isLinkShared;
     private boolean isCollaborative;
     private String collabShareKey;
+    private Integer groupId; // null if not a group memory
 
     // Constructors
     public Memory() {
@@ -141,6 +142,18 @@ public class Memory {
         this.coverUrl = coverUrl;
     }
 
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
     @Override
     public String toString() {
         return "Memory{" +
@@ -150,6 +163,7 @@ public class Memory {
                 ", userId=" + userId +
                 ", coverMediaId=" + coverMediaId +
                 ", isPublic=" + isPublic +
+                ", groupId=" + groupId +
                 ", createdTimestamp=" + createdTimestamp +
                 '}';
     }

@@ -160,6 +160,74 @@
               background: #fee2e2;
               color: #991b1b;
             }
+
+            /* Role Management Styles */
+            .member-card {
+              position: relative;
+            }
+
+            .member-actions {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              margin-left: auto;
+            }
+
+            .role-select {
+              padding: 6px 12px;
+              border: 2px solid #e0e0e0;
+              border-radius: 8px;
+              font-size: 13px;
+              font-weight: 500;
+              color: #374151;
+              background: white;
+              cursor: pointer;
+              transition: all 0.2s;
+              appearance: auto;
+            }
+
+            .role-select:hover {
+              border-color: #6366f1;
+            }
+
+            .role-select:focus {
+              outline: none;
+              border-color: #6366f1;
+              box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            }
+
+            .remove-member-btn {
+              padding: 6px 10px;
+              border: none;
+              border-radius: 8px;
+              background: #fee2e2;
+              color: #dc2626;
+              cursor: pointer;
+              font-size: 12px;
+              font-weight: 600;
+              transition: all 0.2s;
+            }
+
+            .remove-member-btn:hover {
+              background: #fecaca;
+            }
+
+            .member-role.editor {
+              background: #dbeafe;
+              color: #1d4ed8;
+            }
+
+            .member-role.viewer {
+              background: #f3f4f6;
+              color: #6b7280;
+            }
+
+            /* Override member-card to allow actions inline */
+            .members-grid .member-card {
+              display: flex;
+              align-items: center;
+              text-decoration: none;
+            }
           </style>
         </head>
         <script>
@@ -262,6 +330,58 @@
             const text = encodeURIComponent('Join our group on Everly! ' + link);
             window.open('sms:?body=' + text, '_blank');
           }
+
+          // Role Management Functions
+          function updateMemberRole(groupId, memberId, newRole) {
+            if (!confirm('Change this member\'s role to ' + newRole + '?')) return;
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '${pageContext.request.contextPath}/groupmembersservlet';
+
+            const fields = {
+              action: 'updateRole',
+              groupId: groupId,
+              memberId: memberId,
+              role: newRole
+            };
+
+            for (const [key, value] of Object.entries(fields)) {
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = value;
+              form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+          }
+
+          function removeMember(groupId, memberId, username) {
+            if (!confirm('Remove ' + username + ' from this group? This action cannot be undone.')) return;
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '${pageContext.request.contextPath}/groupmembersservlet';
+
+            const fields = {
+              action: 'removeMember',
+              groupId: groupId,
+              memberId: memberId
+            };
+
+            for (const [key, value] of Object.entries(fields)) {
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = value;
+              form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+          }
         </script>
 
         <body>
@@ -336,29 +456,51 @@
 
                               String role = member.getRole();
                               boolean isAdminMember = "admin".equalsIgnoreCase(role);
+                              boolean isEditorMember = "editor".equalsIgnoreCase(role);
+                              boolean isViewerMember = "viewer".equalsIgnoreCase(role);
                               String avatarColor = avatarColors[colorIndex % avatarColors.length];
                               colorIndex++;
+                              int memberId = member.getUser().getId();
                               %>
-                              <a href="${pageContext.request.contextPath}/groupprofile?memberId=<%= member.getUser().getId() %>&groupId=<%= groupId %>"
-                                class="member-card">
-                                <div class="member-avatar" style="background: <%= avatarColor %>; color: white;">
-                                  <%= initials %>
-                                </div>
-                                <div class="member-details">
-                                  <h3 class="member-name">
-                                    <%= username %>
-                                  </h3>
-                                  <span class="member-role <%= isAdminMember ? " admin" : "" %>"><%= isAdminMember
-                                      ? "Admin" : "Member" %></span>
-                                </div>
-                              </a>
+                              <div class="member-card">
+                                <a href="${pageContext.request.contextPath}/groupprofile?memberId=<%= memberId %>&groupId=<%= groupId %>"
+                                  style="display: flex; align-items: center; text-decoration: none; color: inherit; flex: 1;">
+                                  <div class="member-avatar" style="background: <%= avatarColor %>; color: white;">
+                                    <%= initials %>
+                                  </div>
+                                  <div class="member-details">
+                                    <h3 class="member-name">
+                                      <%= username %>
+                                    </h3>
+                                    <span class="member-role <%= isAdminMember ? " admin" : isEditorMember ? "editor"
+                                      : "viewer" %>">
+                                      <%= isAdminMember ? "Admin" : isEditorMember ? "Editor" : "Viewer" %>
+                                    </span>
+                                  </div>
+                                </a>
+
+                                <% if (isAdmin !=null && isAdmin && !isAdminMember) { %>
+                                  <div class="member-actions">
+                                    <select class="role-select"
+                                      onchange="updateMemberRole(<%= groupId %>, <%= memberId %>, this.value)">
+                                      <option value="" disabled selected>Change Role</option>
+                                      <option value="editor" <%=isEditorMember ? "disabled" : "" %>>Editor</option>
+                                      <option value="viewer" <%=isViewerMember ? "disabled" : "" %>>Viewer</option>
+                                    </select>
+                                    <button class="remove-member-btn"
+                                      onclick="event.preventDefault(); removeMember(<%= groupId %>, <%= memberId %>, '<%= username.replace("'", "\\'") %>')">
+                                      Remove
+                                    </button>
+                                  </div>
+                                  <% } %>
+                              </div>
                               <% } } else { %>
                                 <p style="text-align: center; color: #888; grid-column: 1/-1; padding: 40px;">No members
                                   yet. Invite people to join!</p>
                                 <% } %>
                           </div>
 
-                          <!-- Floating Add Memory Button -->
+                          <!-- Floating Buttons -->
                           <div class="floating-buttons" id="floatingButtons">
                             <% if (isAdmin !=null && isAdmin) { %>
                               <button onclick="openInviteModal()" class="floating-btn" style="background: #10b981;">
@@ -372,15 +514,6 @@
                                 Invite Members
                               </button>
                               <% } %>
-                                <a href="${pageContext.request.contextPath}/creatememory?groupId=<%= groupId %>"
-                                  class="floating-btn">
-                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                  </svg>
-                                  Add Memory
-                                </a>
                                 <% if (isAdmin !=null && isAdmin) { %>
                                   <a href="${pageContext.request.contextPath}/editgroup?groupId=<%= groupId %>"
                                     class="floating-btn edit-btn">

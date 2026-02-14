@@ -2,8 +2,11 @@ package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.dao.memoryDAO;
+import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Memory;
+import com.demo.web.model.Group;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -56,9 +59,28 @@ public class DeleteMemoryServlet extends HttpServlet {
                 return;
             }
 
-            // Check if user owns this memory
-            if (memory.getUserId() != userId) {
-                response.sendRedirect("/memories");
+            // Check delete permissions
+            boolean canDelete = false;
+            boolean isGroupMemory = (memory.getGroupId() != null);
+            Integer groupId = memory.getGroupId();
+
+            if (isGroupMemory) {
+                GroupDAO groupDAO = new GroupDAO();
+                GroupMemberDAO groupMemberDAO = new GroupMemberDAO();
+                Group group = groupDAO.findById(groupId);
+                boolean isAdmin = (group != null && group.getUserId() == userId);
+                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
+                canDelete = isAdmin || "editor".equals(memberRole);
+            } else {
+                canDelete = (memory.getUserId() == userId);
+            }
+
+            if (!canDelete) {
+                if (isGroupMemory) {
+                    response.sendRedirect("/groupmemories?groupId=" + groupId);
+                } else {
+                    response.sendRedirect("/memories");
+                }
                 return;
             }
 
@@ -86,8 +108,12 @@ public class DeleteMemoryServlet extends HttpServlet {
             // Delete memory (memory_media entries will cascade)
             memoryDao.deleteMemory(memoryId);
 
-            // Redirect to memories list
-            response.sendRedirect("/memories");
+            // Redirect back
+            if (isGroupMemory && groupId != null) {
+                response.sendRedirect("/groupmemories?groupId=" + groupId);
+            } else {
+                response.sendRedirect("/memories");
+            }
 
         } catch (NumberFormatException e) {
             response.sendRedirect("/memories");

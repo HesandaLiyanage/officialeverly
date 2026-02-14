@@ -1,7 +1,10 @@
 package com.demo.web.controller.Memory;
 
+import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.dao.memoryDAO;
+import com.demo.web.model.Group;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Memory;
 
@@ -14,17 +17,23 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Servlet for loading memory data into edit form
+ * Servlet for loading memory data into edit form.
+ * Supports both personal memories (owner-only) and group memories
+ * (admin/editor).
  */
 public class EditMemoryServlet extends HttpServlet {
 
     private memoryDAO memoryDao;
     private MediaDAO mediaDao;
+    private GroupDAO groupDAO;
+    private GroupMemberDAO groupMemberDAO;
 
     @Override
     public void init() throws ServletException {
         memoryDao = new memoryDAO();
         mediaDao = new MediaDAO();
+        groupDAO = new GroupDAO();
+        groupMemberDAO = new GroupMemberDAO();
     }
 
     @Override
@@ -47,7 +56,6 @@ public class EditMemoryServlet extends HttpServlet {
             int memoryId = Integer.parseInt(idParam);
             int userId = (int) session.getAttribute("user_id");
 
-            // Fetch memory
             Memory memory = memoryDao.getMemoryById(memoryId);
 
             if (memory == null) {
@@ -56,21 +64,40 @@ public class EditMemoryServlet extends HttpServlet {
                 return;
             }
 
-            // Check if user owns this memory
-            if (memory.getUserId() != userId) {
+            boolean canEdit = false;
+            boolean isGroupMemory = (memory.getGroupId() != null);
+
+            if (isGroupMemory) {
+                int groupId = memory.getGroupId();
+                Group group = groupDAO.findById(groupId);
+                boolean isAdmin = (group != null && group.getUserId() == userId);
+                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
+                canEdit = isAdmin || "editor".equals(memberRole);
+
+                if (canEdit) {
+                    request.setAttribute("group", group);
+                    request.setAttribute("isGroupMemory", true);
+                }
+            } else {
+                // Personal memory — only owner can edit
+                canEdit = (memory.getUserId() == userId);
+            }
+
+            if (!canEdit) {
                 request.setAttribute("errorMessage", "You don't have permission to edit this memory");
-                response.sendRedirect("/memories");
+                if (isGroupMemory) {
+                    response.sendRedirect("/groupmemories?groupId=" + memory.getGroupId());
+                } else {
+                    response.sendRedirect("/memories");
+                }
                 return;
             }
 
-            // Fetch associated media items
             List<MediaItem> mediaItems = mediaDao.getMediaByMemoryId(memoryId);
 
-            // Set attributes for JSP
             request.setAttribute("memory", memory);
             request.setAttribute("mediaItems", mediaItems);
 
-            // Forward to edit page
             request.getRequestDispatcher("/views/app/editmemory.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {

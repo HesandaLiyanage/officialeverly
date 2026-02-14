@@ -4,8 +4,11 @@ import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.dao.MemoryMemberDAO;
+import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Memory;
+import com.demo.web.model.Group;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,6 +25,8 @@ public class ViewMediaServlet extends HttpServlet {
     private memoryDAO memoryDao;
     private MemoryMemberDAO memberDao;
     private FeedPostDAO feedPostDAO;
+    private GroupDAO groupDAO;
+    private GroupMemberDAO groupMemberDAO;
 
     // Must match the physical path used in CreateMemoryServlet
     private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads";
@@ -33,6 +38,8 @@ public class ViewMediaServlet extends HttpServlet {
         memoryDao = new memoryDAO();
         memberDao = new MemoryMemberDAO();
         feedPostDAO = new FeedPostDAO();
+        groupDAO = new GroupDAO();
+        groupMemberDAO = new GroupMemberDAO();
     }
 
     @Override
@@ -107,6 +114,18 @@ public class ViewMediaServlet extends HttpServlet {
                         if (!hasAccess && feedPostDAO.isMemorySharedInFeed(memoryId)) {
                             hasAccess = true;
                             System.out.println("  - Access granted: Media is part of a public feed post");
+                        }
+
+                        // Check 4: Media belongs to a group memory and user is a group member
+                        if (!hasAccess && memory != null && memory.getGroupId() != null) {
+                            int groupId = memory.getGroupId();
+                            Group group = groupDAO.findById(groupId);
+                            boolean isGroupAdmin = (group != null && group.getUserId() == userId);
+                            boolean isGroupMember = groupMemberDAO.isUserMember(groupId, userId);
+                            if (isGroupAdmin || isGroupMember) {
+                                hasAccess = true;
+                                System.out.println("  - Access granted: User is member of group " + groupId);
+                            }
                         }
                     }
                 } catch (Exception e) {

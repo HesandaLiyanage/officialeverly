@@ -18,6 +18,7 @@ public class GroupMemberDAO {
 
     // Legacy constructor for backward compatibility
     private Connection legacyConnection;
+
     public GroupMemberDAO(Connection connection) {
         this.legacyConnection = connection;
     }
@@ -33,18 +34,20 @@ public class GroupMemberDAO {
     public boolean addGroupMember(GroupMember gm) {
         String sql = "INSERT INTO group_member (group_id, member_id, role, joined_at, status) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, gm.getGroupId());
             stmt.setInt(2, gm.getUser().getId());
             stmt.setString(3, gm.getRole());
-            stmt.setTimestamp(4, gm.getJoinedAt() != null ? gm.getJoinedAt() : new Timestamp(System.currentTimeMillis()));
+            stmt.setTimestamp(4,
+                    gm.getJoinedAt() != null ? gm.getJoinedAt() : new Timestamp(System.currentTimeMillis()));
             stmt.setString(5, gm.getStatus() != null ? gm.getStatus() : "active");
             int rows = stmt.executeUpdate();
-            System.out.println("[DEBUG GroupMemberDAO] addGroupMember: Added " + rows + " member(s) to group " + gm.getGroupId());
+            System.out.println(
+                    "[DEBUG GroupMemberDAO] addGroupMember: Added " + rows + " member(s) to group " + gm.getGroupId());
             return rows > 0;
         } catch (SQLException e) {
-            String errorMsg = "[ERROR GroupMemberDAO] Error adding group member: " + e.getMessage() + 
-                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+            String errorMsg = "[ERROR GroupMemberDAO] Error adding group member: " + e.getMessage() +
+                    " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
             System.err.println(errorMsg);
             e.printStackTrace();
             return false;
@@ -55,18 +58,19 @@ public class GroupMemberDAO {
     public boolean isUserMember(int groupId, int userId) {
         String sql = "SELECT COUNT(*) as cnt FROM group_member WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);
             stmt.setInt(2, userId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 boolean isMember = rs.getInt("cnt") > 0;
-                System.out.println("[DEBUG GroupMemberDAO] isUserMember: User " + userId + " in group " + groupId + " = " + isMember);
+                System.out.println("[DEBUG GroupMemberDAO] isUserMember: User " + userId + " in group " + groupId
+                        + " = " + isMember);
                 return isMember;
             }
         } catch (SQLException e) {
             String errorMsg = "[ERROR GroupMemberDAO] Error checking membership: " + e.getMessage() +
-                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+                    " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
             System.err.println(errorMsg);
             e.printStackTrace();
         }
@@ -76,13 +80,14 @@ public class GroupMemberDAO {
     // Read (Get all members of a group)
     public List<GroupMember> getMembersByGroupId(int groupId) {
         List<GroupMember> members = new ArrayList<>();
-        String sql = "SELECT gm.group_id, gm.role, gm.joined_at, gm.status, u.user_id, u.username, u.email, u.profile_picture_url " +
+        String sql = "SELECT gm.group_id, gm.role, gm.joined_at, gm.status, u.user_id, u.username, u.email, u.profile_picture_url "
+                +
                 "FROM group_member gm " +
                 "JOIN users u ON gm.member_id = u.user_id " +
                 "WHERE gm.group_id = ? " +
                 "ORDER BY CASE WHEN gm.role = 'admin' THEN 0 ELSE 1 END, gm.joined_at";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -101,10 +106,11 @@ public class GroupMemberDAO {
 
                 members.add(gm);
             }
-            System.out.println("[DEBUG GroupMemberDAO] getMembersByGroupId: Found " + members.size() + " members for group " + groupId);
+            System.out.println("[DEBUG GroupMemberDAO] getMembersByGroupId: Found " + members.size()
+                    + " members for group " + groupId);
         } catch (SQLException e) {
             String errorMsg = "[ERROR GroupMemberDAO] Error getting members: " + e.getMessage() +
-                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+                    " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
             System.err.println(errorMsg);
             e.printStackTrace();
         }
@@ -115,7 +121,7 @@ public class GroupMemberDAO {
     public boolean updateGroupMember(GroupMember gm) {
         String sql = "UPDATE group_member SET role = ?, joined_at = ?, status = ? WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, gm.getRole());
             stmt.setTimestamp(2, gm.getJoinedAt());
             stmt.setString(3, gm.getStatus());
@@ -124,7 +130,7 @@ public class GroupMemberDAO {
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             String errorMsg = "[ERROR GroupMemberDAO] Error updating member: " + e.getMessage() +
-                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+                    " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
             System.err.println(errorMsg);
             e.printStackTrace();
             return false;
@@ -135,16 +141,53 @@ public class GroupMemberDAO {
     public boolean deleteGroupMember(int groupId, int userId) {
         String sql = "DELETE FROM group_member WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);
             stmt.setInt(2, userId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             String errorMsg = "[ERROR GroupMemberDAO] Error deleting member: " + e.getMessage() +
-                             " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
+                    " (SQLState: " + e.getSQLState() + ", ErrorCode: " + e.getErrorCode() + ")";
             System.err.println(errorMsg);
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Update member role (editor, viewer)
+    public boolean updateMemberRole(int groupId, int userId, String newRole) {
+        String sql = "UPDATE group_member SET role = ? WHERE group_id = ? AND member_id = ?";
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, newRole);
+            stmt.setInt(2, groupId);
+            stmt.setInt(3, userId);
+            int rows = stmt.executeUpdate();
+            System.out.println("[DEBUG GroupMemberDAO] updateMemberRole: User " + userId + " in group " + groupId
+                    + " -> " + newRole + " (" + rows + " rows)");
+            return rows > 0;
+        } catch (SQLException e) {
+            System.err.println("[ERROR GroupMemberDAO] Error updating role: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Get a single member's role in a group
+    public String getMemberRole(int groupId, int userId) {
+        String sql = "SELECT role FROM group_member WHERE group_id = ? AND member_id = ?";
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, groupId);
+            stmt.setInt(2, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("role");
+            }
+        } catch (SQLException e) {
+            System.err.println("[ERROR GroupMemberDAO] Error getting role: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -20,7 +20,7 @@ public class GroupService {
 
     /**
      * Gets all groups owned by a user.
-     * 
+     *
      * @param userId The user ID
      * @return List of groups
      */
@@ -30,7 +30,7 @@ public class GroupService {
 
     /**
      * Gets a group by ID with ownership verification.
-     * 
+     *
      * @param groupId The group ID
      * @param userId  The user ID for ownership check
      * @return The group if found and owned by user, null otherwise
@@ -48,7 +48,7 @@ public class GroupService {
 
     /**
      * Gets a group by ID without ownership check.
-     * 
+     *
      * @param groupId The group ID
      * @return The group if found, null otherwise
      */
@@ -58,7 +58,7 @@ public class GroupService {
 
     /**
      * Gets the member count for a group.
-     * 
+     *
      * @param groupId The group ID
      * @return The number of members
      */
@@ -68,7 +68,7 @@ public class GroupService {
 
     /**
      * Gets the GroupDAO for legacy JSP compatibility.
-     * 
+     *
      * @deprecated Use specific methods instead
      * @return The GroupDAO instance
      */

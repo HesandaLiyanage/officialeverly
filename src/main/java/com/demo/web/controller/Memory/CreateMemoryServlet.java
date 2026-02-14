@@ -3,8 +3,11 @@ package com.demo.web.controller.Memory;
 import com.demo.web.dao.memoryDAO;
 import com.demo.web.dao.MediaDAO;
 import com.demo.web.dao.MemoryMemberDAO;
+import com.demo.web.dao.GroupDAO;
+import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
+import com.demo.web.model.Group;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -95,6 +98,45 @@ public class CreateMemoryServlet extends HttpServlet {
             memory.setPublic(false);
             memory.setCollaborative(isCollaborative);
 
+            // Handle group memory
+            String groupIdParam = request.getParameter("groupId");
+            Integer groupId = null;
+            if (groupIdParam != null && !groupIdParam.trim().isEmpty()) {
+                try {
+                    groupId = Integer.parseInt(groupIdParam.trim());
+                    // Verify user is admin or editor in this group
+                    GroupDAO groupDAO = new GroupDAO();
+                    GroupMemberDAO groupMemberDAO = new GroupMemberDAO();
+                    Group group = groupDAO.findById(groupId);
+                    if (group == null) {
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getWriter().write("{\"error\": \"Group not found\"}");
+                        return;
+                    }
+                    boolean isGroupAdmin = (group.getUserId() == userId);
+                    String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
+                    boolean isGroupMember = isGroupAdmin || memberRole != null;
+                    boolean canCreate = isGroupAdmin || "editor".equals(memberRole);
+                    if (!isGroupMember) {
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.getWriter().write("{\"error\": \"You are not a member of this group\"}");
+                        return;
+                    }
+                    if (!canCreate) {
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.getWriter()
+                                .write("{\"error\": \"Viewers cannot create memories. Ask an admin or editor.\"}");
+                        return;
+                    }
+                    memory.setGroupId(groupId);
+                } catch (NumberFormatException ex) {
+                    // Ignore invalid group ID, create as regular memory
+                }
+            }
+
             int memoryId;
             if (isCollaborative) {
                 // Create collaborative memory
@@ -154,8 +196,8 @@ public class CreateMemoryServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
             try (PrintWriter out = response.getWriter()) {
                 out.write(String.format(
-                        "{\"success\": true, \"memoryId\": %d, \"filesUploaded\": %d, \"isCollaborative\": %s}",
-                        memoryId, uploadedCount, isCollaborative));
+                        "{\"success\": true, \"memoryId\": %d, \"filesUploaded\": %d, \"isCollaborative\": %s, \"groupId\": %s}",
+                        memoryId, uploadedCount, isCollaborative, groupId != null ? groupId : "null"));
             }
 
         } catch (Exception e) {

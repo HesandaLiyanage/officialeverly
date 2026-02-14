@@ -173,13 +173,29 @@
                     <div class="memory-viewer-container">
                         <!-- Navigation Header -->
                         <div class="viewer-header">
-                            <a href="/memories" class="nav-btn prev-album">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="15 18 9 12 15 6"></polyline>
-                                </svg>
-                                Back to Memories
-                            </a>
+                            <c:choose>
+                                <c:when test="${isGroupMemory}">
+                                    <a href="${pageContext.request.contextPath}/groupmemories?groupId=${group.groupId}"
+                                        class="nav-btn prev-album">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polyline points="15 18 9 12 15 6"></polyline>
+                                        </svg>
+                                        Back to Group Memories
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="/memories" class="nav-btn prev-album">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polyline points="15 18 9 12 15 6"></polyline>
+                                        </svg>
+                                        Back to Memories
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
                             <h1 class="memory-title" id="memoryTitle">
                                 <c:out value="${memory.title}" default="Untitled Memory" />
                             </h1>
@@ -239,17 +255,19 @@
                                 </svg>
                                 <span id="likeCount">0</span>
                             </button>
-                            <button class="interaction-btn share-btn" id="shareBtn">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="18" cy="5" r="3"></circle>
-                                    <circle cx="6" cy="12" r="3"></circle>
-                                    <circle cx="18" cy="19" r="3"></circle>
-                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                                </svg>
-                                Share
-                            </button>
+                            <c:if test="${not isGroupMemory}">
+                                <button class="interaction-btn share-btn" id="shareBtn">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="18" cy="5" r="3"></circle>
+                                        <circle cx="6" cy="12" r="3"></circle>
+                                        <circle cx="18" cy="19" r="3"></circle>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                    </svg>
+                                    Share
+                                </button>
+                            </c:if>
                         </div>
 
                         <!-- Comments Section -->
@@ -275,26 +293,28 @@
                     <button class="lightbox-nav next" onclick="nextImage()">&#8250;</button>
                 </div>
 
-                <!-- Floating Action Buttons -->
-                <div class="floating-buttons-memory-viewer">
-                    <a href="/editmemory?id=${memory.memoryId}" class="floating-btn-memory-viewer edit-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                        Edit Memory
-                    </a>
-                    <button class="floating-btn-memory-viewer delete-btn" onclick="confirmDelete()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 6h18"></path>
-                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                        </svg>
-                        Delete Memory
-                    </button>
-                </div>
+                <!-- Floating Action Buttons (only shown for users with edit permission) -->
+                <c:if test="${canEdit}">
+                    <div class="floating-buttons-memory-viewer">
+                        <a href="/editmemory?id=${memory.memoryId}" class="floating-btn-memory-viewer edit-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            Edit Memory
+                        </a>
+                        <button class="floating-btn-memory-viewer delete-btn" onclick="confirmDelete()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            </svg>
+                            Delete Memory
+                        </button>
+                    </div>
+                </c:if>
 
                 <jsp:include page="../public/footer.jsp" />
 
