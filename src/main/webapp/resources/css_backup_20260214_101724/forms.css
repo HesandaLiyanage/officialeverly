@@ -1,0 +1,456 @@
+/*
+ * forms.css - Form components for Everly
+ * Input fields, textareas, selects, checkboxes, and form layouts
+ */
+
+/* ============================================ */
+/* FORM LAYOUT                                  */
+/* ============================================ */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+@media (max-width: 640px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================ */
+/* LABELS                                       */
+/* ============================================ */
+.form-label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--gray-700);
+}
+
+.form-label-required::after {
+    content: " *";
+    color: var(--error);
+}
+
+/* ============================================ */
+/* TEXT INPUTS                                  */
+/* ============================================ */
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-base);
+    font-family: var(--font-primary);
+    color: var(--gray-800);
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: var(--gray-400);
+}
+
+.form-input:hover,
+.form-textarea:hover,
+.form-select:hover {
+    border-color: var(--gray-300);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(154, 116, 216, 0.15);
+}
+
+/* Input sizes */
+.form-input-sm {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+}
+
+.form-input-lg {
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--text-lg);
+}
+
+/* ============================================ */
+/* TEXTAREA                                     */
+/* ============================================ */
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: var(--leading-relaxed);
+}
+
+.form-textarea-sm {
+    min-height: 80px;
+}
+
+.form-textarea-lg {
+    min-height: 200px;
+}
+
+/* ============================================ */
+/* SELECT                                       */
+/* ============================================ */
+.form-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right var(--space-3) center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+/* ============================================ */
+/* CHECKBOX & RADIO                             */
+/* ============================================ */
+.form-checkbox-group,
+.form-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.form-checkbox-inline,
+.form-radio-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.form-checkbox,
+.form-radio {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    user-select: none;
+}
+
+.form-checkbox input,
+.form-radio input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.form-checkbox-label,
+.form-radio-label {
+    font-size: var(--text-sm);
+    color: var(--gray-700);
+}
+
+/* Custom checkbox styling */
+.checkbox-custom {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    transition: all var(--transition-fast);
+}
+
+.checkbox-custom.checked {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.checkbox-custom.checked::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
+    border: solid var(--white);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* ============================================ */
+/* TOGGLE SWITCH                                */
+/* ============================================ */
+.form-toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.form-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.form-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gray-300);
+    border-radius: var(--radius-full);
+    transition: var(--transition-fast);
+}
+
+.form-toggle-slider::before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: var(--white);
+    border-radius: var(--radius-full);
+    transition: var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+}
+
+.form-toggle input:checked+.form-toggle-slider {
+    background: var(--primary);
+}
+
+.form-toggle input:checked+.form-toggle-slider::before {
+    transform: translateX(20px);
+}
+
+/* ============================================ */
+/* INPUT WITH ICON                              */
+/* ============================================ */
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 100%;
+    color: var(--gray-400);
+    pointer-events: none;
+}
+
+.input-icon-left {
+    left: 0;
+}
+
+.input-icon-right {
+    right: 0;
+}
+
+.input-with-icon .form-input {
+    padding-left: 44px;
+}
+
+.input-with-icon.icon-right .form-input {
+    padding-left: var(--space-4);
+    padding-right: 44px;
+}
+
+.input-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ============================================ */
+/* INPUT STATES                                 */
+/* ============================================ */
+.form-input.is-valid,
+.form-textarea.is-valid {
+    border-color: var(--success);
+}
+
+.form-input.is-valid:focus,
+.form-textarea.is-valid:focus {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.form-input.is-invalid,
+.form-textarea.is-invalid {
+    border-color: var(--error);
+}
+
+.form-input.is-invalid:focus,
+.form-textarea.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.form-input:disabled,
+.form-textarea:disabled,
+.form-select:disabled {
+    background: var(--gray-100);
+    color: var(--gray-500);
+    cursor: not-allowed;
+}
+
+/* ============================================ */
+/* HELPER TEXT & ERRORS                         */
+/* ============================================ */
+.form-helper {
+    font-size: var(--text-sm);
+    color: var(--gray-500);
+    margin-top: var(--space-1);
+}
+
+.form-error {
+    font-size: var(--text-sm);
+    color: var(--error);
+    margin-top: var(--space-1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.form-error svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* ============================================ */
+/* FILE INPUT                                   */
+/* ============================================ */
+.form-file {
+    position: relative;
+}
+
+.form-file input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.form-file-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8) var(--space-4);
+    background: var(--gray-50);
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.form-file-label:hover,
+.form-file.drag-over .form-file-label {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.form-file-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--space-3);
+    color: var(--gray-400);
+}
+
+.form-file-text {
+    font-size: var(--text-sm);
+    color: var(--gray-600);
+}
+
+.form-file-text strong {
+    color: var(--primary);
+}
+
+/* ============================================ */
+/* SEARCH INPUT                                 */
+/* ============================================ */
+.search-input {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2) var(--space-4);
+    gap: var(--space-3);
+    transition: all var(--transition-fast);
+}
+
+.search-input:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(154, 116, 216, 0.15);
+}
+
+.search-input svg {
+    width: 18px;
+    height: 18px;
+    color: var(--gray-400);
+    flex-shrink: 0;
+}
+
+.search-input input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: var(--text-sm);
+    color: var(--gray-800);
+}
+
+.search-input input::placeholder {
+    color: var(--gray-400);
+}
+
+/* ============================================ */
+/* FORM ACTIONS                                 */
+/* ============================================ */
+.form-actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+}
+
+.form-actions-right {
+    justify-content: flex-end;
+}
+
+.form-actions-between {
+    justify-content: space-between;
+}
+
+@media (max-width: 480px) {
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}

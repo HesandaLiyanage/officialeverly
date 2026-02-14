@@ -1,0 +1,180 @@
+/*
+ * follow.css - Followers/following page styles
+ * Depends on base.css for reset, variables, and base styles
+ */
+
+/* Followers Wrapper */
+.followers-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* Followers Title */
+.followers-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 40px 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* Followers List */
+.followers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Follower Item */
+.follower-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid #f1f3f4;
+    transition: all 0.3s ease;
+}
+
+.follower-item:last-child {
+    border-bottom: none;
+}
+
+.follower-item:hover {
+    background-color: #fafafa;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 8px;
+}
+
+/* Follower Avatar */
+.follower-avatar {
+    flex-shrink: 0;
+}
+
+.follower-avatar img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e9ecef;
+}
+
+/* Follower Info */
+.follower-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.follower-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.follower-status {
+    font-size: 14px;
+    color: #8e44ad;
+    margin: 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* View Profile Button */
+.view-profile-btn {
+    padding: 10px 24px;
+    background: #8e44ad;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    white-space: nowrap;
+}
+
+.view-profile-btn:hover {
+    background: #7d3c98;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(142, 68, 173, 0.3);
+}
+
+.view-profile-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .followers-wrapper {
+        padding: 30px 15px;
+    }
+
+    .followers-title {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+    .follower-item {
+        gap: 12px;
+        padding: 14px 0;
+    }
+
+    .follower-avatar img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .follower-name {
+        font-size: 15px;
+    }
+
+    .follower-status {
+        font-size: 13px;
+    }
+
+    .view-profile-btn {
+        padding: 8px 20px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .followers-wrapper {
+        padding: 20px 15px;
+    }
+
+    .followers-title {
+        font-size: 24px;
+        margin-bottom: 24px;
+    }
+
+    .follower-item {
+        gap: 10px;
+        padding: 12px 0;
+    }
+
+    .follower-avatar img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .follower-name {
+        font-size: 14px;
+    }
+
+    .follower-status {
+        font-size: 12px;
+    }
+
+    .view-profile-btn {
+        padding: 7px 16px;
+        font-size: 12px;
+    }
+}
