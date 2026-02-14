@@ -228,6 +228,15 @@
               align-items: center;
               text-decoration: none;
             }
+
+            .floating-btn.leave-btn {
+              background: #ef4444 !important;
+              color: white;
+            }
+
+            .floating-btn.leave-btn:hover {
+              background: #dc2626 !important;
+            }
           </style>
         </head>
         <script>
@@ -369,6 +378,30 @@
               action: 'removeMember',
               groupId: groupId,
               memberId: memberId
+            };
+
+            for (const [key, value] of Object.entries(fields)) {
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = value;
+              form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+          }
+
+          function leaveGroup(groupId) {
+            if (!confirm('Are you sure you want to leave this group? You will lose access to all group memories.')) return;
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '${pageContext.request.contextPath}/groupmembersservlet';
+
+            const fields = {
+              action: 'leaveGroup',
+              groupId: groupId
             };
 
             for (const [key, value] of Object.entries(fields)) {
@@ -524,6 +557,18 @@
                                     Edit Group
                                   </a>
                                   <% } %>
+                                    <% if (isAdmin==null || !isAdmin) { %>
+                                      <button onclick="leaveGroup(<%= groupId %>)" class="floating-btn leave-btn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                          stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                          stroke-linejoin="round">
+                                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                          <polyline points="16 17 21 12 16 7"></polyline>
+                                          <line x1="21" y1="12" x2="9" y2="12"></line>
+                                        </svg>
+                                        Leave Group
+                                      </button>
+                                      <% } %>
                           </div>
                 </main>
               </div>

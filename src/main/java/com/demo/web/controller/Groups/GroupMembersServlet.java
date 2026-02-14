@@ -120,6 +120,30 @@ public class GroupMembersServlet extends HttpServlet {
         }
 
         boolean isAdmin = (group.getUserId() == userId);
+
+        // Handle leaveGroup before admin check — any member can leave
+        if ("leaveGroup".equals(action)) {
+            if (isAdmin) {
+                response.sendRedirect(request.getContextPath() + "/groupmembers?groupId=" + groupId
+                        + "&error=Admin cannot leave the group. Delete the group instead.");
+                return;
+            }
+            boolean isMember = groupMemberDAO.isUserMember(groupId, userId);
+            if (!isMember) {
+                response.sendRedirect(request.getContextPath() + "/groups?error=You are not a member of this group");
+                return;
+            }
+            boolean removed = groupMemberDAO.deleteGroupMember(groupId, userId);
+            if (removed) {
+                response.sendRedirect(request.getContextPath() + "/groups?msg=You have left the group");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/groupmembers?groupId=" + groupId
+                        + "&error=Failed to leave group");
+            }
+            return;
+        }
+
+        // All other actions require admin
         if (!isAdmin) {
             response.sendRedirect(request.getContextPath() + "/groupmembers?groupId=" + groupId
                     + "&error=Only admin can manage roles");
