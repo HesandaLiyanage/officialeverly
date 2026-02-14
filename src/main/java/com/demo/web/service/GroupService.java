@@ -19,13 +19,13 @@ public class GroupService {
     }
 
     /**
-     * Gets all groups owned by a user.
+     * Gets all groups the user is part of (owned + joined).
      *
      * @param userId The user ID
      * @return List of groups
      */
     public List<Group> getGroupsByUserId(int userId) {
-        return groupDAO.findByUserId(userId);
+        return groupDAO.findGroupsByMemberId(userId);
     }
 
     /**
