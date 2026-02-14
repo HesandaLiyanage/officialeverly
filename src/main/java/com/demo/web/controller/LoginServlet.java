@@ -47,6 +47,13 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
+        // Check if user was redirected after deactivating their account
+        String deactivated = request.getParameter("deactivated");
+        if ("true".equals(deactivated)) {
+            request.setAttribute("infoMessage",
+                    "Your account has been deactivated. You can reactivate it by logging in again.");
+        }
+
         // Show login form
         request.getRequestDispatcher("/login").forward(request, response);
     }
@@ -69,6 +76,14 @@ public class LoginServlet extends HttpServlet {
         // Authenticate user (YOUR EXISTING CODE - UNCHANGED)
         user user = userDAO.findByemail(username);
         if (user != null && PasswordUtil.verifyPassword(password, user.getSalt(), user.getPassword())) {
+
+            // Check if account was deactivated — if so, reactivate it
+            if (!user.is_active()) {
+                System.out.println("Reactivating deactivated account for user: " + user.getUsername());
+                userDAO.reactivateAccount(user.getId());
+                user.set_active(true);
+            }
+
             // Login success: create session (HTTP + Database)
             SessionUtil.createSession(request, user);
 

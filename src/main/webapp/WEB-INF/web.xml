@@ -466,6 +466,16 @@
         <url-pattern>/editprofileview</url-pattern>
     </servlet-mapping>
 
+    <!-- Deactivate Account Servlet -->
+    <servlet>
+        <servlet-name>DeactivateAccountServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Settings.DeactivateAccountServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeactivateAccountServlet</servlet-name>
+        <url-pattern>/deactivateaccount</url-pattern>
+    </servlet-mapping>
+
     <!-- Autograph View Controller -->
     <servlet>
         <servlet-name>AutographViewController</servlet-name>

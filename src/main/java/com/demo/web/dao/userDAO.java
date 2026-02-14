@@ -27,7 +27,8 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+                    +
                     "FROM users WHERE username = ? AND is_active = true";
 
             stmt = conn.prepareStatement(sql);
@@ -59,7 +60,7 @@ public class userDAO {
      * NEW METHOD: Unlock user's master encryption key after authentication
      * Call this AFTER authenticateUser succeeds
      *
-     * @param userId The authenticated user's ID
+     * @param userId   The authenticated user's ID
      * @param password The user's password (plain text)
      * @return The unlocked master key (store in session, NOT database)
      */
@@ -121,13 +122,13 @@ public class userDAO {
         // Step 2: Unlock encryption keys
         try {
             SecretKey masterKey = unlockUserMasterKey(authenticatedUser.getId(), password);
-            return new Object[]{authenticatedUser, masterKey};
+            return new Object[] { authenticatedUser, masterKey };
         } catch (Exception e) {
             // Authentication succeeded but encryption keys failed
             // This might happen for old accounts created before encryption was added
             System.err.println("Warning: User authenticated but encryption keys unavailable: " + e.getMessage());
             // Return user without master key - handle this in your servlet
-            return new Object[]{authenticatedUser, null};
+            return new Object[] { authenticatedUser, null };
         }
     }
 
@@ -141,7 +142,8 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+                    +
                     "FROM users WHERE user_id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -173,7 +175,8 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+                    +
                     "FROM users WHERE email = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -204,7 +207,8 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url " +
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+                    +
                     "FROM users WHERE username = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -279,14 +283,14 @@ public class userDAO {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getEmail());
-            stmt.setString(3, passwordHash);              // Auth password hash
-            stmt.setString(4, authSalt);                  // Auth salt
+            stmt.setString(3, passwordHash); // Auth password hash
+            stmt.setString(4, authSalt); // Auth salt
             stmt.setString(5, user.getBio());
             stmt.setString(6, user.getProfilePictureUrl());
             stmt.setBoolean(7, true);
             stmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
-            stmt.setBytes(9, keyData.getEncryptedMasterKey());  // NEW: Encryption master key
-            stmt.setBytes(10, keyData.getSalt());                // NEW: Encryption salt
+            stmt.setBytes(9, keyData.getEncryptedMasterKey()); // NEW: Encryption master key
+            stmt.setBytes(10, keyData.getSalt()); // NEW: Encryption salt
 
             generatedKeys = stmt.executeQuery();
 
@@ -306,7 +310,8 @@ public class userDAO {
 
         } catch (Exception e) {
             try {
-                if (conn != null) conn.rollback();
+                if (conn != null)
+                    conn.rollback();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -314,7 +319,8 @@ public class userDAO {
             throw new RuntimeException("Database error while creating user", e);
         } finally {
             try {
-                if (conn != null) conn.setAutoCommit(true);
+                if (conn != null)
+                    conn.setAutoCommit(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -364,7 +370,8 @@ public class userDAO {
 
     /**
      * NEW METHOD: Setup encryption for existing user (migration)
-     * Use this to add encryption to accounts created before encryption was implemented
+     * Use this to add encryption to accounts created before encryption was
+     * implemented
      */
     public boolean setupEncryptionForExistingUser(int userId, String password) {
         Connection conn = null;
@@ -398,7 +405,8 @@ public class userDAO {
 
         } catch (Exception e) {
             try {
-                if (conn != null) conn.rollback();
+                if (conn != null)
+                    conn.rollback();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -406,7 +414,8 @@ public class userDAO {
             return false;
         } finally {
             try {
-                if (conn != null) conn.setAutoCommit(true);
+                if (conn != null)
+                    conn.setAutoCommit(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -508,13 +517,76 @@ public class userDAO {
     }
 
     /**
+     * Deactivate a user account (set is_active = false).
+     * Does NOT delete any data — the account can be reactivated later.
+     *
+     * @param userId The user ID to deactivate
+     * @return true if deactivation was successful
+     */
+    public boolean deactivateAccount(int userId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE users SET is_active = false WHERE user_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            System.out.println("Deactivated account for user ID: " + userId + ", rows affected: " + rowsUpdated);
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Database error while deactivating account", e);
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
+     * Reactivate a user account (set is_active = true).
+     * Used when a deactivated user logs back in.
+     *
+     * @param userId The user ID to reactivate
+     * @return true if reactivation was successful
+     */
+    public boolean reactivateAccount(int userId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE users SET is_active = true WHERE user_id = ?";
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            System.out.println("Reactivated account for user ID: " + userId + ", rows affected: " + rowsUpdated);
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Database error while reactivating account", e);
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
+    /**
      * Close database resources - UNCHANGED
      */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
-            if (conn != null) conn.close();
+            if (rs != null)
+                rs.close();
+            if (stmt != null)
+                stmt.close();
+            if (conn != null)
+                conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

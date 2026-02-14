@@ -64,6 +64,7 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/MoveToVaultServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/ProfileImageServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/ProfilePictureServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/DeactivateAccountServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/EditProfileViewController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/LinkedDevicesViewController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/ShareAccessServlet.java
