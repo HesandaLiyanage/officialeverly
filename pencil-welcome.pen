@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everly - Memories</title>
+    <style>
+        :root {
+            /* Palette - Purple Premium */
+            --primary: #8b5cf6; /* Violet 500 */
+            --primary-hover: #7c3aed; /* Violet 600 */
+            --primary-light: #a78bfa; /* Violet 400 */
+            --secondary: #ede9fe; /* Violet 50 */
+            --accent: #d8b4fe; /* Violet 300 */
+            
+            /* Dark Theme Base */
+            --bg-body: #0f172a; /* Slate 950 base */
+            --bg-gradient: radial-gradient(circle at top left, #2e1065, #0f172a 40%);
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shine: rgba(255, 255, 255, 0.03);
+            --glass-blur: 16px;
+            
+            /* Text */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            
+            /* Spacing & Radius */
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --sp-4: 1rem;
+            --sp-6: 1.5rem;
+            
+            /* Animation */
+            --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        /* Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        body {
+            font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Layout Grid */
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(var(--glass-blur));
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .brand {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 3rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-lg);
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s var(--ease-out);
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--glass-shine);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--primary-light);
+            border-color: rgba(139, 92, 246, 0.2);
+            font-weight: 600;
+        }
+
+        .nav-item svg { width: 22px; height: 22px; }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 3rem;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .search-bar {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 300px;
+            transition: 0.3s;
+        }
+
+        .search-bar:focus-within {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .btn-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 6px;
+            padding-right: 16px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #8b5cf6, #d8b4fe);
+        }
+
+        /* Filter Chips */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .chip {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .chip:hover {
+            background: var(--glass-shine);
+            color: white;
+        }
+
+        .chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Masonry Grid */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        .memory-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all 0.4s var(--ease-out);
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            group: 'card';
+        }
+
+        .memory-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .memory-card:hover .card-img {
+            transform: scale(1.1);
+        }
+
+        .img-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(15, 23, 42, 0.8) 100%);
+            z-index: 1;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+            margin-top: -80px; /* Overlap image */
+        }
+
+        .card-date {
+            display: inline-block;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .collab-group {
+            display: flex;
+            padding-left: 10px;
+        }
+
+        .collab-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #1e293b;
+            margin-left: -10px;
+            background: #ddd;
+        }
+
+        .lock-icon {
+            color: var(--text-muted);
+            width: 16px;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 3rem;
+            right: 3rem;
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: var(--primary-hover);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.6);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">E</div>
+                Everly
+            </div>
+            
+            <div class="nav-menu">
+                <a href="#" class="nav-item">
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    Home
+                </a>
+                <a href="#" class="nav-item active">
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                    Memories
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 14H7v-2h10v2zm0-4H7v-2h10v2zm0-4H7V6h10v2z"/></svg>
+                    Journals
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    Autographs
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+                    Events
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    Groups
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <div class="page-title">
+                    <h1>Your Vault</h1>
+                    <p>Relive your cherished moments</p>
+                </div>
+
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" placeholder="Search memories...">
+                    </div>
+                    <button class="btn-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar"></div>
+                        <span style="font-size: 0.9rem; font-weight: 500;">Hesanda</span>
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="chip active">All Memories</div>
+                <div class="chip">Favorites</div>
+                <div class="chip">Recent Trips</div>
+                <div class="chip">Family</div>
+                <div class="chip">Friends</div>
+                <div class="chip">Videos</div>
+                <div class="chip">Collaborative</div>
+            </div>
+
+            <!-- Gallery -->
+            <div class="memory-grid">
+                
+                <!-- Card 1 -->
+                <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?auto=format&fit=crop&w=600&q=80" class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-date">Feb 14, 2026</div>
+                        <div class="card-title">Adventure in Kyoto</div>
+                        <div class="card-desc">Walking through the bamboo forest was absolutely surreal. The lighting was perfect...</div>
+                        <div class="card-footer">
+                            <div class="collab-group">
+                                <div class="collab-avatar" style="background: #f87171;"></div>
+                                <div class="collab-avatar" style="background: #60a5fa;"></div>
+                            </div>
+                            <svg class="lock-icon" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80" class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-date">Jan 28, 2026</div>
+                        <div class="card-title">Graduation Day</div>
+                        <div class="card-desc">Finally did it! So proud of everyone who made this journey possible.</div>
+                        <div class="card-footer">
+                            <div class="collab-group">
+                                <div class="collab-avatar" style="background: #34d399;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Card 3 -->
+                 <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=600&q=80" class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-date">Dec 25, 2025</div>
+                        <div class="card-title">Christmas Dinner</div>
+                        <div class="card-desc">Best turkey we've ever had. Grandma's recipe is unbeatable.</div>
+                        <div class="card-footer">
+                            <div class="collab-group">
+                                <div class="collab-avatar" style="background: #fbbf24;"></div>
+                                <div class="collab-avatar" style="background: #a78bfa;"></div>
+                                <div class="collab-avatar" style="background: #f472b6;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80" class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-date">Nov 10, 2025</div>
+                        <div class="card-title">Nature Walk</div>
+                        <div class="card-desc">Peace and quiet. Just what was needed after a long week.</div>
+                        <div class="card-footer">
+                             <span style="font-size: 0.8rem; color: #94a3b8;">Private</span>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Card 5 -->
+                 <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80" class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-date">Oct 05, 2025</div>
+                        <div class="card-title">Concert Night</div>
+                        <div class="card-desc">The energy was electric! Can't wait for the next tour.</div>
+                        <div class="card-footer">
+                            <div class="collab-group">
+                                <div class="collab-avatar" style="background: #2dd4bf;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Floating Action Button -->
+        <button class="fab">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+        </button>
+    </div>
+
+</body>
+</html>

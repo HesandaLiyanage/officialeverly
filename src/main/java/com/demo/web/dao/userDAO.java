@@ -27,7 +27,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id "
                     +
                     "FROM users WHERE username = ? AND is_active = true";
 
@@ -142,7 +142,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id "
                     +
                     "FROM users WHERE user_id = ?";
 
@@ -175,7 +175,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id "
                     +
                     "FROM users WHERE email = ?";
 
@@ -207,7 +207,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url "
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id "
                     +
                     "FROM users WHERE username = ?";
 
@@ -513,6 +513,7 @@ public class userDAO {
         user.set_active(rs.getBoolean("is_active"));
         user.setCreatedAt(rs.getTimestamp("joined_at"));
         user.setLastLogin(rs.getTimestamp("last_login"));
+        user.setPlanId(rs.getInt("plan_id"));
         return user;
     }
 

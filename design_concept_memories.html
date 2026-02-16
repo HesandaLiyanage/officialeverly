@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everly - Memories (Design Concept)</title>
+    <style>
+        :root {
+            /* Palette - Purple Premium */
+            --primary: #8b5cf6;
+            /* Violet 500 */
+            --primary-hover: #7c3aed;
+            /* Violet 600 */
+            --primary-light: #a78bfa;
+            /* Violet 400 */
+            --secondary: #ede9fe;
+            /* Violet 50 */
+            --accent: #d8b4fe;
+            /* Violet 300 */
+
+            /* Dark Theme Base */
+            --bg-body: #0f172a;
+            /* Slate 950 base */
+            --bg-gradient: radial-gradient(circle at top left, #2e1065, #0f172a 40%);
+
+            /* Glassmorphism */
+            --glass-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shine: rgba(255, 255, 255, 0.03);
+            --glass-blur: 16px;
+
+            /* Text */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+
+            /* Spacing & Radius */
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+
+            /* Animation */
+            --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        /* Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Grid Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(var(--glass-blur));
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .brand {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-lg);
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s var(--ease-out);
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--glass-shine);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--primary-light);
+            border-color: rgba(139, 92, 246, 0.2);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 3rem;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .search-bar {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 320px;
+            transition: 0.3s;
+        }
+
+        .search-bar:focus-within {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .btn-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 6px 16px 6px 6px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .user-profile:hover {
+            background: var(--glass-shine);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #d8b4fe);
+        }
+
+        /* Filter Chips */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .chip {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .chip:hover {
+            background: var(--glass-shine);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px -5px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Masonry Grid */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding-bottom: 6rem;
+        }
+
+        .memory-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all 0.4s var(--ease-out);
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .memory-card:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            border-color: rgba(139, 92, 246, 0.4);
+            z-index: 10;
+        }
+
+        .img-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: 240px;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s var(--ease-out);
+        }
+
+        .memory-card:hover .card-img {
+            transform: scale(1.1);
+        }
+
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(15, 23, 42, 0.6) 100%);
+            z-index: 1;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+            background: rgba(30, 41, 59, 0.3);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-date {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 1rem;
+        }
+
+        .collab-group {
+            display: flex;
+            padding-left: 12px;
+        }
+
+        .collab-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 3px solid #1e293b;
+            margin-left: -12px;
+            background: #94a3b8;
+            transition: 0.2s;
+        }
+
+        .memory-card:hover .collab-avatar {
+            border-color: #292d3e;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 3rem;
+            right: 3rem;
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5);
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out);
+            border: none;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: var(--primary-hover);
+            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.7);
+        }
+
+        .fab svg {
+            width: 32px;
+            height: 32px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">E</div>
+                Everly
+            </div>
+
+            <div class="nav-menu">
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Home
+                </a>
+                <a href="#" class="nav-item active">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Memories
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    Journals
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Autographs
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Events
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Groups
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <div class="page-title">
+                    <h1>Your Vault</h1>
+                    <p>Relive your cherished moments in style</p>
+                </div>
+
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" placeholder="Search memories...">
+                    </div>
+                    <button class="btn-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar"></div>
+                        <span style="font-size: 0.95rem; font-weight: 500; color: white;">Hesanda</span>
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="chip active">All Memories</div>
+                <div class="chip">Favorites</div>
+                <div class="chip">Recent Trips</div>
+                <div class="chip">Family</div>
+                <div class="chip">Friends</div>
+                <div class="chip">Videos</div>
+                <div class="chip">Collaborative</div>
+            </div>
+
+            <!-- Gallery -->
+            <div class="memory-grid">
+
+                <!-- Card 1 -->
+                <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?auto=format&fit=crop&w=600&q=80"
+                            class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span class="card-date">Feb 14, 2026</span>
+                            <svg class="lock-icon" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                height="16" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="card-title">Adventure in Kyoto</div>
+                        <div class="card-desc">Walking through the bamboo forest was absolutely surreal. The lighting
+                            was perfect and we even saw...</div>
+                        <div class="card-footer">
+                            <div class="collab-group">
+                                <div class="collab-avatar" style="background: #f87171;"></div>
+                                <div class="collab-avatar" style="background: #60a5fa;"></div>
+                                <div
+                                    style="margin-left: 8px; font-size: 12px; color: var(--text-muted); align-self: center;">
+                                    + 2 more</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80"
+                            class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span class="card-date">Jan 28, 2026</span>
+                        </div>
+                        <div class="card-title">Graduation Day</div>
+                        <div class="card-desc">Finally did it! So proud of everyone who made this journey possible. A
+                            day to remember forever.</div>
+                        <div class="card-footer">
+                            <div class="collab-group">
+                                <div class="collab-avatar" style="background: #34d399;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=600&q=80"
+                            class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span class="card-date">Dec 25, 2025</span>
+                        </div>
+                        <div class="card-title">Christmas Dinner</div>
+                        <div class="card-desc">Best turkey we've ever had. Grandma's recipe is unbeatable and the
+                            company was even better.</div>
+                        <div class="card-footer">
+                            <div class="collab-group">
+                                <div class="collab-avatar" style="background: #fbbf24;"></div>
+                                <div class="collab-avatar" style="background: #a78bfa;"></div>
+                                <div class="collab-avatar" style="background: #f472b6;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80"
+                            class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span class="card-date">Nov 10, 2025</span>
+                            <svg class="lock-icon" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                height="16" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="card-title">Nature Walk</div>
+                        <div class="card-desc">Peace and quiet. Just what was needed after a long week.</div>
+                        <div class="card-footer">
+                            <span style="font-size: 0.8rem; color: #94a3b8;">Private Vault</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="memory-card">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80"
+                            class="card-img" alt="Memory">
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span class="card-date">Oct 05, 2025</span>
+                        </div>
+                        <div class="card-title">Concert Night</div>
+                        <div class="card-desc">The energy was electric! Can't wait for the next tour.</div>
+                        <div class="card-footer">
+                            <div class="collab-group">
+                                <div class="collab-avatar" style="background: #2dd4bf;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Floating Action Button -->
+        <button class="fab">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+            </svg>
+        </button>
+    </div>
+
+</body>
+
+</html>

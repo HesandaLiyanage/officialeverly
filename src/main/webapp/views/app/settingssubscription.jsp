@@ -119,84 +119,85 @@
                     <div
                         style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
                         <div>
-                            <h2 style="margin: 0 0 5px 0; font-size: 24px; color: #1a1a2e;">Free Tier</h2>
-                            <p style="margin: 0; color: #6b7280; font-size: 14px;">The basics for personal memory
-                                keeping.</p>
+                            <h2 style="margin: 0 0 5px 0; font-size: 24px; color: #1a1a2e;">${currentPlan.name} Tier
+                            </h2>
+                            <p style="margin: 0; color: #6b7280; font-size: 14px;">${currentPlan.description}</p>
                         </div>
                         <span class="plan-status-badge active">Active</span>
                     </div>
+                </div>
 
-                    <div
-                        style="border-top: 1px solid #f0f0f5; padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div
+                    style="border-top: 1px solid #f0f0f5; padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
 
-                        <!-- Storage Limit -->
-                        <div>
-                            <div class="limit-label">
-                                <span>Storage</span>
-                                <span>2.4 GB / 20 GB</span>
-                            </div>
-                            <div class="limit-track">
-                                <div class="limit-fill" style="width: 12%;"></div>
-                            </div>
-                            <p style="font-size: 12px; color: #9ca3af; margin-top: 6px;">12% used</p>
+                    <!-- Storage Limit -->
+                    <div>
+                        <div class="limit-label">
+                            <span>Storage</span>
+                            <span>${usedStorageFormatted} / ${totalStorageFormatted}</span>
                         </div>
-
-                        <!-- Pages/Journal Limit -->
-                        <div>
-                            <div class="limit-label">
-                                <span>Monthly Uploads</span>
-                                <span>15 / 50</span>
-                            </div>
-                            <div class="limit-track">
-                                <div class="limit-fill medium" style="width: 30%; background: #fbbf24;"></div>
-                            </div>
-                            <p style="font-size: 12px; color: #9ca3af; margin-top: 6px;">30% used</p>
+                        <div class="limit-track">
+                            <div class="limit-fill" style="width: ${storagePercentage}%;"></div>
                         </div>
+                        <p style="font-size: 12px; color: #9ca3af; margin-top: 6px;">${storagePercentage}% used</p>
                     </div>
 
-                    <div
-                        style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #f0f0f5; display: flex; justify-content: flex-end;">
-                        <a href="${pageContext.request.contextPath}/managesubscription"
-                            style="color: #9A74D8; font-weight: 600; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 4px;">
-                            View Subscription Details
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Upgrade Promo -->
-                <div class="upgrade-hero">
-                    <div class="upgrade-content">
-                        <h3>Unlock more space & features</h3>
-                        <p>Get unlimited storage, AI journaling, and themes with Premium.</p>
-                    </div>
-                    <a href="${pageContext.request.contextPath}/changeplan" class="upgrade-btn">Change Plan</a>
-                </div>
-
-                <!-- Billing & Payment -->
-                <h3 style="font-size: 20px; margin-bottom: 20px; color: #1a1a2e;">Billing & Payment</h3>
-
-                <div class="sub-card" style="margin-bottom: 30px;">
-                    <div style="margin-bottom: 10px; font-weight: 600; font-size: 15px;">Payment Method</div>
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #fafbfd; border-radius: 8px; border: 1px solid #f0f0f5;">
-                        <div style="color: #6b7280; font-size: 14px;">No payment method added</div>
-                        <button class="sub-btn outline" style="padding: 6px 14px; font-size: 13px;"
-                            disabled>Manage</button>
-                    </div>
-
-                    <div style="margin-top: 25px; margin-bottom: 10px; font-weight: 600; font-size: 15px;">Billing
-                        History</div>
-                    <div class="billing-empty-state">
-                        <div style="font-size: 24px; margin-bottom: 10px;">🧾</div>
-                        <p style="margin: 0;">No invoices available for Free Tier.</p>
+                    <!-- Memories Limit -->
+                    <div>
+                        <div class="limit-label">
+                            <span>Memories</span>
+                            <span>${memoryCount} / ${memoryLimit}</span>
+                        </div>
+                        <div class="limit-track">
+                            <div class="limit-fill medium" style="width: ${memoryPercentage}%; background: #fbbf24;">
+                            </div>
+                        </div>
+                        <p style="font-size: 12px; color: #9ca3af; margin-top: 6px;">${memoryPercentage}% used</p>
                     </div>
                 </div>
 
+                <div
+                    style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #f0f0f5; display: flex; justify-content: flex-end;">
+                    <a href="${pageContext.request.contextPath}/managesubscription"
+                        style="color: #9A74D8; font-weight: 600; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 4px;">
+                        View Subscription Details
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
             </div>
+
+            <!-- Upgrade Promo -->
+            <div class="upgrade-hero">
+                <div class="upgrade-content">
+                    <h3>Unlock more space & features</h3>
+                    <p>Get unlimited storage, AI journaling, and themes with Premium.</p>
+                </div>
+                <a href="${pageContext.request.contextPath}/changeplan" class="upgrade-btn">Change Plan</a>
+            </div>
+
+            <!-- Billing & Payment -->
+            <h3 style="font-size: 20px; margin-bottom: 20px; color: #1a1a2e;">Billing & Payment</h3>
+
+            <div class="sub-card" style="margin-bottom: 30px;">
+                <div style="margin-bottom: 10px; font-weight: 600; font-size: 15px;">Payment Method</div>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #fafbfd; border-radius: 8px; border: 1px solid #f0f0f5;">
+                    <div style="color: #6b7280; font-size: 14px;">No payment method added</div>
+                    <button class="sub-btn outline" style="padding: 6px 14px; font-size: 13px;" disabled>Manage</button>
+                </div>
+
+                <div style="margin-top: 25px; margin-bottom: 10px; font-weight: 600; font-size: 15px;">Billing
+                    History</div>
+                <div class="billing-empty-state">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🧾</div>
+                    <p style="margin: 0;">No invoices available for Free Tier.</p>
+                </div>
+            </div>
+
+        </div>
         </div>
 
         <jsp:include page="../public/footer.jsp" />

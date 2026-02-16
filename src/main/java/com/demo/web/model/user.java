@@ -99,6 +99,16 @@ public class user {
         this.last_login = lastLogin;
     }
 
+    private int plan_id;
+
+    public int getPlanId() {
+        return plan_id;
+    }
+
+    public void setPlanId(int planId) {
+        this.plan_id = planId;
+    }
+
     // Optional: toString method for debugging
     @Override
     public String toString() {
@@ -111,6 +121,7 @@ public class user {
                 ", isActive=" + is_active +
                 ", createdAt=" + joined_at +
                 ", lastLogin=" + last_login +
+                ", planId=" + plan_id +
                 '}';
     }
 }

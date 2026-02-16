@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+import com.demo.web.dao.SubscriptionDAO;
+import com.demo.web.model.Plan;
 
 public class MemoriesServlet extends HttpServlet {
 
@@ -40,6 +42,36 @@ public class MemoriesServlet extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("user_id");
 
         try {
+            SubscriptionDAO subDAO = new SubscriptionDAO();
+            Plan plan = subDAO.getPlanByUserId(userId);
+            if (plan == null)
+                plan = subDAO.getPlanById(1);
+
+            long used = subDAO.getUsedStorage(userId);
+            int count = subDAO.getMemoryCount(userId);
+
+            boolean warning = false;
+            boolean full = false;
+
+            long limit = plan.getStorageLimitBytes();
+            if (limit > 0) {
+                if (used >= limit)
+                    full = true;
+                else if ((double) used / limit > 0.9)
+                    warning = true;
+            }
+
+            int memLimit = plan.getMemoryLimit();
+            if (memLimit > 0) {
+                if (count >= memLimit)
+                    full = true;
+                else if ((double) count / memLimit > 0.9)
+                    warning = true;
+            }
+
+            request.setAttribute("showStorageWarning", warning);
+            request.setAttribute("storageFull", full);
+
             // Get all memories for this user
             List<Memory> memories = memoryDAO.getMemoriesByUserId(userId);
 

@@ -38,6 +38,22 @@
                             </button>
                         </div>
 
+                        <!-- Storage Warning -->
+                        <c:if test="${showStorageWarning}">
+                            <div
+                                style="background: #fff3cd; color: #856404; padding: 10px; margin: 10px 0; border: 1px solid #ffeeba; border-radius: 6px; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                <span>You are running low on storage or confirmed memories. <a
+                                        href="${pageContext.request.contextPath}/changeplan"
+                                        style="color: #533f03; font-weight: 600;">Upgrade now</a></span>
+                            </div>
+                        </c:if>
+
                         <!-- Show error message if any -->
                         <c:if test="${not empty errorMessage}">
                             <div
@@ -55,10 +71,20 @@
                                         <div style="font-size: 64px; margin-bottom: 20px;">📸</div>
                                         <h3 style="margin-bottom: 10px;">No memories yet</h3>
                                         <p style="margin-bottom: 30px;">Start creating your first memory!</p>
-                                        <a href="/creatememory" class="floating-btn"
-                                            style="display: inline-block; padding: 12px 30px; text-decoration: none;">
-                                            Create Your First Memory
-                                        </a>
+                                        <c:choose>
+                                            <c:when test="${storageFull}">
+                                                <div class="floating-btn"
+                                                    style="display: inline-block; padding: 12px 30px; opacity: 0.6; cursor: not-allowed; background: #999;">
+                                                    Storage Full - Upgrade to Create
+                                                </div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="/creatememory" class="floating-btn"
+                                                    style="display: inline-block; padding: 12px 30px; text-decoration: none;">
+                                                    Create Your First Memory
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
@@ -125,14 +151,31 @@
 
                         <!-- Floating Action Buttons -->
                         <div class="floating-buttons" id="floatingButtons" style="position: static; margin-top: 20px;">
-                            <a href="/creatememory" class="floating-btn">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                                Add Memory
-                            </a>
+                            <c:choose>
+                                <c:when test="${storageFull}">
+                                    <div class="floating-btn"
+                                        style="opacity: 0.6; cursor: not-allowed; background: #999;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                        Full
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="/creatememory" class="floating-btn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                        Add Memory
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
                             <a href="/vaultmemories" class="floating-btn vault-btn">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

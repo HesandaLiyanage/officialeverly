@@ -597,6 +597,24 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>SettingsSubscriptionController</servlet-name>
+        <servlet-class>com.demo.web.controller.Settings.SettingsSubscriptionController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SettingsSubscriptionController</servlet-name>
+        <url-pattern>/settingssubscription</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ManageSubscriptionController</servlet-name>
+        <servlet-class>com.demo.web.controller.Settings.ManageSubscriptionController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageSubscriptionController</servlet-name>
+        <url-pattern>/managesubscription</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>
     </servlet>

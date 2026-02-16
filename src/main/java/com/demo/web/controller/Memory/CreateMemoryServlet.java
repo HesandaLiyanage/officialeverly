@@ -8,6 +8,8 @@ import com.demo.web.dao.GroupMemberDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Group;
+import com.demo.web.dao.SubscriptionDAO;
+import com.demo.web.model.Plan;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -57,6 +59,19 @@ public class CreateMemoryServlet extends HttpServlet {
             return;
         }
 
+        Integer userId = (Integer) session.getAttribute("user_id");
+        SubscriptionDAO subDAO = new SubscriptionDAO();
+        int count = subDAO.getMemoryCount(userId);
+        Plan plan = subDAO.getPlanByUserId(userId);
+        if (plan == null)
+            plan = subDAO.getPlanById(1);
+
+        int memLimit = plan.getMemoryLimit();
+        if (memLimit > 0 && count >= memLimit) {
+            response.sendRedirect(request.getContextPath() + "/changeplan?reason=limit");
+            return;
+        }
+
         // Check if creating a collab memory
         String type = request.getParameter("type");
         request.setAttribute("isCollaborative", "collab".equals(type));
@@ -77,6 +92,30 @@ public class CreateMemoryServlet extends HttpServlet {
         }
 
         Integer userId = (Integer) session.getAttribute("user_id");
+
+        // Check limits
+        SubscriptionDAO subDAO = new SubscriptionDAO();
+        int count = subDAO.getMemoryCount(userId);
+        Plan plan = subDAO.getPlanByUserId(userId);
+        if (plan == null)
+            plan = subDAO.getPlanById(1);
+
+        int memLimit = plan.getMemoryLimit();
+        if (memLimit > 0 && count >= memLimit) {
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("{\"error\": \"Memory limit reached. Upgrade plan.\"}");
+            return;
+        }
+
+        long used = subDAO.getUsedStorage(userId);
+        long storeLimit = plan.getStorageLimitBytes();
+        if (storeLimit > 0 && used >= storeLimit) {
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("{\"error\": \"Storage limit reached. Upgrade plan.\"}");
+            return;
+        }
 
         try {
             String memoryName = request.getParameter("memoryName");

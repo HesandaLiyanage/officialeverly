@@ -37,6 +37,54 @@ public class DebugServlet extends HttpServlet {
             out.println("<p>❌ Connection Error: " + e.getMessage() + "</p>");
         }
 
+        // Run Migration if requested
+        String migrate = request.getParameter("migrate");
+        if ("true".equals(migrate)) {
+            out.println("<h3>Running Subscription Migration...</h3>");
+            try (Connection conn = DatabaseUtil.getConnection()) {
+                // Try multiple paths to find the file
+                java.io.InputStream is = DebugServlet.class
+                        .getResourceAsStream("/database/migrations/limit_migration.sql");
+                if (is == null)
+                    is = DebugServlet.class.getClassLoader()
+                            .getResourceAsStream("database/migrations/limit_migration.sql");
+
+                if (is != null) {
+                    java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(is));
+                    StringBuilder sql = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (!line.trim().startsWith("--"))
+                            sql.append(line).append(" ");
+                    }
+
+                    String[] stmts = sql.toString().split(";");
+                    for (String s : stmts) {
+                        if (!s.trim().isEmpty()) {
+                            try (java.sql.Statement st = conn.createStatement()) {
+                                st.execute(s);
+                                out.println("<div style='color:green'>Executed: "
+                                        + s.substring(0, Math.min(s.length(), 50)) + "...</div>");
+                            } catch (Exception ex) {
+                                out.println("<div style='color:red'>Error executing: "
+                                        + s.substring(0, Math.min(s.length(), 50)) + "... <br>" + ex.getMessage()
+                                        + "</div>");
+                            }
+                        }
+                    }
+                    out.println("<p><b>Migration process completed.</b></p>");
+                } else {
+                    out.println("<p style='color:red'>Migration file not found!</p>");
+                }
+            } catch (Exception e) {
+                out.println("<p style='color:red'>Migration failed: " + e.getMessage() + "</p>");
+                e.printStackTrace();
+            }
+        } else {
+            out.println(
+                    "<p><a href='?migrate=true' style='background:red; color:white; padding:10px; text-decoration:none;'>RUN SUBSCRIPTION MIGRATION</a></p>");
+        }
+
         // Test 2: Check users in database
         out.println("<h3>2. Users in Database</h3>");
         try (Connection conn = DatabaseUtil.getConnection()) {
