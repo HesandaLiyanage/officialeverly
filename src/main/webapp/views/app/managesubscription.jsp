@@ -28,7 +28,7 @@
                 </div>
 
                 <% // Retrieve attributes for scriptlet logic String pName=(String) request.getAttribute("planName"); if
-                    (pName==null) pName="Basic" ; %>
+                    (pName==null) { pName="Basic" ; } %>
 
                     <div class="manage-sub-layout">
 
