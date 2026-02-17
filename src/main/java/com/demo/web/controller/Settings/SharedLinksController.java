@@ -22,12 +22,14 @@ public class SharedLinksController extends HttpServlet {
     private autographDAO autographDAO;
     private memoryDAO memoryDAO;
     private GroupInviteDAO groupInviteDAO;
+    private com.demo.web.dao.userDAO userDAO;
 
     @Override
     public void init() throws ServletException {
         autographDAO = new autographDAO();
         memoryDAO = new memoryDAO();
         groupInviteDAO = new GroupInviteDAO();
+        userDAO = new com.demo.web.dao.userDAO();
     }
 
     @Override
@@ -37,7 +39,20 @@ public class SharedLinksController extends HttpServlet {
         HttpSession session = request.getSession(false);
         user currentUser = (session != null) ? (user) session.getAttribute("user") : null;
 
+        if (currentUser == null && session != null) {
+            // Fallback: Check if user_id exists in session (from SessionUtil)
+            Object userIdObj = session.getAttribute("user_id");
+            if (userIdObj != null) {
+                int userId = (Integer) userIdObj;
+                currentUser = userDAO.findById(userId);
+                if (currentUser != null) {
+                    session.setAttribute("user", currentUser); // Cache it
+                }
+            }
+        }
+
         if (currentUser == null) {
+            System.out.println("SharedLinksController: User not found in session, redirecting to login.");
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -72,6 +87,17 @@ public class SharedLinksController extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         user currentUser = (session != null) ? (user) session.getAttribute("user") : null;
+
+        if (currentUser == null && session != null) {
+            Object userIdObj = session.getAttribute("user_id");
+            if (userIdObj != null) {
+                int userId = (Integer) userIdObj;
+                currentUser = userDAO.findById(userId);
+                if (currentUser != null) {
+                    session.setAttribute("user", currentUser);
+                }
+            }
+        }
 
         if (currentUser == null) {
             response.sendRedirect(request.getContextPath() + "/login");
