@@ -600,4 +600,24 @@ public class memoryDAO {
             closeResources(rs, stmt, conn);
         }
     }
+
+    /**
+     * Get memories owned by user that have a collab share link active
+     */
+    public List<Memory> getSharedMemoriesByOwner(int userId) {
+        List<Memory> memories = new ArrayList<>();
+        String sql = "SELECT * FROM memory WHERE user_id = ? AND collab_share_key IS NOT NULL AND (is_in_vault = FALSE OR is_in_vault IS NULL)";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    memories.add(mapResultSetToMemory(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return memories;
+    }
 }

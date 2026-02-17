@@ -27,7 +27,8 @@
                     <p style="margin: 0;">View and manage your current plan, billing, and storage usage.</p>
                 </div>
 
-                <% // Retrieve attributes for scriptlet logic String pName=(String) request.getAttribute("planName");
+                <% // Retrieve attributes for scriptlet logic 
+                    String pName=(String) request.getAttribute("planName");
                     if(pName==null) { pName="Basic" ; } %>
 
                     <div class="manage-sub-layout">

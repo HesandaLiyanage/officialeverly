@@ -37,6 +37,7 @@ public class autographDAO {
     }
 
     public String getOrCreateShareToken(int autographId) throws SQLException {
+        // ... existing implementation ...
         String selectSql = "SELECT share_token FROM autograph WHERE autograph_id = ?";
         String updateSql = "UPDATE autograph SET share_token = ? WHERE autograph_id = ?";
         String newToken = generateToken();
@@ -62,6 +63,23 @@ public class autographDAO {
             }
 
             return newToken;
+        }
+    }
+
+    /**
+     * Revoke share token (set to NULL)
+     */
+    public boolean revokeShareToken(int autographId) {
+        String sql = "UPDATE autograph SET share_token = NULL WHERE autograph_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, autographId);
+            int rows = stmt.executeUpdate();
+            System.out.println("[DEBUG autographDAO] revokeShareToken for ID " + autographId + ": " + rows + " rows.");
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -124,35 +142,41 @@ public class autographDAO {
     /**
      * Get autograph by share token
      */
-//    public autograph getAutographByShareToken(String shareToken) {
-//        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url, share_token FROM autograph WHERE share_token = ?";
-//        try (Connection conn = DatabaseUtil.getConnection();
-//                PreparedStatement stmt = conn.prepareStatement(sql)) {
-//            stmt.setString(1, shareToken);
-//            ResultSet rs = stmt.executeQuery();
-//            if (rs.next()) {
-//                autograph result = mapResultSetToAutograph(rs);
-//                System.out.println(
-//                        "[DEBUG autographDAO] getAutographByShareToken(" + shareToken + ") returned: " + result);
-//                return result;
-//            } else {
-//                System.out.println("[DEBUG autographDAO] getAutographByShareToken(" + shareToken
-//                        + ") returned null (record not found).");
-//            }
-//        } catch (SQLException e) {
-//            System.out.println("[DEBUG autographDAO] Error while fetching autograph by share token " + shareToken + ": "
-//                    + e.getMessage());
-//            e.printStackTrace();
-//            throw new RuntimeException("Error while fetching autograph by share token", e);
-//        }
-//        return null;
-//    }
+    // public autograph getAutographByShareToken(String shareToken) {
+    // String sql = "SELECT autograph_id, a_title, a_description, created_at,
+    // user_id, autograph_pic_url, share_token FROM autograph WHERE share_token =
+    // ?";
+    // try (Connection conn = DatabaseUtil.getConnection();
+    // PreparedStatement stmt = conn.prepareStatement(sql)) {
+    // stmt.setString(1, shareToken);
+    // ResultSet rs = stmt.executeQuery();
+    // if (rs.next()) {
+    // autograph result = mapResultSetToAutograph(rs);
+    // System.out.println(
+    // "[DEBUG autographDAO] getAutographByShareToken(" + shareToken + ") returned:
+    // " + result);
+    // return result;
+    // } else {
+    // System.out.println("[DEBUG autographDAO] getAutographByShareToken(" +
+    // shareToken
+    // + ") returned null (record not found).");
+    // }
+    // } catch (SQLException e) {
+    // System.out.println("[DEBUG autographDAO] Error while fetching autograph by
+    // share token " + shareToken + ": "
+    // + e.getMessage());
+    // e.printStackTrace();
+    // throw new RuntimeException("Error while fetching autograph by share token",
+    // e);
+    // }
+    // return null;
+    // }
 
     /**
      * Get all autographs by a specific user
      */
     public List<autograph> findByUserId(int userId) {
-        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url FROM autograph WHERE user_id = ?";
+        String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url, share_token FROM autograph WHERE user_id = ?";
         List<autograph> autographs = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {

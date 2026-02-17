@@ -25,20 +25,22 @@ public class GroupInviteDAO {
     public boolean createInvite(GroupInvite invite) {
         String sql = "INSERT INTO group_invite (group_id, invite_token, created_by, created_at, is_active) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, invite.getGroupId());
             stmt.setString(2, invite.getInviteToken());
             stmt.setInt(3, invite.getCreatedBy());
-            stmt.setTimestamp(4, invite.getCreatedAt() != null ? invite.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
+            stmt.setTimestamp(4,
+                    invite.getCreatedAt() != null ? invite.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
             stmt.setBoolean(5, invite.isActive());
-            
+
             int rowsInserted = stmt.executeUpdate();
             if (rowsInserted > 0) {
                 ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
                     invite.setInviteId(rs.getInt(1));
                 }
-                System.out.println("[DEBUG GroupInviteDAO] createInvite: Created invite with token " + invite.getInviteToken());
+                System.out.println(
+                        "[DEBUG GroupInviteDAO] createInvite: Created invite with token " + invite.getInviteToken());
                 return true;
             }
         } catch (SQLException e) {
@@ -54,7 +56,7 @@ public class GroupInviteDAO {
     public GroupInvite findByToken(String token) {
         String sql = "SELECT invite_id, group_id, invite_token, created_by, created_at, is_active FROM group_invite WHERE invite_token = ? AND is_active = TRUE";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, token);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -74,19 +76,42 @@ public class GroupInviteDAO {
     /**
      * Find all invites for a group (for access revoking feature)
      */
+    /**
+     * Find all invites for a group (for access revoking feature)
+     */
     public List<GroupInvite> findByGroupId(int groupId) {
         String sql = "SELECT invite_id, group_id, invite_token, created_by, created_at, is_active FROM group_invite WHERE group_id = ? ORDER BY created_at DESC";
         List<GroupInvite> invites = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 invites.add(mapResultSetToInvite(rs));
             }
-            System.out.println("[DEBUG GroupInviteDAO] findByGroupId: Found " + invites.size() + " invites for group " + groupId);
+            System.out.println(
+                    "[DEBUG GroupInviteDAO] findByGroupId: Found " + invites.size() + " invites for group " + groupId);
         } catch (SQLException e) {
             System.out.println("[DEBUG GroupInviteDAO] Error finding invites by group ID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return invites;
+    }
+
+    /**
+     * Find all active invites created by a user
+     */
+    public List<GroupInvite> findInvitesByCreator(int userId) {
+        String sql = "SELECT invite_id, group_id, invite_token, created_by, created_at, is_active FROM group_invite WHERE created_by = ? AND is_active = TRUE ORDER BY created_at DESC";
+        List<GroupInvite> invites = new ArrayList<>();
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                invites.add(mapResultSetToInvite(rs));
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return invites;
@@ -98,10 +123,11 @@ public class GroupInviteDAO {
     public boolean deleteInvite(int inviteId) {
         String sql = "DELETE FROM group_invite WHERE invite_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, inviteId);
             int rowsDeleted = stmt.executeUpdate();
-            System.out.println("[DEBUG GroupInviteDAO] deleteInvite: Deleted " + rowsDeleted + " rows for invite " + inviteId);
+            System.out.println(
+                    "[DEBUG GroupInviteDAO] deleteInvite: Deleted " + rowsDeleted + " rows for invite " + inviteId);
             return rowsDeleted > 0;
         } catch (SQLException e) {
             System.out.println("[DEBUG GroupInviteDAO] Error deleting invite: " + e.getMessage());
@@ -116,7 +142,7 @@ public class GroupInviteDAO {
     public boolean deactivateInvite(int inviteId) {
         String sql = "UPDATE group_invite SET is_active = FALSE WHERE invite_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, inviteId);
             int rowsUpdated = stmt.executeUpdate();
             System.out.println("[DEBUG GroupInviteDAO] deactivateInvite: Deactivated invite " + inviteId);

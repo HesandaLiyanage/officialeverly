@@ -615,6 +615,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>SharedLinksController</servlet-name>
+        <servlet-class>com.demo.web.controller.Settings.SharedLinksController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SharedLinksController</servlet-name>
+        <url-pattern>/sharedlinks</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>
     </servlet>
