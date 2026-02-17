@@ -27,12 +27,8 @@
                     <p style="margin: 0;">View and manage your current plan, billing, and storage usage.</p>
                 </div>
 
-                <% // Retrieve attributes for scriptlet logic 
-                    String pName=(String) request.getAttribute("planName"); 
-                    if(pName==null) { 
-                        pName="Basic" ; 
-                    } 
-                %>
+                <% // Retrieve attributes for scriptlet logic String pName=(String) request.getAttribute("planName");
+                    if(pName==null) { pName="Basic" ; } %>
 
                     <div class="manage-sub-layout">
 
@@ -90,10 +86,10 @@
                             <div class="storage-bar-container">
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                                     <span style="font-size: 14px; font-weight: 600; color: #1a1a2e;">
-                                        ${storageUsed} GB used
+                                        ${storageUsedFormatted} used
                                     </span>
                                     <span style="font-size: 14px; color: #9ca3af;">
-                                        ${storageTotal} GB total
+                                        ${storageTotalFormatted} total
                                     </span>
                                 </div>
                                 <div class="storage-bar-bg">
@@ -109,7 +105,7 @@
                             <div class="storage-breakdown">
                                 <div class="storage-item">
                                     <span class="storage-dot" style="background: #9A74D8;"></span>
-                                    Photos — ${storageUsed} GB <!-- Simplified breakdown -->
+                                    Photos — ${storageUsedFormatted} <!-- Simplified breakdown -->
                                 </div>
                             </div>
 
