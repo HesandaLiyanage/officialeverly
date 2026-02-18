@@ -79,7 +79,7 @@
 
           <div class="vault-options">
             <form action="${pageContext.request.contextPath}/vaultmemories" method="POST" style="display: inline;">
-              <input type="hidden" name="vaultPassword" value="<%= request.getParameter(" vaultPassword") %>">
+              <input type="hidden" name="vaultPassword" value="<%= request.getParameter("vaultPassword") %>">
               <button type="submit" class="vault-option-card"
                 style="border: none; background: none; cursor: pointer; text-align: left;">
                 <div class="option-icon">
@@ -96,7 +96,7 @@
             </form>
 
             <form action="${pageContext.request.contextPath}/vaultjournals" method="POST" style="display: inline;">
-              <input type="hidden" name="vaultPassword" value="<%= request.getParameter(" vaultPassword") %>">
+              <input type="hidden" name="vaultPassword" value="<%= request.getParameter("vaultPassword") %>">
               <button type="submit" class="vault-option-card"
                 style="border: none; background: none; cursor: pointer; text-align: left;">
                 <div class="option-icon">
