@@ -568,11 +568,17 @@ public class FrontControllerServlet extends HttpServlet {
                     return;
                 }
 
+                // Truncate content to fit VARCHAR(50) column if needed
+                String safeContent = content;
+                if (safeContent.length() > 50) {
+                    safeContent = safeContent.substring(0, 50);
+                }
+
                 // Insert into autograph_entry table
                 String insertSql = "INSERT INTO autograph_entry (content, submitted_at, autograph_id, user_id) VALUES (?, CURRENT_DATE, ?, ?)";
                 try (java.sql.Connection conn = com.demo.web.util.DatabaseUtil.getConnection();
                         java.sql.PreparedStatement stmt = conn.prepareStatement(insertSql)) {
-                    stmt.setString(1, content);
+                    stmt.setString(1, safeContent);
                     stmt.setInt(2, ag.getAutographId());
                     stmt.setInt(3, writerUserId);
                     stmt.executeUpdate();
@@ -585,10 +591,12 @@ public class FrontControllerServlet extends HttpServlet {
 
             } catch (SQLException e) {
                 e.printStackTrace();
-                response.getWriter().write("{\"success\": false, \"message\": \"Database error occurred\"}");
+                String errMsg = e.getMessage() != null ? e.getMessage().replace("\"", "'") : "Unknown database error";
+                response.getWriter().write("{\"success\": false, \"message\": \"DB Error: " + errMsg + "\"}");
             } catch (Exception e) {
                 e.printStackTrace();
-                response.getWriter().write("{\"success\": false, \"message\": \"Error submitting entry\"}");
+                String errMsg = e.getMessage() != null ? e.getMessage().replace("\"", "'") : "Unknown error";
+                response.getWriter().write("{\"success\": false, \"message\": \"Error: " + errMsg + "\"}");
             }
         }
     }
