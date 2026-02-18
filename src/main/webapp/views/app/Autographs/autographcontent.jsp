@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="java.util.List" %> <!-- Add this import -->
-        <%@ page import="com.demo.web.model.autograph" %> <!-- Add this import -->
+    <%@ page import="java.util.List" %>
+        <%@ page import="com.demo.web.model.autograph" %>
             <!DOCTYPE html>
             <html lang="en">
 
@@ -50,16 +50,16 @@
                                 <% List<autograph> autographs = (List<autograph>) request.getAttribute("autographs");
                                         if (autographs != null && !autographs.isEmpty()) {
                                         for (autograph ag : autographs) {
-                                        // Format the date
                                         String formattedDate = ag.getCreatedAt() != null ?
                                         ag.getCreatedAt().toString().substring(0, 10) : "Unknown Date";
+                                        String picUrl = ag.getAutographPicUrl() != null ? ag.getAutographPicUrl() :
+                                        "default.jpg";
                                         %>
-                                        <!-- Added data-autograph-id attribute -->
                                         <div class="autograph-card" data-autograph-id="<%= ag.getAutographId() %>"
                                             data-title="<%= ag.getTitle() %>">
                                             <div class="autograph-image"
-                                                style="background-image: url('<%= request.getContextPath() %>/dbimages/<%= ag.getAutographPicUrl() != null ? ag.getAutographPicUrl() : "
-                                                default.jpg" %>')"></div>
+                                                style="background-image: url('<%= request.getContextPath() %>/dbimages/<%= picUrl %>')">
+                                            </div>
                                             <div class="autograph-content">
                                                 <h3 class="autograph-title">
                                                     <%= ag.getTitle() %>
@@ -77,7 +77,6 @@
                                                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                                         </svg>
                                                         <%= "N/A" %> signatures
-                                                            <!-- You might need to calculate the signature count from another table -->
                                                     </span>
                                                     <button class="share-btn"
                                                         onclick="openSharePopup(event, '<%= ag.getAutographId() %>', '<%= ag.getTitle() %>')">
@@ -222,12 +221,12 @@
                 <script>
                     // Function to open share popup
                     function openSharePopup(event, autographId, title) {
-                        event.stopPropagation(); // Prevent card click
+                        event.stopPropagation();
 
-                        const shareOverlay = document.getElementById('shareOverlay');
-                        const whatsappShare = document.getElementById('whatsappShare');
-                        const copyLinkBtn = document.getElementById('copyLinkBtn');
-                        const copyLinkSpan = copyLinkBtn ? copyLinkBtn.querySelector('span') : null;
+                        var shareOverlay = document.getElementById('shareOverlay');
+                        var whatsappShare = document.getElementById('whatsappShare');
+                        var copyLinkBtn = document.getElementById('copyLinkBtn');
+                        var copyLinkSpan = copyLinkBtn ? copyLinkBtn.querySelector('span') : null;
 
                         // Show the overlay immediately
                         if (shareOverlay) {
@@ -244,27 +243,18 @@
                             .then(function (data) {
                                 if (data.success) {
                                     var shareUrl = data.shareUrl;
-
-                                    // Store for copy link function
                                     window.currentShareUrl = shareUrl;
                                     window.currentShareTitle = title;
-
-                                    // Reset copy link text
                                     if (copyLinkSpan) copyLinkSpan.textContent = 'Copy link';
-
-                                    // Update WhatsApp link
                                     if (whatsappShare) {
                                         var whatsappText = 'Check out my autograph book: ' + title + ' - ' + shareUrl;
                                         whatsappShare.href = 'https://wa.me/?text=' + encodeURIComponent(whatsappText);
                                     }
                                 } else {
-                                    // Fallback to direct link if share token generation fails
                                     var fallbackUrl = window.location.origin + '/autographview?id=' + encodeURIComponent(autographId);
                                     window.currentShareUrl = fallbackUrl;
                                     window.currentShareTitle = title;
-
                                     if (copyLinkSpan) copyLinkSpan.textContent = 'Copy link';
-
                                     if (whatsappShare) {
                                         var whatsappText = 'Check out my autograph book: ' + title + ' - ' + fallbackUrl;
                                         whatsappShare.href = 'https://wa.me/?text=' + encodeURIComponent(whatsappText);
@@ -272,13 +262,10 @@
                                 }
                             })
                             .catch(function () {
-                                // Fallback on network error
                                 var fallbackUrl = window.location.origin + '/autographview?id=' + encodeURIComponent(autographId);
                                 window.currentShareUrl = fallbackUrl;
                                 window.currentShareTitle = title;
-
                                 if (copyLinkSpan) copyLinkSpan.textContent = 'Copy link';
-
                                 if (whatsappShare) {
                                     var whatsappText = 'Check out my autograph book: ' + title + ' - ' + fallbackUrl;
                                     whatsappShare.href = 'https://wa.me/?text=' + encodeURIComponent(whatsappText);
@@ -289,48 +276,29 @@
                     document.addEventListener('DOMContentLoaded', function () {
 
                         // Modern Search Functionality
-                        const autographsSearchBtn = document.getElementById('autographsSearchBtn');
+                        var autographsSearchBtn = document.getElementById('autographsSearchBtn');
 
                         if (autographsSearchBtn) {
                             autographsSearchBtn.addEventListener('click', function (event) {
                                 event.stopPropagation();
 
-                                const searchBtnElement = this;
-                                const searchContainer = searchBtnElement.parentElement;
+                                var searchBtnElement = this;
+                                var searchContainer = searchBtnElement.parentElement;
 
-                                const searchBox = document.createElement('div');
+                                var searchBox = document.createElement('div');
                                 searchBox.className = 'autographs-search-expanded';
-                                searchBox.innerHTML = `
-                    <div class="autographs-search-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                    </div>
-                    <input type="text" id="searchInput" placeholder="Search autograph books..." autofocus>
-                    <button class="autographs-search-close">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                `;
+                                searchBox.innerHTML = '<div class="autographs-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg></div><input type="text" id="searchInput" placeholder="Search autograph books..." autofocus><button class="autographs-search-close"><svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>';
 
                                 searchContainer.replaceChild(searchBox, searchBtnElement);
 
-                                const input = searchBox.querySelector('input');
+                                var input = searchBox.querySelector('input');
                                 input.focus();
 
-                                const closeSearch = () => {
-                                    const newSearchBtn = document.createElement('button');
+                                var closeSearch = function () {
+                                    var newSearchBtn = document.createElement('button');
                                     newSearchBtn.className = 'autographs-search-btn';
                                     newSearchBtn.id = 'autographsSearchBtn';
-                                    newSearchBtn.innerHTML = `
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                    `;
+                                    newSearchBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>';
                                     searchContainer.replaceChild(newSearchBtn, searchBox);
                                     newSearchBtn.addEventListener('click', arguments.callee);
                                 };
@@ -338,7 +306,7 @@
                                 searchBox.querySelector('.autographs-search-close').addEventListener('click', closeSearch);
 
                                 input.addEventListener('blur', function () {
-                                    setTimeout(() => {
+                                    setTimeout(function () {
                                         if (!document.activeElement.closest('.autographs-search-expanded')) {
                                             closeSearch();
                                         }
@@ -352,25 +320,24 @@
 
                                 // Search functionality
                                 input.addEventListener('input', function (e) {
-                                    const query = e.target.value.toLowerCase();
-                                    const autographCards = document.querySelectorAll('.autograph-card');
-                                    autographCards.forEach(card => {
-                                        const title = card.getAttribute('data-title')?.toLowerCase() || '';
-                                        card.style.display = title.includes(query) ? 'block' : 'none';
+                                    var query = e.target.value.toLowerCase();
+                                    var autographCards = document.querySelectorAll('.autograph-card');
+                                    autographCards.forEach(function (card) {
+                                        var cardTitle = card.getAttribute('data-title');
+                                        cardTitle = cardTitle ? cardTitle.toLowerCase() : '';
+                                        card.style.display = cardTitle.indexOf(query) !== -1 ? 'block' : 'none';
                                     });
                                 });
                             });
                         }
 
                         // Autograph card click handlers
-                        const autographCards = document.querySelectorAll('.autograph-card');
-                        autographCards.forEach(card => {
+                        var autographCards = document.querySelectorAll('.autograph-card');
+                        autographCards.forEach(function (card) {
                             card.addEventListener('click', function () {
                                 console.log('Autograph book clicked:', this.querySelector('.autograph-title').textContent);
-                                // Get the autograph ID from the data-autograph-id attribute added in JSP
-                                const autographId = this.getAttribute('data-autograph-id');
+                                var autographId = this.getAttribute('data-autograph-id');
                                 if (autographId) {
-                                    // Redirect to autograph detail page with the ID as a parameter
                                     window.location.href = '/autographview?id=' + encodeURIComponent(autographId);
                                 } else {
                                     console.error('Autograph ID not found for this card.');
@@ -379,29 +346,28 @@
                         });
 
                         // Activity item interactions
-                        const activityItems = document.querySelectorAll('.activity-item');
-                        activityItems.forEach(item => {
+                        var activityItems = document.querySelectorAll('.activity-item');
+                        activityItems.forEach(function (item) {
                             item.addEventListener('click', function () {
-                                activityItems.forEach(i => i.classList.remove('selected'));
+                                activityItems.forEach(function (i) { i.classList.remove('selected'); });
                                 this.classList.add('selected');
                             });
                         });
+
                         // ===============================
                         // SHARE POPUP LOGIC
                         // ===============================
-                        const shareOverlay = document.getElementById('shareOverlay');
-                        const closeShare = document.getElementById('closeShare');
-                        const copyLinkBtn = document.getElementById('copyLinkBtn');
-                        const whatsappShare = document.getElementById('whatsappShare');
-
+                        var shareOverlay = document.getElementById('shareOverlay');
+                        var closeShare = document.getElementById('closeShare');
+                        var copyLinkBtn = document.getElementById('copyLinkBtn');
 
                         // Close share popup
                         if (closeShare && shareOverlay) {
-                            closeShare.addEventListener('click', () => {
+                            closeShare.addEventListener('click', function () {
                                 shareOverlay.style.display = 'none';
                             });
 
-                            shareOverlay.addEventListener('click', (e) => {
+                            shareOverlay.addEventListener('click', function (e) {
                                 if (e.target === shareOverlay) {
                                     shareOverlay.style.display = 'none';
                                 }
@@ -410,29 +376,28 @@
 
                         // Copy link functionality
                         if (copyLinkBtn) {
-                            copyLinkBtn.addEventListener('click', () => {
+                            copyLinkBtn.addEventListener('click', function () {
                                 if (navigator.clipboard && navigator.clipboard.writeText) {
-                                    navigator.clipboard.writeText(currentShareUrl).then(() => {
-                                        const span = copyLinkBtn.querySelector('span');
-                                        const originalText = span.textContent;
-                                        span.textContent = 'Copied!';
-                                        setTimeout(() => {
+                                    navigator.clipboard.writeText(window.currentShareUrl).then(function () {
+                                        var span = copyLinkBtn.querySelector('span');
+                                        var originalText = span.textContent;
+                                        span.textContent = 'Link copied!';
+                                        setTimeout(function () {
                                             span.textContent = originalText;
                                         }, 1500);
-                                    }).catch(() => {
-                                        alert('Copy failed. Please copy manually: ' + currentShareUrl);
+                                    }).catch(function () {
+                                        alert('Copy failed. Please copy manually: ' + window.currentShareUrl);
                                     });
                                 } else {
-                                    // Fallback for older browsers
-                                    const tempInput = document.createElement('input');
-                                    tempInput.value = currentShareUrl;
+                                    var tempInput = document.createElement('input');
+                                    tempInput.value = window.currentShareUrl;
                                     document.body.appendChild(tempInput);
                                     tempInput.select();
                                     document.execCommand('copy');
                                     document.body.removeChild(tempInput);
-                                    const span = copyLinkBtn.querySelector('span');
+                                    var span = copyLinkBtn.querySelector('span');
                                     span.textContent = 'Link copied!';
-                                    setTimeout(() => {
+                                    setTimeout(function () {
                                         span.textContent = 'Copy link';
                                     }, 1500);
                                 }
