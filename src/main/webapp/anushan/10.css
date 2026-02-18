@@ -1,0 +1,225 @@
+/* Base */
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background-color: #faf7ff;
+    color: #1e1e1e;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 1rem 0rem; /* Changed from 0 28px */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Changed shadow */
+}
+
+.logo {
+    font-size: 1.6rem; /* Changed from 1.5rem */
+    font-weight: 700;
+    color: #8c3eff;
+    font-family: "Pacifico", cursive;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem; /* Changed from 18px */
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    color: #8c3eff;
+}
+
+/* Right section */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem; /* Changed from 12px */
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    padding: 0.4rem 2rem 0.4rem 0.8rem; /* Changed from 8px 34px 8px 12px */
+    border-radius: 12px;
+    border: 1px solid #ddd; /* Changed from #e9e9f6 */
+    background: #f3f6ff;
+    outline: none;
+}
+
+.search-box img {
+    position: absolute;
+    right: 8px;
+    top: 5px; /* Adjusted top for better alignment with new padding */
+    width: 18px; /* Changed from 16px */
+    opacity: 0.6; /* Changed from 0.7 */
+}
+
+.icon {
+    width: 22px;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* SETTINGS */
+.settings-page {
+    padding: 140px 200px 80px 200px; /* Changed padding and margin */
+}
+
+h1 {
+    font-size: 32px; /* Changed from 28px */
+    margin-bottom: 24px; /* Changed from 18px */
+}
+
+.tabs {
+    display: flex;
+    gap: 40px; /* Changed from 34px */
+    border-bottom: 1px solid #e5e5e5; /* Changed from #eee */
+    margin-bottom: 24px; /* Changed from 20px */
+}
+
+.tab {
+    background: none;
+    border: none;
+    font-weight: 500; /* Changed from 600 */
+    font-size: 16px; /* Changed from 15px */
+    color: #666;
+    padding-bottom: 10px; /* Changed from 8px 0 */
+    cursor: pointer;
+}
+
+.tab.active {
+    color: #000; /* Changed from #111 */
+    border-bottom: 2px solid #000; /* Changed from 3px solid var(--accent) */
+}
+
+/* DUPLICATE CONTENT */
+/* Removed .section-header and its children styling as per your new CSS */
+/* Merged .section-header h2 to .duplicate-content h2 */
+.duplicate-content h2 {
+    font-size: 18px;
+    font-weight: 600; /* Changed from 700 */
+    margin-bottom: 16px; /* Changed from 14px */
+}
+
+/* Removed .header-actions, .btn, .btn-ghost, .btn-danger, .btn-restore styling as per your new CSS */
+
+/* ITEMS GRID - Removed as your new CSS doesn't use a grid for photo items */
+
+/* Photo item card */
+.photo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px; /* Changed from 14px */
+    padding: 14px 20px; /* Changed from 12px */
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); /* Changed from var(--shadow) */
+    /* Removed gap:12px; as per your new CSS */
+}
+
+/* Removed .photo-left styling as per your new CSS */
+.photo-thumb {
+    width: 55px; /* Changed from 64px */
+    height: 55px; /* Changed from 64px */
+    border-radius: 8px; /* Changed from 10px */
+    background-color: #f2f2f2; /* Changed from #f2f2f6 */
+    object-fit: cover;
+    margin-right: 16px; /* Changed from flex-shrink:0 and moved from .photo-left */
+}
+
+.photo-details {
+    flex-grow: 1; /* Added flex-grow: 1 as per your new CSS */
+    /* Removed min-width:0; as per your new CSS */
+}
+
+.photo-title {
+    font-weight: 600; /* Changed from 700 */
+    margin: 0;
+    /* Removed font-size:15px; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; as per your new CSS */
+}
+
+.photo-meta {
+    margin-top: 4px; /* Changed from 6px 0 0 */
+    font-size: 13px;
+    color: #666; /* Changed from #6b6b6b */
+    line-height: 1.4; /* Changed from 1.3 */
+}
+
+/* Removed .photo-actions, .icon-btn styling as per your new CSS */
+.delete-btn {
+    background: none;
+    border: none;
+    color: red; /* Changed from var(--danger) */
+    font-size: 20px; /* Changed from 18px */
+    cursor: pointer;
+    /* Removed border-color: rgba(255,59,48,0.08); as per your new CSS */
+}
+
+/* FOOTER */
+footer {
+    display: flex;
+    justify-content: center; /* Changed from align-items:center and flex-direction:column */
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    padding: 40px; /* Changed from 28px 20px */
+    border-top: 1px solid #eee;
+    color: #555; /* Changed from #666 */
+    /* Removed background:transparent; as per your new CSS */
+}
+
+.footer-links {
+    /* Removed display:flex; gap:18px; as per your new CSS */
+    display: none; /* Hide if not needed, or adjust as per your HTML */
+}
+
+footer a {
+    color: #6c63ff; /* Changed from var(--accent) */
+    text-decoration: none;
+    margin: 0 10px; /* Added margin */
+    font-size: 14px;
+}
+
+footer p {
+    font-size: 13px; /* Changed from 14px */
+    color: #777; /* Changed from #666 */
+}
+
+/* Responsive */
+/* Removed responsive rules for .items-grid as it's not used in your new CSS structure */
+/* Adjusted general responsive rules to match your new CSS */
+@media (max-width: 720px) {
+    .nav-links {
+        display: none;
+    }
+    .settings-page {
+        padding: 100px 20px 40px 20px; /* Adjusted padding for smaller screens */
+    }
+}
