@@ -276,7 +276,7 @@
 
                                 // Navigate to appropriate page
                                 if (tab === 'memories') {
-                                    window.location.href = '/vaultmemories';
+                                    window.location.href = '${pageContext.request.contextPath}/vaultmemories';
                                 }
                             });
                         });

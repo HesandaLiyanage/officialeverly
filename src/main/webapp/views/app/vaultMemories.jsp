@@ -30,7 +30,7 @@
                         <div class="tab-nav">
                             <button class="active" data-tab="memories">Memories</button>
                             <button data-tab="journals"
-                                onclick="window.location.href='/vaultjournals'">Journals</button>
+                                onclick="window.location.href='${pageContext.request.contextPath}/vaultjournals'">Journals</button>
                         </div>
 
                         <!-- Search and Filters -->

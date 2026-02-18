@@ -78,7 +78,8 @@ public class VaultEntryServlet extends HttpServlet {
             boolean isValid = vaultDAO.verifyVaultPassword(userId, password);
 
             if (isValid) {
-                // Password correct - show vault options (memories/journals choice)
+                // Password correct - store vault unlocked state in session
+                session.setAttribute("vault_unlocked", true);
                 request.setAttribute("vaultUnlocked", true);
                 request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
             } else {

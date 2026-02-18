@@ -50,8 +50,20 @@ public class VaultJournalsServlet extends HttpServlet {
             return;
         }
 
-        // For direct GET access, redirect to vault entry to verify password first
-        response.sendRedirect(request.getContextPath() + "/vaultentries");
+        // Check if vault is unlocked in session
+        Boolean vaultUnlocked = (Boolean) session.getAttribute("vault_unlocked");
+        if (vaultUnlocked == null || !vaultUnlocked) {
+            // Vault not unlocked, redirect to vault entry to verify password first
+            response.sendRedirect(request.getContextPath() + "/vaultentries");
+            return;
+        }
+
+        // Vault is unlocked in session, load vault journals
+        List<Journal> vaultJournals = journalDAO.getVaultJournalsByUserId(userId);
+
+        request.setAttribute("journals", vaultJournals);
+        request.setAttribute("journalsCount", vaultJournals.size());
+        request.getRequestDispatcher("/views/app/vaultjournals.jsp").forward(request, response);
     }
 
     /**
