@@ -13,13 +13,12 @@ public class AutographActivityDAO {
      * Log a new activity when someone writes in an autograph book.
      */
     public boolean logActivity(int autographId, int writerUserId, String writerUsername) {
-        String sql = "INSERT INTO autograph_activity (autograph_id, writer_user_id, writer_username, created_at) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO autograph_activity (autograph_id, user_id, action, created_at) VALUES (?, ?, ?, CURRENT_DATE)";
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, autographId);
             stmt.setInt(2, writerUserId);
-            stmt.setString(3, writerUsername);
-            stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+            stmt.setString(3, "wrote in");
             int rows = stmt.executeUpdate();
             System.out.println("[DEBUG AutographActivityDAO] logActivity affected " + rows + " rows.");
             return rows > 0;
@@ -32,12 +31,14 @@ public class AutographActivityDAO {
 
     /**
      * Get recent activities for autograph books owned by the given user.
-     * Joins with the autograph table to get the book title and filter by owner.
+     * Joins with autograph table (for book title) and users table (for writer
+     * username).
      */
     public List<AutographActivity> getRecentActivitiesByOwner(int ownerUserId, int limit) {
-        String sql = "SELECT aa.activity_id, aa.autograph_id, a.a_title, aa.writer_user_id, aa.writer_username, aa.created_at "
+        String sql = "SELECT aa.activity_id, aa.autograph_id, a.a_title, aa.user_id, u.username, aa.action, aa.created_at "
                 + "FROM autograph_activity aa "
                 + "JOIN autograph a ON aa.autograph_id = a.autograph_id "
+                + "JOIN users u ON aa.user_id = u.user_id "
                 + "WHERE a.user_id = ? "
                 + "ORDER BY aa.created_at DESC "
                 + "LIMIT ?";
@@ -52,8 +53,8 @@ public class AutographActivityDAO {
                 activity.setActivityId(rs.getInt("activity_id"));
                 activity.setAutographId(rs.getInt("autograph_id"));
                 activity.setAutographTitle(rs.getString("a_title"));
-                activity.setWriterUserId(rs.getInt("writer_user_id"));
-                activity.setWriterUsername(rs.getString("writer_username"));
+                activity.setWriterUserId(rs.getInt("user_id"));
+                activity.setWriterUsername(rs.getString("username"));
                 activity.setCreatedAt(rs.getTimestamp("created_at"));
                 activities.add(activity);
             }
