@@ -49,8 +49,7 @@ public class AuthenticationFilter implements Filter {
                 "/youcantaccessthis",
                 "/emailsentreset",
                 "/privacy",
-                "/resources/assets/landing.mp4"
-        ));
+                "/resources/assets/landing.mp4"));
     }
 
     @Override
@@ -70,6 +69,12 @@ public class AuthenticationFilter implements Filter {
 
         // If path is public, continue
         if (publicPaths.contains(path)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // Allow share link paths through (auth is handled by the writeautograph page)
+        if (path.startsWith("/share/")) {
             chain.doFilter(request, response);
             return;
         }
@@ -96,5 +101,6 @@ public class AuthenticationFilter implements Filter {
     }
 
     @Override
-    public void destroy() {}
+    public void destroy() {
+    }
 }

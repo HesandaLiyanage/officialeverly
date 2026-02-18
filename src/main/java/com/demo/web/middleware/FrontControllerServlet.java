@@ -3,6 +3,7 @@ package com.demo.web.middleware;
 
 import com.demo.web.dao.userDAO;
 import com.demo.web.dao.autographDAO;
+import com.demo.web.dao.AutographActivityDAO;
 import com.demo.web.dao.userSessionDAO;
 import com.demo.web.dao.GroupDAO;
 import com.demo.web.model.*;
@@ -166,7 +167,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToLogic.put("/generateShareLink", new GenerateShareLinkLogicHandler());
 
         // Remove this if using servlet
-}
+    }
 
     /**
      * Generates a unique random token for share links
@@ -268,9 +269,9 @@ public class FrontControllerServlet extends HttpServlet {
                 case "/createMemory":
                     routeToCreateMemoryServlet(request, response);
                     return;
-
-                // You can add more later:
-                // case "/uploadAvatar": routeToAvatarServlet(request, response); return;
+                case "/submitAutographEntry":
+                    new SubmitAutographEntryHandler().execute(request, response);
+                    return;
             }
         }
 
@@ -395,9 +396,11 @@ public class FrontControllerServlet extends HttpServlet {
     // Inner class implementing the logic for /autographs
     private static class AutographListLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
+        private AutographActivityDAO activityDAO;
 
         public AutographListLogicHandler() {
             this.autographDAO = new autographDAO();
+            this.activityDAO = new AutographActivityDAO();
         }
 
         @Override
@@ -412,8 +415,12 @@ public class FrontControllerServlet extends HttpServlet {
             Integer userId = (Integer) session.getAttribute("user_id");
 
             List<autograph> autographs = autographDAO.findByUserId(userId);
-
             request.setAttribute("autographs", autographs);
+
+            // Fetch recent activities for the user's autograph books
+            List<com.demo.web.model.AutographActivity> recentActivities = activityDAO.getRecentActivitiesByOwner(userId,
+                    5);
+            request.setAttribute("recentActivities", recentActivities);
 
             request.getRequestDispatcher("/views/app/Autographs/autographcontent.jsp").forward(request, response);
         }
@@ -466,6 +473,7 @@ public class FrontControllerServlet extends HttpServlet {
     }
 
     // Inner class implementing the logic for viewing shared autographs
+    // Redirects invitees to the writing page, not the view page
     private static class ShareLinkViewLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
 
@@ -488,13 +496,14 @@ public class FrontControllerServlet extends HttpServlet {
                 autograph ag = autographDAO.getAutographByShareToken(shareToken);
 
                 if (ag == null) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Autograph not found");
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                            "Autograph not found or link has been revoked");
                     return;
                 }
 
-                // Redirect to the autograph view page with ID
+                // Redirect to the autograph writing page with the share token
                 response.sendRedirect(request.getContextPath() +
-                        "/autographview?id=" + ag.getAutographId());
+                        "/writeautograph?token=" + shareToken);
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -507,6 +516,83 @@ public class FrontControllerServlet extends HttpServlet {
             }
         }
     }
+
+    // Inner class implementing the logic for submitting an autograph entry via
+    // share link
+    private static class SubmitAutographEntryHandler implements LogicHandler {
+        private autographDAO autographDAO;
+        private AutographActivityDAO activityDAO;
+
+        public SubmitAutographEntryHandler() {
+            this.autographDAO = new autographDAO();
+            this.activityDAO = new AutographActivityDAO();
+        }
+
+        @Override
+        public void execute(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user_id") == null) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Not authenticated\"}");
+                return;
+            }
+
+            Integer writerUserId = (Integer) session.getAttribute("user_id");
+            String writerUsername = (String) session.getAttribute("username");
+            if (writerUsername == null)
+                writerUsername = "Anonymous";
+
+            String token = request.getParameter("token");
+            String content = request.getParameter("message");
+            String author = request.getParameter("author");
+
+            if (token == null || token.isEmpty()) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Share token is required\"}");
+                return;
+            }
+
+            if (content == null || content.trim().isEmpty()) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Message is required\"}");
+                return;
+            }
+
+            try {
+                // Look up the autograph by share token
+                autograph ag = autographDAO.getAutographByShareToken(token);
+                if (ag == null) {
+                    response.getWriter().write("{\"success\": false, \"message\": \"Invalid or revoked share link\"}");
+                    return;
+                }
+
+                // Insert into autograph_entry table
+                String insertSql = "INSERT INTO autograph_entry (content, submitted_at, autograph_id, user_id) VALUES (?, CURRENT_DATE, ?, ?)";
+                try (java.sql.Connection conn = com.demo.web.util.DatabaseUtil.getConnection();
+                        java.sql.PreparedStatement stmt = conn.prepareStatement(insertSql)) {
+                    stmt.setString(1, content);
+                    stmt.setInt(2, ag.getAutographId());
+                    stmt.setInt(3, writerUserId);
+                    stmt.executeUpdate();
+                }
+
+                // Log activity for the Recent Activity feed
+                activityDAO.logActivity(ag.getAutographId(), writerUserId, writerUsername);
+
+                response.getWriter().write("{\"success\": true, \"message\": \"Entry submitted successfully!\"}");
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.getWriter().write("{\"success\": false, \"message\": \"Database error occurred\"}");
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.getWriter().write("{\"success\": false, \"message\": \"Error submitting entry\"}");
+            }
+        }
+    }
+
     // Inner class implementing the logic for generating share links
     private static class GenerateShareLinkLogicHandler implements LogicHandler {
         private autographDAO autographDAO;
@@ -545,7 +631,9 @@ public class FrontControllerServlet extends HttpServlet {
                 String baseUrl = request.getScheme() + "://" +
                         request.getServerName() +
                         (request.getServerPort() != 80 && request.getServerPort() != 443
-                                ? ":" + request.getServerPort() : "") +
+                                ? ":" + request.getServerPort()
+                                : "")
+                        +
                         request.getContextPath();
 
                 String shareUrl = baseUrl + "/share/" + shareToken;
