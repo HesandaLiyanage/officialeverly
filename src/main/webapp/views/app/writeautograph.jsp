@@ -9,9 +9,10 @@
                         if (ag !=null) { validToken=true; bookTitle=ag.getTitle() !=null ? ag.getTitle()
                         : "Autograph Book" ; userDAO uDao=new userDAO(); user owner=uDao.findById(ag.getUserId()); if
                         (owner !=null && owner.getUsername() !=null) { ownerName=owner.getUsername(); } } } catch
-                        (Exception e) { e.printStackTrace(); } } // If no valid token, redirect back if (!validToken) {
-                        response.sendRedirect(request.getContextPath() + "/autographs" ); return; } %>
-
+                        (Exception e) { e.printStackTrace(); } } if (!validToken) {
+                        response.sendRedirect(request.getContextPath() + "/autographs" ); return; }
+                        request.setAttribute("_shareToken", shareToken); request.setAttribute("_bookTitle", bookTitle);
+                        request.setAttribute("_ownerName", ownerName); %>
                         <jsp:include page="../public/header2.jsp" />
                         <html>
 
@@ -21,19 +22,13 @@
                         </head>
 
                         <body>
-
                             <div class="write-autograph-wrapper">
                                 <div class="write-autograph-container">
-                                    <!-- Header -->
                                     <div class="write-header">
                                         <h1 class="book-title">Write Your Autograph</h1>
-                                        <p class="book-subtitle">For <%= ownerName %>'s <%= bookTitle %>
-                                        </p>
+                                        <p class="book-subtitle">For ${_ownerName}'s ${_bookTitle}</p>
                                     </div>
-
-                                    <!-- Main Content -->
                                     <div class="write-content">
-                                        <!-- Toolbar -->
                                         <div class="toolbar">
                                             <div class="toolbar-section">
                                                 <h3 class="toolbar-title">Text Formatting</h3>
@@ -62,7 +57,6 @@
                                                     </button>
                                                 </div>
                                             </div>
-
                                             <div class="toolbar-section">
                                                 <h3 class="toolbar-title">Emojis &amp; Stickers</h3>
                                                 <div class="emoji-grid" id="emojiGrid">
@@ -91,7 +85,6 @@
                                                     <button class="emoji-btn" data-emoji="&#127925;">&#127925;</button>
                                                 </div>
                                             </div>
-
                                             <div class="toolbar-section">
                                                 <h3 class="toolbar-title">Doodles</h3>
                                                 <div class="doodle-grid">
@@ -106,31 +99,17 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <!-- Autograph Page -->
                                         <div class="page-area">
                                             <div class="autograph-page" id="autographPage">
-                                                <!-- Red margin line -->
                                                 <div class="margin-line"></div>
-
-                                                <!-- Writing Area -->
                                                 <div class="writing-area" id="writingArea" contenteditable="true"
-                                                    data-placeholder="Start writing your message...">
-                                                </div>
-
-                                                <!-- Decorations Container -->
-                                                <div class="decorations-container" id="decorationsContainer">
-                                                    <!-- Draggable emojis/stickers will be added here -->
-                                                </div>
-
-                                                <!-- Author Name Input -->
+                                                    data-placeholder="Start writing your message..."></div>
+                                                <div class="decorations-container" id="decorationsContainer"></div>
                                                 <div class="author-input-wrapper">
                                                     <input type="text" class="author-input" id="authorInput"
                                                         placeholder="- Your Name" maxlength="30">
                                                 </div>
                                             </div>
-
-                                            <!-- Action Buttons -->
                                             <div class="action-buttons">
                                                 <button class="action-btn cancel-btn" id="cancelBtn">Cancel</button>
                                                 <button class="action-btn submit-btn" id="submitBtn">Submit
@@ -140,9 +119,9 @@
                                     </div>
                                 </div>
                             </div>
-
                             <jsp:include page="../public/footer.jsp" />
-
+                            <input type="hidden" id="shareTokenValue" value="${_shareToken}" />
+                            <input type="hidden" id="contextPathValue" value="${pageContext.request.contextPath}" />
                             <script>
                                 class AutographWriter {
                                     constructor() {
@@ -150,61 +129,36 @@
                                         this.decorationsContainer = document.getElementById('decorationsContainer');
                                         this.authorInput = document.getElementById('authorInput');
                                         this.selectedElement = null;
-                                        this.shareToken = '<%= shareToken %>';
-
+                                        this.shareToken = document.getElementById('shareTokenValue').value;
+                                        this.contextPath = document.getElementById('contextPathValue').value;
                                         this.initializeFormatting();
                                         this.initializeEmojis();
                                         this.initializeDoodles();
                                         this.initializeButtons();
                                     }
-
                                     initializeFormatting() {
                                         var boldBtn = document.getElementById('boldBtn');
                                         var italicBtn = document.getElementById('italicBtn');
                                         var underlineBtn = document.getElementById('underlineBtn');
                                         var self = this;
-
-                                        boldBtn.addEventListener('click', function () {
-                                            document.execCommand('bold', false, null);
-                                            self.writingArea.focus();
-                                        });
-
-                                        italicBtn.addEventListener('click', function () {
-                                            document.execCommand('italic', false, null);
-                                            self.writingArea.focus();
-                                        });
-
-                                        underlineBtn.addEventListener('click', function () {
-                                            document.execCommand('underline', false, null);
-                                            self.writingArea.focus();
-                                        });
+                                        boldBtn.addEventListener('click', function () { document.execCommand('bold', false, null); self.writingArea.focus(); });
+                                        italicBtn.addEventListener('click', function () { document.execCommand('italic', false, null); self.writingArea.focus(); });
+                                        underlineBtn.addEventListener('click', function () { document.execCommand('underline', false, null); self.writingArea.focus(); });
                                     }
-
                                     initializeEmojis() {
                                         var emojiButtons = document.querySelectorAll('.emoji-btn');
                                         var self = this;
-
                                         emojiButtons.forEach(function (btn) {
-                                            btn.addEventListener('click', function () {
-                                                var emoji = btn.getAttribute('data-emoji');
-                                                self.addDecoration(emoji, 'emoji');
-                                            });
+                                            btn.addEventListener('click', function () { self.addDecoration(btn.getAttribute('data-emoji'), 'emoji'); });
                                         });
                                     }
-
                                     initializeDoodles() {
                                         var doodleButtons = document.querySelectorAll('.doodle-btn');
                                         var self = this;
-
                                         doodleButtons.forEach(function (btn) {
-                                            btn.addEventListener('click', function () {
-                                                var doodle = btn.getAttribute('data-doodle');
-                                                var type = btn.getAttribute('data-type');
-                                                self.addDecoration(doodle, 'doodle', type);
-                                            });
+                                            btn.addEventListener('click', function () { self.addDecoration(btn.getAttribute('data-doodle'), 'doodle', btn.getAttribute('data-type')); });
                                         });
                                     }
-
                                     addDecoration(content, className, type) {
                                         type = type || '';
                                         var decoration = document.createElement('div');
@@ -212,32 +166,21 @@
                                         if (type) decoration.classList.add(type);
                                         decoration.textContent = content;
                                         decoration.draggable = true;
-
-                                        var randomTop = Math.random() * 60 + 10;
-                                        var randomLeft = Math.random() * 70 + 10;
-                                        decoration.style.top = randomTop + '%';
-                                        decoration.style.left = randomLeft + '%';
-
+                                        decoration.style.top = (Math.random() * 60 + 10) + '%';
+                                        decoration.style.left = (Math.random() * 70 + 10) + '%';
                                         this.makeDraggable(decoration);
                                         this.decorationsContainer.appendChild(decoration);
                                     }
-
                                     makeDraggable(element) {
                                         var isDragging = false;
                                         var currentX, currentY, initialX, initialY;
                                         var xOffset = 0, yOffset = 0;
                                         var self = this;
-
                                         element.addEventListener('mousedown', function (e) {
                                             initialX = e.clientX - xOffset;
                                             initialY = e.clientY - yOffset;
-                                            if (e.target === element) {
-                                                isDragging = true;
-                                                element.style.cursor = 'grabbing';
-                                                element.style.zIndex = '1000';
-                                            }
+                                            if (e.target === element) { isDragging = true; element.style.cursor = 'grabbing'; element.style.zIndex = '1000'; }
                                         });
-
                                         document.addEventListener('mousemove', function (e) {
                                             if (isDragging) {
                                                 e.preventDefault();
@@ -246,94 +189,54 @@
                                                 xOffset = currentX;
                                                 yOffset = currentY;
                                                 var rect = self.decorationsContainer.getBoundingClientRect();
-                                                var percentX = (currentX / rect.width) * 100;
-                                                var percentY = (currentY / rect.height) * 100;
-                                                element.style.left = percentX + '%';
-                                                element.style.top = percentY + '%';
+                                                element.style.left = ((currentX / rect.width) * 100) + '%';
+                                                element.style.top = ((currentY / rect.height) * 100) + '%';
                                             }
                                         });
-
                                         document.addEventListener('mouseup', function () {
-                                            initialX = currentX;
-                                            initialY = currentY;
-                                            isDragging = false;
-                                            element.style.cursor = 'grab';
-                                            element.style.zIndex = '5';
+                                            initialX = currentX; initialY = currentY; isDragging = false;
+                                            element.style.cursor = 'grab'; element.style.zIndex = '5';
                                         });
-
-                                        element.addEventListener('dblclick', function () {
-                                            element.remove();
-                                        });
-
+                                        element.addEventListener('dblclick', function () { element.remove(); });
                                         element.style.cursor = 'grab';
                                     }
-
                                     initializeButtons() {
                                         var cancelBtn = document.getElementById('cancelBtn');
                                         var submitBtn = document.getElementById('submitBtn');
                                         var self = this;
-
                                         cancelBtn.addEventListener('click', function () {
-                                            if (confirm('Are you sure you want to cancel? Your autograph will be lost.')) {
-                                                window.history.back();
-                                            }
+                                            if (confirm('Are you sure you want to cancel? Your autograph will be lost.')) { window.history.back(); }
                                         });
-
-                                        submitBtn.addEventListener('click', function () {
-                                            self.submitAutograph();
-                                        });
+                                        submitBtn.addEventListener('click', function () { self.submitAutograph(); });
                                     }
-
                                     submitAutograph() {
                                         var message = this.writingArea.innerHTML.trim();
                                         var author = this.authorInput.value.trim();
-
-                                        if (!message || message === '<br>') {
-                                            alert('Please write a message!');
-                                            this.writingArea.focus();
-                                            return;
-                                        }
-
-                                        if (!author) {
-                                            alert('Please enter your name!');
-                                            this.authorInput.focus();
-                                            return;
-                                        }
-
+                                        if (!message || message === '<br>') { alert('Please write a message!'); this.writingArea.focus(); return; }
+                                        if (!author) { alert('Please enter your name!'); this.authorInput.focus(); return; }
                                         var submitBtn = document.getElementById('submitBtn');
                                         submitBtn.disabled = true;
                                         submitBtn.textContent = 'Submitting...';
-
                                         var decorations = [];
                                         document.querySelectorAll('.decoration').forEach(function (dec) {
-                                            decorations.push({
-                                                content: dec.textContent,
-                                                className: dec.className,
-                                                top: dec.style.top,
-                                                left: dec.style.left
-                                            });
+                                            decorations.push({ content: dec.textContent, className: dec.className, top: dec.style.top, left: dec.style.left });
                                         });
-
                                         var formData = new URLSearchParams();
                                         formData.append('token', this.shareToken);
                                         formData.append('message', message);
                                         formData.append('author', author);
                                         formData.append('decorations', JSON.stringify(decorations));
-
-                                        var contextPath = '<%= request.getContextPath() %>';
-
-                                        fetch(contextPath + '/submitAutographEntry', {
+                                        var cp = this.contextPath;
+                                        fetch(cp + '/submitAutographEntry', {
                                             method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/x-www-form-urlencoded'
-                                            },
+                                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                             body: formData.toString()
                                         })
                                             .then(function (resp) { return resp.json(); })
                                             .then(function (data) {
                                                 if (data.success) {
-                                                    alert('Your autograph has been submitted! ✨');
-                                                    window.location.href = contextPath + '/autographs';
+                                                    alert('Your autograph has been submitted!');
+                                                    window.location.href = cp + '/autographs';
                                                 } else {
                                                     alert('Error: ' + data.message);
                                                     submitBtn.disabled = false;
@@ -348,12 +251,8 @@
                                             });
                                     }
                                 }
-
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    new AutographWriter();
-                                });
+                                document.addEventListener('DOMContentLoaded', function () { new AutographWriter(); });
                             </script>
-
                         </body>
 
                         </html>
