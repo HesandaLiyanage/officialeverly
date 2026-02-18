@@ -1,315 +1,258 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+    <%@ page import="com.demo.web.dao.autographDAO" %>
+        <%@ page import="com.demo.web.model.autograph" %>
+            <%@ page import="com.demo.web.dao.userDAO" %>
+                <%@ page import="com.demo.web.model.user" %>
+                    <% String shareToken=request.getParameter("token"); String bookTitle="Autograph Book" ; String
+                        ownerName="" ; boolean validToken=false; if (shareToken !=null && !shareToken.isEmpty()) { try {
+                        autographDAO agDao=new autographDAO(); autograph ag=agDao.getAutographByShareToken(shareToken);
+                        if (ag !=null) { validToken=true; bookTitle=ag.getTitle() !=null ? ag.getTitle()
+                        : "Autograph Book" ; userDAO uDao=new userDAO(); user owner=uDao.findById(ag.getUserId()); if
+                        (owner !=null && owner.getUsername() !=null) { ownerName=owner.getUsername(); } } } catch
+                        (Exception e) { e.printStackTrace(); } } if (!validToken) {
+                        response.sendRedirect(request.getContextPath() + "/autographs" ); return; }
+                        request.setAttribute("_shareToken", shareToken); request.setAttribute("_bookTitle", bookTitle);
+                        request.setAttribute("_ownerName", ownerName); %>
+                        <jsp:include page="../public/header2.jsp" />
+                        <html>
 
-<jsp:include page="../public/header2.jsp" />
-<html>
-<head>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/writeautograph.css">
-</head>
-<body>
+                        <head>
+                            <link rel="stylesheet" type="text/css"
+                                href="${pageContext.request.contextPath}/resources/css/writeautograph.css">
+                        </head>
 
-<div class="write-autograph-wrapper">
-    <div class="write-autograph-container">
-        <!-- Header -->
-        <div class="write-header">
-            <h1 class="book-title">Write Your Autograph</h1>
-            <p class="book-subtitle">For John's University 2025 Book</p>
-        </div>
+                        <body>
+                            <div class="write-autograph-wrapper">
+                                <div class="write-autograph-container">
+                                    <div class="write-header">
+                                        <h1 class="book-title">Write Your Autograph</h1>
+                                        <p class="book-subtitle">For ${_ownerName}'s ${_bookTitle}</p>
+                                    </div>
+                                    <div class="write-content">
+                                        <div class="toolbar">
+                                            <div class="toolbar-section">
+                                                <h3 class="toolbar-title">Text Formatting</h3>
+                                                <div class="format-buttons">
+                                                    <button class="format-btn" id="boldBtn" title="Bold">
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2.5">
+                                                            <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                                                            <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                                                        </svg>
+                                                    </button>
+                                                    <button class="format-btn" id="italicBtn" title="Italic">
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2.5">
+                                                            <line x1="19" y1="4" x2="10" y2="4"></line>
+                                                            <line x1="14" y1="20" x2="5" y2="20"></line>
+                                                            <line x1="15" y1="4" x2="9" y2="20"></line>
+                                                        </svg>
+                                                    </button>
+                                                    <button class="format-btn" id="underlineBtn" title="Underline">
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2.5">
+                                                            <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"></path>
+                                                            <line x1="4" y1="21" x2="20" y2="21"></line>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="toolbar-section">
+                                                <h3 class="toolbar-title">Emojis &amp; Stickers</h3>
+                                                <div class="emoji-grid" id="emojiGrid">
+                                                    <button class="emoji-btn"
+                                                        data-emoji="&#10084;&#65039;">&#10084;&#65039;</button>
+                                                    <button class="emoji-btn" data-emoji="&#128156;">&#128156;</button>
+                                                    <button class="emoji-btn" data-emoji="&#10024;">&#10024;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127775;">&#127775;</button>
+                                                    <button class="emoji-btn" data-emoji="&#128171;">&#128171;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127881;">&#127881;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127882;">&#127882;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127880;">&#127880;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127752;">&#127752;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127800;">&#127800;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127802;">&#127802;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127803;">&#127803;</button>
+                                                    <button class="emoji-btn"
+                                                        data-emoji="&#9728;&#65039;">&#9728;&#65039;</button>
+                                                    <button class="emoji-btn" data-emoji="&#11088;">&#11088;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127891;">&#127891;</button>
+                                                    <button class="emoji-btn" data-emoji="&#128218;">&#128218;</button>
+                                                    <button class="emoji-btn"
+                                                        data-emoji="&#9999;&#65039;">&#9999;&#65039;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127912;">&#127912;</button>
+                                                    <button class="emoji-btn" data-emoji="&#129419;">&#129419;</button>
+                                                    <button class="emoji-btn" data-emoji="&#127925;">&#127925;</button>
+                                                </div>
+                                            </div>
+                                            <div class="toolbar-section">
+                                                <h3 class="toolbar-title">Doodles</h3>
+                                                <div class="doodle-grid">
+                                                    <button class="doodle-btn" data-doodle="&#9825;"
+                                                        data-type="heart">&#9825;</button>
+                                                    <button class="doodle-btn" data-doodle="&#9733;"
+                                                        data-type="star">&#9733;</button>
+                                                    <button class="doodle-btn" data-doodle="&#9834;"
+                                                        data-type="music">&#9834;</button>
+                                                    <button class="doodle-btn" data-doodle="&#9734;"
+                                                        data-type="star">&#9734;</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="page-area">
+                                            <div class="autograph-page" id="autographPage">
+                                                <div class="margin-line"></div>
+                                                <div class="writing-area" id="writingArea" contenteditable="true"
+                                                    data-placeholder="Start writing your message..."></div>
+                                                <div class="decorations-container" id="decorationsContainer"></div>
+                                                <div class="author-input-wrapper">
+                                                    <input type="text" class="author-input" id="authorInput"
+                                                        placeholder="- Your Name" maxlength="30">
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <button class="action-btn cancel-btn" id="cancelBtn">Cancel</button>
+                                                <button class="action-btn submit-btn" id="submitBtn">Submit
+                                                    Autograph</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <jsp:include page="../public/footer.jsp" />
+                            <input type="hidden" id="shareTokenValue" value="${_shareToken}" />
+                            <input type="hidden" id="contextPathValue" value="${pageContext.request.contextPath}" />
+                            <script>
+                                class AutographWriter {
+                                    constructor() {
+                                        this.writingArea = document.getElementById('writingArea');
+                                        this.decorationsContainer = document.getElementById('decorationsContainer');
+                                        this.authorInput = document.getElementById('authorInput');
+                                        this.selectedElement = null;
+                                        this.shareToken = document.getElementById('shareTokenValue').value;
+                                        this.contextPath = document.getElementById('contextPathValue').value;
+                                        this.initializeFormatting();
+                                        this.initializeEmojis();
+                                        this.initializeDoodles();
+                                        this.initializeButtons();
+                                    }
+                                    initializeFormatting() {
+                                        var boldBtn = document.getElementById('boldBtn');
+                                        var italicBtn = document.getElementById('italicBtn');
+                                        var underlineBtn = document.getElementById('underlineBtn');
+                                        var self = this;
+                                        boldBtn.addEventListener('click', function () { document.execCommand('bold', false, null); self.writingArea.focus(); });
+                                        italicBtn.addEventListener('click', function () { document.execCommand('italic', false, null); self.writingArea.focus(); });
+                                        underlineBtn.addEventListener('click', function () { document.execCommand('underline', false, null); self.writingArea.focus(); });
+                                    }
+                                    initializeEmojis() {
+                                        var emojiButtons = document.querySelectorAll('.emoji-btn');
+                                        var self = this;
+                                        emojiButtons.forEach(function (btn) {
+                                            btn.addEventListener('click', function () { self.addDecoration(btn.getAttribute('data-emoji'), 'emoji'); });
+                                        });
+                                    }
+                                    initializeDoodles() {
+                                        var doodleButtons = document.querySelectorAll('.doodle-btn');
+                                        var self = this;
+                                        doodleButtons.forEach(function (btn) {
+                                            btn.addEventListener('click', function () { self.addDecoration(btn.getAttribute('data-doodle'), 'doodle', btn.getAttribute('data-type')); });
+                                        });
+                                    }
+                                    addDecoration(content, className, type) {
+                                        type = type || '';
+                                        var decoration = document.createElement('div');
+                                        decoration.className = 'decoration ' + className;
+                                        if (type) decoration.classList.add(type);
+                                        decoration.textContent = content;
+                                        decoration.draggable = true;
+                                        decoration.style.top = (Math.random() * 60 + 10) + '%';
+                                        decoration.style.left = (Math.random() * 70 + 10) + '%';
+                                        this.makeDraggable(decoration);
+                                        this.decorationsContainer.appendChild(decoration);
+                                    }
+                                    makeDraggable(element) {
+                                        var isDragging = false;
+                                        var currentX, currentY, initialX, initialY;
+                                        var xOffset = 0, yOffset = 0;
+                                        var self = this;
+                                        element.addEventListener('mousedown', function (e) {
+                                            initialX = e.clientX - xOffset;
+                                            initialY = e.clientY - yOffset;
+                                            if (e.target === element) { isDragging = true; element.style.cursor = 'grabbing'; element.style.zIndex = '1000'; }
+                                        });
+                                        document.addEventListener('mousemove', function (e) {
+                                            if (isDragging) {
+                                                e.preventDefault();
+                                                currentX = e.clientX - initialX;
+                                                currentY = e.clientY - initialY;
+                                                xOffset = currentX;
+                                                yOffset = currentY;
+                                                var rect = self.decorationsContainer.getBoundingClientRect();
+                                                element.style.left = ((currentX / rect.width) * 100) + '%';
+                                                element.style.top = ((currentY / rect.height) * 100) + '%';
+                                            }
+                                        });
+                                        document.addEventListener('mouseup', function () {
+                                            initialX = currentX; initialY = currentY; isDragging = false;
+                                            element.style.cursor = 'grab'; element.style.zIndex = '5';
+                                        });
+                                        element.addEventListener('dblclick', function () { element.remove(); });
+                                        element.style.cursor = 'grab';
+                                    }
+                                    initializeButtons() {
+                                        var cancelBtn = document.getElementById('cancelBtn');
+                                        var submitBtn = document.getElementById('submitBtn');
+                                        var self = this;
+                                        cancelBtn.addEventListener('click', function () {
+                                            if (confirm('Are you sure you want to cancel? Your autograph will be lost.')) { window.history.back(); }
+                                        });
+                                        submitBtn.addEventListener('click', function () { self.submitAutograph(); });
+                                    }
+                                    submitAutograph() {
+                                        var message = this.writingArea.innerHTML.trim();
+                                        var author = this.authorInput.value.trim();
+                                        if (!message || message === '<br>') { alert('Please write a message!'); this.writingArea.focus(); return; }
+                                        if (!author) { alert('Please enter your name!'); this.authorInput.focus(); return; }
+                                        var submitBtn = document.getElementById('submitBtn');
+                                        submitBtn.disabled = true;
+                                        submitBtn.textContent = 'Submitting...';
+                                        var decorations = [];
+                                        document.querySelectorAll('.decoration').forEach(function (dec) {
+                                            decorations.push({ content: dec.textContent, className: dec.className, top: dec.style.top, left: dec.style.left });
+                                        });
+                                        var formData = new URLSearchParams();
+                                        formData.append('token', this.shareToken);
+                                        formData.append('message', message);
+                                        formData.append('author', author);
+                                        formData.append('decorations', JSON.stringify(decorations));
+                                        var cp = this.contextPath;
+                                        fetch(cp + '/submitAutographEntry', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                            body: formData.toString()
+                                        })
+                                            .then(function (resp) { return resp.json(); })
+                                            .then(function (data) {
+                                                if (data.success) {
+                                                    alert('Your autograph has been submitted!');
+                                                    window.location.href = cp + '/autographs';
+                                                } else {
+                                                    alert('Error: ' + data.message);
+                                                    submitBtn.disabled = false;
+                                                    submitBtn.textContent = 'Submit Autograph';
+                                                }
+                                            })
+                                            .catch(function (err) {
+                                                console.error('Submit error:', err);
+                                                alert('Error submitting autograph. Please try again.');
+                                                submitBtn.disabled = false;
+                                                submitBtn.textContent = 'Submit Autograph';
+                                            });
+                                    }
+                                }
+                                document.addEventListener('DOMContentLoaded', function () { new AutographWriter(); });
+                            </script>
+                        </body>
 
-        <!-- Main Content -->
-        <div class="write-content">
-            <!-- Toolbar -->
-            <div class="toolbar">
-                <div class="toolbar-section">
-                    <h3 class="toolbar-title">Text Formatting</h3>
-                    <div class="format-buttons">
-                        <button class="format-btn" id="boldBtn" title="Bold">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
-                                <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
-                            </svg>
-                        </button>
-                        <button class="format-btn" id="italicBtn" title="Italic">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <line x1="19" y1="4" x2="10" y2="4"></line>
-                                <line x1="14" y1="20" x2="5" y2="20"></line>
-                                <line x1="15" y1="4" x2="9" y2="20"></line>
-                            </svg>
-                        </button>
-                        <button class="format-btn" id="underlineBtn" title="Underline">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"></path>
-                                <line x1="4" y1="21" x2="20" y2="21"></line>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="toolbar-section">
-                    <h3 class="toolbar-title">Emojis & Stickers</h3>
-                    <div class="emoji-grid" id="emojiGrid">
-                        <button class="emoji-btn" data-emoji="❤️">❤️</button>
-                        <button class="emoji-btn" data-emoji="💜">💜</button>
-                        <button class="emoji-btn" data-emoji="✨">✨</button>
-                        <button class="emoji-btn" data-emoji="🌟">🌟</button>
-                        <button class="emoji-btn" data-emoji="💫">💫</button>
-                        <button class="emoji-btn" data-emoji="🎉">🎉</button>
-                        <button class="emoji-btn" data-emoji="🎊">🎊</button>
-                        <button class="emoji-btn" data-emoji="🎈">🎈</button>
-                        <button class="emoji-btn" data-emoji="🌈">🌈</button>
-                        <button class="emoji-btn" data-emoji="🌸">🌸</button>
-                        <button class="emoji-btn" data-emoji="🌺">🌺</button>
-                        <button class="emoji-btn" data-emoji="🌻">🌻</button>
-                        <button class="emoji-btn" data-emoji="☀️">☀️</button>
-                        <button class="emoji-btn" data-emoji="⭐">⭐</button>
-                        <button class="emoji-btn" data-emoji="🎓">🎓</button>
-                        <button class="emoji-btn" data-emoji="📚">📚</button>
-                        <button class="emoji-btn" data-emoji="✏️">✏️</button>
-                        <button class="emoji-btn" data-emoji="🎨">🎨</button>
-                        <button class="emoji-btn" data-emoji="🦋">🦋</button>
-                        <button class="emoji-btn" data-emoji="🎵">🎵</button>
-                    </div>
-                </div>
-
-                <div class="toolbar-section">
-                    <h3 class="toolbar-title">Doodles</h3>
-                    <div class="doodle-grid">
-                        <button class="doodle-btn" data-doodle="♡" data-type="heart">♡</button>
-                        <button class="doodle-btn" data-doodle="★" data-type="star">★</button>
-                        <button class="doodle-btn" data-doodle="♪" data-type="music">♪</button>
-                        <button class="doodle-btn" data-doodle="☆" data-type="star">☆</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Autograph Page -->
-            <div class="page-area">
-                <div class="autograph-page" id="autographPage">
-                    <!-- Red margin line -->
-                    <div class="margin-line"></div>
-
-                    <!-- Writing Area -->
-                    <div class="writing-area" id="writingArea" contenteditable="true" data-placeholder="Start writing your message...">
-                    </div>
-
-                    <!-- Decorations Container -->
-                    <div class="decorations-container" id="decorationsContainer">
-                        <!-- Draggable emojis/stickers will be added here -->
-                    </div>
-
-                    <!-- Author Name Input -->
-                    <div class="author-input-wrapper">
-                        <input type="text" class="author-input" id="authorInput" placeholder="- Your Name" maxlength="30">
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="action-buttons">
-                    <button class="action-btn cancel-btn" id="cancelBtn">Cancel</button>
-                    <button class="action-btn submit-btn" id="submitBtn">Submit Autograph</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<jsp:include page="../public/footer.jsp" />
-
-<script>
-    class AutographWriter {
-        constructor() {
-            this.writingArea = document.getElementById('writingArea');
-            this.decorationsContainer = document.getElementById('decorationsContainer');
-            this.authorInput = document.getElementById('authorInput');
-            this.selectedElement = null;
-
-            this.initializeFormatting();
-            this.initializeEmojis();
-            this.initializeDoodles();
-            this.initializeButtons();
-        }
-
-        initializeFormatting() {
-            const boldBtn = document.getElementById('boldBtn');
-            const italicBtn = document.getElementById('italicBtn');
-            const underlineBtn = document.getElementById('underlineBtn');
-
-            boldBtn.addEventListener('click', () => {
-                document.execCommand('bold', false, null);
-                this.writingArea.focus();
-            });
-
-            italicBtn.addEventListener('click', () => {
-                document.execCommand('italic', false, null);
-                this.writingArea.focus();
-            });
-
-            underlineBtn.addEventListener('click', () => {
-                document.execCommand('underline', false, null);
-                this.writingArea.focus();
-            });
-        }
-
-        initializeEmojis() {
-            const emojiButtons = document.querySelectorAll('.emoji-btn');
-
-            emojiButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const emoji = btn.getAttribute('data-emoji');
-                    this.addDecoration(emoji, 'emoji');
-                });
-            });
-        }
-
-        initializeDoodles() {
-            const doodleButtons = document.querySelectorAll('.doodle-btn');
-
-            doodleButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const doodle = btn.getAttribute('data-doodle');
-                    const type = btn.getAttribute('data-type');
-                    this.addDecoration(doodle, 'doodle', type);
-                });
-            });
-        }
-
-        addDecoration(content, className, type = '') {
-            const decoration = document.createElement('div');
-            decoration.className = `decoration ${className}`;
-            if (type) decoration.classList.add(type);
-            decoration.textContent = content;
-            decoration.draggable = true;
-
-            // Random initial position
-            const randomTop = Math.random() * 60 + 10;
-            const randomLeft = Math.random() * 70 + 10;
-            decoration.style.top = randomTop + '%';
-            decoration.style.left = randomLeft + '%';
-
-            // Make it draggable
-            this.makeDraggable(decoration);
-
-            this.decorationsContainer.appendChild(decoration);
-        }
-
-        makeDraggable(element) {
-            let isDragging = false;
-            let currentX;
-            let currentY;
-            let initialX;
-            let initialY;
-            let xOffset = 0;
-            let yOffset = 0;
-
-            element.addEventListener('mousedown', (e) => {
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-
-                if (e.target === element) {
-                    isDragging = true;
-                    element.style.cursor = 'grabbing';
-                    element.style.zIndex = '1000';
-                }
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (isDragging) {
-                    e.preventDefault();
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
-
-                    xOffset = currentX;
-                    yOffset = currentY;
-
-                    const rect = this.decorationsContainer.getBoundingClientRect();
-                    const percentX = (currentX / rect.width) * 100;
-                    const percentY = (currentY / rect.height) * 100;
-
-                    element.style.left = percentX + '%';
-                    element.style.top = percentY + '%';
-                }
-            });
-
-            document.addEventListener('mouseup', () => {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
-                element.style.cursor = 'grab';
-                element.style.zIndex = '5';
-            });
-
-            // Double click to remove
-            element.addEventListener('dblclick', () => {
-                element.remove();
-            });
-
-            element.style.cursor = 'grab';
-        }
-
-        initializeButtons() {
-            const cancelBtn = document.getElementById('cancelBtn');
-            const submitBtn = document.getElementById('submitBtn');
-
-            cancelBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to cancel? Your autograph will be lost.')) {
-                    window.history.back();
-                }
-            });
-
-            submitBtn.addEventListener('click', () => {
-                this.submitAutograph();
-            });
-        }
-
-        submitAutograph() {
-            const message = this.writingArea.innerHTML.trim();
-            const author = this.authorInput.value.trim();
-
-            if (!message || message === '<br>') {
-                alert('Please write a message!');
-                this.writingArea.focus();
-                return;
-            }
-
-            if (!author) {
-                alert('Please enter your name!');
-                this.authorInput.focus();
-                return;
-            }
-
-            // Get all decorations
-            const decorations = [];
-            document.querySelectorAll('.decoration').forEach(dec => {
-                decorations.push({
-                    content: dec.textContent,
-                    className: dec.className,
-                    top: dec.style.top,
-                    left: dec.style.left
-                });
-            });
-
-            // Here you would send this data to your server
-            const autographData = {
-                message: message,
-                author: author,
-                decorations: decorations,
-                timestamp: new Date().toISOString()
-            };
-
-            console.log('Submitting autograph:', autographData);
-
-            // Show success message
-            alert('Your autograph has been submitted! ✨');
-
-            // Redirect back or to confirmation page
-            // window.location.href = '/autographs';
-        }
-    }
-
-    // Initialize when DOM is ready
-    document.addEventListener('DOMContentLoaded', () => {
-        new AutographWriter();
-    });
-</script>
-
-</body>
-</html>
+                        </html>
