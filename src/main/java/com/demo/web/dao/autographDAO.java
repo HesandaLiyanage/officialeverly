@@ -234,7 +234,7 @@ public class autographDAO {
     private autograph mapResultSetToAutograph(ResultSet rs) throws SQLException {
         autograph autograph = new autograph();
         autograph.setAutographId(rs.getInt("autograph_id"));
-        autograph.setTitle(rs.getString("a_title"));
+        autograph.setTitle(rs.getString("a_title") );
         autograph.setDescription(rs.getString("a_description"));
         autograph.setCreatedAt(rs.getTimestamp("created_at"));
         autograph.setUserId(rs.getInt("user_id"));
