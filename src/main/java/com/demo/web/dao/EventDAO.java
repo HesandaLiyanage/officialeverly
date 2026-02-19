@@ -9,8 +9,10 @@ import java.util.logging.Logger;
 
 public class EventDAO {
     private static final Logger logger = Logger.getLogger(EventDAO.class.getName());
+    private EventGroupDAO eventGroupDAO;
 
     public EventDAO() {
+        this.eventGroupDAO = new EventGroupDAO();
     }
 
     /**
@@ -96,9 +98,10 @@ public class EventDAO {
      * Only group creators (admins) can see and create events
      */
     public List<Event> findByUserId(int userId) {
-        String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
+        String sql = "SELECT DISTINCT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
                 "FROM event e " +
-                "INNER JOIN \"group\" g ON e.group_id = g.group_id " +
+                "INNER JOIN event_group eg ON e.event_id = eg.event_id " +
+                "INNER JOIN \"group\" g ON eg.group_id = g.group_id " +
                 "WHERE g.user_id = ? " +
                 "ORDER BY e.e_date DESC";
         List<Event> events = new ArrayList<>();
@@ -110,6 +113,10 @@ public class EventDAO {
                 events.add(mapResultSetToEvent(rs));
             }
             System.out.println("[DEBUG EventDAO] findByUserId(" + userId + ") returned " + events.size() + " records.");
+            // Populate groupIds for each event
+            for (Event event : events) {
+                event.setGroupIds(eventGroupDAO.findGroupIdsByEventId(event.getEventId()));
+            }
         } catch (SQLException e) {
             System.out.println("[DEBUG EventDAO] Error while fetching events by user ID " + userId + ": " + e.getMessage());
             e.printStackTrace();
@@ -122,9 +129,10 @@ public class EventDAO {
      * Get upcoming events for a user (only from groups they created)
      */
     public List<Event> findUpcomingEventsByUserId(int userId) {
-        String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
+        String sql = "SELECT DISTINCT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
                 "FROM event e " +
-                "INNER JOIN \"group\" g ON e.group_id = g.group_id " +
+                "INNER JOIN event_group eg ON e.event_id = eg.event_id " +
+                "INNER JOIN \"group\" g ON eg.group_id = g.group_id " +
                 "WHERE g.user_id = ? AND e.e_date >= CURRENT_TIMESTAMP " +
                 "ORDER BY e.e_date ASC";
         List<Event> events = new ArrayList<>();
@@ -136,6 +144,9 @@ public class EventDAO {
                 events.add(mapResultSetToEvent(rs));
             }
             System.out.println("[DEBUG EventDAO] findUpcomingEventsByUserId(" + userId + ") returned " + events.size() + " records.");
+            for (Event event : events) {
+                event.setGroupIds(eventGroupDAO.findGroupIdsByEventId(event.getEventId()));
+            }
         } catch (SQLException e) {
             System.out.println("[DEBUG EventDAO] Error while fetching upcoming events by user ID " + userId + ": " + e.getMessage());
             e.printStackTrace();
@@ -148,9 +159,10 @@ public class EventDAO {
      * Get past events for a user (only from groups they created)
      */
     public List<Event> findPastEventsByUserId(int userId) {
-        String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
+        String sql = "SELECT DISTINCT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
                 "FROM event e " +
-                "INNER JOIN \"group\" g ON e.group_id = g.group_id " +
+                "INNER JOIN event_group eg ON e.event_id = eg.event_id " +
+                "INNER JOIN \"group\" g ON eg.group_id = g.group_id " +
                 "WHERE g.user_id = ? AND e.e_date < CURRENT_TIMESTAMP " +
                 "ORDER BY e.e_date DESC";
         List<Event> events = new ArrayList<>();
@@ -162,6 +174,9 @@ public class EventDAO {
                 events.add(mapResultSetToEvent(rs));
             }
             System.out.println("[DEBUG EventDAO] findPastEventsByUserId(" + userId + ") returned " + events.size() + " records.");
+            for (Event event : events) {
+                event.setGroupIds(eventGroupDAO.findGroupIdsByEventId(event.getEventId()));
+            }
         } catch (SQLException e) {
             System.out.println("[DEBUG EventDAO] Error while fetching past events by user ID " + userId + ": " + e.getMessage());
             e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.demo.web.controller.Events;
 
 import com.demo.web.dao.EventDAO;
+import com.demo.web.dao.EventGroupDAO;
 import com.demo.web.dao.GroupDAO;
 import com.demo.web.model.Event;
 import com.demo.web.model.Group;
@@ -13,7 +14,10 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @MultipartConfig(
@@ -24,11 +28,13 @@ import java.util.UUID;
 public class UpdateEventServlet extends HttpServlet {
 
     private EventDAO eventDAO;
+    private EventGroupDAO eventGroupDAO;
     private GroupDAO groupDAO;
 
     @Override
     public void init() throws ServletException {
         this.eventDAO = new EventDAO();
+        this.eventGroupDAO = new EventGroupDAO();
         this.groupDAO = new GroupDAO();
     }
 
@@ -54,10 +60,21 @@ public class UpdateEventServlet extends HttpServlet {
             String title = getPartValue(request.getPart("e_title"));
             String description = getPartValue(request.getPart("e_description"));
             String dateStr = getPartValue(request.getPart("e_date"));
-            String groupIdStr = getPartValue(request.getPart("group_id"));
+
+            // Collect ALL group_id parts (multiple checkboxes with name="group_id")
+            Collection<Part> allParts = request.getParts();
+            List<Integer> groupIds = new ArrayList<>();
+            for (Part part : allParts) {
+                if ("group_id".equals(part.getName())) {
+                    String val = getPartValue(part);
+                    if (val != null && !val.trim().isEmpty()) {
+                        groupIds.add(Integer.parseInt(val.trim()));
+                    }
+                }
+            }
 
             System.out.println("[DEBUG UpdateEventServlet] Form data - Event ID: " + eventIdStr +
-                    ", Title: " + title + ", Date: " + dateStr + ", Group ID: " + groupIdStr);
+                    ", Title: " + title + ", Date: " + dateStr + ", Group IDs: " + groupIds);
 
             // Validation
             if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
@@ -72,12 +89,11 @@ public class UpdateEventServlet extends HttpServlet {
                 throw new IllegalArgumentException("Event date is required");
             }
 
-            if (groupIdStr == null || groupIdStr.trim().isEmpty()) {
-                throw new IllegalArgumentException("Please select a group");
+            if (groupIds.isEmpty()) {
+                throw new IllegalArgumentException("Please select at least one group");
             }
 
             int eventId = Integer.parseInt(eventIdStr);
-            int groupId = Integer.parseInt(groupIdStr);
 
             // Get existing event
             Event existingEvent = eventDAO.findById(eventId);
@@ -85,12 +101,14 @@ public class UpdateEventServlet extends HttpServlet {
                 throw new IllegalArgumentException("Event not found");
             }
 
-            // Verify that the group belongs to this user (security check)
-            Group selectedGroup = groupDAO.findById(groupId);
-            if (selectedGroup == null || selectedGroup.getUserId() != userId) {
-                System.out.println("[DEBUG UpdateEventServlet] Security violation: User " + userId +
-                        " attempted to update event " + eventId + " to group " + groupId);
-                throw new SecurityException("You can only update events for your own groups");
+            // Verify that ALL selected groups belong to this user (security check)
+            for (int groupId : groupIds) {
+                Group selectedGroup = groupDAO.findById(groupId);
+                if (selectedGroup == null || selectedGroup.getUserId() != userId) {
+                    System.out.println("[DEBUG UpdateEventServlet] Security violation: User " + userId +
+                            " attempted to update event " + eventId + " to group " + groupId);
+                    throw new SecurityException("You can only update events for your own groups");
+                }
             }
 
             // Parse the date
@@ -134,7 +152,7 @@ public class UpdateEventServlet extends HttpServlet {
             existingEvent.setTitle(title.trim());
             existingEvent.setDescription(description != null ? description.trim() : "");
             existingEvent.setEventDate(eventDate);
-            existingEvent.setGroupId(groupId);
+            existingEvent.setGroupId(groupIds.get(0)); // legacy column
             existingEvent.setEventPicUrl(eventPicUrl);
 
             System.out.println("[DEBUG UpdateEventServlet] Updating event: " + existingEvent);
@@ -143,6 +161,11 @@ public class UpdateEventServlet extends HttpServlet {
             boolean success = eventDAO.updateEvent(existingEvent);
 
             if (success) {
+                // Update group associations: delete old, insert new
+                eventGroupDAO.deleteGroupsByEventId(eventId);
+                eventGroupDAO.addGroupsToEvent(eventId, groupIds);
+                System.out.println("[DEBUG UpdateEventServlet] Updated groups for event " + eventId + ": " + groupIds);
+
                 System.out.println("[DEBUG UpdateEventServlet] Event updated successfully");
                 session.setAttribute("successMessage", "Event updated successfully!");
                 response.sendRedirect(request.getContextPath() + "/events");

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -154,9 +155,18 @@ public class EventViewController extends HttpServlet {
             // Get all user's groups for the dropdown
             List<Group> userGroups = eventService.getUserGroups(userId);
 
+            // Get group IDs currently associated with this event
+            List<Integer> eventGroupIds = eventService.getGroupIdsForEvent(eventId);
+            if (eventGroupIds == null || eventGroupIds.isEmpty()) {
+                // Fallback: use legacy groupId column
+                eventGroupIds = new ArrayList<>();
+                eventGroupIds.add(event.getGroupId());
+            }
+
             // Set attributes for JSP
             request.setAttribute("event", event);
             request.setAttribute("userGroups", userGroups);
+            request.setAttribute("eventGroupIds", eventGroupIds);
 
             request.getRequestDispatcher("/views/app/editevent.jsp").forward(request, response);
 

@@ -1,6 +1,8 @@
 package com.demo.web.model;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Event {
     private int eventId;          // Maps to 'event_id' in DB
@@ -10,6 +12,7 @@ public class Event {
     private Timestamp createdAt;   // Maps to 'created_at' in DB
     private int groupId;           // Maps to 'group_id' in DB
     private String eventPicUrl;    // Maps to 'event_pic' in DB
+    private List<Integer> groupIds; // Maps to event_group junction table (many-to-many)
 
     // Default constructor
     public Event() {
@@ -82,6 +85,14 @@ public class Event {
 
     public void setEventPicUrl(String eventPicUrl) {
         this.eventPicUrl = eventPicUrl;
+    }
+
+    public List<Integer> getGroupIds() {
+        return groupIds;
+    }
+
+    public void setGroupIds(List<Integer> groupIds) {
+        this.groupIds = groupIds;
     }
 
     @Override

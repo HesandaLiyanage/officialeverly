@@ -1,6 +1,7 @@
 package com.demo.web.service;
 
 import com.demo.web.dao.EventDAO;
+import com.demo.web.dao.EventGroupDAO;
 import com.demo.web.dao.GroupDAO;
 import com.demo.web.model.Event;
 import com.demo.web.model.Group;
@@ -15,10 +16,12 @@ import java.util.List;
 public class EventService {
 
     private EventDAO eventDAO;
+    private EventGroupDAO eventGroupDAO;
     private GroupDAO groupDAO;
 
     public EventService() {
         this.eventDAO = new EventDAO();
+        this.eventGroupDAO = new EventGroupDAO();
         this.groupDAO = new GroupDAO();
     }
 
@@ -86,13 +89,29 @@ public class EventService {
             return null;
         }
 
-        // Get the group and verify ownership
-        Group eventGroup = groupDAO.findById(event.getGroupId());
-        if (eventGroup == null || eventGroup.getUserId() != userId) {
-            return null;
+        // Get all group IDs for this event from the junction table
+        List<Integer> groupIds = eventGroupDAO.findGroupIdsByEventId(eventId);
+        event.setGroupIds(groupIds);
+
+        // Verify ownership: user must own at least one of the event's groups
+        boolean hasPermission = false;
+        for (int groupId : groupIds) {
+            Group eventGroup = groupDAO.findById(groupId);
+            if (eventGroup != null && eventGroup.getUserId() == userId) {
+                hasPermission = true;
+                break;
+            }
         }
 
-        return event;
+        // Fallback: check the legacy group_id column
+        if (!hasPermission) {
+            Group eventGroup = groupDAO.findById(event.getGroupId());
+            if (eventGroup != null && eventGroup.getUserId() == userId) {
+                hasPermission = true;
+            }
+        }
+
+        return hasPermission ? event : null;
     }
 
     /**
@@ -113,5 +132,12 @@ public class EventService {
      */
     public Group getGroupById(int groupId) {
         return groupDAO.findById(groupId);
+    }
+
+    /**
+     * Gets all group IDs associated with an event.
+     */
+    public List<Integer> getGroupIdsForEvent(int eventId) {
+        return eventGroupDAO.findGroupIdsByEventId(eventId);
     }
 }

@@ -1,6 +1,7 @@
 package com.demo.web.controller.Events;
 
 import com.demo.web.dao.EventDAO;
+import com.demo.web.dao.EventGroupDAO;
 import com.demo.web.dao.GroupAnnouncementDAO;
 import com.demo.web.dao.GroupDAO;
 import com.demo.web.model.Event;
@@ -15,7 +16,10 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @MultipartConfig(
@@ -26,12 +30,14 @@ import java.util.UUID;
 public class CreateEventServlet extends HttpServlet {
 
     private EventDAO eventDAO;
+    private EventGroupDAO eventGroupDAO;
     private GroupDAO groupDAO;
     private GroupAnnouncementDAO announcementDAO;
 
     @Override
     public void init() throws ServletException {
         this.eventDAO = new EventDAO();
+        this.eventGroupDAO = new EventGroupDAO();
         this.groupDAO = new GroupDAO();
         this.announcementDAO = new GroupAnnouncementDAO();
     }
@@ -62,10 +68,21 @@ public class CreateEventServlet extends HttpServlet {
             String title = getPartValue(request.getPart("e_title"));
             String description = getPartValue(request.getPart("e_description"));
             String dateStr = getPartValue(request.getPart("e_date"));
-            String groupIdStr = getPartValue(request.getPart("group_id"));
+
+            // Collect ALL group_id parts (multiple checkboxes with name="group_id")
+            Collection<Part> allParts = request.getParts();
+            List<Integer> groupIds = new ArrayList<>();
+            for (Part part : allParts) {
+                if ("group_id".equals(part.getName())) {
+                    String val = getPartValue(part);
+                    if (val != null && !val.trim().isEmpty()) {
+                        groupIds.add(Integer.parseInt(val.trim()));
+                    }
+                }
+            }
 
             System.out.println("[DEBUG SaveEventServlet] Form data - Title: " + title +
-                    ", Date: " + dateStr + ", Group ID: " + groupIdStr);
+                    ", Date: " + dateStr + ", Group IDs: " + groupIds);
 
             // Validation
             if (title == null || title.trim().isEmpty()) {
@@ -76,18 +93,18 @@ public class CreateEventServlet extends HttpServlet {
                 throw new IllegalArgumentException("Event date is required");
             }
 
-            if (groupIdStr == null || groupIdStr.trim().isEmpty()) {
-                throw new IllegalArgumentException("Please select a group");
+            if (groupIds.isEmpty()) {
+                throw new IllegalArgumentException("Please select at least one group");
             }
 
-            int groupId = Integer.parseInt(groupIdStr);
-
-            // Verify that the group belongs to this user (security check)
-            Group selectedGroup = groupDAO.findById(groupId);
-            if (selectedGroup == null || selectedGroup.getUserId() != userId) {
-                System.out.println("[DEBUG SaveEventServlet] Security violation: User " + userId +
-                        " attempted to create event for group " + groupId);
-                throw new SecurityException("You can only create events for your own groups");
+            // Verify that ALL selected groups belong to this user (security check)
+            for (int groupId : groupIds) {
+                Group selectedGroup = groupDAO.findById(groupId);
+                if (selectedGroup == null || selectedGroup.getUserId() != userId) {
+                    System.out.println("[DEBUG SaveEventServlet] Security violation: User " + userId +
+                            " attempted to create event for group " + groupId);
+                    throw new SecurityException("You can only create events for your own groups");
+                }
             }
 
             // Parse the date
@@ -122,12 +139,12 @@ public class CreateEventServlet extends HttpServlet {
                 System.out.println("[DEBUG SaveEventServlet] File saved to: " + eventPicUrl);
             }
 
-            // Create Event object
+            // Create Event object (use first group as the legacy group_id)
             Event newEvent = new Event();
             newEvent.setTitle(title.trim());
             newEvent.setDescription(description != null ? description.trim() : "");
             newEvent.setEventDate(eventDate);
-            newEvent.setGroupId(groupId);
+            newEvent.setGroupId(groupIds.get(0)); // legacy column
             newEvent.setEventPicUrl(eventPicUrl);
             newEvent.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
@@ -137,26 +154,32 @@ public class CreateEventServlet extends HttpServlet {
             int eventId = eventDAO.createEvent(newEvent);
 
             if (eventId > 0) {
-                // Auto-create announcement for the group
-                try {
-                    String announcementTitle = "New Event: " + newEvent.getTitle();
-                    String announcementContent = "A new event '" + newEvent.getTitle() + "' has been scheduled for " + dateStr + ".\n\n" +
-                            (newEvent.getDescription() != null && !newEvent.getDescription().isEmpty()
-                                    ? "Details: " + newEvent.getDescription()
-                                    : "");
+                // Save group associations in junction table
+                eventGroupDAO.addGroupsToEvent(eventId, groupIds);
+                System.out.println("[DEBUG SaveEventServlet] Added " + groupIds.size() + " groups to event " + eventId);
 
-                    System.out.println("[DEBUG SaveEventServlet] Creating auto-announcement - groupId: " + groupId + ", userId: " + userId + ", title: " + announcementTitle);
-                    GroupAnnouncement announcement = new GroupAnnouncement(groupId, userId, announcementTitle, announcementContent);
-                    announcement.setEventId(eventId);
-                    boolean announcementCreated = announcementDAO.createAnnouncement(announcement);
-                    System.out.println("[DEBUG SaveEventServlet] Auto-announcement created: " + announcementCreated + " for event: " + newEvent.getTitle());
-                } catch (Exception e) {
-                    System.err.println("[DEBUG SaveEventServlet] Failed to create auto-announcement: " + e.getMessage());
-                    e.printStackTrace();
-                    // We don't want to fail the event creation if announcement fails
+                // Auto-create announcement for EACH group
+                for (int groupId : groupIds) {
+                    try {
+                        String announcementTitle = "New Event: " + newEvent.getTitle();
+                        String announcementContent = "A new event '" + newEvent.getTitle() + "' has been scheduled for " + dateStr + ".\n\n" +
+                                (newEvent.getDescription() != null && !newEvent.getDescription().isEmpty()
+                                        ? "Details: " + newEvent.getDescription()
+                                        : "");
+
+                        System.out.println("[DEBUG SaveEventServlet] Creating auto-announcement - groupId: " + groupId + ", userId: " + userId + ", title: " + announcementTitle);
+                        GroupAnnouncement announcement = new GroupAnnouncement(groupId, userId, announcementTitle, announcementContent);
+                        announcement.setEventId(eventId);
+                        boolean announcementCreated = announcementDAO.createAnnouncement(announcement);
+                        System.out.println("[DEBUG SaveEventServlet] Auto-announcement created: " + announcementCreated + " for group " + groupId);
+                    } catch (Exception e) {
+                        System.err.println("[DEBUG SaveEventServlet] Failed to create auto-announcement for group " + groupId + ": " + e.getMessage());
+                        e.printStackTrace();
+                        // We don't want to fail the event creation if announcement fails
+                    }
                 }
 
-                System.out.println("[DEBUG SaveEventServlet] Event created successfully");
+                System.out.println("[DEBUG SaveEventServlet] Event created successfully with " + groupIds.size() + " groups");
                 session.setAttribute("successMessage", "Event created successfully!");
                 response.sendRedirect(request.getContextPath() + "/events");
             } else {
@@ -171,7 +194,6 @@ public class CreateEventServlet extends HttpServlet {
             session.setAttribute("formData_e_title", getPartValue(request.getPart("e_title")));
             session.setAttribute("formData_e_description", getPartValue(request.getPart("e_description")));
             session.setAttribute("formData_e_date", getPartValue(request.getPart("e_date")));
-            session.setAttribute("formData_group_id", getPartValue(request.getPart("group_id")));
             response.sendRedirect(request.getContextPath() + "/createevent");
 
         } catch (IllegalArgumentException | SecurityException e) {
@@ -181,7 +203,6 @@ public class CreateEventServlet extends HttpServlet {
                 session.setAttribute("formData_e_title", getPartValue(request.getPart("e_title")));
                 session.setAttribute("formData_e_description", getPartValue(request.getPart("e_description")));
                 session.setAttribute("formData_e_date", getPartValue(request.getPart("e_date")));
-                session.setAttribute("formData_group_id", getPartValue(request.getPart("group_id")));
             } catch (Exception ex) {
                 // Ignore if parts are not available
             }
@@ -195,7 +216,6 @@ public class CreateEventServlet extends HttpServlet {
                 session.setAttribute("formData_e_title", getPartValue(request.getPart("e_title")));
                 session.setAttribute("formData_e_description", getPartValue(request.getPart("e_description")));
                 session.setAttribute("formData_e_date", getPartValue(request.getPart("e_date")));
-                session.setAttribute("formData_group_id", getPartValue(request.getPart("group_id")));
             } catch (Exception ex) {
                 // Ignore if parts are not available
             }
