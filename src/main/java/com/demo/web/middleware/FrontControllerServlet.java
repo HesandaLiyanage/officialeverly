@@ -205,6 +205,10 @@ public class FrontControllerServlet extends HttpServlet {
     private void handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Ensure UTF-8 encoding for all requests/responses (fixes emoji rendering)
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         String path = request.getRequestURI().substring(request.getContextPath().length());
 
         // Remove trailing slash
