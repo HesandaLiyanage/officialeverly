@@ -74,23 +74,20 @@ public class AutographActivity {
 
     /**
      * Returns a human-readable relative time string.
+     * Since created_at is DATE (not TIMESTAMP), we only compare days.
      */
     public String getRelativeTime() {
         if (createdAt == null)
             return "just now";
         long diffMs = System.currentTimeMillis() - createdAt.getTime();
-        long diffMinutes = diffMs / (1000 * 60);
-        long diffHours = diffMs / (1000 * 60 * 60);
         long diffDays = diffMs / (1000 * 60 * 60 * 24);
 
-        if (diffMinutes < 1)
-            return "just now";
-        if (diffMinutes < 60)
-            return diffMinutes + (diffMinutes == 1 ? " minute ago" : " minutes ago");
-        if (diffHours < 24)
-            return diffHours + (diffHours == 1 ? " hour ago" : " hours ago");
+        if (diffDays <= 0)
+            return "Today";
+        if (diffDays == 1)
+            return "Yesterday";
         if (diffDays < 30)
-            return diffDays + (diffDays == 1 ? " day ago" : " days ago");
+            return diffDays + " days ago";
         return createdAt.toString().substring(0, 10);
     }
 }
