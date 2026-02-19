@@ -244,9 +244,33 @@
                     this.pageContentEl.style.opacity = '0';
                     var self = this;
                     setTimeout(function () {
-                        self.pageContentEl.innerHTML =
-                            '<div class="message-text">' + entry.content + '</div>' +
-                            '<div class="author-name">- ' + entry.author + '</div>';
+                        var html = '';
+                        var data = entry.entry_data;
+                        if (data && data.elements) {
+                            // Render each element from the canvas state
+                            for (var i = 0; i < data.elements.length; i++) {
+                                var el = data.elements[i];
+                                if (el.type === 'text') {
+                                    // Text content - render as the writing area
+                                    html += '<div class="viewer-writing-area">' + el.content + '</div>';
+                                } else if (el.type === 'emoji') {
+                                    // Emoji decoration at exact position
+                                    html += '<span class="viewer-decoration viewer-emoji" style="position:absolute;top:' + el.top_pct + ';left:' + el.left_pct + ';">' + el.content + '</span>';
+                                } else if (el.type === 'doodle') {
+                                    var doodleClass = 'viewer-doodle';
+                                    if (el.sub_type) doodleClass += ' viewer-doodle-' + el.sub_type;
+                                    html += '<span class="viewer-decoration ' + doodleClass + '" style="position:absolute;top:' + el.top_pct + ';left:' + el.left_pct + ';">' + el.content + '</span>';
+                                }
+                            }
+                            // Author name
+                            var authorName = data.author || entry.author || 'Anonymous';
+                            html += '<div class="author-name">- ' + authorName + '</div>';
+                        } else {
+                            // Fallback for entries without entry_data
+                            html = '<div class="viewer-writing-area">' + (entry.content || '') + '</div>';
+                            html += '<div class="author-name">- ' + (entry.author || 'Anonymous') + '</div>';
+                        }
+                        self.pageContentEl.innerHTML = html;
                         self.pageDateEl.textContent = 'Written on ' + entry.date;
                         self.pageNumberEl.textContent = 'Page ' + (index + 1) + ' of ' + self.entries.length;
                         self.pageContentEl.style.opacity = '1';

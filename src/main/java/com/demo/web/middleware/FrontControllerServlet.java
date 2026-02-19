@@ -468,39 +468,23 @@ public class FrontControllerServlet extends HttpServlet {
 
             request.setAttribute("autograph", autographDetail);
 
-            // Fetch real autograph entries from the database
+            // Fetch entries with entry_data from autograph_activity
+            AutographActivityDAO viewActivityDAO = new AutographActivityDAO();
+            java.util.List<String[]> entryList = viewActivityDAO.getEntriesByAutographId(autographId);
             StringBuilder entriesJson = new StringBuilder("[");
-            try (java.sql.Connection conn = com.demo.web.util.DatabaseUtil.getConnection();
-                    java.sql.PreparedStatement stmt = conn.prepareStatement(
-                            "SELECT ae.content, ae.submitted_at, u.username FROM autograph_entry ae " +
-                                    "LEFT JOIN users u ON ae.user_id = u.user_id " +
-                                    "WHERE ae.autograph_id = ? ORDER BY ae.submitted_at ASC")) {
-                stmt.setInt(1, autographId);
-                java.sql.ResultSet rs = stmt.executeQuery();
-                boolean first = true;
-                while (rs.next()) {
-                    if (!first)
-                        entriesJson.append(",");
-                    first = false;
-                    String content = rs.getString("content");
-                    String submittedAt = rs.getString("submitted_at");
-                    String username = rs.getString("username");
-                    if (content == null)
-                        content = "";
-                    if (submittedAt == null)
-                        submittedAt = "";
-                    if (username == null)
-                        username = "Anonymous";
-                    // Escape for JSON
-                    content = content.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r",
-                            "");
-                    username = username.replace("\\", "\\\\").replace("\"", "\\\"");
-                    entriesJson.append("{\"content\":\"").append(content).append("\",");
-                    entriesJson.append("\"date\":\"").append(submittedAt).append("\",");
-                    entriesJson.append("\"author\":\"").append(username).append("\"}");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            boolean first = true;
+            for (String[] entry : entryList) {
+                if (!first)
+                    entriesJson.append(",");
+                first = false;
+                String entryData = entry[0]; // raw JSON from DB
+                String signerName = entry[1];
+                String createdAt = entry[2];
+                // Escape signer name for JSON
+                signerName = signerName.replace("\\", "\\\\").replace("\"", "\\\"");
+                entriesJson.append("{\"entry_data\":").append(entryData).append(",");
+                entriesJson.append("\"author\":\"").append(signerName).append("\",");
+                entriesJson.append("\"date\":\"").append(createdAt).append("\"}");
             }
             entriesJson.append("]");
             request.setAttribute("entriesJson", entriesJson.toString());
@@ -586,6 +570,7 @@ public class FrontControllerServlet extends HttpServlet {
             String token = request.getParameter("token");
             String content = request.getParameter("message");
             String author = request.getParameter("author");
+            String entryDataJson = request.getParameter("entry_data");
 
             if (token == null || token.isEmpty()) {
                 response.getWriter().write("{\"success\": false, \"message\": \"Share token is required\"}");
@@ -621,8 +606,8 @@ public class FrontControllerServlet extends HttpServlet {
                     stmt.executeUpdate();
                 }
 
-                // Log activity for the Recent Activity feed
-                activityDAO.logActivity(ag.getAutographId(), writerUserId, writerUsername);
+                // Log activity for the Recent Activity feed (includes entry_data)
+                activityDAO.logActivity(ag.getAutographId(), writerUserId, writerUsername, author, entryDataJson);
 
                 response.getWriter().write("{\"success\": true, \"message\": \"Entry submitted successfully!\"}");
 
