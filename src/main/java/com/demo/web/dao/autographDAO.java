@@ -209,22 +209,63 @@ public class autographDAO {
     }
 
     /**
-     * Delete autograph by ID
+     * Delete autograph by ID (also removes related activity and entry records)
      */
     public boolean deleteAutograph(int autographId) {
-        String sql = "DELETE FROM autograph WHERE autograph_id = ?";
-        try (Connection conn = DatabaseUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, autographId);
-            int rowsDeleted = stmt.executeUpdate();
-            System.out.println(
-                    "[DEBUG autographDAO] deleteAutograph affected " + rowsDeleted + " rows for ID: " + autographId);
-            return rowsDeleted > 0;
+        String deleteActivity = "DELETE FROM autograph_activity WHERE autograph_id = ?";
+        String deleteEntry = "DELETE FROM autograph_entry WHERE autograph_id = ?";
+        String deleteAutograph = "DELETE FROM autograph WHERE autograph_id = ?";
+        Connection conn = null;
+        try {
+            conn = DatabaseUtil.getConnection();
+            conn.setAutoCommit(false);
+
+            // Delete related activity records first
+            try (PreparedStatement stmt = conn.prepareStatement(deleteActivity)) {
+                stmt.setInt(1, autographId);
+                int actRows = stmt.executeUpdate();
+                System.out.println(
+                        "[DEBUG autographDAO] Deleted " + actRows + " activity rows for autograph ID: " + autographId);
+            }
+
+            // Delete related entry records
+            try (PreparedStatement stmt = conn.prepareStatement(deleteEntry)) {
+                stmt.setInt(1, autographId);
+                int entryRows = stmt.executeUpdate();
+                System.out.println(
+                        "[DEBUG autographDAO] Deleted " + entryRows + " entry rows for autograph ID: " + autographId);
+            }
+
+            // Delete the autograph itself
+            try (PreparedStatement stmt = conn.prepareStatement(deleteAutograph)) {
+                stmt.setInt(1, autographId);
+                int rowsDeleted = stmt.executeUpdate();
+                System.out.println("[DEBUG autographDAO] deleteAutograph affected " + rowsDeleted + " rows for ID: "
+                        + autographId);
+                conn.commit();
+                return rowsDeleted > 0;
+            }
         } catch (SQLException e) {
             System.out.println(
                     "[DEBUG autographDAO] Error while deleting autograph ID " + autographId + ": " + e.getMessage());
             e.printStackTrace();
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
             throw new RuntimeException("Error while deleting autograph", e);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
     }
 
@@ -234,7 +275,7 @@ public class autographDAO {
     private autograph mapResultSetToAutograph(ResultSet rs) throws SQLException {
         autograph autograph = new autograph();
         autograph.setAutographId(rs.getInt("autograph_id"));
-        autograph.setTitle(rs.getString("a_title") );
+        autograph.setTitle(rs.getString("a_title"));
         autograph.setDescription(rs.getString("a_description"));
         autograph.setCreatedAt(rs.getTimestamp("created_at"));
         autograph.setUserId(rs.getInt("user_id"));
