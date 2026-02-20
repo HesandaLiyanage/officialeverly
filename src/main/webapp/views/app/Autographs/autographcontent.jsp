@@ -265,63 +265,72 @@
                         document.addEventListener('DOMContentLoaded', function () {
 
                             // Modern Search Functionality
-                            var autographsSearchBtn = document.getElementById('autographsSearchBtn');
+                            function resetCards() {
+                                var autographCards = document.querySelectorAll('.autograph-card');
+                                autographCards.forEach(function (card) { card.style.display = ''; });
+                            }
 
-                            if (autographsSearchBtn) {
-                                autographsSearchBtn.addEventListener('click', function (event) {
-                                    event.stopPropagation();
+                            function openSearch(event) {
+                                event.stopPropagation();
 
-                                    var searchBtnElement = this;
-                                    var searchContainer = searchBtnElement.parentElement;
+                                var searchBtnElement = event.currentTarget;
+                                var searchContainer = searchBtnElement.parentElement;
 
-                                    var searchBox = document.createElement('div');
-                                    searchBox.className = 'autographs-search-expanded';
-                                    searchBox.innerHTML = '<div class="autographs-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg></div><input type="text" id="searchInput" placeholder="Search autograph books..." autofocus><button class="autographs-search-close"><svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>';
+                                var searchBox = document.createElement('div');
+                                searchBox.className = 'autographs-search-expanded';
+                                searchBox.innerHTML = '<div class="autographs-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg></div><input type="text" id="searchInput" placeholder="Search autograph books..." autofocus><button class="autographs-search-close"><svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>';
 
-                                    searchContainer.replaceChild(searchBox, searchBtnElement);
+                                searchContainer.replaceChild(searchBox, searchBtnElement);
 
-                                    var input = searchBox.querySelector('input');
-                                    input.focus();
+                                var input = searchBox.querySelector('input');
+                                input.focus();
 
-                                    var closeSearch = function () {
-                                        var newSearchBtn = document.createElement('button');
-                                        newSearchBtn.className = 'autographs-search-btn';
-                                        newSearchBtn.id = 'autographsSearchBtn';
-                                        newSearchBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>';
-                                        searchContainer.replaceChild(newSearchBtn, searchBox);
-                                        newSearchBtn.addEventListener('click', arguments.callee);
-                                    };
+                                var closeSearch = function () {
+                                    resetCards();
+                                    var newSearchBtn = document.createElement('button');
+                                    newSearchBtn.className = 'autographs-search-btn';
+                                    newSearchBtn.id = 'autographsSearchBtn';
+                                    newSearchBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>';
+                                    searchContainer.replaceChild(newSearchBtn, searchBox);
+                                    newSearchBtn.addEventListener('click', openSearch);
+                                };
 
-                                    searchBox.querySelector('.autographs-search-close').addEventListener('click', closeSearch);
+                                searchBox.querySelector('.autographs-search-close').addEventListener('click', closeSearch);
 
-                                    input.addEventListener('blur', function () {
-                                        setTimeout(function () {
-                                            if (!document.activeElement.closest('.autographs-search-expanded')) {
-                                                closeSearch();
-                                            }
-                                        }, 150);
-                                    });
+                                input.addEventListener('blur', function () {
+                                    setTimeout(function () {
+                                        if (!document.activeElement || !document.activeElement.closest || !document.activeElement.closest('.autographs-search-expanded')) {
+                                            closeSearch();
+                                        }
+                                    }, 200);
+                                });
 
-                                    searchBox.addEventListener('mousedown', function (e) {
+                                searchBox.addEventListener('mousedown', function (e) {
+                                    if (!e.target.closest('.autographs-search-close')) {
                                         e.preventDefault();
                                         input.focus();
-                                    });
+                                    }
+                                });
 
-                                    // Search functionality
-                                    input.addEventListener('input', function (e) {
-                                        var query = e.target.value.toLowerCase().trim();
-                                        var autographCards = document.querySelectorAll('.autograph-card');
-                                        autographCards.forEach(function (card) {
-                                            if (query === '') {
-                                                card.style.display = '';
-                                            } else {
-                                                var cardTitle = card.getAttribute('data-title');
-                                                cardTitle = cardTitle ? cardTitle.toLowerCase() : '';
-                                                card.style.display = cardTitle.indexOf(query) !== -1 ? '' : 'none';
-                                            }
-                                        });
+                                // Search functionality
+                                input.addEventListener('input', function (e) {
+                                    var query = e.target.value.toLowerCase().trim();
+                                    var autographCards = document.querySelectorAll('.autograph-card');
+                                    autographCards.forEach(function (card) {
+                                        if (query === '') {
+                                            card.style.display = '';
+                                        } else {
+                                            var cardTitle = card.getAttribute('data-title');
+                                            cardTitle = cardTitle ? cardTitle.toLowerCase() : '';
+                                            card.style.display = cardTitle.indexOf(query) !== -1 ? '' : 'none';
+                                        }
                                     });
                                 });
+                            }
+
+                            var autographsSearchBtn = document.getElementById('autographsSearchBtn');
+                            if (autographsSearchBtn) {
+                                autographsSearchBtn.addEventListener('click', openSearch);
                             }
 
                             // Autograph card click handlers
