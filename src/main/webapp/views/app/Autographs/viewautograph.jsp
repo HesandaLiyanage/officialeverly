@@ -197,6 +197,8 @@
         <input type="hidden" id="entriesData" value='${entriesJson}' />
         <input type="hidden" id="autographIdValue" value="${autograph.autographId}" />
         <input type="hidden" id="autographTitleValue" value="${autograph.title}" />
+        <input type="hidden" id="prevBookIdValue" value="${prevBookId}" />
+        <input type="hidden" id="nextBookIdValue" value="${nextBookId}" />
         <script>
             class AutographViewer {
                 constructor() {
@@ -314,6 +316,34 @@
                         var confirmDelete = confirm('Are you sure you want to delete this autograph book? This action cannot be undone.');
                         if (confirmDelete) { deleteForm.submit(); }
                     });
+                }
+
+                // Prev/Next book navigation
+                var prevBookId = parseInt(document.getElementById('prevBookIdValue').value);
+                var nextBookId = parseInt(document.getElementById('nextBookIdValue').value);
+                var prevBookBtn = document.getElementById('prevBook');
+                var nextBookBtn = document.getElementById('nextBook');
+                if (prevBookBtn) {
+                    if (prevBookId > 0) {
+                        prevBookBtn.addEventListener('click', function () {
+                            window.location.href = '/autographview?id=' + prevBookId;
+                        });
+                    } else {
+                        prevBookBtn.disabled = true;
+                        prevBookBtn.style.opacity = '0.35';
+                        prevBookBtn.style.cursor = 'default';
+                    }
+                }
+                if (nextBookBtn) {
+                    if (nextBookId > 0) {
+                        nextBookBtn.addEventListener('click', function () {
+                            window.location.href = '/autographview?id=' + nextBookId;
+                        });
+                    } else {
+                        nextBookBtn.disabled = true;
+                        nextBookBtn.style.opacity = '0.35';
+                        nextBookBtn.style.cursor = 'default';
+                    }
                 }
 
                 // Prevent floating buttons from overlapping footer

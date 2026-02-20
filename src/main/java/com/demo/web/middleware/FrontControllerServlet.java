@@ -421,6 +421,14 @@ public class FrontControllerServlet extends HttpServlet {
             List<autograph> autographs = autographDAO.findByUserId(userId);
             request.setAttribute("autographs", autographs);
 
+            // Fetch signers (entry authors) for each autograph book
+            java.util.Map<Integer, List<String>> signersMap = new java.util.HashMap<>();
+            for (autograph ag : autographs) {
+                List<String> signers = activityDAO.getSignersByAutographId(ag.getAutographId());
+                signersMap.put(ag.getAutographId(), signers);
+            }
+            request.setAttribute("signersMap", signersMap);
+
             // Fetch recent activities for the user's autograph books
             List<com.demo.web.model.AutographActivity> recentActivities = activityDAO.getRecentActivitiesByOwner(userId,
                     5);
@@ -471,6 +479,22 @@ public class FrontControllerServlet extends HttpServlet {
             }
 
             request.setAttribute("autograph", autographDetail);
+
+            // Compute prev/next book navigation
+            List<autograph> userBooks = autographDAO.findByUserId(userId);
+            int prevBookId = -1;
+            int nextBookId = -1;
+            for (int i = 0; i < userBooks.size(); i++) {
+                if (userBooks.get(i).getAutographId() == autographId) {
+                    if (i > 0)
+                        prevBookId = userBooks.get(i - 1).getAutographId();
+                    if (i < userBooks.size() - 1)
+                        nextBookId = userBooks.get(i + 1).getAutographId();
+                    break;
+                }
+            }
+            request.setAttribute("prevBookId", prevBookId);
+            request.setAttribute("nextBookId", nextBookId);
 
             // Fetch entries with entry_data from autograph_activity
             AutographActivityDAO viewActivityDAO = new AutographActivityDAO();

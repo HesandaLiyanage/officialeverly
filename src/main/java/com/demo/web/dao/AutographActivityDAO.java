@@ -105,4 +105,31 @@ public class AutographActivityDAO {
         }
         return entries;
     }
+
+    /**
+     * Get distinct signer names for a given autograph book.
+     * Returns a list of unique signer names, ordered by earliest entry.
+     */
+    public List<String> getSignersByAutographId(int autographId) {
+        String sql = "SELECT DISTINCT ON (aa.signer_name) aa.signer_name "
+                + "FROM autograph_activity aa "
+                + "WHERE aa.autograph_id = ? AND aa.signer_name IS NOT NULL "
+                + "ORDER BY aa.signer_name, aa.created_at ASC";
+        List<String> signers = new ArrayList<>();
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, autographId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString("signer_name");
+                if (name != null && !name.trim().isEmpty()) {
+                    signers.add(name.trim());
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("[DEBUG AutographActivityDAO] Error fetching signers: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return signers;
+    }
 }
