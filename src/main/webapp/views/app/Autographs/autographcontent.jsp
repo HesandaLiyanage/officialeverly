@@ -81,15 +81,8 @@
                                                                         request.getAttribute("signersMap");
                                                                         List<String> signers = signersMap != null ?
                                                                             signersMap.get(ag.getAutographId()) : null;
-                                                                            String[] avatarGradients = {
-                                                                            "linear-gradient(135deg, #667eea 0%, #764ba2
-                                                                            100%)", "linear-gradient(135deg, #f093fb 0%,
-                                                                            #f5576c 100%)", "linear-gradient(135deg,
-                                                                            #a8edea 0%, #fed6e3 100%)",
-                                                                            "linear-gradient(135deg, #ffecd2 0%, #fcb69f
-                                                                            100%)", "linear-gradient(135deg, #ff9a9e 0%,
-                                                                            #fecfef 100%)" };
                                                                             int maxShow = 4;
+                                                                            int gradCount = 5;
                                                                             if (signers != null && !signers.isEmpty()) {
                                                                             int showCount = Math.min(signers.size(),
                                                                             maxShow);
@@ -97,17 +90,15 @@
                                                                                 String sName=signers.get(si); String
                                                                                 initial=sName.substring(0,
                                                                                 1).toUpperCase(); int
-                                                                                sHash=Math.abs(sName.hashCode()); String
-                                                                                grad=avatarGradients[sHash %
-                                                                                avatarGradients.length]; %>
-                                                                                <div class="signer-avatar"
-                                                                                    style="background: <%= grad %>; z-index: <%= (maxShow - si) %>;"
+                                                                                gi=Math.abs(sName.hashCode()) %
+                                                                                gradCount; %>
+                                                                                <div class="signer-avatar signer-grad-<%= gi %>"
+                                                                                    style="z-index: <%= (maxShow - si) %>;"
                                                                                     title="<%= sName %>">
                                                                                     <%= initial %>
                                                                                 </div>
                                                                                 <% } if (signers.size()> maxShow) { %>
                                                                                     <div class="signer-avatar signer-more"
-                                                                                        style="z-index: 0;"
                                                                                         title="<%= (signers.size() - maxShow) %> more">
                                                                                         +<%= (signers.size() - maxShow)
                                                                                             %>
