@@ -107,21 +107,22 @@ public class AutographActivityDAO {
     }
 
     /**
-     * Get distinct signer names for a given autograph book.
-     * Returns a list of unique signer names, ordered by earliest entry.
+     * Get distinct usernames of signers for a given autograph book.
+     * Uses username (not signer_name) to match the activity tab avatars.
      */
     public List<String> getSignersByAutographId(int autographId) {
-        String sql = "SELECT DISTINCT ON (aa.signer_name) aa.signer_name "
+        String sql = "SELECT DISTINCT u.username "
                 + "FROM autograph_activity aa "
-                + "WHERE aa.autograph_id = ? AND aa.signer_name IS NOT NULL "
-                + "ORDER BY aa.signer_name, aa.created_at ASC";
+                + "JOIN users u ON aa.user_id = u.user_id "
+                + "WHERE aa.autograph_id = ? "
+                + "ORDER BY u.username ASC";
         List<String> signers = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, autographId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                String name = rs.getString("signer_name");
+                String name = rs.getString("username");
                 if (name != null && !name.trim().isEmpty()) {
                     signers.add(name.trim());
                 }
