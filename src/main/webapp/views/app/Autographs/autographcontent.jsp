@@ -19,7 +19,7 @@
 
                     <jsp:include page="../../public/header2.jsp" />
 
-                    <div class="page-wrapper">
+                    <div class="page-wrapper" style="min-height: calc(100vh - 160px);">
                         <main class="main-content">
 
                             <!-- Page Header -->
@@ -139,9 +139,11 @@
                                                 , "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
                                                 , "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
                                                 , "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
-                                                , "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" }; int gradIdx=0;
-                                                for (AutographActivity act : recentActivities) { String
-                                                gradient=gradients[gradIdx % gradients.length]; gradIdx++; %>
+                                                , "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" }; for
+                                                (AutographActivity act : recentActivities) { // Use username hash for
+                                                consistent color per user int
+                                                userHash=Math.abs(act.getWriterUsername().hashCode()); String
+                                                gradient=gradients[userHash % gradients.length]; %>
                                                 <div class="activity-item">
                                                     <div class="activity-avatar" style="background: <%= gradient %>;">
                                                         <span>
@@ -308,12 +310,16 @@
 
                                     // Search functionality
                                     input.addEventListener('input', function (e) {
-                                        var query = e.target.value.toLowerCase();
+                                        var query = e.target.value.toLowerCase().trim();
                                         var autographCards = document.querySelectorAll('.autograph-card');
                                         autographCards.forEach(function (card) {
-                                            var cardTitle = card.getAttribute('data-title');
-                                            cardTitle = cardTitle ? cardTitle.toLowerCase() : '';
-                                            card.style.display = cardTitle.indexOf(query) !== -1 ? 'block' : 'none';
+                                            if (query === '') {
+                                                card.style.display = '';
+                                            } else {
+                                                var cardTitle = card.getAttribute('data-title');
+                                                cardTitle = cardTitle ? cardTitle.toLowerCase() : '';
+                                                card.style.display = cardTitle.indexOf(query) !== -1 ? '' : 'none';
+                                            }
                                         });
                                     });
                                 });

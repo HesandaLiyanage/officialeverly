@@ -315,6 +315,26 @@
                         if (confirmDelete) { deleteForm.submit(); }
                     });
                 }
+
+                // Prevent floating buttons from overlapping footer
+                var floatingBtns = document.querySelector('.floating-buttons');
+                var footer = document.querySelector('footer') || document.querySelector('.footer') || document.querySelector('.main-footer');
+                if (floatingBtns && footer) {
+                    var defaultBottom = 30;
+                    function adjustFloatingButtons() {
+                        var footerRect = footer.getBoundingClientRect();
+                        var windowHeight = window.innerHeight;
+                        if (footerRect.top < windowHeight) {
+                            var newBottom = windowHeight - footerRect.top + 15;
+                            floatingBtns.style.bottom = Math.max(newBottom, defaultBottom) + 'px';
+                        } else {
+                            floatingBtns.style.bottom = defaultBottom + 'px';
+                        }
+                    }
+                    window.addEventListener('scroll', adjustFloatingButtons);
+                    window.addEventListener('resize', adjustFloatingButtons);
+                    adjustFloatingButtons();
+                }
             });
         </script>
     </body>
