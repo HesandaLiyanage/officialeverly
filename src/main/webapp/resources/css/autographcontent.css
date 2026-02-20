@@ -522,21 +522,22 @@
 }
 
 .signer-avatar {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     border: 2px solid #fff;
     margin-left: -8px;
     position: relative;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     cursor: default;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .signer-avatar:first-child {
@@ -548,6 +549,7 @@
     color: #4b5563;
     font-size: 10px;
     font-weight: 600;
+    text-shadow: none;
 }
 
 .no-signers {
@@ -567,15 +569,15 @@
 }
 
 .signer-grad-2 {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 .signer-grad-3 {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
 }
 
 .signer-grad-4 {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
 }
 
 /* Share Popup */
