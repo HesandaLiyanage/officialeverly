@@ -140,8 +140,7 @@
                                                 , "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
                                                 , "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
                                                 , "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" }; for
-                                                (AutographActivity act : recentActivities) { // Use username hash for
-                                                consistent color per user int
+                                                (AutographActivity act : recentActivities) { int
                                                 userHash=Math.abs(act.getWriterUsername().hashCode()); String
                                                 gradient=gradients[userHash % gradients.length]; %>
                                                 <div class="activity-item">
