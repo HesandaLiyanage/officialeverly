@@ -173,29 +173,38 @@
                                     }
                                     makeDraggable(element) {
                                         var isDragging = false;
-                                        var currentX, currentY, initialX, initialY;
-                                        var xOffset = 0, yOffset = 0;
+                                        var startMouseX, startMouseY, startLeft, startTop;
                                         var self = this;
                                         element.addEventListener('mousedown', function (e) {
-                                            initialX = e.clientX - xOffset;
-                                            initialY = e.clientY - yOffset;
-                                            if (e.target === element) { isDragging = true; element.style.cursor = 'grabbing'; element.style.zIndex = '1000'; }
+                                            if (e.target === element) {
+                                                isDragging = true;
+                                                element.style.cursor = 'grabbing';
+                                                element.style.zIndex = '1000';
+                                                var containerRect = self.decorationsContainer.getBoundingClientRect();
+                                                var elemRect = element.getBoundingClientRect();
+                                                startMouseX = e.clientX;
+                                                startMouseY = e.clientY;
+                                                startLeft = elemRect.left - containerRect.left;
+                                                startTop = elemRect.top - containerRect.top;
+                                                e.preventDefault();
+                                            }
                                         });
                                         document.addEventListener('mousemove', function (e) {
                                             if (isDragging) {
                                                 e.preventDefault();
-                                                currentX = e.clientX - initialX;
-                                                currentY = e.clientY - initialY;
-                                                xOffset = currentX;
-                                                yOffset = currentY;
-                                                var rect = self.decorationsContainer.getBoundingClientRect();
-                                                element.style.left = ((currentX / rect.width) * 100) + '%';
-                                                element.style.top = ((currentY / rect.height) * 100) + '%';
+                                                var containerRect = self.decorationsContainer.getBoundingClientRect();
+                                                var newLeft = startLeft + (e.clientX - startMouseX);
+                                                var newTop = startTop + (e.clientY - startMouseY);
+                                                element.style.left = ((newLeft / containerRect.width) * 100) + '%';
+                                                element.style.top = ((newTop / containerRect.height) * 100) + '%';
                                             }
                                         });
                                         document.addEventListener('mouseup', function () {
-                                            initialX = currentX; initialY = currentY; isDragging = false;
-                                            element.style.cursor = 'grab'; element.style.zIndex = '5';
+                                            if (isDragging) {
+                                                isDragging = false;
+                                                element.style.cursor = 'grab';
+                                                element.style.zIndex = '5';
+                                            }
                                         });
                                         element.addEventListener('dblclick', function () { element.remove(); });
                                         element.style.cursor = 'grab';
@@ -217,15 +226,57 @@
                                         var submitBtn = document.getElementById('submitBtn');
                                         submitBtn.disabled = true;
                                         submitBtn.textContent = 'Submitting...';
-                                        var decorations = [];
-                                        document.querySelectorAll('.decoration').forEach(function (dec) {
-                                            decorations.push({ content: dec.textContent, className: dec.className, top: dec.style.top, left: dec.style.left });
+
+                                        // Capture full canvas state
+                                        var page = document.getElementById('autographPage');
+                                        var pageRect = page.getBoundingClientRect();
+                                        var canvasWidth = pageRect.width;
+                                        var canvasHeight = pageRect.height;
+
+                                        // Build elements array
+                                        var elements = [];
+                                        var elemId = 0;
+
+                                        // Add the text content as an element
+                                        elements.push({
+                                            id: 'elem_' + (elemId++),
+                                            type: 'text',
+                                            content: message,
+                                            x_pct: 0,
+                                            y_pct: 0
                                         });
+
+                                        // Add each decoration (emoji/doodle) with its position
+                                        var decorations = document.querySelectorAll('.decoration');
+                                        decorations.forEach(function (dec) {
+                                            var decType = 'emoji';
+                                            var classList = dec.className || '';
+                                            if (classList.indexOf('doodle') !== -1) decType = 'doodle';
+                                            var subType = '';
+                                            if (classList.indexOf('heart') !== -1) subType = 'heart';
+                                            else if (classList.indexOf('star') !== -1) subType = 'star';
+                                            else if (classList.indexOf('music') !== -1) subType = 'music';
+                                            elements.push({
+                                                id: 'elem_' + (elemId++),
+                                                type: decType,
+                                                sub_type: subType,
+                                                content: dec.textContent,
+                                                top_pct: dec.style.top,
+                                                left_pct: dec.style.left
+                                            });
+                                        });
+
+                                        var entryData = {
+                                            canvas: { width: Math.round(canvasWidth), height: Math.round(canvasHeight) },
+                                            elements: elements,
+                                            author: author
+                                        };
+
                                         var formData = new URLSearchParams();
                                         formData.append('token', this.shareToken);
                                         formData.append('message', message);
                                         formData.append('author', author);
-                                        formData.append('decorations', JSON.stringify(decorations));
+                                        formData.append('entry_data', JSON.stringify(entryData));
                                         var cp = this.contextPath;
                                         fetch(cp + '/submitAutographEntry', {
                                             method: 'POST',

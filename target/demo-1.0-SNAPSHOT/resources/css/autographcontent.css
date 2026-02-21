@@ -46,11 +46,13 @@
     margin-top: 5px;
     margin-bottom: 2px;
 }
+
 .tab-nav {
     display: flex;
     margin-bottom: 10px;
     border-bottom: 2px solid #e9ecef;
 }
+
 /* Search Filters */
 .search-filters {
     display: flex;
@@ -469,24 +471,25 @@
         font-size: 11px;
     }
 }
-     /* Share Button Styles */
- .share-btn {
-     border: none;
-     border-radius: 8px;
-     background: #9A74D8;
-     box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
-     padding: 6px 12px;
-     display: inline-flex;
-     justify-content: center;
-     align-items: center;
-     gap: 6px;
-     cursor: pointer;
-     font-family: "Plus Jakarta Sans", sans-serif;
-     transition: all 0.3s ease;
-     font-size: 13px;
-     color: #ffffff;
-     font-weight: 500;
- }
+
+/* Share Button Styles */
+.share-btn {
+    border: none;
+    border-radius: 8px;
+    background: #9A74D8;
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+    padding: 6px 12px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    color: #ffffff;
+    font-weight: 500;
+}
 
 .share-btn:hover {
     background: #8a64c8;
@@ -511,6 +514,72 @@
     justify-content: space-between;
     gap: 10px;
 }
+
+/* Stacked signer avatars */
+.signer-avatars {
+    display: flex;
+    align-items: center;
+}
+
+.signer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    border: 2px solid #fff;
+    margin-left: -8px;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: default;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.signer-avatar:first-child {
+    margin-left: 0;
+}
+
+.signer-more {
+    background: #e5e7eb;
+    color: #4b5563;
+    font-size: 10px;
+    font-weight: 600;
+    text-shadow: none;
+}
+
+.no-signers {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.signer-grad-0 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.signer-grad-1 {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.signer-grad-2 {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.signer-grad-3 {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.signer-grad-4 {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
 /* Share Popup */
 .share-overlay {
     position: fixed;
@@ -532,8 +601,15 @@
 }
 
 @keyframes scaleIn {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .share-header {
@@ -571,6 +647,7 @@
 .share-option:hover {
     background: #f3edff;
 }
+
 .share-option.whatsapp {
     display: flex;
     align-items: center;
