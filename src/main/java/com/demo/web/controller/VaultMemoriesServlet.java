@@ -56,9 +56,41 @@ public class VaultMemoriesServlet extends HttpServlet {
             return;
         }
 
-        // For direct GET access, redirect to vault entry to verify password first
-        // This ensures user must always enter password to access vault
-        response.sendRedirect(request.getContextPath() + "/vaultentries");
+        // Check if vault is unlocked in session
+        Boolean vaultUnlocked = (Boolean) session.getAttribute("vault_unlocked");
+        if (vaultUnlocked == null || !vaultUnlocked) {
+            // Vault not unlocked, redirect to vault entry to verify password first
+            response.sendRedirect(request.getContextPath() + "/vaultentries");
+            return;
+        }
+
+        // Vault is unlocked in session, load vault memories
+        try {
+            List<Memory> vaultMemories = memoryDao.getVaultMemoriesByUserId(userId);
+
+            // Load cover images for each memory
+            for (Memory memory : vaultMemories) {
+                if (memory.getCoverMediaId() != null) {
+                    try {
+                        MediaItem coverMedia = mediaDAO.getMediaById(memory.getCoverMediaId());
+                        if (coverMedia != null) {
+                            memory.setCoverUrl(request.getContextPath() + "/viewmedia?id=" + coverMedia.getMediaId());
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            request.setAttribute("memories", vaultMemories);
+            request.setAttribute("memoriesCount", vaultMemories.size());
+            request.getRequestDispatcher("/views/app/vaultMemories.jsp").forward(request, response);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Error loading vault memories");
+            request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
+        }
     }
 
     /**
