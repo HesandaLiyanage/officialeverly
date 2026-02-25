@@ -6,12 +6,12 @@
 /* Page Wrapper */
 .page-wrapper {
     position: relative;
-    width: 90%;
+    width: 96%;
     max-width: 1600px;
     margin: 0 auto;
-    padding: 20px 40px;
+    padding: 20px 20px;
     display: flex;
-    gap: 30px;
+    gap: 20px;
     box-sizing: border-box;
 }
 
@@ -24,7 +24,7 @@
 
 .sidebar {
     min-height: 100vh;
-    width: 300px;
+    width: 240px;
     flex-shrink: 0;
     position: relative;
 
@@ -192,8 +192,8 @@
 /* Groups List - With Scrolling */
 .groups-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space-4);
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
     margin-bottom: var(--space-5);
 }
 
@@ -218,7 +218,7 @@
 
 .group-card {
     background: white;
-    border-radius: 16px;
+    border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -230,13 +230,13 @@
 }
 
 .group-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .group-images {
     width: 100%;
-    height: 180px;
+    height: 140px;
     display: flex;
     gap: 0;
     background: #f3f4f6;
@@ -302,19 +302,22 @@
 
 /* Group Info */
 .group-info {
-    padding: 20px;
+    padding: 12px 14px;
 }
 
 .group-title {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     color: #333;
     font-family: "Plus Jakarta Sans", sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .group-meta {
-    font-size: 14px;
+    font-size: 12px;
     color: #6c757d;
     font-weight: 500;
     font-family: "Plus Jakarta Sans", sans-serif;
@@ -509,8 +512,8 @@
     }
 
     .groups-list {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
     }
 
     .floating-buttons {
@@ -533,7 +536,7 @@
     }
 
     .groups-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .group-card {
@@ -610,6 +613,7 @@
     margin-top: 5px;
     margin-bottom: 2px;
 }
+
 .tab-nav {
     display: flex;
     margin-bottom: 10px;

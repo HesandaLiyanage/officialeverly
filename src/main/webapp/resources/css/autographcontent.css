@@ -6,12 +6,12 @@
 /* Page Wrapper */
 .page-wrapper {
     position: relative;
-    width: 90%;
+    width: 96%;
     max-width: 1600px;
     margin: 0 auto;
-    padding: 20px 40px;
+    padding: 20px 20px;
     display: flex;
-    gap: 30px;
+    gap: 20px;
     box-sizing: border-box;
 }
 
@@ -21,7 +21,7 @@
 }
 
 .sidebar {
-    width: 300px;
+    width: 240px;
     flex-shrink: 0;
     position: relative;
 }
@@ -46,11 +46,13 @@
     margin-top: 5px;
     margin-bottom: 2px;
 }
+
 .tab-nav {
     display: flex;
     margin-bottom: 10px;
     border-bottom: 2px solid #e9ecef;
 }
+
 /* Search Filters */
 .search-filters {
     display: flex;
@@ -174,14 +176,14 @@
 /* Autographs Grid */
 .autographs-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
     margin-bottom: 20px;
 }
 
 .autograph-card {
     background: white;
-    border-radius: 16px;
+    border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
@@ -189,13 +191,13 @@
 }
 
 .autograph-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .autograph-image {
     width: 100%;
-    height: 200px;
+    height: 140px;
     background-size: cover;
     background-position: center;
     background-color: #e5e7eb;
@@ -213,23 +215,26 @@
 }
 
 .autograph-content {
-    padding: 20px;
+    padding: 12px 14px;
 }
 
 .autograph-title {
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     color: #0d141c;
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .autograph-date {
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     color: #6c757d;
-    margin: 0 0 12px 0;
+    margin: 0 0 8px 0;
 }
 
 .autograph-meta {
@@ -409,8 +414,8 @@
     }
 
     .autographs-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
     }
 
     .floating-buttons {
@@ -437,7 +442,7 @@
     }
 
     .autographs-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .autograph-image {
@@ -469,24 +474,25 @@
         font-size: 11px;
     }
 }
-     /* Share Button Styles */
- .share-btn {
-     border: none;
-     border-radius: 8px;
-     background: #9A74D8;
-     box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
-     padding: 6px 12px;
-     display: inline-flex;
-     justify-content: center;
-     align-items: center;
-     gap: 6px;
-     cursor: pointer;
-     font-family: "Plus Jakarta Sans", sans-serif;
-     transition: all 0.3s ease;
-     font-size: 13px;
-     color: #ffffff;
-     font-weight: 500;
- }
+
+/* Share Button Styles */
+.share-btn {
+    border: none;
+    border-radius: 8px;
+    background: #9A74D8;
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+    padding: 6px 12px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    color: #ffffff;
+    font-weight: 500;
+}
 
 .share-btn:hover {
     background: #8a64c8;
@@ -511,6 +517,7 @@
     justify-content: space-between;
     gap: 10px;
 }
+
 /* Share Popup */
 .share-overlay {
     position: fixed;
@@ -532,8 +539,15 @@
 }
 
 @keyframes scaleIn {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .share-header {
@@ -571,6 +585,7 @@
 .share-option:hover {
     background: #f3edff;
 }
+
 .share-option.whatsapp {
     display: flex;
     align-items: center;
