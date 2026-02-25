@@ -1,0 +1,619 @@
+/*
+ * memoryrecap.css - Memory Recap page specific styles
+ * Uses shared memories.css for base layout (page-wrapper, memories-grid, memory-card, etc.)
+ * This file adds recap-specific gradients, badges, filter pills, and the story viewer modal.
+ */
+
+/* ============================================ */
+/* FILTER PILLS                                 */
+/* ============================================ */
+.recap-filter-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.recap-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 2px solid var(--gray-200, #e9ecef);
+    border-radius: 50px;
+    background: var(--white, #ffffff);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-600, #6c757d);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.recap-pill:hover {
+    border-color: var(--primary, #9A74D8);
+    color: var(--primary, #9A74D8);
+    background: var(--primary-light, #EADDFF);
+    transform: translateY(-1px);
+}
+
+.recap-pill.active {
+    background: var(--primary, #9A74D8);
+    color: var(--white, #ffffff);
+    border-color: var(--primary, #9A74D8);
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
+}
+
+.recap-pill.active svg {
+    stroke: var(--white, #ffffff);
+}
+
+.recap-pill svg {
+    stroke: currentColor;
+    flex-shrink: 0;
+}
+
+/* ============================================ */
+/* RECAP CARD COVER GRADIENTS                   */
+/* ============================================ */
+.recap-cover {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.recap-cover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.12;
+    background-image:
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Time-based gradients */
+.time-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.summer-gradient {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+}
+
+.month-gradient {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+}
+
+/* Event-based gradients */
+.event-gradient {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.travel-gradient {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.birthday-gradient {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* People-based gradients */
+.family-gradient {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.friends-gradient {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+.work-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #00c6fb 100%);
+}
+
+/* ============================================ */
+/* RECAP COVER CONTENT (icon + emoji)           */
+/* ============================================ */
+.recap-cover-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+    position: relative;
+}
+
+.recap-cover-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    transition: transform 0.3s ease;
+}
+
+.recap-card-item:hover .recap-cover-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.recap-cover-icon svg {
+    stroke: white;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+}
+
+.recap-cover-year {
+    font-size: 24px;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.5px;
+}
+
+/* ============================================ */
+/* RECAP BADGES (on card covers)                */
+/* ============================================ */
+.recap-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: white;
+    z-index: 3;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.time-badge {
+    background: rgba(102, 126, 234, 0.85);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+.event-badge {
+    background: rgba(240, 147, 251, 0.85);
+    box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
+}
+
+.people-badge {
+    background: rgba(79, 172, 254, 0.85);
+    box-shadow: 0 2px 8px rgba(79, 172, 254, 0.4);
+}
+
+.recap-badge svg {
+    stroke: white;
+    width: 12px;
+    height: 12px;
+}
+
+/* ============================================ */
+/* RECAP SUBTITLE (under date)                  */
+/* ============================================ */
+.recap-subtitle {
+    margin: 6px 0 0 0;
+    color: var(--gray-400, #9ca3af);
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-style: italic;
+}
+
+/* ============================================ */
+/* SIDEBAR EXTRAS                               */
+/* ============================================ */
+.favorite-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.moment-date {
+    font-size: 12px;
+    color: #8e8e8e;
+}
+
+.favorite-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+/* ============================================ */
+/* WHATSAPP STATUS-STYLE STORY VIEWER MODAL     */
+/* ============================================ */
+
+/* Modal Overlay - Blurred Background */
+.recap-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    z-index: 9999;
+    animation: recapFadeIn 0.3s ease;
+}
+
+.recap-modal-overlay.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes recapFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Story Viewer Container */
+.story-viewer {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    height: 90vh;
+    max-height: 800px;
+    background: #000;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: storySlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes storySlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Progress Bars */
+.story-progress-bars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    gap: 4px;
+    padding: 12px;
+    z-index: 100;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: white;
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+.progress-bar.active .progress-fill {
+    animation: progressAnimation 5s linear forwards;
+}
+
+.progress-bar.completed .progress-fill {
+    width: 100%;
+}
+
+@keyframes progressAnimation {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+/* Story Header */
+.story-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 20px 60px 20px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+    z-index: 99;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.story-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.story-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+    font-weight: 700;
+    border: 2px solid white;
+}
+
+.story-details {
+    flex: 1;
+}
+
+.story-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 2px;
+}
+
+.story-time {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.story-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.story-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Story Content */
+.story-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.story-slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.story-slide.active {
+    display: flex;
+    animation: storySlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes storySlideIn {
+    from {
+        opacity: 0;
+        transform: scale(1.1);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.story-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.story-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px 20px 20px 20px;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    color: white;
+}
+
+.caption-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.caption-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Navigation Areas */
+.story-nav {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    cursor: pointer;
+    z-index: 98;
+}
+
+.story-nav-prev {
+    left: 0;
+}
+
+.story-nav-next {
+    right: 0;
+}
+
+.story-nav:active {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Reaction Button */
+.story-reaction-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.story-reaction-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* ============================================ */
+/* RESPONSIVE                                   */
+/* ============================================ */
+@media (max-width: 768px) {
+    .recap-filter-pills {
+        gap: 6px;
+    }
+
+    .recap-pill {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .recap-cover-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .recap-cover-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .recap-cover-year {
+        font-size: 20px;
+    }
+
+    .story-viewer {
+        max-width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .recap-filter-pills {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .recap-pill {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+
+    .recap-cover-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .recap-cover-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .recap-cover-year {
+        font-size: 18px;
+    }
+}
+
+/* ============================================ */
+/* SCROLLBAR for recap grid                     */
+/* ============================================ */
+#recapGrid::-webkit-scrollbar {
+    width: 6px;
+}
+
+#recapGrid::-webkit-scrollbar-track {
+    background: #f1f3f4;
+    border-radius: 10px;
+}
+
+#recapGrid::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 10px;
+}
+
+#recapGrid::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
