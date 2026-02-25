@@ -18,6 +18,8 @@
 .main-content {
     flex: 1;
     min-width: 0;
+    padding-bottom: 40px;
+    /* space so footer doesn't overlap */
 }
 
 .sidebar {
@@ -435,11 +437,11 @@
     }
 
     .page-title {
-        font-size: 28px;
+        font-size: 16px;
     }
 
     .page-subtitle {
-        font-size: 14px;
+        font-size: 11px;
     }
 
     .autographs-grid {

@@ -18,6 +18,8 @@
 .main-content {
     flex: 1;
     min-width: 0;
+    padding-bottom: 40px;
+    /* space so footer doesn't overlap */
 }
 
 .sidebar {
@@ -28,14 +30,14 @@
 /* Page Title */
 .page-title {
     background: none;
-    padding: var(--space-2) var(--space-5);
-    font-size: var(--text-3xl);
-    font-weight: var(--font-bold);
+    padding: 6px 14px;
+    font-size: 18px;
+    font-weight: 700;
     color: var(--gray-800);
     border-bottom-color: var(--primary);
     cursor: pointer;
-    transition: all var(--transition-normal);
-    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
 }
 
 .page-subtitle {
@@ -608,7 +610,7 @@
     }
 
     .page-title {
-        font-size: var(--text-4xl);
+        font-size: 16px;
     }
 
     .search-filters {
@@ -641,7 +643,7 @@
     }
 
     .page-title {
-        font-size: var(--text-3xl);
+        font-size: 16px;
     }
 
     .journals-grid {

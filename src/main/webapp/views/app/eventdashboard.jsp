@@ -47,8 +47,15 @@
                                         <!-- Wrap everything after header -->
                                         <div class="page-wrapper">
                                             <main class="main-content">
-                                                <!-- Tab Navigation -->
+                                                <!-- Page Title -->
                                                 <div class="tab-nav">
+                                                    <div class="page-title">Events
+                                                        <p class="page-subtitle">Plan, track, and relive your special
+                                                            occasions.</p>
+                                                    </div>
+                                                </div>
+                                                <!-- Tab Navigation -->
+                                                <div class="tab-nav" style="margin-top: 0;">
                                                     <button class="active" data-tab="upcoming">Upcoming</button>
                                                     <button data-tab="past">Past Events</button>
                                                 </div>

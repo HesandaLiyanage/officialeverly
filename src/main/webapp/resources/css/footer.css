@@ -1,19 +1,18 @@
 /*
- * footer.css - Footer component styles
- * Depends on base.css for reset, variables, and base styles
+ * footer.css - Footer component styles (compact modern)
  */
 
 /* Footer Container */
 .footer {
     display: flex;
-    padding: 40px 20px;
+    padding: 16px 20px;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    flex: 1 0 0;
+    gap: 8px;
     align-self: stretch;
     background-color: white;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #e9ecef;
+    margin-top: 20px;
 }
 
 /* Inner Layout Container */
@@ -23,9 +22,7 @@
     align-items: center;
     width: 100%;
     max-width: 800px;
-    /* optional: control max width */
-    gap: 100px;
-    /* space between items */
+    gap: 40px;
     position: relative;
 }
 
@@ -51,21 +48,17 @@
     left: 50%;
     transform: translateX(-50%);
     flex: none;
-    /* prevent stretching */
 }
 
 .footer-link {
     color: #666B87;
     text-align: center;
-    font-feature-settings: 'dlig' on;
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 24px;
-    /* 150% */
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
 }
 
 .footer-link:hover {
@@ -74,28 +67,29 @@
 
 /* Copyright Text */
 .footer-copyright {
-    justify-content: center;
-    color: #666B87;
+    color: #999;
     text-align: center;
-    font-feature-settings: 'dlig' on;
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 16px;
-    font-style: normal;
+    font-size: 11px;
     font-weight: 400;
-    line-height: 24px;
-    /* 150% */
+    line-height: 1.4;
     align-self: stretch;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .footer {
+        padding: 12px 16px;
+    }
+
     .footer-inner {
-        gap: 40px;
+        gap: 20px;
     }
 
     .footer-links {
         flex-direction: column;
         align-items: center;
+        gap: 6px;
     }
 
     .footer-link-wrapper.center {
@@ -106,10 +100,10 @@
 
 @media (max-width: 480px) {
     .footer {
-        padding: 30px 15px;
+        padding: 10px 12px;
     }
 
     .footer-inner {
-        gap: 24px;
+        gap: 12px;
     }
 }

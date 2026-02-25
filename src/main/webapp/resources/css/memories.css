@@ -18,6 +18,8 @@
 .main-content {
     flex: 1;
     min-width: 0;
+    padding-bottom: 40px;
+    /* space so footer doesn't overlap */
 }
 
 .sidebar {
