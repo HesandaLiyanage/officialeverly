@@ -1,270 +1,251 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="header.jsp" %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy - Everly</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/headercomponents.css">
-  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="header.css">
-  <link rel="stylesheet" href="footer.css">
-  <style>
-    /* Modern Privacy Page Specific Styles */
-    body {
-      font-family: 'Epilogue', Arial, sans-serif; /* Use the imported font */
-      background-color: #f9fafb; /* Light grey background */
-      color: #1f2937; /* Darker text for better contrast */
-    }
+  <jsp:include page="../public/header.jsp" />
+  <html>
 
-    .container {
-      max-width: 1000px; /* Limit content width */
-      margin: 0 auto; /* Center content */
-      padding: 0 20px; /* Add side padding */
-    }
+  <head>
+    <title>Privacy Policy - Everly</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/content-page.css">
+  </head>
 
-    /* Modern Hero Section */
-    .hero {
-      position: relative;
-      text-align: center;
-      margin: 40px 0; /* Consistent top/bottom margin */
-      width: 100%; /* Full width container */
-      border-radius: 16px; /* More modern rounded corners */
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* Subtle shadow */
-      background-color: #e0e7ff; /* Light blue background */
-    }
+  <body>
 
-    .hero-img {
-      width: 100%; /* Make image full width */
-      height: 250px; /* Fixed height for consistency */
-      object-fit: cover; /* Cover the area */
-      display: block; /* Remove inline spacing */
-    }
+    <div class="content-page">
 
-    .hero-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%); /* Center text */
-      color: #1e3a8a; /* Darker blue text */
-      text-align: center; /* Center text */
-      padding: 20px; /* Add padding */
-      background: rgba(255, 255, 255, 0.85); /* Semi-transparent white background */
-      border-radius: 12px; /* Match container */
-      backdrop-filter: blur(5px); /* Frosted glass effect */
-    }
+      <!-- Hero Banner -->
+      <section class="content-hero">
+        <div class="content-hero-inner">
+          <h1 class="fade-in">Privacy Policy</h1>
+          <p class="fade-in">We are committed to protecting your privacy and ensuring the security of your personal
+            information. Your trust matters to us.</p>
+        </div>
+      </section>
 
-    .hero-text h1 {
-      font-size: 2.5rem; /* Larger, modern heading */
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
+      <!-- Content Sections -->
+      <div class="content-container">
+        <div class="content-sections">
 
-    .hero-text p {
-      font-size: 1.1rem;
-      font-weight: 400;
-      margin: 0; /* Remove default margin */
-    }
+          <!-- Introduction -->
+          <div class="content-card fade-in">
+            <div class="card-text">
+              This Privacy Policy explains how we collect, use, and safeguard your data when you use our services. We
+              encourage you to read this policy carefully to understand our practices regarding your information and how
+              we handle it.
+            </div>
+          </div>
 
-    /* Modern Section Styling */
-    .differentiators {
-      width: 100%; /* Full width */
-      margin: 40px 0; /* Consistent vertical spacing */
-      text-align: left; /* Left align text */
-      padding: 30px; /* Add padding inside */
-      background-color: #ffffff; /* White background */
-      border-radius: 16px; /* Modern rounded corners */
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Soft shadow */
-    }
+          <!-- Section 1: Information We Collect -->
+          <div class="content-card fade-in">
+            <h2>
+              <span class="section-icon purple">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+              </span>
+              1. Information We Collect
+            </h2>
+            <div class="card-text">
+              We collect various types of information to provide and improve our services. This includes:
+            </div>
+            <ul class="policy-list">
+              <li>
+                <span class="bullet"></span>
+                <span><strong>Personal Information:</strong> Such as your name, email address, and any other information
+                  you provide when creating an account or contacting us.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>Usage Data:</strong> Information about how you use our services, including the features
+                  you access, the content you create, and the interactions you have with other users.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>Device Information:</strong> Information about the device you use to access our services,
+                  such as the device type, operating system, and unique device identifiers.</span>
+              </li>
+            </ul>
+          </div>
 
-    .differentiators h2 {
-      font-size: 1.6rem; /* Modern heading size */
-      font-weight: 600;
-      color: #1e40af; /* Blue heading */
-      margin-top: 0; /* Remove top margin */
-      margin-bottom: 1.2rem; /* Space below heading */
-      padding-bottom: 0.8rem; /* Space under heading */
-      border-bottom: 2px solid #e0e7ff; /* Light blue border */
-    }
+          <!-- Section 2: How We Use Your Information -->
+          <div class="content-card fade-in">
+            <h2>
+              <span class="section-icon blue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+              </span>
+              2. How We Use Your Information
+            </h2>
+            <div class="card-text">
+              We use the information we collect for the following purposes:
+            </div>
+            <ul class="policy-list">
+              <li>
+                <span class="bullet"></span>
+                <span><strong>To Provide and Improve Our Services:</strong> To deliver the features and functionality of
+                  Everly, personalize your experience, and enhance our services based on your usage.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>To Communicate with You:</strong> To respond to your inquiries, provide support, and send
+                  you important updates and notifications about our services.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>To Ensure Security:</strong> To protect the security of your account and our services, and
+                  to prevent fraud and abuse.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>To Comply with Legal Obligations:</strong> To meet any applicable legal or regulatory
+                  requirements.</span>
+              </li>
+            </ul>
+          </div>
 
-    .desc {
-      color: #4b5563; /* Muted text color */
-      font-size: 1rem;
-      line-height: 1.7; /* Better readability */
-    }
+          <!-- Section 3: Data Storage and Security -->
+          <div class="content-card fade-in">
+            <h2>
+              <span class="section-icon green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </span>
+              3. Data Storage & Security
+            </h2>
+            <div class="card-text">
+              We take the security of your data seriously and implement robust measures to protect it from unauthorized
+              access, use, or disclosure. These measures include:
+            </div>
+            <ul class="policy-list">
+              <li>
+                <span class="bullet"></span>
+                <span><strong>End-to-End Encryption:</strong> All data stored on Everly is encrypted using end-to-end
+                  encryption, ensuring that only you and those you explicitly share with can access your
+                  information.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>Secure Storage:</strong> We store your data on secure servers with restricted access,
+                  employing industry-standard security protocols to safeguard your information.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>Regular Security Audits:</strong> We conduct regular security audits and assessments to
+                  identify and address potential vulnerabilities.</span>
+              </li>
+            </ul>
+          </div>
 
-    .desc ul {
-      margin-top: 10px;
-      padding-left: 20px;
-    }
+          <!-- Section 4: Data Sharing and Disclosure -->
+          <div class="content-card fade-in">
+            <h2>
+              <span class="section-icon orange">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3" />
+                  <circle cx="6" cy="12" r="3" />
+                  <circle cx="18" cy="19" r="3" />
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                </svg>
+              </span>
+              4. Data Sharing & Disclosure
+            </h2>
+            <div class="card-text">
+              We do not share your personal information with third parties except in the following limited
+              circumstances:
+            </div>
+            <ul class="policy-list">
+              <li>
+                <span class="bullet"></span>
+                <span><strong>With Your Consent:</strong> We may share your information with third parties if you
+                  explicitly consent to such sharing.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>To Comply with Legal Obligations:</strong> We may disclose your information if required by
+                  law or in response to valid legal requests.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>To Protect Our Rights:</strong> We may share your information if necessary to protect our
+                  rights, property, or safety, or the rights, property, or safety of others.</span>
+              </li>
+            </ul>
+          </div>
 
-    .desc li {
-      margin-bottom: 0.5rem; /* Space between list items */
-    }
+          <!-- Section 5: Your Rights and Control -->
+          <div class="content-card fade-in">
+            <h2>
+              <span class="section-icon pink">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DB2777" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </span>
+              5. Your Rights & Control
+            </h2>
+            <div class="card-text">
+              You have certain rights regarding your personal information, including:
+            </div>
+            <ul class="policy-list">
+              <li>
+                <span class="bullet"></span>
+                <span><strong>Access and Correction:</strong> You can access and update your account information at any
+                  time.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>Deletion:</strong> You can request the deletion of your account and associated
+                  data.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>Data Portability:</strong> You can request a copy of your data in a structured,
+                  machine-readable format.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span><strong>Opt-Out:</strong> You can opt-out of receiving promotional communications from us.</span>
+              </li>
+            </ul>
+          </div>
 
-    .desc strong {
-      color: #1f2937; /* Darker color for emphasis */
-    }
+        </div>
+      </div>
 
-    /* Modern CTA Section */
-    .cta {
-      text-align: center;
-      background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); /* Gradient background */
-      padding: 40px 20px;
-      border-radius: 16px;
-      margin: 40px 0; /* Consistent spacing */
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Soft shadow */
-    }
-
-    .cta h2 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #1e40af;
-      margin-bottom: 0.5rem;
-    }
-
-    .cta p {
-      font-size: 1rem;
-      color: #4b5563;
-      margin-bottom: 1.5rem;
-    }
-
-    .cta a {
-      display: inline-block; /* Make link block-like */
-      text-decoration: none;
-      background-color: #6366f1; /* Modern purple button */
-      color: white;
-      padding: 12px 30px;
-      border-radius: 8px; /* Slightly less rounded */
-      font-size: 1rem;
-      font-weight: 500;
-      transition: background-color 0.2s ease, transform 0.2s ease; /* Smooth hover */
-      box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3); /* Button shadow */
-    }
-
-    .cta a:hover {
-      background-color: #4f46e5; /* Darker purple on hover */
-      transform: translateY(-2px); /* Lift effect */
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .hero-text h1 {
-        font-size: 2rem; /* Smaller heading on mobile */
-      }
-
-      .hero-text p {
-        font-size: 1rem;
-      }
-
-      .differentiators {
-        padding: 20px; /* Less padding on mobile */
-      }
-
-      .differentiators h2 {
-        font-size: 1.4rem; /* Smaller heading */
-      }
-    }
-  </style>
-</head>
-<body>
-
-<!-- Main Content -->
-<main class="container">
-
-  <!-- Hero Section (Adapted for Privacy Policy) -->
-  <div class="hero">
-    <img src="https://via.placeholder.com/1200x400?text=Privacy+Policy" alt="Privacy Policy Banner" class="hero-img">
-    <div class="hero-text">
-      <h1>Privacy Policy</h1>
-      <p>At Everly, we are committed to protecting your privacy and ensuring the security of your personal information.</p>
     </div>
-  </div>
 
-  <!-- Introduction -->
-  <div class="differentiators">
-    <div class="desc">
-      This Privacy Policy explains how we collect, use, and safeguard your data when you use our services. We encourage you to read this policy carefully to understand our practices regarding your information and how we handle it.
-    </div>
-  </div>
+    <jsp:include page="../public/footer.jsp" />
 
-  <!-- Section 1: Information We Collect -->
-  <div class="differentiators">
-    <h2>1. Information We Collect</h2>
-    <div class="desc">
-      We collect various types of information to provide and improve our services. This includes:
-      <ul style="margin-top: 10px; padding-left: 20px;">
-        <li><strong>Personal Information:</strong> Such as your name, email address, and any other information you provide when creating an account or contacting us.</li>
-        <li><strong>Usage Data:</strong> Information about how you use our services, including the features you access, the content you create, and the interactions you have with other users.</li>
-        <li><strong>Device Information:</strong> Information about the device you use to access our services, such as the device type, operating system, and unique device identifiers.</li>
-      </ul>
-    </div>
-  </div>
+    <script>
+      // Scroll-triggered fade-in animations
+      document.addEventListener('DOMContentLoaded', function () {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.style.animationPlayState = 'running';
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
 
-  <!-- Section 2: How We Use Your Information -->
-  <div class="differentiators">
-    <h2>2. How We Use Your Information</h2>
-    <div class="desc">
-      We use the information we collect for the following purposes:
-      <ul style="margin-top: 10px; padding-left: 20px;">
-        <li><strong>To Provide and Improve Our Services:</strong> To deliver the features and functionality of Everly, personalize your experience, and enhance our services based on your usage.</li>
-        <li><strong>To Communicate with You:</strong> To respond to your inquiries, provide support, and send you important updates and notifications about our services.</li>
-        <li><strong>To Ensure Security:</strong> To protect the security of your account and our services, and to prevent fraud and abuse.</li>
-        <li><strong>To Comply with Legal Obligations:</strong> To meet any applicable legal or regulatory requirements.</li>
-      </ul>
-    </div>
-  </div>
+        document.querySelectorAll('.fade-in').forEach(function (el, i) {
+          el.style.animationPlayState = 'paused';
+          el.style.animationDelay = (i * 0.08) + 's';
+          observer.observe(el);
+        });
+      });
+    </script>
 
-  <!-- Section 3: Data Storage and Security -->
-  <div class="differentiators">
-    <h2>3. Data Storage and Security</h2>
-    <div class="desc">
-      We take the security of your data seriously and implement robust measures to protect it from unauthorized access, use, or disclosure. These measures include:
-      <ul style="margin-top: 10px; padding-left: 20px;">
-        <li><strong>End-to-End Encryption:</strong> All data stored on Everly is encrypted using end-to-end encryption, ensuring that only you and those you explicitly share with can access your information.</li>
-        <li><strong>Secure Storage:</strong> We store your data on secure servers with restricted access, employing industry-standard security protocols to safeguard your information.</li>
-        <li><strong>Regular Security Audits:</strong> We conduct regular security audits and assessments to identify and address potential vulnerabilities.</li>
-      </ul>
-    </div>
-  </div>
+  </body>
 
-  <!-- Section 4: Data Sharing and Disclosure -->
-  <div class="differentiators">
-    <h2>4. Data Sharing and Disclosure</h2>
-    <div class="desc">
-      We do not share your personal information with third parties except in the following limited circumstances:
-      <ul style="margin-top: 10px; padding-left: 20px;">
-        <li><strong>With Your Consent:</strong> We may share your information with third parties if you explicitly consent to such sharing.</li>
-        <li><strong>To Comply with Legal Obligations:</strong> We may disclose your information if required by law or in response to valid legal requests.</li>
-        <li><strong>To Protect Our Rights:</strong> We may share your information if necessary to protect our rights, property, or safety, or the rights, property, or safety of others.</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Section 5: Your Rights and Control -->
-  <div class="differentiators">
-    <h2>5. Your Rights and Control</h2>
-    <div class="desc">
-      You have certain rights regarding your personal information, including:
-      <ul style="margin-top: 10px; padding-left: 20px;">
-        <li><strong>Access and Correction:</strong> You can access and update your account information at any time.</li>
-        <li><strong>Deletion:</strong> You can request the deletion of your account and associated data.</li>
-        <li><strong>Data Portability:</strong> You can request a copy of your data in a structured, machine-readable format.</li>
-        <li><strong>Opt-Out:</strong> You can opt-out of receiving promotional communications from us.</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Download PDF Link -->
-
-
-</main>
-
-<!-- Include Footer -->
-<%@ include file="footer.jsp" %>
-
-</body>
-</html>
+  </html>

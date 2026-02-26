@@ -1,0 +1,457 @@
+/*
+ * content-page.css — Shared styles for About Us, Privacy, and similar content pages
+ * Design System: #7C3AED primary, Plus Jakarta Sans, clean borders, no glow
+ * Matches landing.css and subscription.css aesthetic
+ */
+
+/* =============================================
+   PAGE LAYOUT
+   ============================================= */
+
+.content-page {
+    width: 100%;
+    min-height: 100vh;
+    background: #FAFBFD;
+}
+
+.content-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
+}
+
+/* =============================================
+   HERO BANNER
+   ============================================= */
+
+.content-hero {
+    position: relative;
+    width: 100%;
+    padding: 100px 32px 80px;
+    text-align: center;
+    background: #111827;
+    overflow: hidden;
+}
+
+.content-hero::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: -15%;
+    width: 50%;
+    height: 180%;
+    background: radial-gradient(ellipse, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.content-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40%;
+    right: -15%;
+    width: 50%;
+    height: 180%;
+    background: radial-gradient(ellipse, rgba(124, 58, 237, 0.07) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.content-hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.content-hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 16px;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+}
+
+.content-hero p {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+    font-weight: 400;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+/* =============================================
+   CONTENT SECTIONS
+   ============================================= */
+
+.content-sections {
+    margin-top: -32px;
+    position: relative;
+    z-index: 2;
+}
+
+.content-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 36px 40px;
+    margin-bottom: 20px;
+    transition: all 0.25s ease;
+}
+
+.content-card:hover {
+    border-color: #D1D5DB;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.content-card h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.content-card h2 .section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.section-icon.purple {
+    background: #F3E8FF;
+}
+
+.section-icon.blue {
+    background: #DBEAFE;
+}
+
+.section-icon.green {
+    background: #D1FAE5;
+}
+
+.section-icon.orange {
+    background: #FEF3C7;
+}
+
+.section-icon.pink {
+    background: #FCE7F3;
+}
+
+.content-card .card-text {
+    font-size: 15px;
+    color: #4B5563;
+    line-height: 1.8;
+    font-weight: 400;
+}
+
+.content-card .card-text strong {
+    color: #111827;
+    font-weight: 600;
+}
+
+/* =============================================
+   VALUE / FEATURE LIST ITEMS
+   ============================================= */
+
+.value-list {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.value-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.value-item .value-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #F3E8FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.value-item .value-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.value-item .value-content {
+    flex: 1;
+}
+
+.value-item .value-content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.value-item .value-content p {
+    font-size: 14px;
+    color: #6B7280;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* =============================================
+   PRIVACY POLICY LIST ITEMS
+   ============================================= */
+
+.policy-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.policy-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 15px;
+    color: #4B5563;
+    line-height: 1.7;
+}
+
+.policy-list li .bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7C3AED;
+    flex-shrink: 0;
+    margin-top: 9px;
+    opacity: 0.5;
+}
+
+.policy-list li strong {
+    color: #111827;
+    font-weight: 600;
+}
+
+/* =============================================
+   CONTACT FORM (About page)
+   ============================================= */
+
+.contact-card {
+    background: #111827;
+    border: none;
+    border-radius: 14px;
+    padding: 48px 40px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 50%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.contact-card h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 1;
+}
+
+.contact-card .contact-subtitle {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+}
+
+.contact-form {
+    max-width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    background: rgba(255, 255, 255, 0.06);
+    color: #FFFFFF;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: rgba(124, 58, 237, 0.5);
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+    margin-bottom: 14px;
+}
+
+.contact-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 30px;
+    background: #7C3AED;
+    color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    border: none;
+    cursor: pointer;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    letter-spacing: 0.01em;
+}
+
+.contact-submit:hover {
+    background: #6D28D9;
+    transform: translateY(-1px);
+}
+
+/* =============================================
+   SCROLL ANIMATIONS
+   ============================================= */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+
+@media (max-width: 768px) {
+    .content-hero {
+        padding: 72px 24px 56px;
+    }
+
+    .content-hero h1 {
+        font-size: 34px;
+    }
+
+    .content-hero p {
+        font-size: 16px;
+    }
+
+    .content-container {
+        padding: 0 20px 60px;
+    }
+
+    .content-card {
+        padding: 28px 24px;
+    }
+
+    .content-card h2 {
+        font-size: 19px;
+    }
+
+    .contact-card {
+        padding: 36px 24px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-hero {
+        padding: 60px 16px 48px;
+    }
+
+    .content-hero h1 {
+        font-size: 28px;
+    }
+
+    .content-hero p {
+        font-size: 15px;
+    }
+
+    .content-container {
+        padding: 0 16px 48px;
+    }
+
+    .content-card {
+        padding: 24px 20px;
+    }
+
+    .content-card h2 {
+        font-size: 18px;
+    }
+
+    .contact-card {
+        padding: 32px 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fade-in {
+        opacity: 1;
+        animation: none;
+    }
+}
