@@ -34,8 +34,7 @@ public class UnblockUserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"))
-                || "application/x-www-form-urlencoded".equals(request.getContentType());
+        boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 
         if (session == null || session.getAttribute("user_id") == null) {
             if (isAjax) {
