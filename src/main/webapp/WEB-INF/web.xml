@@ -292,6 +292,16 @@
         <url-pattern>/generateShareLink</url-pattern>
     </servlet-mapping>
 
+    <!-- Submit Autograph Entry Servlet -->
+    <servlet>
+        <servlet-name>SubmitAutographServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Autographs.SubmitAutographServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SubmitAutographServlet</servlet-name>
+        <url-pattern>/submit-autograph</url-pattern>
+    </servlet-mapping>
+
 
     <servlet>
         <servlet-name>creategroup</servlet-name>
