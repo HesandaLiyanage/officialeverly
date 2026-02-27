@@ -1,5 +1,7 @@
 package com.demo.web.controller.Autographs;
 
+import com.demo.web.dao.AutographEntryDAO;
+import com.demo.web.model.AutographEntry;
 import com.demo.web.model.autograph;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.AutographService;
@@ -76,6 +78,17 @@ public class AutographViewController extends HttpServlet {
             }
 
             request.setAttribute("autograph", autographDetail);
+
+            // Load autograph entries
+            try {
+                AutographEntryDAO entryDao = new AutographEntryDAO();
+                List<AutographEntry> entries = entryDao.findByAutographId(autographId);
+                request.setAttribute("entries", entries);
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("entries", java.util.Collections.emptyList());
+            }
+
             request.getRequestDispatcher("/views/app/Autographs/viewautograph.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/autographs");
