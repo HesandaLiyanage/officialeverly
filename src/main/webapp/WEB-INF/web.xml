@@ -282,6 +282,16 @@
         <url-pattern>/updateautograph</url-pattern>
     </servlet-mapping>
 
+    <!-- Generate Autograph Share Link Servlet -->
+    <servlet>
+        <servlet-name>GenerateAutographShareLinkServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Autographs.GenerateAutographShareLinkServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GenerateAutographShareLinkServlet</servlet-name>
+        <url-pattern>/generateShareLink</url-pattern>
+    </servlet-mapping>
+
 
     <servlet>
         <servlet-name>creategroup</servlet-name>
@@ -621,6 +631,36 @@
     <servlet-mapping>
         <servlet-name>SharedLinksController</servlet-name>
         <url-pattern>/sharedlinks</url-pattern>
+    </servlet-mapping>
+
+    <!-- Block User Servlet -->
+    <servlet>
+        <servlet-name>BlockUserServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.BlockUserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BlockUserServlet</servlet-name>
+        <url-pattern>/blockUser</url-pattern>
+    </servlet-mapping>
+
+    <!-- Unblock User Servlet -->
+    <servlet>
+        <servlet-name>UnblockUserServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.UnblockUserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UnblockUserServlet</servlet-name>
+        <url-pattern>/unblockuser</url-pattern>
+    </servlet-mapping>
+
+    <!-- Blocked Users View Controller -->
+    <servlet>
+        <servlet-name>BlockedUsersViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Feed.BlockedUsersViewController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BlockedUsersViewController</servlet-name>
+        <url-pattern>/blockedusersview</url-pattern>
     </servlet-mapping>
 
     <servlet>

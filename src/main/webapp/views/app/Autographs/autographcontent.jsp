@@ -254,38 +254,33 @@
                             const shareOverlay = document.getElementById('shareOverlay');
                             const whatsappShare = document.getElementById('whatsappShare');
 
-                            // Create the share URL
-                            const baseUrl = window.location.origin;
+                            // Fetch the share link from the server
                             fetch('/generateShareLink?autographId=' + encodeURIComponent(autographId))
                                 .then(res => res.json())
                                 .then(data => {
                                     if (data.success) {
+                                        // Store for copy link function
                                         window.currentShareUrl = data.shareUrl;
+                                        window.currentShareTitle = title;
 
-                                        const whatsappText = 'Check out my autograph book: ' + title + ' - ' + data.shareUrl;
-                                        whatsappShare.href = 'https://wa.me/?text=' + encodeURIComponent(whatsappText);
+                                        // Update WhatsApp link
+                                        if (whatsappShare) {
+                                            const whatsappText = 'Check out my autograph book: ' + title + ' - ' + data.shareUrl;
+                                            whatsappShare.href = 'https://wa.me/?text=' + encodeURIComponent(whatsappText);
+                                        }
 
-                                        document.getElementById('shareOverlay').style.display = 'flex';
+                                        // Show the overlay only after we have the URL
+                                        if (shareOverlay) {
+                                            shareOverlay.style.display = 'flex';
+                                        }
                                     } else {
-                                        alert('Unable to generate share link');
+                                        alert('Unable to generate share link: ' + (data.error || 'Unknown error'));
                                     }
+                                })
+                                .catch(err => {
+                                    console.error('Error generating share link:', err);
+                                    alert('Failed to generate share link. Please try again.');
                                 });
-
-
-                            // Store for copy link function
-                            window.currentShareUrl = shareUrl;
-                            window.currentShareTitle = title;
-
-                            // Update WhatsApp link
-                            if (whatsappShare) {
-                                const whatsappText = 'Check out my autograph book: ' + title + ' - ' + shareUrl;
-                                whatsappShare.href = 'https://wa.me/?text=' + encodeURIComponent(whatsappText);
-                            }
-
-                            // Show the overlay
-                            if (shareOverlay) {
-                                shareOverlay.style.display = 'flex';
-                            }
                         }
 
                         document.addEventListener('DOMContentLoaded', function () {

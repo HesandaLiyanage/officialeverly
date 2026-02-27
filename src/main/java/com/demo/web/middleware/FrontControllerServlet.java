@@ -113,7 +113,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToController.put("/feedcomment", "/viewComments");
         routeToController.put("/comments", "/viewComments");
         routeToJsp.put("/feededitprofile", "/views/app/editpublicprofile.jsp");
-        routeToJsp.put("/blockedusers", "/views/app/blockedusers.jsp");
+        routeToController.put("/blockedusers", "/blockedusersview");
         routeToJsp.put("/vaultentries", "/views/app/vaultentries.jsp");
         routeToController.put("/collabmemoryview", "/collabmemoryviewservlet");
 

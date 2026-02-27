@@ -1,5 +1,6 @@
 package com.demo.web.controller.Feed;
 
+import com.demo.web.dao.BlockedUserDAO;
 import com.demo.web.dao.FeedFollowDAO;
 import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.FeedProfileDAO;
@@ -31,6 +32,7 @@ public class FeedProfileViewController extends HttpServlet {
     private FeedPostDAO feedPostDAO;
     private FeedFollowDAO feedFollowDAO;
     private SavedPostDAO savedPostDAO;
+    private BlockedUserDAO blockedUserDAO;
 
     @Override
     public void init() throws ServletException {
@@ -38,6 +40,7 @@ public class FeedProfileViewController extends HttpServlet {
         feedPostDAO = new FeedPostDAO();
         feedFollowDAO = new FeedFollowDAO();
         savedPostDAO = new SavedPostDAO();
+        blockedUserDAO = new BlockedUserDAO();
     }
 
     @Override
@@ -87,6 +90,7 @@ public class FeedProfileViewController extends HttpServlet {
         int followerCount = 0;
         int followingCount = 0;
         boolean isFollowing = false;
+        boolean isBlocked = false;
         List<FeedProfile> recommendedUsers = new ArrayList<>();
 
         try {
@@ -96,6 +100,9 @@ public class FeedProfileViewController extends HttpServlet {
             // Check if current user follows this profile (if not own profile)
             if (!isOwnProfile) {
                 isFollowing = feedFollowDAO.isFollowing(
+                        currentUserProfile.getFeedProfileId(),
+                        profileToView.getFeedProfileId());
+                isBlocked = blockedUserDAO.isBlocked(
                         currentUserProfile.getFeedProfileId(),
                         profileToView.getFeedProfileId());
             }
@@ -161,6 +168,7 @@ public class FeedProfileViewController extends HttpServlet {
             request.setAttribute("savedPosts", savedPosts);
             request.setAttribute("recommendedUsers", recommendedUsers);
             request.setAttribute("currentUserProfile", currentUserProfile);
+            request.setAttribute("isBlocked", isBlocked);
 
             request.getRequestDispatcher("/views/app/userprofile.jsp").forward(request, response);
 

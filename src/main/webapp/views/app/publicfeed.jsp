@@ -243,6 +243,119 @@
                                                     .add-comment-bar .post-btn.active {
                                                         opacity: 1;
                                                     }
+
+                                                    /* Post Options Dropdown */
+                                                    .post-header {
+                                                        position: relative;
+                                                    }
+
+                                                    .post-options {
+                                                        background: none;
+                                                        border: none;
+                                                        cursor: pointer;
+                                                        padding: 8px;
+                                                        border-radius: 50%;
+                                                        transition: background 0.2s;
+                                                    }
+
+                                                    .post-options:hover {
+                                                        background: #f3f4f6;
+                                                    }
+
+                                                    .post-options-menu {
+                                                        position: absolute;
+                                                        top: 100%;
+                                                        right: 0;
+                                                        background: white;
+                                                        border-radius: 12px;
+                                                        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+                                                        min-width: 200px;
+                                                        z-index: 100;
+                                                        overflow: hidden;
+                                                        display: none;
+                                                        animation: menuSlideDown 0.2s ease;
+                                                    }
+
+                                                    .post-options-menu.active {
+                                                        display: block;
+                                                    }
+
+                                                    @keyframes menuSlideDown {
+                                                        from {
+                                                            opacity: 0;
+                                                            transform: translateY(-8px);
+                                                        }
+
+                                                        to {
+                                                            opacity: 1;
+                                                            transform: translateY(0);
+                                                        }
+                                                    }
+
+                                                    .menu-item {
+                                                        display: flex;
+                                                        align-items: center;
+                                                        gap: 10px;
+                                                        padding: 12px 16px;
+                                                        cursor: pointer;
+                                                        transition: background 0.15s;
+                                                        font-size: 14px;
+                                                        font-family: "Plus Jakarta Sans", sans-serif;
+                                                        color: #262626;
+                                                        border: none;
+                                                        background: none;
+                                                        width: 100%;
+                                                        text-align: left;
+                                                    }
+
+                                                    .menu-item:hover {
+                                                        background: #f9fafb;
+                                                    }
+
+                                                    .menu-item.danger {
+                                                        color: #dc2626;
+                                                    }
+
+                                                    .menu-item.danger:hover {
+                                                        background: #fef2f2;
+                                                    }
+
+                                                    .menu-item svg {
+                                                        flex-shrink: 0;
+                                                    }
+
+                                                    .menu-divider {
+                                                        height: 1px;
+                                                        background: #f3f4f6;
+                                                        margin: 4px 0;
+                                                    }
+
+                                                    /* Toast Notification */
+                                                    .toast-notification {
+                                                        position: fixed;
+                                                        bottom: 100px;
+                                                        left: 50%;
+                                                        transform: translateX(-50%) translateY(20px);
+                                                        background: #1a1a1a;
+                                                        color: white;
+                                                        padding: 12px 24px;
+                                                        border-radius: 12px;
+                                                        font-size: 14px;
+                                                        font-weight: 500;
+                                                        font-family: "Plus Jakarta Sans", sans-serif;
+                                                        z-index: 9999;
+                                                        opacity: 0;
+                                                        transition: opacity 0.3s, transform 0.3s;
+                                                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+                                                        display: flex;
+                                                        align-items: center;
+                                                        gap: 8px;
+                                                    }
+
+                                                    .toast-notification.show {
+                                                        opacity: 1;
+                                                        transform: translateX(-50%) translateY(0);
+                                                    }
                                                 </style>
                                             </head>
 
@@ -365,7 +478,8 @@
                                                                                                 </p>
                                                                                             </div>
                                                                             </div>
-                                                                            <button class="post-options">
+                                                                            <button class="post-options"
+                                                                                onclick="toggleOptionsMenu(this, event)">
                                                                                 <svg width="20" height="20"
                                                                                     viewBox="0 0 24 24" fill="none"
                                                                                     stroke="currentColor"
@@ -378,222 +492,262 @@
                                                                                     </circle>
                                                                                 </svg>
                                                                             </button>
-                                                                        </div>
-
-                                                                        <div class="carousel-container"
-                                                                            data-current-slide="0">
-                                                                            <div class="carousel-track">
-                                                                                <% if (mediaItems !=null &&
-                                                                                    !mediaItems.isEmpty()) { for
-                                                                                    (MediaItem media : mediaItems) {
-                                                                                    String
-                                                                                    mediaUrl=request.getContextPath()
-                                                                                    + "/viewmedia?id=" +
-                                                                                    media.getMediaId(); boolean
-                                                                                    isVideo="video"
-                                                                                    .equals(media.getMediaType()) ||
-                                                                                    (media.getMimeType() !=null &&
-                                                                                    media.getMimeType().startsWith("video/"));
+                                                                            <div class="post-options-menu">
+                                                                                <% if (poster !=null &&
+                                                                                    poster.getFeedProfileId()
+                                                                                    !=feedProfile.getFeedProfileId()) {
                                                                                     %>
-                                                                                    <div class="carousel-slide">
-                                                                                        <% if (isVideo) { %>
-                                                                                            <video src="<%= mediaUrl %>"
-                                                                                                controls></video>
-                                                                                            <% } else { %>
-                                                                                                <img src="<%= mediaUrl %>"
-                                                                                                    alt="Post media">
-                                                                                                <% } %>
-                                                                                    </div>
-                                                                                    <% } } else { %>
-                                                                                        <div class="carousel-slide">
-                                                                                            <div
-                                                                                                class="post-image-placeholder">
-                                                                                                <svg viewBox="0 0 24 24"
-                                                                                                    fill="none"
-                                                                                                    stroke="currentColor"
-                                                                                                    stroke-width="1.5">
-                                                                                                    <rect x="3" y="3"
-                                                                                                        width="18"
-                                                                                                        height="18"
-                                                                                                        rx="2" ry="2" />
-                                                                                                    <circle cx="8.5"
-                                                                                                        cy="8.5"
-                                                                                                        r="1.5" />
-                                                                                                    <polyline
-                                                                                                        points="21 15 16 10 5 21" />
-                                                                                                </svg>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <% } %>
-                                                                            </div>
-
-                                                                            <% if (hasMultipleMedia) { %>
-                                                                                <button class="carousel-btn prev"
-                                                                                    onclick="moveCarousel(this, -1)">
-                                                                                    <svg viewBox="0 0 24 24" fill="none"
-                                                                                        stroke="currentColor"
-                                                                                        stroke-width="2">
-                                                                                        <polyline
-                                                                                            points="15 18 9 12 15 6">
-                                                                                        </polyline>
-                                                                                    </svg>
-                                                                                </button>
-                                                                                <button class="carousel-btn next"
-                                                                                    onclick="moveCarousel(this, 1)">
-                                                                                    <svg viewBox="0 0 24 24" fill="none"
-                                                                                        stroke="currentColor"
-                                                                                        stroke-width="2">
-                                                                                        <polyline
-                                                                                            points="9 18 15 12 9 6">
-                                                                                        </polyline>
-                                                                                    </svg>
-                                                                                </button>
-                                                                                <div class="carousel-dots">
-                                                                                    <% for (int i=0; i < mediaCount; i++) { %>
-                                                                                    <div class="carousel-dot<%= (i == 0) ? " active" : "" %>"></div>
+                                                                                    <button class="menu-item danger"
+                                                                                        onclick="blockUser(<%= poster.getFeedProfileId() %>, '<%= posterUsername %>', this)">
+                                                                                        <svg width="16" height="16"
+                                                                                            viewBox="0 0 24 24"
+                                                                                            fill="none"
+                                                                                            stroke="currentColor"
+                                                                                            stroke-width="2">
+                                                                                            <circle cx="12" cy="12"
+                                                                                                r="10"></circle>
+                                                                                        </svg>
+                                                                                        Block @<%= posterUsername %>
+                                                                                    </button>
+                                                                                    <div class="menu-divider"></div>
                                                                                     <% } %>
+                                                                                        <button class="menu-item"
+                                                                                            onclick="closeAllMenus()">
+                                                                                            <svg width="16" height="16"
+                                                                                                viewBox="0 0 24 24"
+                                                                                                fill="none"
+                                                                                                stroke="currentColor"
+                                                                                                stroke-width="2">
+                                                                                                <path
+                                                                                                    d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z">
+                                                                                                </path>
+                                                                                            </svg>
+                                                                                            Report Post
+                                                                                        </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="carousel-container"
+                                                                        data-current-slide="0">
+                                                                        <div class="carousel-track">
+                                                                            <% if (mediaItems !=null &&
+                                                                                !mediaItems.isEmpty()) { for (MediaItem
+                                                                                media : mediaItems) { String
+                                                                                mediaUrl=request.getContextPath()
+                                                                                + "/viewmedia?id=" + media.getMediaId();
+                                                                                boolean isVideo="video"
+                                                                                .equals(media.getMediaType()) ||
+                                                                                (media.getMimeType() !=null &&
+                                                                                media.getMimeType().startsWith("video/"));
+                                                                                %>
+                                                                                <div class="carousel-slide">
+                                                                                    <% if (isVideo) { %>
+                                                                                        <video src="<%= mediaUrl %>"
+                                                                                            controls></video>
+                                                                                        <% } else { %>
+                                                                                            <img src="<%= mediaUrl %>"
+                                                                                                alt="Post media">
+                                                                                            <% } %>
                                                                                 </div>
-                                                                                <% } %>
+                                                                                <% } } else { %>
+                                                                                    <div class="carousel-slide">
+                                                                                        <div
+                                                                                            class="post-image-placeholder">
+                                                                                            <svg viewBox="0 0 24 24"
+                                                                                                fill="none"
+                                                                                                stroke="currentColor"
+                                                                                                stroke-width="1.5">
+                                                                                                <rect x="3" y="3"
+                                                                                                    width="18"
+                                                                                                    height="18" rx="2"
+                                                                                                    ry="2" />
+                                                                                                <circle cx="8.5"
+                                                                                                    cy="8.5" r="1.5" />
+                                                                                                <polyline
+                                                                                                    points="21 15 16 10 5 21" />
+                                                                                            </svg>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <% } %>
                                                                         </div>
 
-                                                                        <div class="post-actions">
-                                                                            <div class="action-buttons">
-                                                                                <button class="action-btn like-btn<%= post.isLikedByCurrentUser() ? " liked" : "" %>" data-post-id="<%= post.getPostId() %>">
-                                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="<%= post.isLikedByCurrentUser() ? "#ed4956" : "none" %>" stroke="<%= post.isLikedByCurrentUser() ? "#ed4956" : "currentColor" %>" stroke-width="2">
-                                                                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                                                                    </svg>
-                                                                                </button>
-                                                                                <button class="action-btn comment-btn"
-                                                                                    onclick="window.location.href='${pageContext.request.contextPath}/comments?postId=<%= post.getPostId() %>'">
-                                                                                    <svg width="24" height="24"
-                                                                                        viewBox="0 0 24 24" fill="none"
-                                                                                        stroke="currentColor"
-                                                                                        stroke-width="2">
-                                                                                        <path
-                                                                                            d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z">
-                                                                                        </path>
-                                                                                    </svg>
-                                                                                </button>
-                                                                                <button class="action-btn">
-                                                                                    <svg width="24" height="24"
-                                                                                        viewBox="0 0 24 24" fill="none"
-                                                                                        stroke="currentColor"
-                                                                                        stroke-width="2">
-                                                                                        <circle cx="18" cy="5" r="3">
-                                                                                        </circle>
-                                                                                        <circle cx="6" cy="12" r="3">
-                                                                                        </circle>
-                                                                                        <circle cx="18" cy="19" r="3">
-                                                                                        </circle>
-                                                                                        <line x1="8.59" y1="13.51"
-                                                                                            x2="15.42" y2="17.49">
-                                                                                        </line>
-                                                                                        <line x1="15.41" y1="6.51"
-                                                                                            x2="8.59" y2="10.49"></line>
-                                                                                    </svg>
-                                                                                </button>
+                                                                        <% if (hasMultipleMedia) { %>
+                                                                            <button class="carousel-btn prev"
+                                                                                onclick="moveCarousel(this, -1)">
+                                                                                <svg viewBox="0 0 24 24" fill="none"
+                                                                                    stroke="currentColor"
+                                                                                    stroke-width="2">
+                                                                                    <polyline points="15 18 9 12 15 6">
+                                                                                    </polyline>
+                                                                                </svg>
+                                                                            </button>
+                                                                            <button class="carousel-btn next"
+                                                                                onclick="moveCarousel(this, 1)">
+                                                                                <svg viewBox="0 0 24 24" fill="none"
+                                                                                    stroke="currentColor"
+                                                                                    stroke-width="2">
+                                                                                    <polyline points="9 18 15 12 9 6">
+                                                                                    </polyline>
+                                                                                </svg>
+                                                                            </button>
+                                                                            <div class="carousel-dots">
+                                                                                <% for (int i=0; i < mediaCount; i++) {
+                                                                                    %>
+                                                                                    <div class="carousel-dot<%= (i == 0) ? "active" : "" %>"></div>
+                                                                                    <% } %>
                                                                             </div>
-                                                                            <button class="action-btn bookmark-btn"
-                                                                                data-post-id="<%= post.getPostId() %>">
+                                                                            <% } %>
+                                                                    </div>
+
+                                                                    <div class="post-actions">
+                                                                        <div class="action-buttons">
+                                                                            <button
+                                                                                class="action-btn like-btn<%= post.isLikedByCurrentUser() ? "liked" : "" %>" data-post-id="<%=
+                                                                                    post.getPostId() %>">
+                                                                                    <svg width="24" height="24"
+                                                                                        viewBox="0 0 24 24"
+                                                                                        fill="<%= post.isLikedByCurrentUser() ? "#ed4956" : "none" %>"
+                                                                                        stroke="<%=
+                                                                                            post.isLikedByCurrentUser()
+                                                                                            ? "#ed4956" : "currentColor"
+                                                                                            %>"
+                                                                                            stroke-width="2">
+                                                                                            <path
+                                                                                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                                                                            </path>
+                                                                                    </svg>
+                                                                            </button>
+                                                                            <button class="action-btn comment-btn"
+                                                                                onclick="window.location.href='${pageContext.request.contextPath}/comments?postId=<%= post.getPostId() %>'">
                                                                                 <svg width="24" height="24"
                                                                                     viewBox="0 0 24 24" fill="none"
                                                                                     stroke="currentColor"
                                                                                     stroke-width="2">
                                                                                     <path
-                                                                                        d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z">
+                                                                                        d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z">
                                                                                     </path>
                                                                                 </svg>
                                                                             </button>
+                                                                            <button class="action-btn">
+                                                                                <svg width="24" height="24"
+                                                                                    viewBox="0 0 24 24" fill="none"
+                                                                                    stroke="currentColor"
+                                                                                    stroke-width="2">
+                                                                                    <circle cx="18" cy="5" r="3">
+                                                                                    </circle>
+                                                                                    <circle cx="6" cy="12" r="3">
+                                                                                    </circle>
+                                                                                    <circle cx="18" cy="19" r="3">
+                                                                                    </circle>
+                                                                                    <line x1="8.59" y1="13.51"
+                                                                                        x2="15.42" y2="17.49">
+                                                                                    </line>
+                                                                                    <line x1="15.41" y1="6.51" x2="8.59"
+                                                                                        y2="10.49"></line>
+                                                                                </svg>
+                                                                            </button>
                                                                         </div>
-
-                                                                        <div class="post-info">
-                                                                            <p class="likes-count">
-                                                                                <%= post.getLikeCount() %> likes
-                                                                            </p>
-                                                                            <p class="post-caption">
-                                                                                <span class="username">
-                                                                                    <%= posterUsername %>
-                                                                                </span>
-                                                                                <%= postCaption %>
-                                                                            </p>
-                                                                            <button class="view-comments"
-                                                                                onclick="window.location.href='${pageContext.request.contextPath}/comments?postId=<%= post.getPostId() %>'">View
-                                                                                comments</button>
-                                                                        </div>
-
-                                                                        <div class="add-comment-bar">
-                                                                            <input type="text"
-                                                                                placeholder="Add a comment..."
-                                                                                class="comment-input"
-                                                                                data-post-id="<%= post.getPostId() %>">
-                                                                            <button class="post-btn"
-                                                                                data-post-id="<%= post.getPostId() %>">Post</button>
-                                                                        </div>
+                                                                        <button class="action-btn bookmark-btn"
+                                                                            data-post-id="<%= post.getPostId() %>">
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                stroke="currentColor" stroke-width="2">
+                                                                                <path
+                                                                                    d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z">
+                                                                                </path>
+                                                                            </svg>
+                                                                        </button>
                                                                     </div>
-                                                                    <% }} %>
-                                                        </div>
-                                                    </main>
 
-                                                    <aside class="sidebar"
-                                                        style="width: 280px; flex-shrink: 0; display: none;">
-                                                        <div class="sidebar-section"
-                                                            style="background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                                                            <h3
-                                                                style="font-size: 14px; font-weight: 600; color: #8e8e8e; margin: 0 0 16px 0; font-family: 'Plus Jakarta Sans', sans-serif;">
-                                                                Suggested for you</h3>
-                                                            <ul style="list-style: none; padding: 0; margin: 0;">
-                                                                <% String[]
-                                                                    gradients={ "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
-                                                                    , "linear-gradient(135deg, #30cfd0 0%, #330867 100%)"
-                                                                    , "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
-                                                                    , "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)"
-                                                                    , "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)"
-                                                                    }; int gradientIndex=0; if (recommendedUsers !=null
-                                                                    && !recommendedUsers.isEmpty()) { for (FeedProfile
-                                                                    user : recommendedUsers) { String
-                                                                    gradient=gradients[gradientIndex %
-                                                                    gradients.length]; gradientIndex++; %>
-                                                                    <li
-                                                                        style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
-                                                                        <% if (user.getFeedProfilePictureUrl() !=null &&
-                                                                            !user.getFeedProfilePictureUrl().contains("default"))
-                                                                            { %>
-                                                                            <img src="<%= user.getFeedProfilePictureUrl() %>"
-                                                                                alt="@<%= user.getFeedUsername() %>"
-                                                                                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                                                                            <% } else { %>
-                                                                                <div
-                                                                                    style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: <%= gradient %>; color: white; font-weight: 600; font-size: 14px; flex-shrink: 0;">
-                                                                                    <%= user.getInitials() %>
-                                                                                </div>
-                                                                                <% } %>
-                                                                                    <div style="flex: 1; min-width: 0;">
-                                                                                        <a href="${pageContext.request.contextPath}/publicprofile?username=<%= user.getFeedUsername() %>"
-                                                                                            style="text-decoration: none; display: block;">
-                                                                                            <span
-                                                                                                style="font-weight: 600; font-size: 14px; color: #262626; font-family: 'Plus Jakarta Sans', sans-serif;">
-                                                                                                <%= user.getFeedUsername()
-                                                                                                    %>
-                                                                                            </span>
-                                                                                        </a>
-                                                                                        <span
-                                                                                            style="font-size: 12px; color: #8e8e8e;">Suggested
-                                                                                            for you</span>
-                                                                                    </div>
-                                                                                    <button class="follow-btn-small"
-                                                                                        style="background: transparent; color: #0095f6; border: none; font-weight: 600; font-size: 12px; cursor: pointer; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif;"
-                                                                                        data-profile-id="<%= user.getFeedProfileId() %>"
-                                                                                        onclick="handleFollowSidebar(this, <%= user.getFeedProfileId() %>)">Follow</button>
-                                                                    </li>
-                                                                    <% }} else { %>
-                                                                        <li
-                                                                            style="text-align: center; color: #8e8e8e; padding: 20px 0; font-size: 14px;">
-                                                                            No suggestions available
-                                                                        </li>
-                                                                        <% } %>
-                                                            </ul>
+                                                                    <div class="post-info">
+                                                                        <p class="likes-count">
+                                                                            <%= post.getLikeCount() %> likes
+                                                                        </p>
+                                                                        <p class="post-caption">
+                                                                            <span class="username">
+                                                                                <%= posterUsername %>
+                                                                            </span>
+                                                                            <%= postCaption %>
+                                                                        </p>
+                                                                        <button class="view-comments"
+                                                                            onclick="window.location.href='${pageContext.request.contextPath}/comments?postId=<%= post.getPostId() %>'">View
+                                                                            comments</button>
+                                                                    </div>
+
+                                                                    <div class="add-comment-bar">
+                                                                        <input type="text"
+                                                                            placeholder="Add a comment..."
+                                                                            class="comment-input"
+                                                                            data-post-id="<%= post.getPostId() %>">
+                                                                        <button class="post-btn"
+                                                                            data-post-id="<%= post.getPostId() %>">Post</button>
+                                                                    </div>
                                                         </div>
-                                                    </aside>
+                                                        <% }} %>
+                                                </div>
+                                                </main>
+
+                                                <aside class="sidebar"
+                                                    style="width: 280px; flex-shrink: 0; display: none;">
+                                                    <div class="sidebar-section"
+                                                        style="background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                                        <h3
+                                                            style="font-size: 14px; font-weight: 600; color: #8e8e8e; margin: 0 0 16px 0; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                                            Suggested for you</h3>
+                                                        <ul style="list-style: none; padding: 0; margin: 0;">
+                                                            <% String[]
+                                                                gradients={ "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
+                                                                , "linear-gradient(135deg, #30cfd0 0%, #330867 100%)"
+                                                                , "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+                                                                , "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)"
+                                                                , "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" };
+                                                                int gradientIndex=0; if (recommendedUsers !=null &&
+                                                                !recommendedUsers.isEmpty()) { for (FeedProfile user :
+                                                                recommendedUsers) { String
+                                                                gradient=gradients[gradientIndex % gradients.length];
+                                                                gradientIndex++; %>
+                                                                <li
+                                                                    style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                                                                    <% if (user.getFeedProfilePictureUrl() !=null &&
+                                                                        !user.getFeedProfilePictureUrl().contains("default"))
+                                                                        { %>
+                                                                        <img src="<%= user.getFeedProfilePictureUrl() %>"
+                                                                            alt="@<%= user.getFeedUsername() %>"
+                                                                            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                                                                        <% } else { %>
+                                                                            <div
+                                                                                style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: <%= gradient %>; color: white; font-weight: 600; font-size: 14px; flex-shrink: 0;">
+                                                                                <%= user.getInitials() %>
+                                                                            </div>
+                                                                            <% } %>
+                                                                                <div style="flex: 1; min-width: 0;">
+                                                                                    <a href="${pageContext.request.contextPath}/publicprofile?username=<%= user.getFeedUsername() %>"
+                                                                                        style="text-decoration: none; display: block;">
+                                                                                        <span
+                                                                                            style="font-weight: 600; font-size: 14px; color: #262626; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                                                                            <%= user.getFeedUsername()
+                                                                                                %>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                    <span
+                                                                                        style="font-size: 12px; color: #8e8e8e;">Suggested
+                                                                                        for you</span>
+                                                                                </div>
+                                                                                <button class="follow-btn-small"
+                                                                                    style="background: transparent; color: #0095f6; border: none; font-weight: 600; font-size: 12px; cursor: pointer; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif;"
+                                                                                    data-profile-id="<%= user.getFeedProfileId() %>"
+                                                                                    onclick="handleFollowSidebar(this, <%= user.getFeedProfileId() %>)">Follow</button>
+                                                                </li>
+                                                                <% }} else { %>
+                                                                    <li
+                                                                        style="text-align: center; color: #8e8e8e; padding: 20px 0; font-size: 14px;">
+                                                                        No suggestions available
+                                                                    </li>
+                                                                    <% } %>
+                                                        </ul>
+                                                    </div>
+                                                </aside>
                                                 </div>
 
                                                 <a href="${pageContext.request.contextPath}/createPost"
@@ -781,6 +935,106 @@
                                                                 }
                                                             })
                                                             .catch(function (error) { console.error('Error:', error); });
+                                                    }
+
+                                                    // Toggle post options menu
+                                                    function toggleOptionsMenu(btn, event) {
+                                                        event.stopPropagation();
+                                                        var menu = btn.parentElement.querySelector('.post-options-menu');
+                                                        var isActive = menu.classList.contains('active');
+
+                                                        // Close all other menus first
+                                                        closeAllMenus();
+
+                                                        if (!isActive) {
+                                                            menu.classList.add('active');
+                                                        }
+                                                    }
+
+                                                    // Close all open menus
+                                                    function closeAllMenus() {
+                                                        document.querySelectorAll('.post-options-menu.active').forEach(function (menu) {
+                                                            menu.classList.remove('active');
+                                                        });
+                                                    }
+
+                                                    // Close menus when clicking elsewhere
+                                                    document.addEventListener('click', function (e) {
+                                                        if (!e.target.closest('.post-options') && !e.target.closest('.post-options-menu')) {
+                                                            closeAllMenus();
+                                                        }
+                                                    });
+
+                                                    // Block a user
+                                                    function blockUser(targetProfileId, username, btn) {
+                                                        if (!confirm('Are you sure you want to block @' + username + '? Their posts will no longer appear in your feed.')) {
+                                                            closeAllMenus();
+                                                            return;
+                                                        }
+
+                                                        closeAllMenus();
+
+                                                        fetch(contextPath + '/blockUser?targetProfileId=' + targetProfileId, {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                                                        })
+                                                            .then(function (response) { return response.json(); })
+                                                            .then(function (data) {
+                                                                if (data.success) {
+                                                                    // Hide all posts by this user with animation
+                                                                    document.querySelectorAll('.feed-post').forEach(function (post) {
+                                                                        var postHeader = post.querySelector('.post-header');
+                                                                        if (postHeader) {
+                                                                            var blockBtn = postHeader.querySelector('.menu-item.danger');
+                                                                            if (blockBtn && blockBtn.getAttribute('onclick') &&
+                                                                                blockBtn.getAttribute('onclick').indexOf(targetProfileId) !== -1) {
+                                                                                post.style.transition = 'opacity 0.4s, transform 0.4s, max-height 0.4s';
+                                                                                post.style.opacity = '0';
+                                                                                post.style.transform = 'scale(0.95)';
+                                                                                setTimeout(function () {
+                                                                                    post.style.maxHeight = '0';
+                                                                                    post.style.overflow = 'hidden';
+                                                                                    post.style.padding = '0';
+                                                                                    post.style.margin = '0';
+                                                                                    setTimeout(function () {
+                                                                                        post.remove();
+                                                                                    }, 300);
+                                                                                }, 400);
+                                                                            }
+                                                                        }
+                                                                    });
+
+                                                                    showToast('🚫 @' + username + ' has been blocked');
+                                                                } else {
+                                                                    showToast('⚠️ ' + (data.message || 'Could not block user'));
+                                                                }
+                                                            })
+                                                            .catch(function (error) {
+                                                                console.error('Error blocking user:', error);
+                                                                showToast('⚠️ Error blocking user');
+                                                            });
+                                                    }
+
+                                                    // Show toast notification
+                                                    function showToast(message) {
+                                                        var existing = document.querySelector('.toast-notification');
+                                                        if (existing) existing.remove();
+
+                                                        var toast = document.createElement('div');
+                                                        toast.className = 'toast-notification';
+                                                        toast.textContent = message;
+                                                        document.body.appendChild(toast);
+
+                                                        setTimeout(function () {
+                                                            toast.classList.add('show');
+                                                        }, 10);
+
+                                                        setTimeout(function () {
+                                                            toast.classList.remove('show');
+                                                            setTimeout(function () {
+                                                                toast.remove();
+                                                            }, 300);
+                                                        }, 3000);
                                                     }
                                                 </script>
                                             </body>

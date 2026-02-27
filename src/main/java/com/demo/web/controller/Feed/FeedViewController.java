@@ -1,5 +1,6 @@
 package com.demo.web.controller.Feed;
 
+import com.demo.web.dao.BlockedUserDAO;
 import com.demo.web.dao.FeedFollowDAO;
 import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.FeedPostLikeDAO;
@@ -33,6 +34,7 @@ public class FeedViewController extends HttpServlet {
     private FeedFollowDAO feedFollowDAO;
     private FeedPostLikeDAO feedPostLikeDAO;
     private MediaDAO mediaDAO;
+    private BlockedUserDAO blockedUserDAO;
 
     @Override
     public void init() throws ServletException {
@@ -41,6 +43,8 @@ public class FeedViewController extends HttpServlet {
         feedFollowDAO = new FeedFollowDAO();
         feedPostLikeDAO = new FeedPostLikeDAO();
         mediaDAO = new MediaDAO();
+        blockedUserDAO = new BlockedUserDAO();
+        blockedUserDAO.ensureTableExists();
     }
 
     @Override
@@ -83,6 +87,17 @@ public class FeedViewController extends HttpServlet {
 
             // Fetch all posts for FYP (random order)
             List<FeedPost> posts = feedPostDAO.findAllPosts();
+
+            // Filter out posts from blocked users
+            List<Integer> blockedProfileIds = blockedUserDAO.getBlockedProfileIds(feedProfile.getFeedProfileId());
+            if (!blockedProfileIds.isEmpty()) {
+                posts.removeIf(post -> {
+                    FeedProfile poster = post.getFeedProfile();
+                    return poster != null && blockedProfileIds.contains(poster.getFeedProfileId());
+                });
+                logger.info(
+                        "[FeedViewController] Filtered out posts from " + blockedProfileIds.size() + " blocked users");
+            }
 
             // Load all media items for each post (for carousel)
             for (FeedPost post : posts) {

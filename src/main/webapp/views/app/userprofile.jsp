@@ -23,6 +23,9 @@
                       if (isOwnProfile == null) isOwnProfile = true;
                       if (isFollowing == null) isFollowing = false;
 
+                      Boolean isBlocked = (Boolean) request.getAttribute("isBlocked");
+                      if (isBlocked == null) isBlocked = false;
+
                       String profileUsername = (profileToView != null) ? profileToView.getFeedUsername() : "user";
                       String profilePic = (profileToView != null && profileToView.getFeedProfilePictureUrl() != null)
                       ? profileToView.getFeedProfilePictureUrl() : null;
@@ -152,6 +155,69 @@
                             border-bottom: 2px solid #262626;
                             color: #262626;
                           }
+
+                          .block-btn {
+                            background: transparent;
+                            color: #6c757d;
+                            border: 2px solid #e5e7eb;
+                            padding: 10px 28px;
+                            border-radius: 10px;
+                            font-size: 14px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 6px;
+                          }
+
+                          .block-btn:hover {
+                            border-color: #ed4956;
+                            color: #ed4956;
+                            background: rgba(237, 73, 86, 0.05);
+                          }
+
+                          .block-btn.blocked {
+                            background: rgba(237, 73, 86, 0.1);
+                            color: #ed4956;
+                            border-color: #ed4956;
+                          }
+
+                          .block-btn.blocked:hover {
+                            background: transparent;
+                            color: #6c757d;
+                            border-color: #e5e7eb;
+                          }
+
+                          .profile-action-buttons {
+                            display: flex;
+                            gap: 10px;
+                            align-items: center;
+                            flex-wrap: wrap;
+                          }
+
+                          .toast-notification {
+                            position: fixed;
+                            bottom: 30px;
+                            left: 50%;
+                            transform: translateX(-50%) translateY(20px);
+                            background: #1e1e2e;
+                            color: white;
+                            padding: 14px 28px;
+                            border-radius: 12px;
+                            font-size: 14px;
+                            font-weight: 500;
+                            z-index: 9999;
+                            pointer-events: none;
+                            opacity: 0;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+                          }
+
+                          .toast-notification.show {
+                            opacity: 1;
+                            transform: translateX(-50%) translateY(0);
+                          }
                         </style>
                       </head>
 
@@ -193,23 +259,41 @@
                                       <a href="${pageContext.request.contextPath}/feededitprofile"
                                         class="edit-profile-btn">Edit profile</a>
                                       <% } else { %>
-                                        <button class="follow-btn <%= isFollowing ? " following" : "" %>"
-                                          id="followBtn"
-                                          data-profile-id="<%= profileId %>"
-                                            data-is-following="<%= isFollowing %>">
-                                              <% if (isFollowing) { %>
-                                                Following
-                                                <% } else { %>
-                                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2">
-                                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                                    <circle cx="8.5" cy="7" r="4" />
-                                                    <line x1="20" y1="8" x2="20" y2="14" />
-                                                    <line x1="23" y1="11" x2="17" y2="11" />
-                                                  </svg>
-                                                  Follow
-                                                  <% } %>
-                                        </button>
+                                        <div class="profile-action-buttons">
+                                          <button class="follow-btn <%= isFollowing ? " following" : "" %>"
+                                            id="followBtn" data-profile-id="<%= profileId %>" data-is-following="<%=
+                                                isFollowing %>">
+                                                <% if (isFollowing) { %>
+                                                  Following
+                                                  <% } else { %>
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                      stroke="currentColor" stroke-width="2">
+                                                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                                      <circle cx="8.5" cy="7" r="4" />
+                                                      <line x1="20" y1="8" x2="20" y2="14" />
+                                                      <line x1="23" y1="11" x2="17" y2="11" />
+                                                    </svg>
+                                                    Follow
+                                                    <% } %>
+                                          </button>
+                                          <button class="block-btn <%= isBlocked ? " blocked" : "" %>" id="blockBtn"
+                                            data-profile-id="<%= profileId %>" data-username="<%= profileUsername %>"
+                                                data-is-blocked="<%= isBlocked %>" onclick="toggleBlockUser()">
+                                                  <% if (isBlocked) { %>
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                      stroke="currentColor" stroke-width="2">
+                                                      <circle cx="12" cy="12" r="10"></circle>
+                                                    </svg>
+                                                    Blocked
+                                                    <% } else { %>
+                                                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                      </svg>
+                                                      Block
+                                                      <% } %>
+                                          </button>
+                                        </div>
                                         <% } %>
                                   </div>
                                   <div class="profile-stats">
@@ -477,6 +561,83 @@
                                 }
                               })
                               .catch(error => console.error('Error:', error));
+                          }
+
+                          // Block/Unblock user toggle
+                          function toggleBlockUser() {
+                            const blockBtn = document.getElementById('blockBtn');
+                            const profileId = blockBtn.dataset.profileId;
+                            const username = blockBtn.dataset.username;
+                            const isBlocked = blockBtn.dataset.isBlocked === 'true';
+
+                            if (isBlocked) {
+                              // Unblock
+                              if (!confirm('Unblock @' + username + '? Their posts will appear in your feed again.')) return;
+
+                              fetch('${pageContext.request.contextPath}/unblockuser', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/x-www-form-urlencoded',
+                                  'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                body: 'profileId=' + profileId
+                              })
+                                .then(response => response.json())
+                                .then(data => {
+                                  if (data.success) {
+                                    blockBtn.dataset.isBlocked = 'false';
+                                    blockBtn.classList.remove('blocked');
+                                    blockBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg> Block';
+                                    showToast('✅ @' + username + ' has been unblocked');
+                                  } else {
+                                    showToast('⚠️ ' + (data.message || 'Could not unblock user'));
+                                  }
+                                })
+                                .catch(error => {
+                                  console.error('Error:', error);
+                                  showToast('⚠️ Error unblocking user');
+                                });
+                            } else {
+                              // Block
+                              if (!confirm('Block @' + username + '? Their posts will no longer appear in your feed.')) return;
+
+                              fetch('${pageContext.request.contextPath}/blockUser?targetProfileId=' + profileId, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                              })
+                                .then(response => response.json())
+                                .then(data => {
+                                  if (data.success) {
+                                    blockBtn.dataset.isBlocked = 'true';
+                                    blockBtn.classList.add('blocked');
+                                    blockBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg> Blocked';
+                                    showToast('🚫 @' + username + ' has been blocked');
+                                  } else {
+                                    showToast('⚠️ ' + (data.message || 'Could not block user'));
+                                  }
+                                })
+                                .catch(error => {
+                                  console.error('Error:', error);
+                                  showToast('⚠️ Error blocking user');
+                                });
+                            }
+                          }
+
+                          // Toast notification
+                          function showToast(message) {
+                            var existing = document.querySelector('.toast-notification');
+                            if (existing) existing.remove();
+
+                            var toast = document.createElement('div');
+                            toast.className = 'toast-notification';
+                            toast.textContent = message;
+                            document.body.appendChild(toast);
+
+                            setTimeout(function () { toast.classList.add('show'); }, 10);
+                            setTimeout(function () {
+                              toast.classList.remove('show');
+                              setTimeout(function () { toast.remove(); }, 300);
+                            }, 3000);
                           }
                         </script>
                       </body>
