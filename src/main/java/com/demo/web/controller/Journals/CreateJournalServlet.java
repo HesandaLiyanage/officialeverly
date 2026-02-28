@@ -50,8 +50,10 @@ public class CreateJournalServlet extends HttpServlet {
             // Get form data
             String content = request.getParameter("content"); // This will be HTML with formatting
             String decorationsJson = request.getParameter("decorations"); // JSON string of decorations
+            String backgroundTheme = request.getParameter("backgroundTheme"); // Background image path
 
-            System.out.println("[DEBUG CreateJournalServlet] Content length: " + (content != null ? content.length() : 0));
+            System.out.println(
+                    "[DEBUG CreateJournalServlet] Content length: " + (content != null ? content.length() : 0));
             System.out.println("[DEBUG CreateJournalServlet] Decorations: " + decorationsJson);
 
             // Validate required fields
@@ -65,8 +67,9 @@ public class CreateJournalServlet extends HttpServlet {
             // Generate title from current date (e.g., "24th October 2025")
             String journalTitle = generateDateTitle();
 
-            // Create the complete journal content by combining HTML content and decorations
-            String completeContent = buildCompleteJournalContent(content, decorationsJson);
+            // Create the complete journal content by combining HTML content, decorations,
+            // and background
+            String completeContent = buildCompleteJournalContent(content, decorationsJson, backgroundTheme);
 
             // Create Journal object
             Journal newJournal = new Journal();
@@ -77,7 +80,8 @@ public class CreateJournalServlet extends HttpServlet {
 
             // IMPORTANT: Since DB doesn't have created_at/updated_at columns,
             // we DON'T set them here. The model still has them, but DAO won't use them.
-            // We'll let the DB handle timestamps if needed later, or remove them from model.
+            // We'll let the DB handle timestamps if needed later, or remove them from
+            // model.
 
             System.out.println("[DEBUG CreateJournalServlet] Created journal object: " + newJournal);
 
@@ -85,7 +89,8 @@ public class CreateJournalServlet extends HttpServlet {
             boolean success = journalDAO.createJournal(newJournal);
 
             if (success) {
-                System.out.println("[DEBUG CreateJournalServlet] Journal saved successfully with ID: " + newJournal.getJournalId());
+                System.out.println("[DEBUG CreateJournalServlet] Journal saved successfully with ID: "
+                        + newJournal.getJournalId());
 
                 // ✅ UPDATE STREAK - Use the correct method with date parameter
                 try {
@@ -93,9 +98,11 @@ public class CreateJournalServlet extends HttpServlet {
                     boolean streakUpdated = streakDAO.updateStreakOnNewEntry(userId, today);
 
                     if (streakUpdated) {
-                        System.out.println("[DEBUG CreateJournalServlet] Streak updated successfully for user " + userId);
+                        System.out
+                                .println("[DEBUG CreateJournalServlet] Streak updated successfully for user " + userId);
                     } else {
-                        System.out.println("[WARNING CreateJournalServlet] Streak update returned false for user " + userId);
+                        System.out.println(
+                                "[WARNING CreateJournalServlet] Streak update returned false for user " + userId);
                     }
                 } catch (Exception e) {
                     System.out.println("[ERROR CreateJournalServlet] Streak update failed: " + e.getMessage());
@@ -111,7 +118,6 @@ public class CreateJournalServlet extends HttpServlet {
                 request.getRequestDispatcher("/writejournal").forward(request, response);
             }
 
-
         } catch (Exception e) {
             System.out.println("[ERROR CreateJournalServlet] Unexpected error: " + e.getMessage());
             e.printStackTrace();
@@ -123,11 +129,12 @@ public class CreateJournalServlet extends HttpServlet {
     /**
      * Build complete journal content by combining text content and decorations
      */
-    private String buildCompleteJournalContent(String htmlContent, String decorationsJson) {
+    private String buildCompleteJournalContent(String htmlContent, String decorationsJson, String backgroundTheme) {
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{");
         jsonBuilder.append("\"htmlContent\":").append(escapeJson(htmlContent)).append(",");
-        jsonBuilder.append("\"decorations\":").append(decorationsJson != null ? decorationsJson : "[]");
+        jsonBuilder.append("\"decorations\":").append(decorationsJson != null ? decorationsJson : "[]").append(",");
+        jsonBuilder.append("\"backgroundTheme\":").append(escapeJson(backgroundTheme != null ? backgroundTheme : ""));
         jsonBuilder.append("}");
 
         return jsonBuilder.toString();
@@ -137,7 +144,8 @@ public class CreateJournalServlet extends HttpServlet {
      * Escape JSON string properly
      */
     private String escapeJson(String text) {
-        if (text == null) return "\"\"";
+        if (text == null)
+            return "\"\"";
 
         return "\"" + text
                 .replace("\\", "\\\\")

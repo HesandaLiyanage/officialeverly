@@ -53,7 +53,8 @@ public class EditJournalServlet extends HttpServlet { // Only handles POST
 
             int journalId = Integer.parseInt(journalIdParam);
 
-            System.out.println("[DEBUG EditJournalServlet] Attempting to edit journal ID: " + journalId + " for user ID: " + userId);
+            System.out.println("[DEBUG EditJournalServlet] Attempting to edit journal ID: " + journalId
+                    + " for user ID: " + userId);
 
             // Fetch the journal to check ownership and get current data
             Journal journal = journalDAO.findById(journalId);
@@ -66,7 +67,8 @@ public class EditJournalServlet extends HttpServlet { // Only handles POST
 
             // Security check: Ensure the journal belongs to the current user
             if (journal.getUserId() != userId) {
-                System.out.println("[DEBUG EditJournalServlet] User " + userId + " tried to edit journal " + journalId + " which belongs to user " + journal.getUserId());
+                System.out.println("[DEBUG EditJournalServlet] User " + userId + " tried to edit journal " + journalId
+                        + " which belongs to user " + journal.getUserId());
                 request.setAttribute("error", "You do not have permission to edit this journal entry.");
                 response.sendRedirect(request.getContextPath() + "/journals");
                 return;
@@ -76,9 +78,11 @@ public class EditJournalServlet extends HttpServlet { // Only handles POST
             String title = request.getParameter("title"); // Get title if provided in edit form
             String content = request.getParameter("content"); // This will be HTML with formatting
             String decorationsJson = request.getParameter("decorations"); // JSON string of decorations
+            String backgroundTheme = request.getParameter("backgroundTheme"); // Background image path
 
             System.out.println("[DEBUG EditJournalServlet] Title: " + title);
-            System.out.println("[DEBUG EditJournalServlet] Content length: " + (content != null ? content.length() : 0));
+            System.out
+                    .println("[DEBUG EditJournalServlet] Content length: " + (content != null ? content.length() : 0));
             System.out.println("[DEBUG EditJournalServlet] Decorations: " + decorationsJson);
 
             // Validate required fields
@@ -94,8 +98,9 @@ public class EditJournalServlet extends HttpServlet { // Only handles POST
             // Since no image upload is handled here, picUrl remains unchanged
             String picUrl = journal.getJournalPic(); // Keep existing image
 
-            // Create the updated journal content by combining HTML content and decorations
-            String updatedContent = buildCompleteJournalContent(content, decorationsJson);
+            // Create the updated journal content by combining HTML content, decorations,
+            // and background
+            String updatedContent = buildCompleteJournalContent(content, decorationsJson, backgroundTheme);
 
             // Use provided title or keep the original if null/empty
             String journalTitle = (title != null && !title.trim().isEmpty())
@@ -106,7 +111,8 @@ public class EditJournalServlet extends HttpServlet { // Only handles POST
             journal.setTitle(journalTitle);
             journal.setContent(updatedContent);
             // journal.setUserId(userId); // UserId should not change
-            // journal.setJournalPic(picUrl); // PicUrl might change if image upload is added later
+            // journal.setJournalPic(picUrl); // PicUrl might change if image upload is
+            // added later
 
             // Perform the update in the database
             boolean success = journalDAO.updateJournal(journal);
@@ -138,7 +144,8 @@ public class EditJournalServlet extends HttpServlet { // Only handles POST
                 if (journal != null && journal.getUserId() == userId) {
                     request.setAttribute("journal", journal);
                 }
-            } catch (Exception ex) { /* Ignore error fetching journal on error page */ }
+            } catch (Exception ex) {
+                /* Ignore error fetching journal on error page */ }
             request.getRequestDispatcher("/views/app/editjournal.jsp").forward(request, response);
         }
     }
@@ -146,11 +153,12 @@ public class EditJournalServlet extends HttpServlet { // Only handles POST
     /**
      * Build complete journal content by combining text content and decorations
      */
-    private String buildCompleteJournalContent(String htmlContent, String decorationsJson) {
+    private String buildCompleteJournalContent(String htmlContent, String decorationsJson, String backgroundTheme) {
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{");
         jsonBuilder.append("\"htmlContent\":").append(escapeJson(htmlContent)).append(",");
-        jsonBuilder.append("\"decorations\":").append(decorationsJson != null ? decorationsJson : "[]");
+        jsonBuilder.append("\"decorations\":").append(decorationsJson != null ? decorationsJson : "[]").append(",");
+        jsonBuilder.append("\"backgroundTheme\":").append(escapeJson(backgroundTheme != null ? backgroundTheme : ""));
         jsonBuilder.append("}");
 
         return jsonBuilder.toString();
@@ -160,7 +168,8 @@ public class EditJournalServlet extends HttpServlet { // Only handles POST
      * Escape JSON string properly
      */
     private String escapeJson(String text) {
-        if (text == null) return "\"\"";
+        if (text == null)
+            return "\"\"";
 
         return "\"" + text
                 .replace("\\", "\\\\")
