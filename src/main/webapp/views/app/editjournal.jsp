@@ -16,14 +16,13 @@
                             (decEl !=null && !decEl.isJsonNull() && decEl.isJsonArray()) {
                             existingDecorations=decEl.getAsJsonArray().toString(); } JsonElement
                             bgEl=contentObj.get("backgroundTheme"); if (bgEl !=null && !bgEl.isJsonNull()) {
-                            existingBackground=bgEl.getAsString(); } } catch (Exception e) { System.out.println("Error
-                            parsing journal content for edit: " + e.getMessage());
+                            existingBackground=bgEl.getAsString(); } } catch (Exception e) { System.out.println("Error parsing journal content for edit: " + e.getMessage());
             }
         }
     }
 %>
 
-<jsp:include page=" ../public/header2.jsp" />
+<jsp:include page="../public/header2.jsp" />
                         <html>
 
                         <head>

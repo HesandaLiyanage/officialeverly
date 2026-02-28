@@ -225,56 +225,55 @@
 
                             makeDraggable(element, isWritingArea = false) {
                                 let isDragging = false;
-                                let currentX;
-                                let currentY;
-                                let initialX;
-                                let initialY;
-                                let xOffset = 0;
-                                let yOffset = 0;
-
-                                const updateOffsets = () => {
-                                    const rect = document.getElementById('autographPage').getBoundingClientRect();
-                                    xOffset = (parseFloat(element.style.left) / 100) * rect.width;
-                                    yOffset = (parseFloat(element.style.top) / 100) * rect.height;
-                                };
+                                let startX;
+                                let startY;
+                                let initialLeft;
+                                let initialTop;
 
                                 element.addEventListener('mousedown', (e) => {
                                     if (isWritingArea) {
                                         const rect = element.getBoundingClientRect();
                                         const relativeX = e.clientX - rect.left;
                                         const relativeY = e.clientY - rect.top;
+                                        // Only allow dragging from the top-left corner for the text area
                                         if (relativeX > 30 && relativeY > 30) return;
                                     }
-
-                                    updateOffsets();
-                                    initialX = e.clientX - xOffset;
-                                    initialY = e.clientY - yOffset;
 
                                     if (e.target === element || element.contains(e.target)) {
                                         isDragging = true;
                                         element.style.cursor = 'grabbing';
                                         element.style.zIndex = '1000';
+
+                                        const rect = element.getBoundingClientRect();
+                                        const containerRect = document.getElementById('autographPage').getBoundingClientRect();
+
+                                        startX = e.clientX;
+                                        startY = e.clientY;
+
+                                        initialLeft = rect.left - containerRect.left;
+                                        initialTop = rect.top - containerRect.top;
                                     }
                                 });
 
                                 document.addEventListener('mousemove', (e) => {
                                     if (isDragging) {
                                         e.preventDefault();
-                                        currentX = e.clientX - initialX;
-                                        currentY = e.clientY - initialY;
+                                        const deltaX = e.clientX - startX;
+                                        const deltaY = e.clientY - startY;
 
-                                        const rect = document.getElementById('autographPage').getBoundingClientRect();
-                                        let percentX = (currentX / rect.width) * 100;
-                                        let percentY = (currentY / rect.height) * 100;
+                                        const newLeft = initialLeft + deltaX;
+                                        const newTop = initialTop + deltaY;
 
+                                        const containerRect = document.getElementById('autographPage').getBoundingClientRect();
+                                        let percentX = (newLeft / containerRect.width) * 100;
+                                        let percentY = (newTop / containerRect.height) * 100;
+
+                                        // Constrain to container
                                         percentX = Math.max(0, Math.min(95, percentX));
                                         percentY = Math.max(0, Math.min(95, percentY));
 
                                         element.style.left = percentX + '%';
                                         element.style.top = percentY + '%';
-
-                                        xOffset = (percentX / 100) * rect.width;
-                                        yOffset = (percentY / 100) * rect.height;
                                     }
                                 });
 

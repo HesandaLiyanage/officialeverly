@@ -80,6 +80,7 @@
                                             font-size: 15px;
                                             line-height: 1.7;
                                             color: #1e293b;
+                                            position: relative;
                                         }
 
                                         .ag-page-content::-webkit-scrollbar {
@@ -120,10 +121,8 @@
                                         }
 
                                         .ag-page-content .decoration {
-                                            position: relative !important;
-                                            display: inline-block;
-                                            top: auto !important;
-                                            left: auto !important;
+                                            position: absolute !important;
+                                            /* Let inline styles from DB determine top/left */
                                         }
 
                                         /* No entries state */
@@ -457,7 +456,7 @@
 
                                         // --- Share Modal ---
                                         var shareUrl = '';
-                                        var autographId = ${ autograph.autographId };
+                                        var autographId = '${autograph.getAutographId()}';
 
                                         function openShareModal() {
                                             document.getElementById('shareModal').classList.add('active');

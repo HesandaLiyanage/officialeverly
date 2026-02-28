@@ -30,6 +30,10 @@ public class EditJournalServlet extends HttpServlet { // Only handles POST
 
         System.out.println("[DEBUG EditJournalServlet] Received POST request for edit");
 
+        // Set UTF-8 encoding for emoji/unicode support
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         // Check if user is logged in
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
