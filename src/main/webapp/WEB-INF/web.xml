@@ -251,7 +251,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>EditJournalServlet</servlet-name>
-        <url-pattern>/editjournal</url-pattern> <!-- This handles the POST submission -->
+        <url-pattern>/editjournal/save</url-pattern> <!-- POST submission only, GET goes through FrontController -->
     </servlet-mapping>
 
 <!--    <servlet>-->
