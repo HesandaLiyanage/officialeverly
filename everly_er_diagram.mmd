@@ -1,0 +1,518 @@
+erDiagram
+
+    users {
+        int user_id PK
+        varchar username
+        varchar email
+        varchar password
+        varchar salt
+        text bio
+        date joined_at
+        boolean is_active
+        timestamp last_login
+        varchar profile_picture_url
+        bytea master_key_encrypted
+        bytea key_derivation_salt
+        int plan_id FK
+        boolean vault_setup_completed
+        varchar vault_password_hash
+        varchar vault_password_salt
+    }
+
+    plans {
+        int plan_id PK
+        varchar name
+        bigint storage_limit_bytes
+        numeric price_monthly
+        numeric price_annual
+        int max_members
+        text description
+        int memory_limit
+    }
+
+    user_sessions {
+        varchar session_id PK
+        int user_id FK
+        timestamp created_at
+        timestamp expires_at
+        varchar device_name
+        varchar device_type
+        varchar ip_address
+        text user_agent
+        boolean is_active
+    }
+
+    vault {
+        int user_id PK
+    }
+
+    publicprofile {
+        int profile_id PK
+        varchar display_name
+        text bio
+        varchar profile_picture
+        int follow_count
+    }
+
+    follow {
+        int follower_id PK
+        int following_id PK
+    }
+
+    block {
+        int block_id PK
+        int user_id FK
+        int blocked_user_id FK
+        date blocked_at
+    }
+
+    trash {
+        int user_id PK
+    }
+
+    recycle_bin {
+        int id PK
+        int original_id
+        varchar item_type
+        int user_id
+        varchar title
+        text content
+        jsonb metadata
+        timestamp deleted_at
+    }
+
+    memory {
+        int memory_id PK
+        varchar title
+        varchar description
+        date updated_at
+        int user_id FK
+        int cover_media_id FK
+        timestamp created_timestamp
+        boolean is_public
+        varchar share_key
+        timestamp expires_at
+        boolean is_link_shared
+        boolean is_in_vault
+        boolean is_collaborative
+        varchar collab_share_key
+        int group_id FK
+    }
+
+    memory_media {
+        int memory_id PK
+        int media_id PK
+    }
+
+    memory_members {
+        int id PK
+        int memory_id FK
+        int user_id FK
+        varchar role
+        timestamp joined_at
+    }
+
+    media_items {
+        int media_id PK
+        int user_id FK
+        varchar filename
+        varchar original_filename
+        varchar file_path
+        bigint file_size
+        varchar mime_type
+        varchar media_type
+        varchar title
+        text description
+        timestamp upload_timestamp
+        boolean is_public
+        varchar storage_bucket
+        jsonb metadata
+        boolean is_encrypted
+        varchar encryption_key_id
+        varchar file_hash
+        int split_count
+        bigint original_file_size
+        boolean is_split
+        bytea encryption_iv
+    }
+
+    media_shares {
+        int share_id PK
+        int media_id FK
+        varchar share_type
+        varchar share_key
+        timestamp expires_at
+        timestamp created_at
+    }
+
+    encryption_keys {
+        varchar key_id PK
+        int user_id FK
+        bytea encrypted_key
+        timestamp created_at
+        bytea iv
+    }
+
+    encryption_metadata {
+        int metadata_id PK
+        varchar entity_type
+        varchar entity_id
+        bytea iv
+        timestamp created_at
+    }
+
+    encryption_audit_log {
+        int log_id PK
+        int user_id FK
+        varchar action
+        varchar entity_type
+        varchar entity_id
+        varchar ip_address
+        timestamp timestamp
+    }
+
+    groups {
+        int group_id PK
+        varchar g_name
+        varchar g_description
+        date created_at
+        int user_id FK
+        varchar group_pic
+        varchar group_url
+    }
+
+    group_member {
+        int group_id PK
+        int member_id PK
+        varchar role
+        timestamp joined_at
+        varchar status
+    }
+
+    group_announcement {
+        int announcement_id PK
+        int group_id FK
+        int user_id FK
+        varchar title
+        text content
+        timestamp created_at
+        int event_id FK
+    }
+
+    group_invite {
+        int invite_id PK
+        int group_id FK
+        varchar invite_token
+        int created_by FK
+        timestamp created_at
+        boolean is_active
+    }
+
+    group_media_shares {
+        int group_id PK
+        int media_id PK
+        int shared_by_user_id FK
+        timestamp shared_at
+    }
+
+    group_encryption_keys {
+        int group_id PK
+        varchar key_id PK
+        int user_id PK
+        bytea encrypted_key
+        bytea iv
+        timestamp created_at
+    }
+
+    event {
+        int event_id PK
+        varchar e_title
+        varchar e_description
+        date e_date
+        date created_at
+        int group_id FK
+        varchar event_pic
+    }
+
+    event_attendance {
+        int event_id PK
+    }
+
+    event_user {
+        int event_id PK
+        int group_id PK
+    }
+
+    journal {
+        int journal_id PK
+        varchar j_title
+        varchar j_content
+        int user_id FK
+        varchar journal_pic
+        boolean is_in_vault
+    }
+
+    journal_streaks {
+        int streak_id PK
+        int user_id FK
+        int current_streak
+        int longest_streak
+        date last_entry_date
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    journal_theme {
+        int journal_id PK
+        int theme_id PK
+    }
+
+    theme {
+        int theme_id PK
+        varchar t_name
+    }
+
+    autograph {
+        int autograph_id PK
+        varchar a_title
+        varchar a_description
+        date created_at
+        int user_id FK
+        varchar autograph_pic_url
+        varchar share_token
+    }
+
+    autograph_activity {
+        int activity_id PK
+        int autograph_id FK
+        int user_id FK
+        varchar action
+        date created_at
+        jsonb entry_data
+        varchar signer_name
+    }
+
+    autograph_entry {
+        int entry_id PK
+        varchar link
+        text content
+        date submitted_at
+        int autograph_id FK
+        int user_id FK
+        text content_plain
+    }
+
+    post {
+        int post_id PK
+        text content
+        date created_at
+        int profile_id FK
+    }
+
+    comment {
+        int comment_id PK
+        int post_id FK
+        int user_id FK
+        varchar content
+        date commented_at
+    }
+
+    likes {
+        int like_id PK
+        int post_id FK
+        int user_id FK
+        date liked_at
+    }
+
+    share {
+        int share_id PK
+        int post_id FK
+        int user_id FK
+        date created_at
+    }
+
+    repost {
+        int repost_id PK
+        int post_id FK
+        int user_id FK
+        date created_at
+    }
+
+    tag {
+        int tag_id PK
+        int post_id FK
+        int tagged_user_id FK
+    }
+
+    collab {
+        int collab_id PK
+        int post_id FK
+        int shared_with FK
+    }
+
+    member {
+        int member_id PK
+        int user_id FK
+        varchar g_role
+        date joined_at
+    }
+
+    feed_profiles {
+        int feed_profile_id PK
+        int user_id FK
+        varchar feed_username
+        text feed_profile_picture_url
+        varchar feed_bio
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    feed_posts {
+        int post_id PK
+        int memory_id FK
+        int feed_profile_id FK
+        text caption
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    feed_post_comments {
+        int comment_id PK
+        int post_id FK
+        int feed_profile_id FK
+        int parent_comment_id FK
+        text comment_text
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    feed_post_likes {
+        int like_id PK
+        int post_id FK
+        int feed_profile_id FK
+        timestamp created_at
+    }
+
+    feed_comment_likes {
+        int like_id PK
+        int comment_id FK
+        int feed_profile_id FK
+        timestamp created_at
+    }
+
+    feed_follows {
+        int follow_id PK
+        int follower_id FK
+        int following_id FK
+        timestamp created_at
+    }
+
+    saved_posts {
+        int saved_id PK
+        int feed_profile_id FK
+        int post_id FK
+        timestamp created_at
+    }
+
+    blocked_users {
+        int id PK
+        int blocker_profile_id
+        int blocked_profile_id
+        timestamp created_at
+    }
+
+    recap {
+        int recap_id PK
+        int memory_id FK
+        date generated_at
+    }
+
+    %% ===== RELATIONSHIPS =====
+
+    %% Users and Plans
+    users ||--o| plans : "has plan"
+    users ||--o{ user_sessions : "has sessions"
+    users ||--o| vault : "has vault"
+    users ||--o| trash : "has trash"
+
+    %% Users and Social
+    users ||--o{ follow : "follower"
+    users ||--o{ follow : "following"
+    users ||--o{ block : "blocks"
+    users ||--o{ block : "blocked by"
+
+    %% Users and Memories
+    users ||--o{ memory : "owns"
+    users ||--o{ media_items : "uploads"
+    users ||--o{ memory_members : "collaborates"
+    memory ||--o{ memory_media : "contains"
+    media_items ||--o{ memory_media : "used in"
+    memory ||--o{ memory_members : "has members"
+    memory ||--o| recap : "has recap"
+    media_items ||--o{ media_shares : "shared via"
+    memory ||--o{ groups : "belongs to group"
+
+    %% Memory cover
+    media_items ||--o{ memory : "cover image"
+
+    %% Encryption
+    users ||--o{ encryption_keys : "has keys"
+    users ||--o{ encryption_audit_log : "audit logs"
+
+    %% Groups
+    users ||--o{ groups : "creates"
+    groups ||--o{ group_member : "has members"
+    users ||--o{ group_member : "member of"
+    groups ||--o{ group_announcement : "has announcements"
+    users ||--o{ group_announcement : "announces"
+    groups ||--o{ group_invite : "has invites"
+    users ||--o{ group_invite : "creates invite"
+    groups ||--o{ group_media_shares : "shared media"
+    media_items ||--o{ group_media_shares : "shared in group"
+    users ||--o{ group_media_shares : "shares media"
+    groups ||--o{ group_encryption_keys : "has enc keys"
+    encryption_keys ||--o{ group_encryption_keys : "used by group"
+    users ||--o{ group_encryption_keys : "group key holder"
+
+    %% Events
+    groups ||--o{ event : "has events"
+    event ||--o| event_attendance : "has attendance"
+    event ||--o{ event_user : "has users"
+    groups ||--o{ event_user : "event in group"
+    event ||--o{ group_announcement : "linked to"
+
+    %% Journals
+    users ||--o{ journal : "writes"
+    users ||--o{ journal_streaks : "has streaks"
+    journal ||--o{ journal_theme : "has themes"
+    theme ||--o{ journal_theme : "used by"
+
+    %% Autographs
+    users ||--o{ autograph : "owns"
+    autograph ||--o{ autograph_activity : "has activity"
+    autograph ||--o{ autograph_entry : "has entries"
+
+    %% Legacy Posts - publicprofile system
+    publicprofile ||--o{ post : "posts"
+    post ||--o{ comment : "has comments"
+    post ||--o{ likes : "has likes"
+    post ||--o{ share : "has shares"
+    post ||--o{ repost : "has reposts"
+    post ||--o{ tag : "has tags"
+    post ||--o{ collab : "has collabs"
+
+    %% Feed System
+    users ||--o| feed_profiles : "has feed profile"
+    feed_profiles ||--o{ feed_posts : "creates posts"
+    memory ||--o{ feed_posts : "shared as post"
+    feed_posts ||--o{ feed_post_comments : "has comments"
+    feed_profiles ||--o{ feed_post_comments : "comments"
+    feed_post_comments ||--o{ feed_post_comments : "replies to"
+    feed_posts ||--o{ feed_post_likes : "has likes"
+    feed_profiles ||--o{ feed_post_likes : "likes"
+    feed_post_comments ||--o{ feed_comment_likes : "has likes"
+    feed_profiles ||--o{ feed_comment_likes : "likes comment"
+    feed_profiles ||--o{ feed_follows : "follower"
+    feed_profiles ||--o{ feed_follows : "following"
+    feed_profiles ||--o{ saved_posts : "saves"
+    feed_posts ||--o{ saved_posts : "saved by"
