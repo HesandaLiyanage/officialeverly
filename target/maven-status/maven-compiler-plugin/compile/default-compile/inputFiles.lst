@@ -1,7 +1,9 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Autographs/AddAutographServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Autographs/AutographViewController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Autographs/DeleteAutographServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Autographs/GenerateAutographShareLinkServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Autographs/RestoreAutographServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Autographs/SubmitAutographServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Autographs/UpdateAutographServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Autographs/WriteAutographServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/ChangeVaultPasswordServlet.java
@@ -11,6 +13,8 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Events/DeleteEventServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Events/EventViewController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Events/UpdateEventServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/BlockUserServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/BlockedUsersViewController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/CommentsViewController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/CreatePostServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/EditFeedProfileViewController.java
@@ -21,6 +25,7 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/FollowersViewController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/PostLikeServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/SavePostServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/UnblockUserServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/UpdateFeedProfileServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/FeedProfileSetupServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/GoogleCallback.java
@@ -58,6 +63,7 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Memory/JoinCollabServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Memory/LeaveCollabServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Memory/MemoriesServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Memory/MemoryRecapServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Memory/MemoryViewServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Memory/RemoveCollabMemberServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Memory/UpdateMemoryServlet.java
@@ -67,6 +73,9 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/DeactivateAccountServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/EditProfileViewController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/LinkedDevicesViewController.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/ManageSubscriptionController.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/SettingsSubscriptionController.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/SharedLinksController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/ShareAccessServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/VaultEntryServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/VaultJournalsServlet.java
@@ -78,6 +87,7 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/signupservlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/AutographActivityDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/AutographEntryDAO.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/BlockedUserDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/EventDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/FeedCommentDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/FeedFollowDAO.java
@@ -92,8 +102,10 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/JournalStreakDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/MediaDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/MemoryMemberDAO.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/MemoryRecapDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/RecycleBinDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/SavedPostDAO.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/SubscriptionDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/VaultDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/autographDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/memoryDAO.java
@@ -120,6 +132,7 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/MediaShare.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Memory.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/MemoryMember.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Plan.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/RecycleBinItem.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/UserSession.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/autograph.java

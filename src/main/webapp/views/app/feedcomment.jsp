@@ -96,7 +96,7 @@
                                                             background: white;
                                                             border-radius: 8px;
                                                             overflow: hidden;
-                                                            max-width: 1100px;
+                                                            max-width: 935px;
                                                             width: 100%;
                                                             max-height: 90vh;
                                                         }
@@ -108,11 +108,11 @@
                                                             align-items: center;
                                                             justify-content: center;
                                                             min-width: 0;
-                                                            max-width: 600px;
+                                                            max-width: 595px;
                                                         }
 
                                                         .post-details-section {
-                                                            width: 400px;
+                                                            width: 340px;
                                                             display: flex;
                                                             flex-direction: column;
                                                             border-left: 1px solid #efefef;
@@ -567,7 +567,8 @@
                                                                         </button>
                                                                         <div class="carousel-dots">
                                                                             <% for (int i=0; i < mediaCount; i++) { %>
-                                                                                <div class="carousel-dot<%= i == 0 ? "active" : "" %>"></div>
+                                                                                <div class="carousel-dot<%= i == 0 ? "
+                                                                                    active" : "" %>"></div>
                                                                                 <% } %>
                                                                         </div>
                                                                         <% } %>

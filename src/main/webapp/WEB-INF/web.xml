@@ -148,6 +148,16 @@
         <url-pattern>/collabmemoryviewservlet</url-pattern>
     </servlet-mapping>
 
+    <!-- Memory Recap Servlet -->
+    <servlet>
+        <servlet-name>MemoryRecapServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Memory.MemoryRecapServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MemoryRecapServlet</servlet-name>
+        <url-pattern>/memoryrecapview</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>GenerateShareLinkServlet</servlet-name>
         <servlet-class>com.demo.web.controller.Memory.GenerateShareLinkServlet</servlet-class>

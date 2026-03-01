@@ -23,7 +23,7 @@
                                 href="${pageContext.request.contextPath}/resources/css/follow.css">
                             <style>
                                 .followers-wrapper {
-                                    max-width: 600px;
+                                    max-width: 450px;
                                     margin: 0 auto;
                                     padding: 20px;
                                 }

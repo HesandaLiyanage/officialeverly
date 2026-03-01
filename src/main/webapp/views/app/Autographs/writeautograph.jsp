@@ -323,34 +323,26 @@
                                     return;
                                 }
 
-                                // Clone the page area for cleaning
-                                const pageClone = document.getElementById('autographPage').cloneNode(true);
+                                // Get all decorations
+                                const decorations = [];
+                                document.querySelectorAll('.decoration').forEach(dec => {
+                                    decorations.push({
+                                        content: dec.textContent,
+                                        className: dec.className,
+                                        top: dec.style.top,
+                                        left: dec.style.left
+                                    });
+                                });
 
-                                // Remove internal structure that isn't needed for viewing
-                                const marginLine = pageClone.querySelector('.margin-line');
-                                if (marginLine) marginLine.remove();
-
-                                // Transform writing area to static div
-                                const writingAreaClone = pageClone.querySelector('#writingArea');
-                                writingAreaClone.removeAttribute('contenteditable');
-                                writingAreaClone.removeAttribute('data-placeholder');
-                                writingAreaClone.id = ''; // Remove ID to prevent duplicates in view
-                                writingAreaClone.className = 'message-text';
-
-                                // Transform author input to static div
-                                const authorInputClone = pageClone.querySelector('#authorInput');
-                                const authorWrapperClone = authorInputClone.parentElement;
-                                const authorDiv = document.createElement('div');
-                                authorDiv.className = 'author-signature';
-                                authorDiv.textContent = '- ' + author;
-                                authorWrapperClone.replaceChild(authorDiv, authorInputClone);
-
-                                // Capture the full HTML content
-                                const fullContentHtml = pageClone.innerHTML;
+                                const jsonPayload = {
+                                    htmlContent: message,
+                                    decorations: decorations,
+                                    author: author
+                                };
 
                                 const formData = new URLSearchParams();
                                 formData.append('token', '<%= shareToken %>');
-                                formData.append('content', fullContentHtml);
+                                formData.append('content', JSON.stringify(jsonPayload));
                                 formData.append('author', author);
                                 // We still send plain content for indexing or fallback if needed
                                 formData.append('contentPlain', message);

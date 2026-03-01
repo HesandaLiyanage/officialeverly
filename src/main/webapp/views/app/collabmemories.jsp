@@ -17,7 +17,8 @@
                         <div class="tab-nav">
                             <button data-tab="memories" onclick="window.location.href='/memories'">Memories</button>
                             <button class="active" data-tab="collab">Collab Memories</button>
-                            <button data-tab="recap" onclick="window.location.href='/memoryrecap'">Memory Recap</button>
+                            <button data-tab="recap" onclick="window.location.href='/memoryrecapview'">Memory
+                                Recap</button>
                         </div>
 
                         <!-- Search and Filters -->

@@ -364,13 +364,7 @@
                                                     <main class="main-content">
                                                         <div class="fixed-top-section">
                                                             <div class="tab-nav">
-                                                                <div class="tab-buttons">
-                                                                    <div>
-                                                                        <button class="active"
-                                                                            data-tab="home">Home</button>
-                                                                        <button data-tab="explore">Explore</button>
-                                                                    </div>
-                                                                </div>
+
                                                                 <a href="${pageContext.request.contextPath}/publicprofile"
                                                                     class="profile-link" title="@<%= feedUsername %>">
                                                                     <% if

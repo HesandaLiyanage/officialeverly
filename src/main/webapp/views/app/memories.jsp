@@ -14,7 +14,7 @@
                         <div class="tab-nav">
                             <button class="active">Memories</button>
                             <button onclick="window.location.href='/collabmemories'">Collab Memories</button>
-                            <button onclick="window.location.href='/memoryrecap'">Memory Recap</button>
+                            <button onclick="window.location.href='/memoryrecapview'">Memory Recap</button>
                         </div>
 
                         <!-- Search and Filters -->

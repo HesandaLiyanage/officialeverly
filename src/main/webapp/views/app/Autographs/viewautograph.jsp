@@ -398,7 +398,24 @@
                                         (function () {
                                             var entriesText = document.getElementById('entriesData').textContent;
                                             var rawEntries = JSON.parse(entriesText || '[]');
-                                            pages = rawEntries.map(function (entry) { return entry.content; });
+                                            pages = rawEntries.map(function (entry) {
+                                                try {
+                                                    var data = JSON.parse(entry.content);
+                                                    if (data.htmlContent) {
+                                                        // It's the new structured JSON format
+                                                        var decHtml = (data.decorations || []).map(function (d) {
+                                                            return '<div class="' + d.className + '" style="position: absolute; top: ' + d.top + '; left: ' + d.left + '; pointer-events: none;">' + d.content + '</div>';
+                                                        }).join('');
+
+                                                        return '<div class="message-text" style="position: relative; z-index: 2;">' + data.htmlContent + '</div>' +
+                                                            '<div class="decorations-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">' + decHtml + '</div>' +
+                                                            '<div class="author-signature" style="position: relative; z-index: 2;">- ' + data.author + '</div>';
+                                                    }
+                                                } catch (e) {
+                                                    // Fallback for old simple string/HTML entries
+                                                }
+                                                return entry.content;
+                                            });
                                             render();
                                         })();
 
