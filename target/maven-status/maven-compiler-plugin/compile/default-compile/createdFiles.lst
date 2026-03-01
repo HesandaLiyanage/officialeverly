@@ -62,6 +62,7 @@ com/demo/web/dao/userDAO.class
 com/demo/web/controller/DebugServlet.class
 com/demo/web/controller/Settings/SharedLinksController.class
 com/demo/web/controller/Events/EventViewController.class
+com/demo/web/controller/StorageSenseServlet.class
 com/demo/web/dao/RecycleBinDAO.class
 com/demo/web/dao/autographDAO.class
 com/demo/web/controller/Settings/SettingsSubscriptionController.class
@@ -134,6 +135,7 @@ com/demo/web/dao/MemoryRecapDAO.class
 com/demo/web/controller/Groups/EditGroupServlet.class
 com/demo/web/dao/JournalDAO.class
 com/demo/web/controller/Memory/DeleteMemoryServlet.class
+com/demo/web/controller/Journals/TrashManagementServlet.class
 com/demo/web/controller/Groups/CreateGroupServlet.class
 com/demo/web/util/DatabaseUtil.class
 com/demo/web/service/AutographService.class

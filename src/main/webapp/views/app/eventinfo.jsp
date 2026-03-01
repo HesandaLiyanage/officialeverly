@@ -41,8 +41,7 @@
                                                     if (g.getUserId() == userId) { hasAccess = true; break; }
                                                     }
                                                     if (!hasAccess) {
-                                                    session.setAttribute("errorMessage", "You don't have permission to
-                                                    view this event");
+                                                    session.setAttribute("errorMessage", "You don't have permission to view this event");
                                                     response.sendRedirect(request.getContextPath() + "/events"); return;
                                                     }
                                                     } catch (NumberFormatException e) {
@@ -50,8 +49,7 @@
                                                     response.sendRedirect(request.getContextPath() + "/events"); return;
                                                     } catch (Exception e) {
                                                     e.printStackTrace();
-                                                    session.setAttribute("errorMessage", "An error occurred while
-                                                    loading the event");
+                                                    session.setAttribute("errorMessage", "An error occurred while loading the event");
                                                     response.sendRedirect(request.getContextPath() + "/events"); return;
                                                     }
 
@@ -692,8 +690,7 @@
                                                                                                                     class="ev-poll-options">
                                                                                                                     <button
                                                                                                                         type="button"
-                                                                                                                        class="ev-poll-btn <%= "
-                                                                                                                        going".equals(uv)
+                                                                                                                        class="ev-poll-btn <%= "going".equals(uv)
                                                                                                                         ? "selected going"
                                                                                                                         : ""
                                                                                                                         %>"
@@ -726,8 +723,7 @@
 
                                                                                                                     <button
                                                                                                                         type="button"
-                                                                                                                        class="ev-poll-btn <%= "
-                                                                                                                        not_going".equals(uv)
+                                                                                                                        class="ev-poll-btn <%= "not_going".equals(uv)
                                                                                                                         ? "selected not_going"
                                                                                                                         : ""
                                                                                                                         %>"
@@ -761,8 +757,7 @@
 
                                                                                                                     <button
                                                                                                                         type="button"
-                                                                                                                        class="ev-poll-btn <%= "
-                                                                                                                        maybe".equals(uv)
+                                                                                                                        class="ev-poll-btn <%= "maybe".equals(uv)
                                                                                                                         ? "selected maybe"
                                                                                                                         : ""
                                                                                                                         %>"
@@ -846,8 +841,7 @@
                                                                                                                         :
                                                                                                                         "not_going".equals(vv)
                                                                                                                         ?
-                                                                                                                        "Not
-                                                                                                                        Going"
+                                                                                                                        "Not Going"
                                                                                                                         :
                                                                                                                         "Maybe";
                                                                                                                         %>

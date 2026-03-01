@@ -78,6 +78,7 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/SettingsSubscriptionController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/SharedLinksController.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/ShareAccessServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/StorageSenseServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/VaultEntryServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/VaultJournalsServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/VaultMemoriesServlet.java

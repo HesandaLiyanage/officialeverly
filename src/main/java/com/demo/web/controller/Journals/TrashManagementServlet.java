@@ -1,7 +1,3 @@
-/*
-/ File: src/main/java/com/demo/web/controller/Journals/TrashManagementServlet.java
-
-
 package com.demo.web.controller.Journals;
 
 import com.demo.web.dao.RecycleBinDAO;
@@ -14,8 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
 
-@WebServlet("/trashmgt")
+@WebServlet("/trashmgtview")
 public class TrashManagementServlet extends HttpServlet {
 
     @Override
@@ -28,11 +25,29 @@ public class TrashManagementServlet extends HttpServlet {
             return;
         }
 
-        // ✅ Use RecycleBinDAO (not JournalDAO)
         RecycleBinDAO rbDao = new RecycleBinDAO();
-        List<RecycleBinItem> trashItems = rbDao.findByUserId(userId);
 
-        request.setAttribute("trashItems", trashItems);
+        // Get both journal and autograph trash items
+        List<RecycleBinItem> journalItems = rbDao.findByUserId(userId);
+        List<RecycleBinItem> autographItems = rbDao.findAutographsByUserId(userId);
+
+        // Combine both lists
+        List<RecycleBinItem> allItems = new ArrayList<>();
+        allItems.addAll(journalItems);
+        allItems.addAll(autographItems);
+
+        // Sort by deleted_at DESC
+        allItems.sort((a, b) -> {
+            if (a.getDeletedAt() == null && b.getDeletedAt() == null)
+                return 0;
+            if (a.getDeletedAt() == null)
+                return 1;
+            if (b.getDeletedAt() == null)
+                return -1;
+            return b.getDeletedAt().compareTo(a.getDeletedAt());
+        });
+
+        request.setAttribute("trashItems", allItems);
         request.getRequestDispatcher("/views/app/trashmgt.jsp").forward(request, response);
     }
 
@@ -47,7 +62,7 @@ public class TrashManagementServlet extends HttpServlet {
         }
 
         String action = request.getParameter("action");
-        String recycleBinIdStr = request.getParameter("recycleBinId"); // ← Key change!
+        String recycleBinIdStr = request.getParameter("recycleBinId");
 
         if (recycleBinIdStr == null || recycleBinIdStr.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/trashmgt?error=Invalid item");
@@ -56,22 +71,38 @@ public class TrashManagementServlet extends HttpServlet {
 
         try {
             int recycleBinId = Integer.parseInt(recycleBinIdStr);
+            RecycleBinDAO rbDao = new RecycleBinDAO();
+
+            // Get the item to determine its type
+            RecycleBinItem item = rbDao.findById(recycleBinId);
+            if (item == null || item.getUserId() != userId) {
+                response.sendRedirect(request.getContextPath() + "/trashmgt?error=Item not found");
+                return;
+            }
 
             if ("restore".equals(action)) {
-                // ✅ Restore via JournalDAO (it handles re-insert + cleanup)
-                com.demo.web.dao.JournalDAO journalDAO = new com.demo.web.dao.JournalDAO();
-                boolean success = journalDAO.restoreJournalFromRecycleBin(recycleBinId, userId);
+                boolean success = false;
+                if ("journal".equals(item.getItemType())) {
+                    com.demo.web.dao.JournalDAO journalDAO = new com.demo.web.dao.JournalDAO();
+                    success = journalDAO.restoreJournalFromRecycleBin(recycleBinId, userId);
+                } else if ("autograph".equals(item.getItemType())) {
+                    // For autographs, restore by re-inserting into autograph table and removing
+                    // from recycle bin
+                    com.demo.web.dao.autographDAO autographDAO = new com.demo.web.dao.autographDAO();
+                    success = autographDAO.restoreAutographFromRecycleBin(recycleBinId, userId);
+                }
+
                 if (success) {
-                    response.sendRedirect(request.getContextPath() + "/trashmgt?msg=Journal restored");
+                    response.sendRedirect(request.getContextPath() + "/trashmgt?msg=" +
+                            item.getItemType().substring(0, 1).toUpperCase() + item.getItemType().substring(1)
+                            + " restored successfully");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/trashmgt?error=Failed to restore");
                 }
             } else if ("permanentDelete".equals(action)) {
-                // ✅ Delete directly from recycle_bin
-                RecycleBinDAO rbDao = new RecycleBinDAO();
                 boolean success = rbDao.deleteFromRecycleBin(recycleBinId);
                 if (success) {
-                    response.sendRedirect(request.getContextPath() + "/trashmgt?msg=Journal permanently deleted");
+                    response.sendRedirect(request.getContextPath() + "/trashmgt?msg=Item permanently deleted");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/trashmgt?error=Failed to delete");
                 }
@@ -84,4 +115,3 @@ public class TrashManagementServlet extends HttpServlet {
         }
     }
 }
-*/
