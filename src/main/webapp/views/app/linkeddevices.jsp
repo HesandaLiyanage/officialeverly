@@ -55,8 +55,7 @@
                                                     request.getAttribute("devices");
                                                     String currentSessionId = (String)
                                                     request.getAttribute("currentSessionId");
-                                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd
-                                                    HH:mm");
+                                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-ddHH:mm");
 
                                                     if (devices != null && !devices.isEmpty()) {
                                                     for (UserSession device : devices) {

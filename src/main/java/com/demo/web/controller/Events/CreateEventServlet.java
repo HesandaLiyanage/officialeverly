@@ -15,13 +15,15 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
-        maxFileSize = 1024 * 1024 * 10,       // 10MB
-        maxRequestSize = 1024 * 1024 * 50     // 50MB
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
 )
 public class CreateEventServlet extends HttpServlet {
 
@@ -38,8 +40,8 @@ public class CreateEventServlet extends HttpServlet {
 
     /**
      * POST - Handle event creation (form submission)
+     * Now supports multiple groups via checkboxes (group_ids[])
      */
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -58,36 +60,45 @@ public class CreateEventServlet extends HttpServlet {
         System.out.println("[DEBUG SaveEventServlet] User ID: " + userId);
 
         try {
-            // IMPORTANT: For multipart/form-data, use getPart() instead of getParameter()
+            // Get form fields
             String title = getPartValue(request.getPart("e_title"));
             String description = getPartValue(request.getPart("e_description"));
             String dateStr = getPartValue(request.getPart("e_date"));
-            String groupIdStr = getPartValue(request.getPart("group_id"));
 
-            System.out.println("[DEBUG SaveEventServlet] Form data - Title: " + title +
-                    ", Date: " + dateStr + ", Group ID: " + groupIdStr);
+            System.out.println("[DEBUG SaveEventServlet] Form data - Title: " + title + ", Date: " + dateStr);
 
             // Validation
             if (title == null || title.trim().isEmpty()) {
                 throw new IllegalArgumentException("Event title is required");
             }
-
             if (dateStr == null || dateStr.trim().isEmpty()) {
                 throw new IllegalArgumentException("Event date is required");
             }
 
-            if (groupIdStr == null || groupIdStr.trim().isEmpty()) {
-                throw new IllegalArgumentException("Please select a group");
+            // Collect selected group IDs from checkboxes
+            List<Integer> selectedGroupIds = new ArrayList<>();
+            Collection<Part> parts = request.getParts();
+            for (Part part : parts) {
+                if ("group_ids".equals(part.getName())) {
+                    String val = getPartValue(part);
+                    if (val != null && !val.trim().isEmpty()) {
+                        selectedGroupIds.add(Integer.parseInt(val.trim()));
+                    }
+                }
             }
 
-            int groupId = Integer.parseInt(groupIdStr);
+            if (selectedGroupIds.isEmpty()) {
+                throw new IllegalArgumentException("Please select at least one group");
+            }
 
-            // Verify that the group belongs to this user (security check)
-            Group selectedGroup = groupDAO.findById(groupId);
-            if (selectedGroup == null || selectedGroup.getUserId() != userId) {
-                System.out.println("[DEBUG SaveEventServlet] Security violation: User " + userId +
-                        " attempted to create event for group " + groupId);
-                throw new SecurityException("You can only create events for your own groups");
+            System.out.println("[DEBUG SaveEventServlet] Selected groups: " + selectedGroupIds);
+
+            // Security: verify all groups belong to this user
+            for (int gid : selectedGroupIds) {
+                Group g = groupDAO.findById(gid);
+                if (g == null || g.getUserId() != userId) {
+                    throw new SecurityException("You can only create events for your own groups (group " + gid + ")");
+                }
             }
 
             // Parse the date
@@ -98,36 +109,30 @@ public class CreateEventServlet extends HttpServlet {
             // Handle file upload
             String eventPicUrl = null;
             Part filePart = request.getPart("event_pic");
-
             if (filePart != null && filePart.getSize() > 0) {
                 System.out.println("[DEBUG SaveEventServlet] Processing file upload");
                 String fileName = getSubmittedFileName(filePart);
                 String fileExtension = fileName.substring(fileName.lastIndexOf("."));
                 String uniqueFileName = "event_" + UUID.randomUUID().toString() + fileExtension;
 
-                // Define upload path - using media_uploads (persistent directory)
                 String uploadPath = getServletContext().getRealPath("") + File.separator + "media_uploads";
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
-                    System.out.println("[DEBUG SaveEventServlet] Created upload directory: " + uploadPath);
                 }
 
-                // Save file
                 String filePath = uploadPath + File.separator + uniqueFileName;
                 filePart.write(filePath);
-
-                // Store relative path in database
                 eventPicUrl = "media_uploads/" + uniqueFileName;
                 System.out.println("[DEBUG SaveEventServlet] File saved to: " + eventPicUrl);
             }
 
-            // Create Event object
+            // Create Event object (use first group for backward compat group_id)
             Event newEvent = new Event();
             newEvent.setTitle(title.trim());
             newEvent.setDescription(description != null ? description.trim() : "");
             newEvent.setEventDate(eventDate);
-            newEvent.setGroupId(groupId);
+            newEvent.setGroupId(selectedGroupIds.get(0)); // primary group for backward compat
             newEvent.setEventPicUrl(eventPicUrl);
             newEvent.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
@@ -137,98 +142,69 @@ public class CreateEventServlet extends HttpServlet {
             int eventId = eventDAO.createEvent(newEvent);
 
             if (eventId > 0) {
-                // Auto-create announcement for the group
-                try {
-                    String announcementTitle = "New Event: " + newEvent.getTitle();
-                    String announcementContent = "A new event '" + newEvent.getTitle() + "' has been scheduled for " + dateStr + ".\n\n" +
-                            (newEvent.getDescription() != null && !newEvent.getDescription().isEmpty()
-                                    ? "Details: " + newEvent.getDescription()
-                                    : "");
+                // Save all groups to event_group junction table
+                eventDAO.setEventGroups(eventId, selectedGroupIds);
 
-                    System.out.println("[DEBUG SaveEventServlet] Creating auto-announcement - groupId: " + groupId + ", userId: " + userId + ", title: " + announcementTitle);
-                    GroupAnnouncement announcement = new GroupAnnouncement(groupId, userId, announcementTitle, announcementContent);
-                    announcement.setEventId(eventId);
-                    boolean announcementCreated = announcementDAO.createAnnouncement(announcement);
-                    System.out.println("[DEBUG SaveEventServlet] Auto-announcement created: " + announcementCreated + " for event: " + newEvent.getTitle());
-                } catch (Exception e) {
-                    System.err.println("[DEBUG SaveEventServlet] Failed to create auto-announcement: " + e.getMessage());
-                    e.printStackTrace();
-                    // We don't want to fail the event creation if announcement fails
+                // Auto-create announcement for EACH selected group
+                for (int groupId : selectedGroupIds) {
+                    try {
+                        String announcementTitle = "New Event: " + newEvent.getTitle();
+                        String announcementContent = "A new event '" + newEvent.getTitle() +
+                                "' has been scheduled for " + dateStr + ".\n\n" +
+                                (newEvent.getDescription() != null && !newEvent.getDescription().isEmpty()
+                                        ? "Details: " + newEvent.getDescription()
+                                        : "");
+
+                        GroupAnnouncement announcement = new GroupAnnouncement(groupId, userId, announcementTitle,
+                                announcementContent);
+                        announcement.setEventId(eventId);
+                        boolean announcementCreated = announcementDAO.createAnnouncement(announcement);
+                        System.out.println("[DEBUG SaveEventServlet] Auto-announcement created: " +
+                                announcementCreated + " for group: " + groupId);
+                    } catch (Exception e) {
+                        System.err.println("[DEBUG SaveEventServlet] Failed to create auto-announcement for group "
+                                + groupId + ": " + e.getMessage());
+                    }
                 }
 
-                System.out.println("[DEBUG SaveEventServlet] Event created successfully");
+                System.out.println("[DEBUG SaveEventServlet] Event created successfully with " + selectedGroupIds.size()
+                        + " groups");
                 session.setAttribute("successMessage", "Event created successfully!");
                 response.sendRedirect(request.getContextPath() + "/events");
             } else {
-                System.out.println("[DEBUG SaveEventServlet] Failed to create event");
                 throw new RuntimeException("Failed to create event");
             }
 
         } catch (ParseException e) {
             System.out.println("[DEBUG SaveEventServlet] Date parsing error: " + e.getMessage());
-            e.printStackTrace();
             session.setAttribute("errorMessage", "Invalid date format");
-            session.setAttribute("formData_e_title", getPartValue(request.getPart("e_title")));
-            session.setAttribute("formData_e_description", getPartValue(request.getPart("e_description")));
-            session.setAttribute("formData_e_date", getPartValue(request.getPart("e_date")));
-            session.setAttribute("formData_group_id", getPartValue(request.getPart("group_id")));
             response.sendRedirect(request.getContextPath() + "/createevent");
-
         } catch (IllegalArgumentException | SecurityException e) {
             System.out.println("[DEBUG SaveEventServlet] Validation error: " + e.getMessage());
             session.setAttribute("errorMessage", e.getMessage());
-            try {
-                session.setAttribute("formData_e_title", getPartValue(request.getPart("e_title")));
-                session.setAttribute("formData_e_description", getPartValue(request.getPart("e_description")));
-                session.setAttribute("formData_e_date", getPartValue(request.getPart("e_date")));
-                session.setAttribute("formData_group_id", getPartValue(request.getPart("group_id")));
-            } catch (Exception ex) {
-                // Ignore if parts are not available
-            }
             response.sendRedirect(request.getContextPath() + "/createevent");
-
         } catch (Exception e) {
             System.out.println("[DEBUG SaveEventServlet] Error in POST: " + e.getMessage());
             e.printStackTrace();
             session.setAttribute("errorMessage", "An error occurred while creating the event: " + e.getMessage());
-            try {
-                session.setAttribute("formData_e_title", getPartValue(request.getPart("e_title")));
-                session.setAttribute("formData_e_description", getPartValue(request.getPart("e_description")));
-                session.setAttribute("formData_e_date", getPartValue(request.getPart("e_date")));
-                session.setAttribute("formData_group_id", getPartValue(request.getPart("group_id")));
-            } catch (Exception ex) {
-                // Ignore if parts are not available
-            }
             response.sendRedirect(request.getContextPath() + "/createevent");
         }
     }
 
-    /**
-     * Helper method to extract value from a Part (for text fields in multipart form)
-     */
     private String getPartValue(Part part) throws IOException {
-        if (part == null) {
+        if (part == null)
             return null;
-        }
-
         java.io.BufferedReader reader = new java.io.BufferedReader(
-                new java.io.InputStreamReader(part.getInputStream(), "UTF-8")
-        );
-
+                new java.io.InputStreamReader(part.getInputStream(), "UTF-8"));
         StringBuilder value = new StringBuilder();
         char[] buffer = new char[1024];
         int length;
         while ((length = reader.read(buffer)) > 0) {
             value.append(buffer, 0, length);
         }
-
         return value.toString();
     }
 
-
-    /**
-     * Helper method to extract filename from Part
-     */
     private String getSubmittedFileName(Part part) {
         String contentDisposition = part.getHeader("content-disposition");
         String[] tokens = contentDisposition.split(";");

@@ -12,6 +12,7 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Events/CreateEventServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Events/DeleteEventServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Events/EventViewController.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Events/EventVoteServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Events/UpdateEventServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/BlockUserServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Feed/BlockedUsersViewController.java
@@ -89,6 +90,7 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/AutographEntryDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/BlockedUserDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/EventDAO.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/EventVoteDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/FeedCommentDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/FeedFollowDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/FeedPostDAO.java

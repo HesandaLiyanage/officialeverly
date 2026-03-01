@@ -1,9 +1,11 @@
 package com.demo.web.controller.Events;
 
 import com.demo.web.dao.EventDAO;
+import com.demo.web.dao.GroupAnnouncementDAO;
 import com.demo.web.dao.GroupDAO;
 import com.demo.web.model.Event;
 import com.demo.web.model.Group;
+import com.demo.web.model.GroupAnnouncement;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -13,23 +15,24 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2,
-        maxFileSize = 1024 * 1024 * 10,
-        maxRequestSize = 1024 * 1024 * 50
-)
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
 public class UpdateEventServlet extends HttpServlet {
 
     private EventDAO eventDAO;
     private GroupDAO groupDAO;
+    private GroupAnnouncementDAO announcementDAO;
 
     @Override
     public void init() throws ServletException {
         this.eventDAO = new EventDAO();
         this.groupDAO = new GroupDAO();
+        this.announcementDAO = new GroupAnnouncementDAO();
     }
 
     @Override
@@ -40,44 +43,48 @@ public class UpdateEventServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
-            System.out.println("[DEBUG UpdateEventServlet] No session, redirecting to login");
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
         Integer userId = (Integer) session.getAttribute("user_id");
-        System.out.println("[DEBUG UpdateEventServlet] User ID: " + userId);
+        String eventIdRedirect = null;
 
         try {
-            // Get form parameters (use getPart for multipart data)
             String eventIdStr = getPartValue(request.getPart("event_id"));
             String title = getPartValue(request.getPart("e_title"));
             String description = getPartValue(request.getPart("e_description"));
             String dateStr = getPartValue(request.getPart("e_date"));
-            String groupIdStr = getPartValue(request.getPart("group_id"));
-
-            System.out.println("[DEBUG UpdateEventServlet] Form data - Event ID: " + eventIdStr +
-                    ", Title: " + title + ", Date: " + dateStr + ", Group ID: " + groupIdStr);
 
             // Validation
             if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
                 throw new IllegalArgumentException("Event ID is required");
             }
-
             if (title == null || title.trim().isEmpty()) {
                 throw new IllegalArgumentException("Event title is required");
             }
-
             if (dateStr == null || dateStr.trim().isEmpty()) {
                 throw new IllegalArgumentException("Event date is required");
             }
 
-            if (groupIdStr == null || groupIdStr.trim().isEmpty()) {
-                throw new IllegalArgumentException("Please select a group");
+            int eventId = Integer.parseInt(eventIdStr);
+            eventIdRedirect = eventIdStr;
+
+            // Collect selected group IDs from checkboxes
+            List<Integer> selectedGroupIds = new ArrayList<>();
+            Collection<Part> parts = request.getParts();
+            for (Part part : parts) {
+                if ("group_ids".equals(part.getName())) {
+                    String val = getPartValue(part);
+                    if (val != null && !val.trim().isEmpty()) {
+                        selectedGroupIds.add(Integer.parseInt(val.trim()));
+                    }
+                }
             }
 
-            int eventId = Integer.parseInt(eventIdStr);
-            int groupId = Integer.parseInt(groupIdStr);
+            if (selectedGroupIds.isEmpty()) {
+                throw new IllegalArgumentException("Please select at least one group");
+            }
 
             // Get existing event
             Event existingEvent = eventDAO.findById(eventId);
@@ -85,12 +92,12 @@ public class UpdateEventServlet extends HttpServlet {
                 throw new IllegalArgumentException("Event not found");
             }
 
-            // Verify that the group belongs to this user (security check)
-            Group selectedGroup = groupDAO.findById(groupId);
-            if (selectedGroup == null || selectedGroup.getUserId() != userId) {
-                System.out.println("[DEBUG UpdateEventServlet] Security violation: User " + userId +
-                        " attempted to update event " + eventId + " to group " + groupId);
-                throw new SecurityException("You can only update events for your own groups");
+            // Security: verify all selected groups belong to this user
+            for (int gid : selectedGroupIds) {
+                Group g = groupDAO.findById(gid);
+                if (g == null || g.getUserId() != userId) {
+                    throw new SecurityException("You can only assign events to your own groups");
+                }
             }
 
             // Parse the date
@@ -98,14 +105,11 @@ public class UpdateEventServlet extends HttpServlet {
             Date parsedDate = dateFormat.parse(dateStr);
             Timestamp eventDate = new Timestamp(parsedDate.getTime());
 
-            // Handle file upload (optional - only if new file is uploaded)
-            String eventPicUrl = existingEvent.getEventPicUrl(); // Keep existing image by default
+            // Handle file upload (optional)
+            String eventPicUrl = existingEvent.getEventPicUrl();
             Part filePart = request.getPart("event_pic");
-
             if (filePart != null && filePart.getSize() > 0) {
-                System.out.println("[DEBUG UpdateEventServlet] Processing new file upload");
-
-                // Delete old image if exists
+                // Delete old image
                 if (existingEvent.getEventPicUrl() != null && !existingEvent.getEventPicUrl().isEmpty()) {
                     deleteEventImage(existingEvent.getEventPicUrl());
                 }
@@ -113,88 +117,89 @@ public class UpdateEventServlet extends HttpServlet {
                 String fileName = getSubmittedFileName(filePart);
                 String fileExtension = fileName.substring(fileName.lastIndexOf("."));
                 String uniqueFileName = "event_" + UUID.randomUUID().toString() + fileExtension;
-
-                // Define upload path - using media_uploads (persistent directory)
                 String uploadPath = getServletContext().getRealPath("") + File.separator + "media_uploads";
                 File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) {
+                if (!uploadDir.exists())
                     uploadDir.mkdirs();
-                }
 
-                // Save file
                 String filePath = uploadPath + File.separator + uniqueFileName;
                 filePart.write(filePath);
-
-                // Store relative path
                 eventPicUrl = "media_uploads/" + uniqueFileName;
-                System.out.println("[DEBUG UpdateEventServlet] New file saved to: " + eventPicUrl);
+            }
+
+            // Detect which groups are NEW (added in this update)
+            List<Integer> oldGroupIds = eventDAO.getGroupIdsForEvent(eventId);
+            List<Integer> newlyAddedGroups = new ArrayList<>();
+            for (int gid : selectedGroupIds) {
+                if (!oldGroupIds.contains(gid)) {
+                    newlyAddedGroups.add(gid);
+                }
             }
 
             // Update Event object
             existingEvent.setTitle(title.trim());
             existingEvent.setDescription(description != null ? description.trim() : "");
             existingEvent.setEventDate(eventDate);
-            existingEvent.setGroupId(groupId);
+            existingEvent.setGroupId(selectedGroupIds.get(0)); // backward compat
             existingEvent.setEventPicUrl(eventPicUrl);
 
-            System.out.println("[DEBUG UpdateEventServlet] Updating event: " + existingEvent);
-
-            // Update in database
             boolean success = eventDAO.updateEvent(existingEvent);
 
             if (success) {
-                System.out.println("[DEBUG UpdateEventServlet] Event updated successfully");
+                // Sync groups in junction table
+                eventDAO.setEventGroups(eventId, selectedGroupIds);
+
+                // Create announcements for NEWLY added groups only
+                for (int groupId : newlyAddedGroups) {
+                    try {
+                        String announcementTitle = "New Event: " + existingEvent.getTitle();
+                        String announcementContent = "A new event '" + existingEvent.getTitle() +
+                                "' has been scheduled for " + dateStr + ".";
+
+                        GroupAnnouncement announcement = new GroupAnnouncement(groupId, userId, announcementTitle,
+                                announcementContent);
+                        announcement.setEventId(eventId);
+                        announcementDAO.createAnnouncement(announcement);
+                        System.out.println("[DEBUG UpdateEventServlet] Created announcement for new group: " + groupId);
+                    } catch (Exception e) {
+                        System.err.println(
+                                "[DEBUG UpdateEventServlet] Failed to create announcement for group " + groupId);
+                    }
+                }
+
                 session.setAttribute("successMessage", "Event updated successfully!");
                 response.sendRedirect(request.getContextPath() + "/events");
             } else {
-                System.out.println("[DEBUG UpdateEventServlet] Failed to update event");
                 throw new RuntimeException("Failed to update event");
             }
 
         } catch (ParseException e) {
-            System.out.println("[DEBUG UpdateEventServlet] Date parsing error: " + e.getMessage());
-            e.printStackTrace();
             session.setAttribute("errorMessage", "Invalid date format");
-            response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + request.getParameter("event_id"));
-
+            response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + eventIdRedirect);
         } catch (IllegalArgumentException | SecurityException e) {
-            System.out.println("[DEBUG UpdateEventServlet] Validation error: " + e.getMessage());
             session.setAttribute("errorMessage", e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + request.getParameter("event_id"));
-
+            response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + eventIdRedirect);
         } catch (Exception e) {
-            System.out.println("[DEBUG UpdateEventServlet] Error in POST: " + e.getMessage());
             e.printStackTrace();
             session.setAttribute("errorMessage", "An error occurred while updating the event: " + e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + request.getParameter("event_id"));
+            response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + eventIdRedirect);
         }
     }
 
-    /**
-     * Helper method to extract value from a Part (for text fields in multipart form)
-     */
     private String getPartValue(Part part) throws IOException {
-        if (part == null) {
+        if (part == null)
             return null;
-        }
-
         java.io.BufferedReader reader = new java.io.BufferedReader(
-                new java.io.InputStreamReader(part.getInputStream(), "UTF-8")
-        );
-
+                new java.io.InputStreamReader(part.getInputStream(), "UTF-8"));
         StringBuilder value = new StringBuilder();
         char[] buffer = new char[1024];
         int length;
         while ((length = reader.read(buffer)) > 0) {
             value.append(buffer, 0, length);
         }
-
         return value.toString();
     }
 
-    /**
-     * Helper method to extract filename from Part
-     */
     private String getSubmittedFileName(Part part) {
         String contentDisposition = part.getHeader("content-disposition");
         String[] tokens = contentDisposition.split(";");
@@ -206,24 +211,15 @@ public class UpdateEventServlet extends HttpServlet {
         return "";
     }
 
-    /**
-     * Helper method to delete event image from file system
-     */
     private void deleteEventImage(String imageUrl) {
         try {
             String realPath = getServletContext().getRealPath("") + File.separator + imageUrl;
             File imageFile = new File(realPath);
-
             if (imageFile.exists()) {
-                boolean fileDeleted = imageFile.delete();
-                if (fileDeleted) {
-                    System.out.println("[DEBUG UpdateEventServlet] Old image deleted: " + realPath);
-                } else {
-                    System.out.println("[DEBUG UpdateEventServlet] Failed to delete old image: " + realPath);
-                }
+                imageFile.delete();
             }
         } catch (Exception e) {
-            System.out.println("[DEBUG UpdateEventServlet] Error deleting old image: " + e.getMessage());
+            System.err.println("[DEBUG UpdateEventServlet] Error deleting old image: " + e.getMessage());
         }
     }
 }

@@ -158,6 +158,16 @@
         <url-pattern>/memoryrecapview</url-pattern>
     </servlet-mapping>
 
+    <!-- Event Vote Servlet (AJAX) -->
+    <servlet>
+        <servlet-name>EventVoteServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Events.EventVoteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EventVoteServlet</servlet-name>
+        <url-pattern>/eventVote</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>GenerateShareLinkServlet</servlet-name>
         <servlet-class>com.demo.web.controller.Memory.GenerateShareLinkServlet</servlet-class>

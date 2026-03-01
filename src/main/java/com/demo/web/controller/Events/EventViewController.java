@@ -1,5 +1,6 @@
 package com.demo.web.controller.Events;
 
+import com.demo.web.dao.EventDAO;
 import com.demo.web.model.Event;
 import com.demo.web.model.Group;
 import com.demo.web.service.AuthService;
@@ -154,9 +155,14 @@ public class EventViewController extends HttpServlet {
             // Get all user's groups for the dropdown
             List<Group> userGroups = eventService.getUserGroups(userId);
 
+            // Get the current group IDs for this event (multi-group support)
+            EventDAO eventDAO = new EventDAO();
+            List<Integer> eventGroupIds = eventDAO.getGroupIdsForEvent(eventId);
+
             // Set attributes for JSP
             request.setAttribute("event", event);
             request.setAttribute("userGroups", userGroups);
+            request.setAttribute("eventGroupIds", eventGroupIds);
 
             request.getRequestDispatcher("/views/app/editevent.jsp").forward(request, response);
 

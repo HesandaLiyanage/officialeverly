@@ -15,16 +15,18 @@ public class EventDAO {
 
     /**
      * Create a new event
+     * 
      * @return the generated event_id, or -1 on failure
      */
     public int createEvent(Event event) {
         String sql = "INSERT INTO event (e_title, e_description, e_date, created_at, group_id, event_pic) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, event.getTitle());
             stmt.setString(2, event.getDescription());
             stmt.setTimestamp(3, event.getEventDate());
-            stmt.setTimestamp(4, event.getCreatedAt() != null ? event.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
+            stmt.setTimestamp(4,
+                    event.getCreatedAt() != null ? event.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
             stmt.setInt(5, event.getGroupId());
             stmt.setString(6, event.getEventPicUrl());
             int rowsInserted = stmt.executeUpdate();
@@ -51,7 +53,7 @@ public class EventDAO {
     public Event findById(int eventId) {
         String sql = "SELECT event_id, e_title, e_description, e_date, created_at, group_id, event_pic FROM event WHERE event_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, eventId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -76,15 +78,17 @@ public class EventDAO {
         String sql = "SELECT event_id, e_title, e_description, e_date, created_at, group_id, event_pic FROM event WHERE group_id = ? ORDER BY e_date DESC";
         List<Event> events = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 events.add(mapResultSetToEvent(rs));
             }
-            System.out.println("[DEBUG EventDAO] findByGroupId(" + groupId + ") returned " + events.size() + " records.");
+            System.out
+                    .println("[DEBUG EventDAO] findByGroupId(" + groupId + ") returned " + events.size() + " records.");
         } catch (SQLException e) {
-            System.out.println("[DEBUG EventDAO] Error while fetching events by group ID " + groupId + ": " + e.getMessage());
+            System.out.println(
+                    "[DEBUG EventDAO] Error while fetching events by group ID " + groupId + ": " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error while fetching events by group ID", e);
         }
@@ -103,7 +107,7 @@ public class EventDAO {
                 "ORDER BY e.e_date DESC";
         List<Event> events = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -111,7 +115,8 @@ public class EventDAO {
             }
             System.out.println("[DEBUG EventDAO] findByUserId(" + userId + ") returned " + events.size() + " records.");
         } catch (SQLException e) {
-            System.out.println("[DEBUG EventDAO] Error while fetching events by user ID " + userId + ": " + e.getMessage());
+            System.out.println(
+                    "[DEBUG EventDAO] Error while fetching events by user ID " + userId + ": " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error while fetching events by user ID", e);
         }
@@ -129,15 +134,17 @@ public class EventDAO {
                 "ORDER BY e.e_date ASC";
         List<Event> events = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 events.add(mapResultSetToEvent(rs));
             }
-            System.out.println("[DEBUG EventDAO] findUpcomingEventsByUserId(" + userId + ") returned " + events.size() + " records.");
+            System.out.println("[DEBUG EventDAO] findUpcomingEventsByUserId(" + userId + ") returned " + events.size()
+                    + " records.");
         } catch (SQLException e) {
-            System.out.println("[DEBUG EventDAO] Error while fetching upcoming events by user ID " + userId + ": " + e.getMessage());
+            System.out.println("[DEBUG EventDAO] Error while fetching upcoming events by user ID " + userId + ": "
+                    + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error while fetching upcoming events by user ID", e);
         }
@@ -155,15 +162,17 @@ public class EventDAO {
                 "ORDER BY e.e_date DESC";
         List<Event> events = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 events.add(mapResultSetToEvent(rs));
             }
-            System.out.println("[DEBUG EventDAO] findPastEventsByUserId(" + userId + ") returned " + events.size() + " records.");
+            System.out.println(
+                    "[DEBUG EventDAO] findPastEventsByUserId(" + userId + ") returned " + events.size() + " records.");
         } catch (SQLException e) {
-            System.out.println("[DEBUG EventDAO] Error while fetching past events by user ID " + userId + ": " + e.getMessage());
+            System.out.println(
+                    "[DEBUG EventDAO] Error while fetching past events by user ID " + userId + ": " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error while fetching past events by user ID", e);
         }
@@ -176,17 +185,19 @@ public class EventDAO {
     public boolean isUserGroupAdmin(int userId) {
         String sql = "SELECT COUNT(*) as group_count FROM \"group\" WHERE user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 int count = rs.getInt("group_count");
                 boolean isAdmin = count > 0;
-                System.out.println("[DEBUG EventDAO] isUserGroupAdmin(" + userId + ") returned: " + isAdmin + " (has " + count + " groups)");
+                System.out.println("[DEBUG EventDAO] isUserGroupAdmin(" + userId + ") returned: " + isAdmin + " (has "
+                        + count + " groups)");
                 return isAdmin;
             }
         } catch (SQLException e) {
-            System.out.println("[DEBUG EventDAO] Error while checking if user is group admin " + userId + ": " + e.getMessage());
+            System.out.println(
+                    "[DEBUG EventDAO] Error while checking if user is group admin " + userId + ": " + e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -198,18 +209,22 @@ public class EventDAO {
     public boolean updateEvent(Event event) {
         String sql = "UPDATE event SET e_title = ?, e_description = ?, e_date = ?, event_pic = ? WHERE event_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, event.getTitle());
             stmt.setString(2, event.getDescription());
             stmt.setTimestamp(3, event.getEventDate());
             stmt.setString(4, event.getEventPicUrl());
             stmt.setInt(5, event.getEventId());
-            System.out.println("[DEBUG EventDAO] updateEvent preparing statement with values - Title: '" + event.getTitle() + "', Description: '" + event.getDescription() + "', Date: " + event.getEventDate() + ", Pic URL: '" + event.getEventPicUrl() + "', ID: " + event.getEventId());
+            System.out.println("[DEBUG EventDAO] updateEvent preparing statement with values - Title: '"
+                    + event.getTitle() + "', Description: '" + event.getDescription() + "', Date: "
+                    + event.getEventDate() + ", Pic URL: '" + event.getEventPicUrl() + "', ID: " + event.getEventId());
             int rowsUpdated = stmt.executeUpdate();
-            System.out.println("[DEBUG EventDAO] updateEvent executed. Rows affected: " + rowsUpdated + " for ID: " + event.getEventId());
+            System.out.println("[DEBUG EventDAO] updateEvent executed. Rows affected: " + rowsUpdated + " for ID: "
+                    + event.getEventId());
             return rowsUpdated > 0;
         } catch (SQLException e) {
-            System.out.println("[DEBUG EventDAO] Error while updating event ID " + event.getEventId() + ": " + e.getMessage());
+            System.out.println(
+                    "[DEBUG EventDAO] Error while updating event ID " + event.getEventId() + ": " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error while updating event", e);
         }
@@ -221,7 +236,7 @@ public class EventDAO {
     public boolean deleteEvent(int eventId) {
         String sql = "DELETE FROM event WHERE event_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, eventId);
             int rowsDeleted = stmt.executeUpdate();
             System.out.println("[DEBUG EventDAO] deleteEvent affected " + rowsDeleted + " rows for ID: " + eventId);
@@ -246,5 +261,106 @@ public class EventDAO {
         event.setGroupId(rs.getInt("group_id"));
         event.setEventPicUrl(rs.getString("event_pic"));
         return event;
+    }
+
+    // =============================================
+    // Multi-Group Event Support (event_group table)
+    // =============================================
+
+    /**
+     * Add a group to an event (event_group junction).
+     */
+    public boolean addEventGroup(int eventId, int groupId) {
+        String sql = "INSERT INTO event_group (event_id, group_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, eventId);
+            stmt.setInt(2, groupId);
+            int rows = stmt.executeUpdate();
+            System.out.println(
+                    "[EventDAO] addEventGroup: eventId=" + eventId + ", groupId=" + groupId + ", rows=" + rows);
+            return rows > 0;
+        } catch (SQLException e) {
+            System.err.println("[EventDAO] Error in addEventGroup: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Remove a group from an event.
+     */
+    public boolean removeEventGroup(int eventId, int groupId) {
+        String sql = "DELETE FROM event_group WHERE event_id = ? AND group_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, eventId);
+            stmt.setInt(2, groupId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("[EventDAO] Error in removeEventGroup: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Get all group IDs for an event from event_group junction table.
+     */
+    public List<Integer> getGroupIdsForEvent(int eventId) {
+        List<Integer> groupIds = new ArrayList<>();
+        String sql = "SELECT group_id FROM event_group WHERE event_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, eventId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                groupIds.add(rs.getInt("group_id"));
+            }
+        } catch (SQLException e) {
+            System.err.println("[EventDAO] Error in getGroupIdsForEvent: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return groupIds;
+    }
+
+    /**
+     * Sync groups for an event: remove old ones, add new ones.
+     * Also keeps event.group_id in sync with the first group for backward
+     * compatibility.
+     */
+    public void setEventGroups(int eventId, List<Integer> groupIds) {
+        // First, remove all existing group mappings
+        String deleteSql = "DELETE FROM event_group WHERE event_id = ?";
+        String insertSql = "INSERT INTO event_group (event_id, group_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            // Delete existing
+            try (PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
+                stmt.setInt(1, eventId);
+                stmt.executeUpdate();
+            }
+            // Insert new ones
+            try (PreparedStatement stmt = conn.prepareStatement(insertSql)) {
+                for (int groupId : groupIds) {
+                    stmt.setInt(1, eventId);
+                    stmt.setInt(2, groupId);
+                    stmt.addBatch();
+                }
+                stmt.executeBatch();
+            }
+            // Keep event.group_id in sync (use first group)
+            if (!groupIds.isEmpty()) {
+                try (PreparedStatement stmt = conn
+                        .prepareStatement("UPDATE event SET group_id = ? WHERE event_id = ?")) {
+                    stmt.setInt(1, groupIds.get(0));
+                    stmt.setInt(2, eventId);
+                    stmt.executeUpdate();
+                }
+            }
+            System.out.println("[EventDAO] setEventGroups: eventId=" + eventId + ", groups=" + groupIds);
+        } catch (SQLException e) {
+            System.err.println("[EventDAO] Error in setEventGroups: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

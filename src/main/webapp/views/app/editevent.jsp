@@ -1,273 +1,299 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List" %>
-<%@ page import="com.demo.web.model.Group" %>
-<%@ page import="com.demo.web.model.Event" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Event</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/editevent.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
+    <%@ page import="java.util.List" %>
+        <%@ page import="com.demo.web.model.Group" %>
+            <%@ page import="com.demo.web.model.Event" %>
+                <%@ page import="java.text.SimpleDateFormat" %>
+                    <!DOCTYPE html>
+                    <html lang="en">
 
-<jsp:include page="../public/header2.jsp" />
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Edit Event</title>
+                        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/editevent.css">
+                        <link
+                            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+                            rel="stylesheet">
+                    </head>
 
-<%
-    Event event = (Event) request.getAttribute("event");
-    List<Group> userGroups = (List<Group>) request.getAttribute("userGroups");
-    String errorMessage = (String) request.getAttribute("error");
+                    <body>
 
-    // Check for error message in session
-    if (errorMessage == null) {
-        errorMessage = (String) session.getAttribute("errorMessage");
-        if (errorMessage != null) {
-            session.removeAttribute("errorMessage");
-        }
-    }
+                        <jsp:include page="../public/header2.jsp" />
 
-    if (event == null) {
-        response.sendRedirect(request.getContextPath() + "/events");
-        return;
-    }
+                        <% Event event=(Event) request.getAttribute("event"); List<Group> userGroups = (List<Group>)
+                                request.getAttribute("userGroups");
+                                List<Integer> eventGroupIds = (List<Integer>) request.getAttribute("eventGroupIds");
+                                        String errorMessage = (String) request.getAttribute("error");
 
-    // Format date for input field (yyyy-MM-dd)
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    String formattedDate = dateFormat.format(event.getEventDate());
+                                        if (errorMessage == null) {
+                                        errorMessage = (String) session.getAttribute("errorMessage");
+                                        if (errorMessage != null) {
+                                        session.removeAttribute("errorMessage");
+                                        }
+                                        }
 
-    // Get existing image URL
-    String existingImageUrl = event.getEventPicUrl();
-    String displayImageUrl = null;
-    if (existingImageUrl != null && !existingImageUrl.isEmpty()) {
-        displayImageUrl = request.getContextPath() + "/" + existingImageUrl;
-    }
-%>
+                                        if (event == null) {
+                                        response.sendRedirect(request.getContextPath() + "/events");
+                                        return;
+                                        }
 
-<div class="page-wrapper">
-    <div class="create-event-container">
-        <h1 class="page-title">Edit Event</h1>
-        <p class="page-subtitle">Update your event details and information.</p>
+                                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                        String formattedDate = dateFormat.format(event.getEventDate());
 
-        <%-- Display Error Message --%>
-        <% if (errorMessage != null) { %>
-        <div class="alert alert-error" style="background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #c00;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <%= errorMessage %>
-        </div>
-        <% } %>
+                                        String existingImageUrl = event.getEventPicUrl();
+                                        String displayImageUrl = null;
+                                        if (existingImageUrl != null && !existingImageUrl.isEmpty()) {
+                                        displayImageUrl = request.getContextPath() + "/" + existingImageUrl;
+                                        }
+                                        %>
 
-        <form class="event-form" id="eventForm" action="${pageContext.request.contextPath}/updateEvent" method="post" enctype="multipart/form-data">
+                                        <div class="page-wrapper">
+                                            <div class="create-event-container">
+                                                <h1 class="page-title">Edit Event</h1>
+                                                <p class="page-subtitle">Update your event details and information.</p>
 
-            <!-- Hidden Event ID -->
-            <input type="hidden" name="event_id" value="<%= event.getEventId() %>" />
+                                                <% if (errorMessage !=null) { %>
+                                                    <div class="alert alert-error"
+                                                        style="background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #c00;">
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            style="vertical-align: middle; margin-right: 8px;">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                                                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                                        </svg>
+                                                        <%= errorMessage %>
+                                                    </div>
+                                                    <% } %>
 
-            <!-- Event Title Input -->
-            <div class="form-group">
-                <label class="form-label">Event Title <span style="color: #ef4444;">*</span></label>
-                <input
-                        type="text"
-                        class="form-input"
-                        name="e_title"
-                        id="e_title"
-                        placeholder="e.g., Birthday Party, Family Reunion"
-                        value="<%= event.getTitle() %>"
-                        required
-                />
-            </div>
+                                                        <form class="event-form" id="eventForm"
+                                                            action="${pageContext.request.contextPath}/updateEvent"
+                                                            method="post" enctype="multipart/form-data">
 
-            <!-- Event Description -->
-            <div class="form-group">
-                <label class="form-label">Description</label>
-                <textarea
-                        class="form-input form-textarea"
-                        name="e_description"
-                        id="e_description"
-                        placeholder="Describe the event and what makes it special"
-                        rows="4"
-                ><%= event.getDescription() != null ? event.getDescription() : "" %></textarea>
-            </div>
+                                                            <input type="hidden" name="event_id"
+                                                                value="<%= event.getEventId() %>" />
 
-            <!-- Event Date -->
-            <div class="form-group">
-                <label class="form-label">Event Date <span style="color: #ef4444;">*</span></label>
-                <input
-                        type="date"
-                        class="form-input"
-                        name="e_date"
-                        id="e_date"
-                        value="<%= formattedDate %>"
-                        required
-                />
-            </div>
+                                                            <!-- Event Title -->
+                                                            <div class="form-group">
+                                                                <label class="form-label">Event Title <span
+                                                                        style="color: #ef4444;">*</span></label>
+                                                                <input type="text" class="form-input" name="e_title"
+                                                                    id="e_title"
+                                                                    placeholder="e.g., Birthday Party, Family Reunion"
+                                                                    value="<%= event.getTitle() %>" required />
+                                                            </div>
 
-            <!-- Select Group -->
-            <div class="form-group">
-                <label class="form-label">Select Group <span style="color: #ef4444;">*</span></label>
-                <select
-                        class="form-input form-select"
-                        name="group_id"
-                        id="group_id"
-                        required
-                >
-                    <option value="" disabled>Choose a group</option>
-                    <%
-                        if (userGroups != null && !userGroups.isEmpty()) {
-                            for (Group group : userGroups) {
-                                boolean isSelected = group.getGroupId() == event.getGroupId();
-                    %>
-                    <option value="<%= group.getGroupId() %>" <%= isSelected ? "selected" : "" %>>
-                        <%= group.getName() %>
-                    </option>
-                    <%
-                        }
-                    } else {
-                    %>
-                    <option value="" disabled>No groups available</option>
-                    <% } %>
-                </select>
-            </div>
+                                                            <!-- Event Description -->
+                                                            <div class="form-group">
+                                                                <label class="form-label">Description</label>
+                                                                <textarea class="form-input form-textarea"
+                                                                    name="e_description" id="e_description"
+                                                                    placeholder="Describe the event"
+                                                                    rows="4"><%= event.getDescription() != null ? event.getDescription() : "" %></textarea>
+                                                            </div>
 
-            <!-- Event Picture Upload Area -->
-            <div class="form-group">
-                <label class="form-label">Event Picture</label>
-                <div class="upload-area" id="uploadArea" <%= displayImageUrl != null ? "class='has-files'" : "" %>>
-                    <div class="upload-content" <%= displayImageUrl != null ? "style='display: none;'" : "" %>>
-                        <div class="upload-icon">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                        </div>
-                        <h3 class="upload-title">Change Event Picture</h3>
-                        <p class="upload-description">Drag and drop or click to upload</p>
-                        <p class="upload-hint">PNG, JPG, GIF up to 10MB</p>
-                        <button type="button" class="browse-btn" id="browseBtn">Browse Files</button>
-                        <input
-                                type="file"
-                                class="file-input"
-                                id="fileInput"
-                                name="event_pic"
-                                accept="image/png, image/jpeg, image/gif"
-                                hidden
-                        />
-                    </div>
-                    <div class="preview-container" id="previewContainer">
-                        <% if (displayImageUrl != null) { %>
-                        <div class="file-preview">
-                            <img src="<%= displayImageUrl %>" alt="Current Event Picture">
-                            <button type="button" class="remove-file" onclick="removeFile()">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                            </button>
-                        </div>
-                        <% } %>
-                    </div>
-                </div>
-                <p style="font-size: 0.875rem; color: #6b7280; margin-top: 8px;">
-                    Leave empty to keep the current picture
-                </p>
-            </div>
+                                                            <!-- Event Date -->
+                                                            <div class="form-group">
+                                                                <label class="form-label">Event Date <span
+                                                                        style="color: #ef4444;">*</span></label>
+                                                                <input type="date" class="form-input" name="e_date"
+                                                                    id="e_date" value="<%= formattedDate %>" required />
+                                                            </div>
 
-            <!-- Submit Buttons -->
-            <div class="form-actions">
-                <button type="button" class="cancel-btn" onclick="window.location.href='${pageContext.request.contextPath}/events'">
-                    Cancel
-                </button>
-                <button type="submit" class="submit-btn" id="submitBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    Save Changes
-                </button>
-            </div>
+                                                            <!-- Select Groups (checkboxes for multi-group) -->
+                                                            <div class="form-group">
+                                                                <label class="form-label">Assign to Groups <span
+                                                                        style="color: #ef4444;">*</span></label>
+                                                                <p
+                                                                    style="font-size: 0.85rem; color: #6b7280; margin-bottom: 12px;">
+                                                                    Select one or more groups. You can add or remove
+                                                                    groups.</p>
+                                                                <div class="group-checkbox-list" id="groupCheckboxList">
+                                                                    <% if (userGroups !=null && !userGroups.isEmpty()) {
+                                                                        for (Group group : userGroups) { boolean
+                                                                        isChecked=eventGroupIds !=null &&
+                                                                        eventGroupIds.contains(group.getGroupId()); %>
+                                                                        <label class="group-checkbox-item">
+                                                                            <input type="checkbox" name="group_ids"
+                                                                                value="<%= group.getGroupId() %>"
+                                                                                class="group-checkbox" <%=isChecked
+                                                                                ? "checked" : "" %> />
+                                                                            <span class="group-checkbox-label">
+                                                                                <span class="group-checkbox-name">
+                                                                                    <%= group.getName() %>
+                                                                                </span>
+                                                                            </span>
+                                                                            <span class="group-checkbox-check">
+                                                                                <svg width="16" height="16"
+                                                                                    viewBox="0 0 24 24" fill="none"
+                                                                                    stroke="currentColor"
+                                                                                    stroke-width="3"
+                                                                                    stroke-linecap="round"
+                                                                                    stroke-linejoin="round">
+                                                                                    <polyline points="20 6 9 17 4 12">
+                                                                                    </polyline>
+                                                                                </svg>
+                                                                            </span>
+                                                                        </label>
+                                                                        <% } } else { %>
+                                                                            <p
+                                                                                style="padding: 20px; text-align: center; color: #9ca3af;">
+                                                                                No groups available</p>
+                                                                            <% } %>
+                                                                </div>
+                                                            </div>
 
-        </form>
-    </div>
-</div>
+                                                            <!-- Event Picture Upload Area -->
+                                                            <div class="form-group">
+                                                                <label class="form-label">Event Picture</label>
+                                                                <div class="upload-area" id="uploadArea"
+                                                                    <%=displayImageUrl !=null ? "class='has-files'" : ""
+                                                                    %>>
+                                                                    <div class="upload-content" <%=displayImageUrl
+                                                                        !=null ? "style='display: none;'" : "" %>>
+                                                                        <div class="upload-icon">
+                                                                            <svg width="48" height="48"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                stroke="currentColor" stroke-width="2"
+                                                                                stroke-linecap="round"
+                                                                                stroke-linejoin="round">
+                                                                                <rect x="3" y="3" width="18" height="18"
+                                                                                    rx="2" ry="2"></rect>
+                                                                                <circle cx="8.5" cy="8.5" r="1.5">
+                                                                                </circle>
+                                                                                <polyline points="21 15 16 10 5 21">
+                                                                                </polyline>
+                                                                            </svg>
+                                                                        </div>
+                                                                        <h3 class="upload-title">Change Event Picture
+                                                                        </h3>
+                                                                        <p class="upload-description">Drag and drop or
+                                                                            click to upload</p>
+                                                                        <p class="upload-hint">PNG, JPG, GIF up to 10MB
+                                                                        </p>
+                                                                        <button type="button" class="browse-btn"
+                                                                            id="browseBtn">Browse Files</button>
+                                                                        <input type="file" class="file-input"
+                                                                            id="fileInput" name="event_pic"
+                                                                            accept="image/png, image/jpeg, image/gif"
+                                                                            hidden />
+                                                                    </div>
+                                                                    <div class="preview-container"
+                                                                        id="previewContainer">
+                                                                        <% if (displayImageUrl !=null) { %>
+                                                                            <div class="file-preview">
+                                                                                <img src="<%= displayImageUrl %>"
+                                                                                    alt="Current Event Picture">
+                                                                                <button type="button"
+                                                                                    class="remove-file"
+                                                                                    onclick="removeFile()">
+                                                                                    <svg width="16" height="16"
+                                                                                        viewBox="0 0 24 24" fill="none"
+                                                                                        stroke="currentColor"
+                                                                                        stroke-width="2">
+                                                                                        <line x1="18" y1="6" x2="6"
+                                                                                            y2="18"></line>
+                                                                                        <line x1="6" y1="6" x2="18"
+                                                                                            y2="18"></line>
+                                                                                    </svg>
+                                                                                </button>
+                                                                            </div>
+                                                                            <% } %>
+                                                                    </div>
+                                                                </div>
+                                                                <p
+                                                                    style="font-size: 0.875rem; color: #6b7280; margin-top: 8px;">
+                                                                    Leave empty to keep the current picture
+                                                                </p>
+                                                            </div>
 
-<jsp:include page="../public/footer.jsp" />
+                                                            <!-- Submit Buttons -->
+                                                            <div class="form-actions">
+                                                                <button type="button" class="cancel-btn"
+                                                                    onclick="window.location.href='${pageContext.request.contextPath}/events'">
+                                                                    Cancel
+                                                                </button>
+                                                                <button type="submit" class="submit-btn" id="submitBtn">
+                                                                    <svg width="20" height="20" viewBox="0 0 24 24"
+                                                                        fill="none" stroke="currentColor"
+                                                                        stroke-width="2" stroke-linecap="round"
+                                                                        stroke-linejoin="round">
+                                                                        <polyline points="20 6 9 17 4 12" />
+                                                                    </svg>
+                                                                    Save Changes
+                                                                </button>
+                                                            </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const browseBtn = document.getElementById('browseBtn');
-        const previewContainer = document.getElementById('previewContainer');
-        const eventForm = document.getElementById('eventForm');
-        const submitBtn = document.getElementById('submitBtn');
+                                                        </form>
+                                            </div>
+                                        </div>
 
-        // File upload functionality
-        browseBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            fileInput.click();
-        });
+                                        <jsp:include page="../public/footer.jsp" />
 
-        uploadArea.addEventListener('click', function(e) {
-            if (!e.target.closest('.browse-btn') && !e.target.closest('.remove-file')) {
-                fileInput.click();
-            }
-        });
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                const uploadArea = document.getElementById('uploadArea');
+                                                const fileInput = document.getElementById('fileInput');
+                                                const browseBtn = document.getElementById('browseBtn');
+                                                const previewContainer = document.getElementById('previewContainer');
+                                                const eventForm = document.getElementById('eventForm');
+                                                const submitBtn = document.getElementById('submitBtn');
 
-        fileInput.addEventListener('change', function(e) {
-            handleFiles(e.target.files);
-        });
+                                                browseBtn.addEventListener('click', function (e) {
+                                                    e.stopPropagation();
+                                                    fileInput.click();
+                                                });
 
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            uploadArea.classList.add('drag-over');
-        });
+                                                uploadArea.addEventListener('click', function (e) {
+                                                    if (!e.target.closest('.browse-btn') && !e.target.closest('.remove-file')) {
+                                                        fileInput.click();
+                                                    }
+                                                });
 
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            uploadArea.classList.remove('drag-over');
-        });
+                                                fileInput.addEventListener('change', function (e) {
+                                                    handleFiles(e.target.files);
+                                                });
 
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            uploadArea.classList.remove('drag-over');
-            handleFiles(e.dataTransfer.files);
-        });
+                                                uploadArea.addEventListener('dragover', function (e) {
+                                                    e.preventDefault();
+                                                    uploadArea.classList.add('drag-over');
+                                                });
 
-        function handleFiles(files) {
-            if (files.length === 0) return;
+                                                uploadArea.addEventListener('dragleave', function (e) {
+                                                    e.preventDefault();
+                                                    uploadArea.classList.remove('drag-over');
+                                                });
 
-            const file = files[0];
+                                                uploadArea.addEventListener('drop', function (e) {
+                                                    e.preventDefault();
+                                                    uploadArea.classList.remove('drag-over');
+                                                    handleFiles(e.dataTransfer.files);
+                                                });
 
-            // Validate file type
-            if (!file.type.startsWith('image/')) {
-                alert('Please upload an image file (PNG, JPG, or GIF)');
-                fileInput.value = '';
-                return;
-            }
+                                                function handleFiles(files) {
+                                                    if (files.length === 0) return;
+                                                    const file = files[0];
+                                                    if (!file.type.startsWith('image/')) {
+                                                        alert('Please upload an image file (PNG, JPG, or GIF)');
+                                                        fileInput.value = '';
+                                                        return;
+                                                    }
+                                                    const maxSize = 10 * 1024 * 1024;
+                                                    if (file.size > maxSize) {
+                                                        alert('File size must be less than 10MB');
+                                                        fileInput.value = '';
+                                                        return;
+                                                    }
 
-            // Validate file size (10MB)
-            const maxSize = 10 * 1024 * 1024;
-            if (file.size > maxSize) {
-                alert('File size must be less than 10MB');
-                fileInput.value = '';
-                return;
-            }
+                                                    previewContainer.innerHTML = '';
+                                                    uploadArea.classList.add('has-files');
+                                                    document.querySelector('.upload-content').style.display = 'none';
 
-            previewContainer.innerHTML = '';
-            uploadArea.classList.add('has-files');
-            document.querySelector('.upload-content').style.display = 'none';
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.createElement('div');
-                preview.className = 'file-preview';
-                preview.innerHTML = `
+                                                    const reader = new FileReader();
+                                                    reader.onload = function (e) {
+                                                        const preview = document.createElement('div');
+                                                        preview.className = 'file-preview';
+                                                        preview.innerHTML = `
                     <img src="${e.target.result}" alt="Event Picture Preview">
                     <button type="button" class="remove-file" onclick="removeFile()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -276,62 +302,126 @@
                         </svg>
                     </button>
                 `;
-                previewContainer.appendChild(preview);
-            };
-            reader.readAsDataURL(file);
-        }
+                                                        previewContainer.appendChild(preview);
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                }
 
-        window.removeFile = function() {
-            previewContainer.innerHTML = '';
-            uploadArea.classList.remove('has-files');
-            document.querySelector('.upload-content').style.display = 'block';
-            fileInput.value = '';
-        };
+                                                window.removeFile = function () {
+                                                    previewContainer.innerHTML = '';
+                                                    uploadArea.classList.remove('has-files');
+                                                    document.querySelector('.upload-content').style.display = 'block';
+                                                    fileInput.value = '';
+                                                };
 
-        // Form validation and submission
-        eventForm.addEventListener('submit', function(e) {
-            const title = document.getElementById('e_title').value.trim();
-            const date = document.getElementById('e_date').value;
-            const groupId = document.getElementById('group_id').value;
+                                                // Form validation
+                                                eventForm.addEventListener('submit', function (e) {
+                                                    const title = document.getElementById('e_title').value.trim();
+                                                    const date = document.getElementById('e_date').value;
+                                                    const checkedGroups = document.querySelectorAll('input[name="group_ids"]:checked');
 
-            if (!title) {
-                e.preventDefault();
-                alert('Please enter an event title');
-                return false;
-            }
+                                                    if (!title) { e.preventDefault(); alert('Please enter an event title'); return false; }
+                                                    if (!date) { e.preventDefault(); alert('Please select an event date'); return false; }
+                                                    if (checkedGroups.length === 0) { e.preventDefault(); alert('Please select at least one group'); return false; }
 
-            if (!date) {
-                e.preventDefault();
-                alert('Please select an event date');
-                return false;
-            }
-
-            if (!groupId) {
-                e.preventDefault();
-                alert('Please select a group');
-                return false;
-            }
-
-            // Disable submit button to prevent double submission
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `
+                                                    submitBtn.disabled = true;
+                                                    submitBtn.innerHTML = `
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
                     <circle cx="12" cy="12" r="10"></circle>
                 </svg>
                 Updating...
             `;
+                                                    return true;
+                                                });
+                                            });
+                                        </script>
 
-            return true;
-        });
-    });
-</script>
+                                        <style>
+                                            @keyframes spin {
+                                                from {
+                                                    transform: rotate(0deg);
+                                                }
 
-<style>
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-</style>
+                                                to {
+                                                    transform: rotate(360deg);
+                                                }
+                                            }
 
-</body>
-</html>
+                                            /* Group Checkbox Styles */
+                                            .group-checkbox-list {
+                                                border: 1px solid #e5e7eb;
+                                                border-radius: 12px;
+                                                overflow: hidden;
+                                                max-height: 250px;
+                                                overflow-y: auto;
+                                            }
+
+                                            .group-checkbox-item {
+                                                display: flex;
+                                                align-items: center;
+                                                padding: 14px 16px;
+                                                cursor: pointer;
+                                                transition: background 0.15s ease;
+                                                border-bottom: 1px solid #f3f4f6;
+                                                gap: 12px;
+                                            }
+
+                                            .group-checkbox-item:last-child {
+                                                border-bottom: none;
+                                            }
+
+                                            .group-checkbox-item:hover {
+                                                background: #f9fafb;
+                                            }
+
+                                            .group-checkbox-item input[type="checkbox"] {
+                                                display: none;
+                                            }
+
+                                            .group-checkbox-label {
+                                                flex: 1;
+                                                display: flex;
+                                                flex-direction: column;
+                                            }
+
+                                            .group-checkbox-name {
+                                                font-weight: 600;
+                                                font-size: 0.95rem;
+                                                color: #111827;
+                                            }
+
+                                            .group-checkbox-check {
+                                                width: 24px;
+                                                height: 24px;
+                                                border: 2px solid #d1d5db;
+                                                border-radius: 6px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                transition: all 0.2s ease;
+                                                color: white;
+                                                flex-shrink: 0;
+                                            }
+
+                                            .group-checkbox-check svg {
+                                                opacity: 0;
+                                                transition: opacity 0.2s ease;
+                                            }
+
+                                            .group-checkbox-item input[type="checkbox"]:checked~.group-checkbox-check {
+                                                background: #9A74D8;
+                                                border-color: #9A74D8;
+                                            }
+
+                                            .group-checkbox-item input[type="checkbox"]:checked~.group-checkbox-check svg {
+                                                opacity: 1;
+                                            }
+
+                                            .group-checkbox-item input[type="checkbox"]:checked~.group-checkbox-label .group-checkbox-name {
+                                                color: #9A74D8;
+                                            }
+                                        </style>
+
+                    </body>
+
+                    </html>

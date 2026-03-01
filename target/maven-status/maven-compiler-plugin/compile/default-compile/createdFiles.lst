@@ -68,6 +68,7 @@ com/demo/web/controller/Settings/SettingsSubscriptionController.class
 com/demo/web/filter/AuthenticationFilter.class
 com/demo/web/service/ProfileService.class
 com/demo/web/controller/Autographs/WriteAutographServlet.class
+com/demo/web/controller/Events/EventVoteServlet.class
 com/demo/web/controller/Groups/ViewAnnouncementServlet.class
 com/demo/web/dao/FeedPostLikeDAO.class
 com/demo/web/model/FeedPost.class
@@ -105,6 +106,7 @@ com/demo/web/service/JournalService.class
 com/demo/web/util/EncryptionService$EncryptedData.class
 com/demo/web/controller/Settings/DeactivateAccountServlet.class
 com/demo/web/controller/Memory/MemoriesServlet.class
+com/demo/web/dao/EventVoteDAO.class
 com/demo/web/model/Journal.class
 com/demo/web/dao/GroupAnnouncementDAO.class
 com/demo/web/model/MediaShare.class
