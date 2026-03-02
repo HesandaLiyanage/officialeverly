@@ -229,7 +229,6 @@
           <a href="#" class="tab active">Privacy & Security</a>
           <a href="${pageContext.request.contextPath}/storagesense" class="tab">Storage Sense</a>
           <a href="${pageContext.request.contextPath}/settingsnotifications" class="tab">Notifications</a>
-          <a href="${pageContext.request.contextPath}/settingsappearance" class="tab">Appearance</a>
         </div>
 
         <a href="${pageContext.request.contextPath}/settingsprivacy" class="back-nav">

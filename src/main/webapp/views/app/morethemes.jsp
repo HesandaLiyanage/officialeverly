@@ -18,11 +18,10 @@
         <a href="${pageContext.request.contextPath}/settingsprivacy" class="tab">Privacy & Security</a>
         <a href="${pageContext.request.contextPath}/storagesense" class="tab">Storage Sense</a>
         <a href="${pageContext.request.contextPath}/settingsnotifications" class="tab">Notifications</a>
-        <a href="${pageContext.request.contextPath}/settingsappearance" class="tab active">Appearance</a>
       </div>
 
       <div class="back-option">
-        <a href="settingsappearance.jsp" class="back-link">← Back</a>
+        <a href="${pageContext.request.contextPath}/settingsaccount" class="back-link">← Back to Settings</a>
       </div>
 
       <h2>More Themes</h2>

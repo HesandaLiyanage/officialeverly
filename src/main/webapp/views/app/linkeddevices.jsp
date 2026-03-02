@@ -27,7 +27,6 @@
                             <a href="${pageContext.request.contextPath}/storagesense" class="tab">Storage Sense</a>
                             <a href="${pageContext.request.contextPath}/settingsnotifications"
                                 class="tab">Notifications</a>
-                            <a href="${pageContext.request.contextPath}/settingsappearance" class="tab">Appearance</a>
                         </div>
 
                         <div class="account-section">

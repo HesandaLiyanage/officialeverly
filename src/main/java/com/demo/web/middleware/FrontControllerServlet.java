@@ -79,7 +79,6 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/settingsprivacy", "/views/app/settingsprivacy.jsp");
         routeToJsp.put("/settingssubscription", "/views/app/settingssubscription.jsp");
         routeToController.put("/storagesense", "/storagesenseview");
-        routeToJsp.put("/settingsappearance", "/views/app/settingsappearance.jsp");
         routeToJsp.put("/vaultForgotPassword", "/views/app/vaultForgotPassword.jsp");
         routeToJsp.put("/vaultmemories", "/views/app/vaultMemories.jsp");
         routeToJsp.put("/vaultPassword", "/views/app/vaultPassword.jsp");
