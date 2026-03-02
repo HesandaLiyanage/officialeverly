@@ -41,9 +41,8 @@ public class FrontControllerServlet extends HttpServlet {
         // ========================================
         routeToJsp.put("/", "/views/public/landing.jsp");
         routeToJsp.put("/login", "/views/public/loginContent.jsp");
-        routeToJsp.put("/register", "/views/public/register.jsp");
+        // /register and /contact removed - JSPs don't exist
         routeToJsp.put("/aboutus", "/views/public/aboutus.jsp");
-        routeToJsp.put("/contact", "/views/public/contact.jsp");
         routeToJsp.put("/signup", "/views/public/signup.jsp");
         routeToJsp.put("/signup2", "/views/public/signup2.jsp");
         routeToJsp.put("/404", "/views/public/404.jsp");
@@ -69,15 +68,15 @@ public class FrontControllerServlet extends HttpServlet {
         // PROTECTED PAGES (static JSPs - no data fetching)
         // ========================================
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
-        routeToJsp.put("/profile", "/views/app/profile.jsp");
+        // /profile removed - profile.jsp doesn't exist; use /publicprofile instead
         routeToController.put("/collabmemories", "/collabmemoriesview");
         routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp");
-        routeToJsp.put("/managesubscription", "/views/app/managesubscription.jsp");
+        // /managesubscription handled by web.xml ManageSubscriptionController
         routeToJsp.put("/changeplan", "/views/app/changeplan.jsp");
         routeToJsp.put("/familyplan", "/views/app/familyplan.jsp");
         routeToController.put("/settingsnotifications", "/notificationprefsapi");
         routeToJsp.put("/settingsprivacy", "/views/app/settingsprivacy.jsp");
-        routeToJsp.put("/settingssubscription", "/views/app/settingssubscription.jsp");
+        // /settingssubscription handled by web.xml SettingsSubscriptionController
         routeToController.put("/storagesense", "/storagesenseview");
         routeToJsp.put("/vaultForgotPassword", "/views/app/vaultForgotPassword.jsp");
         routeToJsp.put("/vaultmemories", "/views/app/vaultMemories.jsp");
@@ -86,7 +85,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/addautograph", "/views/app/Autographs/addautograph.jsp");
         routeToJsp.put("/duplicatefinder", "/views/app/duplicatefinder.jsp");
         routeToJsp.put("/morethemes", "/views/app/morethemes.jsp");
-        routeToJsp.put("/sharedlinks", "/views/app/sharedlinks.jsp");
+        // /sharedlinks handled by web.xml SharedLinksController
         routeToController.put("/trashmgt", "/trashmgtview");
         routeToController.put("/notifications", "/notificationsapi");
         routeToJsp.put("/groupprofile", "/views/app/groupprofile.jsp");
@@ -94,7 +93,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToController.put("/groupannouncement", "/groupannouncementservlet");
         routeToController.put("/createannouncement", "/createannouncementservlet");
         routeToController.put("/viewannouncement", "/viewannouncementservlet");
-        routeToJsp.put("/writeautograph", "/views/app/writeautograph.jsp");
+        // /writeautograph removed - actual feature uses /write-autograph via
+        // @WebServlet
         routeToJsp.put("/eventinfo", "/views/app/eventinfo.jsp");
         routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
         routeToJsp.put("/creategroup", "/views/app/creategroup.jsp");
@@ -111,7 +111,7 @@ public class FrontControllerServlet extends HttpServlet {
         // Comment routes - use controller for data loading
         routeToController.put("/feedcomment", "/viewComments");
         routeToController.put("/comments", "/viewComments");
-        routeToJsp.put("/feededitprofile", "/views/app/editpublicprofile.jsp");
+        // /feededitprofile JSP route removed - controller route on line 162 handles it
         routeToController.put("/blockedusers", "/blockedusersview");
         routeToJsp.put("/vaultentries", "/views/app/vaultentries.jsp");
         routeToController.put("/collabmemoryview", "/collabmemoryviewservlet");
