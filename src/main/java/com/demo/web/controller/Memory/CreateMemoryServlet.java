@@ -9,6 +9,7 @@ import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Group;
 import com.demo.web.dao.SubscriptionDAO;
+import com.demo.web.dao.NotificationDAO;
 import com.demo.web.model.Plan;
 
 import javax.servlet.ServletException;
@@ -237,6 +238,26 @@ public class CreateMemoryServlet extends HttpServlet {
                 out.write(String.format(
                         "{\"success\": true, \"memoryId\": %d, \"filesUploaded\": %d, \"isCollaborative\": %s, \"groupId\": %s}",
                         memoryId, uploadedCount, isCollaborative, groupId != null ? groupId : "null"));
+            }
+
+            // Send notifications for collab memory uploads
+            if (uploadedCount > 0) {
+                try {
+                    NotificationDAO notifDAO = new NotificationDAO();
+                    java.util.List<Integer> members = notifDAO.getCollabMemoryMembers(memoryId, userId);
+                    for (int memberId : members) {
+                        notifDAO.createNotification(
+                                memberId,
+                                "memory_uploads",
+                                "New Upload",
+                                "uploaded " + uploadedCount + " file" + (uploadedCount > 1 ? "s" : "") + " to "
+                                        + memoryName.trim(),
+                                "/memoryview?id=" + memoryId,
+                                userId);
+                    }
+                } catch (Exception ex) {
+                    // Don't fail the main request
+                }
             }
 
         } catch (Exception e) {

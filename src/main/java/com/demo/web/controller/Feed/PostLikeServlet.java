@@ -2,6 +2,7 @@ package com.demo.web.controller.Feed;
 
 import com.demo.web.dao.FeedPostLikeDAO;
 import com.demo.web.dao.FeedProfileDAO;
+import com.demo.web.dao.NotificationDAO;
 import com.demo.web.model.FeedProfile;
 
 import javax.servlet.ServletException;
@@ -23,6 +24,7 @@ public class PostLikeServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(PostLikeServlet.class.getName());
     private FeedPostLikeDAO likeDAO = new FeedPostLikeDAO();
     private FeedProfileDAO profileDAO = new FeedProfileDAO();
+    private NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -82,6 +84,24 @@ public class PostLikeServlet extends HttpServlet {
 
             int newLikeCount = likeDAO.getLikeCount(postId);
             out.print(String.format("{\"success\": true, \"isLiked\": %b, \"likeCount\": %d}", isLiked, newLikeCount));
+
+            // Send notification when liked (not unliked)
+            if (isLiked) {
+                try {
+                    int postOwnerUserId = notificationDAO.getPostOwnerUserId(postId);
+                    if (postOwnerUserId > 0) {
+                        notificationDAO.createNotification(
+                                postOwnerUserId,
+                                "comments_reactions",
+                                "New Like",
+                                "liked your post",
+                                "/feed",
+                                userId);
+                    }
+                } catch (Exception ex) {
+                    logger.warning("[PostLikeServlet] Failed to send notification: " + ex.getMessage());
+                }
+            }
 
             logger.info("[PostLikeServlet] Profile " + currentProfile.getFeedProfileId() +
                     (isLiked ? " liked" : " unliked") + " post " + postId);

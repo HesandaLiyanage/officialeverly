@@ -75,7 +75,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/managesubscription", "/views/app/managesubscription.jsp");
         routeToJsp.put("/changeplan", "/views/app/changeplan.jsp");
         routeToJsp.put("/familyplan", "/views/app/familyplan.jsp");
-        routeToJsp.put("/settingsnotifications", "/views/app/settingsnotifications.jsp");
+        routeToController.put("/settingsnotifications", "/notificationprefsapi");
         routeToJsp.put("/settingsprivacy", "/views/app/settingsprivacy.jsp");
         routeToJsp.put("/settingssubscription", "/views/app/settingssubscription.jsp");
         routeToController.put("/storagesense", "/storagesenseview");
@@ -89,7 +89,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/morethemes", "/views/app/morethemes.jsp");
         routeToJsp.put("/sharedlinks", "/views/app/sharedlinks.jsp");
         routeToController.put("/trashmgt", "/trashmgtview");
-        routeToJsp.put("/notifications", "/views/app/notifications.jsp");
+        routeToController.put("/notifications", "/notificationsapi");
         routeToJsp.put("/groupprofile", "/views/app/groupprofile.jsp");
         routeToController.put("/groupmembers", "/groupmembersservlet");
         routeToController.put("/groupannouncement", "/groupannouncementservlet");

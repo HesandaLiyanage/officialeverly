@@ -6,11 +6,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Everly</title>
-    <!-- Component CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/base.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/header.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet">
+    <style>
+      /* Notification bell badge */
+      .notification-icon {
+        position: relative;
+      }
+
+      .notif-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #ef4444;
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px;
+        border: 2px solid white;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        animation: badgePulse 2s ease-in-out infinite;
+      }
+
+      .notif-badge.hidden {
+        display: none;
+      }
+
+      @keyframes badgePulse {
+
+        0%,
+        100% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.1);
+        }
+      }
+    </style>
   </head>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -22,7 +63,6 @@
           event.stopPropagation();
           profileDropdown.classList.toggle('active');
         });
-
         document.addEventListener('click', function (event) {
           if (!profileDropdown.contains(event.target) && event.target !== profilePhoto) {
             profileDropdown.classList.remove('active');
@@ -30,33 +70,30 @@
         });
       }
 
-      // NEW MODERN SEARCH FUNCTIONALITY
+      // Search
       const searchBtn = document.getElementById('searchBtn');
       if (searchBtn) {
         searchBtn.addEventListener('click', function (event) {
           event.stopPropagation();
-
           const searchBtnElement = this;
           const searchBox = document.createElement('div');
           searchBox.className = 'search-box-expanded';
           searchBox.innerHTML = `
-          <div class="search-icon-expanded">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          </div>
-          <input type="text" placeholder="Search anything..." autofocus>
-          <button class="search-close">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        `;
-
+                    <div class="search-icon-expanded">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                    <input type="text" placeholder="Search anything..." autofocus>
+                    <button class="search-close">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                `;
           searchBtnElement.parentNode.replaceChild(searchBox, searchBtnElement);
-
           const input = searchBox.querySelector('input');
           input.focus();
 
@@ -70,7 +107,6 @@
           };
 
           searchBox.querySelector('.search-close').addEventListener('click', closeSearch);
-
           input.addEventListener('blur', function () {
             setTimeout(() => {
               if (!document.activeElement.closest('.search-box-expanded')) {
@@ -78,7 +114,6 @@
               }
             }, 150);
           });
-
           searchBox.addEventListener('mousedown', function (e) {
             e.preventDefault();
             input.focus();
@@ -94,6 +129,25 @@
         });
       }
 
+      // Fetch unread count for badge
+      function fetchUnreadCount() {
+        fetch('${pageContext.request.contextPath}/api/notifications/unreadcount')
+          .then(r => r.json())
+          .then(data => {
+            const badge = document.getElementById('notifBadge');
+            if (badge) {
+              if (data.count > 0) {
+                badge.textContent = data.count > 99 ? '99+' : data.count;
+                badge.classList.remove('hidden');
+              } else {
+                badge.classList.add('hidden');
+              }
+            }
+          })
+          .catch(() => { });
+      }
+      fetchUnreadCount();
+      setInterval(fetchUnreadCount, 30000); // poll every 30s
 
       // Mobile Menu
       const navToggle = document.getElementById('navToggle');
@@ -102,7 +156,6 @@
         navToggle.addEventListener('click', function () {
           navBar.classList.toggle('active');
         });
-
         document.addEventListener('click', function (event) {
           if (!navBar.contains(event.target) && !navToggle.contains(event.target) && navBar.classList.contains('active')) {
             navBar.classList.remove('active');
@@ -113,7 +166,6 @@
   </script>
 
   <body class="has-fixed-header">
-
     <header class="main-header">
       <div class="logo">
         <a href="/" target="_blank" style="text-decoration:none;">
@@ -141,6 +193,7 @@
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
           </svg>
+          <span class="notif-badge hidden" id="notifBadge">0</span>
         </div>
 
         <div class="profile-dropdown-container">

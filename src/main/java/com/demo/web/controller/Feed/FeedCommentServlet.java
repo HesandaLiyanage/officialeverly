@@ -3,6 +3,7 @@ package com.demo.web.controller.Feed;
 import com.demo.web.dao.FeedCommentDAO;
 import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.FeedProfileDAO;
+import com.demo.web.dao.NotificationDAO;
 import com.demo.web.model.FeedComment;
 import com.demo.web.model.FeedPost;
 import com.demo.web.model.FeedProfile;
@@ -27,6 +28,7 @@ public class FeedCommentServlet extends HttpServlet {
     private FeedCommentDAO commentDAO = new FeedCommentDAO();
     private FeedPostDAO postDAO = new FeedPostDAO();
     private FeedProfileDAO profileDAO = new FeedProfileDAO();
+    private NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -145,6 +147,23 @@ public class FeedCommentServlet extends HttpServlet {
                             : "null",
                     createdComment.getRelativeTime());
             out.print(json);
+
+            // Send notification to post owner
+            try {
+                int postOwnerUserId = notificationDAO.getPostOwnerUserId(postId);
+                int actorUserId = currentProfile.getUserId();
+                if (postOwnerUserId > 0) {
+                    notificationDAO.createNotification(
+                            postOwnerUserId,
+                            "comments_reactions",
+                            "New Comment",
+                            "commented on your post",
+                            "/feed",
+                            actorUserId);
+                }
+            } catch (Exception e) {
+                logger.warning("[FeedCommentServlet] Failed to send notification: " + e.getMessage());
+            }
         } else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.print("{\"success\": false, \"error\": \"Failed to create comment\"}");

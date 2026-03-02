@@ -69,6 +69,9 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Memory/RemoveCollabMemberServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Memory/UpdateMemoryServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/MoveToVaultServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/NotificationCountServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/NotificationPrefsServlet.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/NotificationsServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/ProfileImageServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/ProfilePictureServlet.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/controller/Settings/DeactivateAccountServlet.java
@@ -106,6 +109,7 @@
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/MediaDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/MemoryMemberDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/MemoryRecapDAO.java
+/Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/NotificationDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/RecycleBinDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/SavedPostDAO.java
 /Users/hesandaliyanage/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dao/SubscriptionDAO.java

@@ -2,6 +2,7 @@ package com.demo.web.controller.Autographs;
 
 import com.demo.web.dao.AutographEntryDAO;
 import com.demo.web.dao.autographDAO;
+import com.demo.web.dao.NotificationDAO;
 import com.demo.web.model.AutographEntry;
 import com.demo.web.model.autograph;
 import com.demo.web.service.AuthService;
@@ -89,6 +90,21 @@ public class SubmitAutographServlet extends HttpServlet {
 
             if (saved) {
                 out.write("{\"success\": true, \"message\": \"Autograph submitted successfully!\"}");
+
+                // Send notification to autograph owner
+                try {
+                    NotificationDAO notifDAO = new NotificationDAO();
+                    int ownerUserId = ag.getUserId();
+                    notifDAO.createNotification(
+                            ownerUserId,
+                            "comments_reactions",
+                            "New Autograph Entry",
+                            "wrote in your autograph book",
+                            "/autographs",
+                            userId);
+                } catch (Exception ex) {
+                    // Don't fail the main request if notification fails
+                }
             } else {
                 out.write("{\"success\": false, \"message\": \"Failed to save your autograph. Please try again.\"}");
             }
