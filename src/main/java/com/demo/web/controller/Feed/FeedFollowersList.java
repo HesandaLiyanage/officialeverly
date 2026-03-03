@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  */
 public class FeedFollowersList extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FollowersViewController.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedFollowersList.class.getName());
     private FeedFollowDAO feedFollowDAO;
     private FeedProfileDAO feedProfileDAO;
 

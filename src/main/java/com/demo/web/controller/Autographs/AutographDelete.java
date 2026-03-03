@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 public class AutographDelete extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(DeleteAutographServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(AutographDelete.class.getName());
     private autographDAO autographDAO;
 
     @Override

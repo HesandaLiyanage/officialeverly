@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 )
 public class AutographCreate extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(AddAutographServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(AutographCreate.class.getName());
     private autographDAO autographDAO;
 
     @Override

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 @WebServlet("/postLike")
 public class FeedPostLike extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(PostLikeServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedPostLike.class.getName());
     private FeedPostLikeDAO likeDAO = new FeedPostLikeDAO();
     private FeedProfileDAO profileDAO = new FeedProfileDAO();
     private NotificationDAO notificationDAO = new NotificationDAO();

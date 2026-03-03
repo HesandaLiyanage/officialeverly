@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class JournalEdit extends HttpServlet { // Only handles POST
 
-    private static final Logger logger = Logger.getLogger(EditJournalServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(JournalEdit.class.getName());
     private JournalDAO journalDAO;
 
     @Override

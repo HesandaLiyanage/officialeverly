@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class FeedProfileEdit extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(EditFeedProfileViewController.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedProfileEdit.class.getName());
     private FeedProfileDAO feedProfileDAO;
 
     @Override

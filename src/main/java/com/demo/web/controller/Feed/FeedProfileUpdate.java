@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 )
 public class FeedProfileUpdate extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(UpdateFeedProfileServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedProfileUpdate.class.getName());
     private FeedProfileDAO feedProfileDAO;
 
     // Allowed image extensions

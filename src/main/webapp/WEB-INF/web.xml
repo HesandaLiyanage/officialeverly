@@ -11,7 +11,7 @@
     <!-- Logic servlets -->
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Auth.LoginServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.AuthLogin</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -20,7 +20,7 @@
 
     <servlet>
         <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Auth.LogoutServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.AuthLogout</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -30,7 +30,7 @@
 
     <servlet>
         <servlet-name>signup</servlet-name>
-        <servlet-class>com.demo.web.controller.Auth.signupservlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.AuthSignup</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>signup</servlet-name>
@@ -40,7 +40,7 @@
 
     <servlet>
         <servlet-name>googlecallback</servlet-name>
-        <servlet-class>com.demo.web.controller.Auth.GoogleCallback</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.AuthGoogleCallback</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>googlecallback</servlet-name>
@@ -50,7 +50,7 @@
 
     <servlet>
         <servlet-name>googlelogin</servlet-name>
-        <servlet-class>com.demo.web.controller.Auth.GoogleLoginServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.AuthGoogleLogin</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>googlelogin</servlet-name>
@@ -60,7 +60,7 @@
     <!-- Add Autograph Servlet -->
     <servlet>
         <servlet-name>AddAutographServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Autographs.AddAutographServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.AutographCreate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AddAutographServlet</servlet-name>
@@ -69,7 +69,7 @@
 
     <servlet>
         <servlet-name>CreateMemoryServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.CreateMemoryServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MemoryCreate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CreateMemoryServlet</servlet-name>
@@ -78,7 +78,7 @@
 
     <servlet>
         <servlet-name>MemoriesListServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.MemoriesServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MemoriesList</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MemoriesListServlet</servlet-name>
@@ -87,7 +87,7 @@
 
     <servlet>
         <servlet-name>MemoryViewServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.MemoryViewServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MemoryView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MemoryViewServlet</servlet-name>
@@ -96,7 +96,7 @@
 
     <servlet>
         <servlet-name>EditMemoryServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.EditMemoryServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MemoryEdit</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EditMemoryServlet</servlet-name>
@@ -105,7 +105,7 @@
 
     <servlet>
         <servlet-name>UpdateMemoryServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.UpdateMemoryServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MemoryUpdate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UpdateMemoryServlet</servlet-name>
@@ -114,7 +114,7 @@
 
     <servlet>
         <servlet-name>DeleteMemoryServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.DeleteMemoryServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MemoryDelete</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DeleteMemoryServlet</servlet-name>
@@ -124,7 +124,7 @@
     <!-- Collaborative Memory Servlets -->
     <servlet>
         <servlet-name>CollabMemoriesServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.CollabMemoriesServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemoriesList</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CollabMemoriesServlet</servlet-name>
@@ -133,7 +133,7 @@
 
     <servlet>
         <servlet-name>CollabMemoryViewServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.CollabMemoryViewServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemoryView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CollabMemoryViewServlet</servlet-name>
@@ -143,7 +143,7 @@
     <!-- Memory Recap Servlet -->
     <servlet>
         <servlet-name>MemoryRecapServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.MemoryRecapServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MemoryRecap</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MemoryRecapServlet</servlet-name>
@@ -153,7 +153,7 @@
     <!-- Event Vote Servlet (AJAX) -->
     <servlet>
         <servlet-name>EventVoteServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Events.EventVoteServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Events.EventVote</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EventVoteServlet</servlet-name>
@@ -162,7 +162,7 @@
 
     <servlet>
         <servlet-name>GenerateShareLinkServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.GenerateShareLinkServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MemoryShareLink</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>GenerateShareLinkServlet</servlet-name>
@@ -171,7 +171,7 @@
 
     <servlet>
         <servlet-name>JoinCollabServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.JoinCollabServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemoryJoin</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>JoinCollabServlet</servlet-name>
@@ -180,7 +180,7 @@
 
     <servlet>
         <servlet-name>LeaveCollabServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.LeaveCollabServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemoryLeave</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LeaveCollabServlet</servlet-name>
@@ -189,7 +189,7 @@
 
     <servlet>
         <servlet-name>RemoveCollabMemberServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.RemoveCollabMemberServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.CollabMemberRemove</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>RemoveCollabMemberServlet</servlet-name>
@@ -198,7 +198,7 @@
 
     <servlet>
         <servlet-name>ViewMediaServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Memory.ViewMediaServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.MediaView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ViewMediaServlet</servlet-name>
@@ -207,7 +207,7 @@
 
     <servlet>
         <servlet-name>DeleteAutographServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Autographs.DeleteAutographServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.AutographDelete</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DeleteAutographServlet</servlet-name>
@@ -216,7 +216,7 @@
 
     <servlet>
         <servlet-name>SaveEventServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Events.CreateEventServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Events.EventCreate</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size>        <!-- 10MB -->
             <max-request-size>52428800</max-request-size>   <!-- 50MB -->
@@ -231,7 +231,7 @@
 
     <servlet>
         <servlet-name>DeleteEventServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Events.DeleteEventServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Events.EventDelete</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -241,7 +241,7 @@
     <!-- Add these three servlets -->
     <servlet>
         <servlet-name>CreateJournalServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Journals.CreateJournalServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Journals.JournalCreate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CreateJournalServlet</servlet-name>
@@ -250,7 +250,7 @@
 
     <servlet>
         <servlet-name>DeleteJournalServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Journals.DeleteJournalServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Journals.JournalDelete</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DeleteJournalServlet</servlet-name>
@@ -259,7 +259,7 @@
 
     <servlet>
         <servlet-name>EditJournalServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Journals.EditJournalServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Journals.JournalEdit</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EditJournalServlet</servlet-name>
@@ -287,7 +287,7 @@
     <!-- Servlet for updating autographs -->
     <servlet>
         <servlet-name>UpdateAutographServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Autographs.UpdateAutographServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.AutographUpdate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UpdateAutographServlet</servlet-name>
@@ -297,7 +297,7 @@
     <!-- Generate Autograph Share Link Servlet -->
     <servlet>
         <servlet-name>GenerateAutographShareLinkServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Autographs.GenerateAutographShareLinkServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.AutographShareLink</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>GenerateAutographShareLinkServlet</servlet-name>
@@ -307,7 +307,7 @@
     <!-- Submit Autograph Entry Servlet -->
     <servlet>
         <servlet-name>SubmitAutographServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Autographs.SubmitAutographServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.AutographEntrySubmit</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>SubmitAutographServlet</servlet-name>
@@ -317,7 +317,7 @@
 
     <servlet>
         <servlet-name>creategroup</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.CreateGroupServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupCreate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>creategroup</servlet-name>
@@ -328,7 +328,7 @@
 
     <servlet>
         <servlet-name>deletegroupservlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.DeleteGroupServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupDelete</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>deletegroupservlet</servlet-name>
@@ -338,7 +338,7 @@
 
     <servlet>
         <servlet-name>editgroupservlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.EditGroupServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupEdit</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>editgroupservlet</servlet-name>
@@ -348,7 +348,7 @@
     <!-- Group Invite Servlets -->
     <servlet>
         <servlet-name>InviteServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.InviteServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupInviteJoin</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>InviteServlet</servlet-name>
@@ -357,7 +357,7 @@
 
     <servlet>
         <servlet-name>GenerateInviteLinkServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.GenerateInviteLinkServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupInviteLink</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>GenerateInviteLinkServlet</servlet-name>
@@ -366,7 +366,7 @@
 
     <servlet>
         <servlet-name>GroupMembersServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.GroupMembersServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupMembersList</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>GroupMembersServlet</servlet-name>
@@ -375,7 +375,7 @@
 
     <servlet>
         <servlet-name>GroupAnnouncementServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.GroupAnnouncementServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupAnnouncementsList</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>GroupAnnouncementServlet</servlet-name>
@@ -384,7 +384,7 @@
 
     <servlet>
         <servlet-name>CreateAnnouncementServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.CreateAnnouncementServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupAnnouncementCreate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CreateAnnouncementServlet</servlet-name>
@@ -393,7 +393,7 @@
 
     <servlet>
         <servlet-name>ViewAnnouncementServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.ViewAnnouncementServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupAnnouncementView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ViewAnnouncementServlet</servlet-name>
@@ -402,7 +402,7 @@
 
     <servlet>
         <servlet-name>GroupProfileServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.GroupProfileServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupProfileView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>GroupProfileServlet</servlet-name>
@@ -411,7 +411,7 @@
 
     <servlet>
         <servlet-name>RemoveMemberServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.RemoveMemberServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupMemberRemove</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>RemoveMemberServlet</servlet-name>
@@ -420,7 +420,7 @@
 
     <servlet>
         <servlet-name>UpdateEventServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Events.UpdateEventServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Events.EventUpdate</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size>
             <max-request-size>52428800</max-request-size>
@@ -435,7 +435,7 @@
 
     <servlet>
         <servlet-name>editprofileservlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Settings.editprofileservlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.SettingsProfileUpdate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>editprofileservlet</servlet-name>
@@ -444,7 +444,7 @@
 
     <servlet>
         <servlet-name>LinkedDevicesServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Settings.LinkedDevicesServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.SettingsLinkedDevicesAction</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LinkedDevicesServlet</servlet-name>
@@ -454,7 +454,7 @@
     <!-- Feed Profile Setup Servlet -->
     <servlet>
         <servlet-name>FeedProfileSetupServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.FeedProfileSetupServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedProfileSetup</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size>        <!-- 10MB -->
             <max-request-size>15728640</max-request-size>   <!-- 15MB -->
@@ -482,7 +482,7 @@
     <!-- Settings View Controllers -->
     <servlet>
         <servlet-name>LinkedDevicesViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Settings.LinkedDevicesViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.SettingsLinkedDevicesView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LinkedDevicesViewController</servlet-name>
@@ -491,7 +491,7 @@
 
     <servlet>
         <servlet-name>EditProfileViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Settings.EditProfileViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.SettingsProfileView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EditProfileViewController</servlet-name>
@@ -501,7 +501,7 @@
     <!-- Deactivate Account Servlet -->
     <servlet>
         <servlet-name>DeactivateAccountServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Settings.DeactivateAccountServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.SettingsDeactivateAccount</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DeactivateAccountServlet</servlet-name>
@@ -630,7 +630,7 @@
 
     <servlet>
         <servlet-name>SettingsSubscriptionController</servlet-name>
-        <servlet-class>com.demo.web.controller.Settings.SettingsSubscriptionController</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.SettingsSubscriptionView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>SettingsSubscriptionController</servlet-name>
@@ -639,7 +639,7 @@
 
     <servlet>
         <servlet-name>ManageSubscriptionController</servlet-name>
-        <servlet-class>com.demo.web.controller.Settings.ManageSubscriptionController</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.SettingsSubscriptionManage</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ManageSubscriptionController</servlet-name>
@@ -648,7 +648,7 @@
 
     <servlet>
         <servlet-name>SharedLinksController</servlet-name>
-        <servlet-class>com.demo.web.controller.Settings.SharedLinksController</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.SettingsSharedLinksView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>SharedLinksController</servlet-name>

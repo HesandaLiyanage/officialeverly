@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 public class JournalCreate extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(CreateJournalServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(JournalCreate.class.getName());
     private JournalDAO journalDAO;
     private JournalStreakDAO streakDAO;
 

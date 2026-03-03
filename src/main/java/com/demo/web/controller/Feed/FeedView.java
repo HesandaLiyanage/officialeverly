@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class FeedView extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FeedViewController.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedView.class.getName());
     private FeedProfileDAO feedProfileDAO;
     private FeedPostDAO feedPostDAO;
     private FeedFollowDAO feedFollowDAO;

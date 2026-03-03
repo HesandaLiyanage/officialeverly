@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class FeedFollow extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FollowServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedFollow.class.getName());
     private FeedFollowDAO feedFollowDAO;
     private FeedProfileDAO feedProfileDAO;
 

@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class FeedUnblockUser extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(UnblockUserServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedUnblockUser.class.getName());
     private BlockedUserDAO blockedUserDAO;
     private FeedProfileDAO feedProfileDAO;
 

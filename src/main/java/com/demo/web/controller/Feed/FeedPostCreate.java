@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class FeedPostCreate extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(CreatePostServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedPostCreate.class.getName());
     private FeedPostDAO feedPostDAO;
     private FeedProfileDAO feedProfileDAO;
     private memoryDAO memoryDao;

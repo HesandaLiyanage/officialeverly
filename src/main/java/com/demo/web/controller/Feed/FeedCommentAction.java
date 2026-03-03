@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 @WebServlet("/commentAction")
 public class FeedCommentAction extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FeedCommentServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedCommentAction.class.getName());
     private FeedCommentDAO commentDAO = new FeedCommentDAO();
     private FeedPostDAO postDAO = new FeedPostDAO();
     private FeedProfileDAO profileDAO = new FeedProfileDAO();

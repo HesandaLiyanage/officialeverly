@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class FeedPostSave extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(SavePostServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedPostSave.class.getName());
     private SavedPostDAO savedPostDAO;
     private FeedProfileDAO feedProfileDAO;
 

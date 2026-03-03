@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 @WebServlet("/viewComments")
 public class FeedCommentView extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(CommentsViewController.class.getName());
+    private static final Logger logger = Logger.getLogger(FeedCommentView.class.getName());
     private FeedPostDAO postDAO = new FeedPostDAO();
     private FeedCommentDAO commentDAO = new FeedCommentDAO();
     private FeedPostLikeDAO likeDAO = new FeedPostLikeDAO();
