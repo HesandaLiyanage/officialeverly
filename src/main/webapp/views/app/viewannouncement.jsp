@@ -17,7 +17,8 @@
                                         authorName=(ga.getPostedBy() !=null) ? ga.getPostedBy().getUsername()
                                         : "Unknown" ; String postDate=ga.getCreatedAt() !=null ?
                                         ga.getCreatedAt().toString() : "" ; boolean hasEvent=(ga.getEventId() !=null);
-                                        // Load event data if linked Event linkedEvent=null; String eventPicUrl=null;
+                                        // Load event data if linked 
+                                        Event linkedEvent=null; String eventPicUrl=null;
                                         String formattedEventDate="" ; if (hasEvent) { try { EventDAO eventDAO=new
                                         EventDAO(); linkedEvent=eventDAO.findById(ga.getEventId()); if (linkedEvent
                                         !=null) { if (linkedEvent.getEventPicUrl() !=null &&
@@ -507,8 +508,7 @@
 
                                                                                         <div class="ev-poll-options">
                                                                                             <button type="button"
-                                                                                                class="ev-poll-btn <%= "
-                                                                                                going".equals(userCurrentVote)
+                                                                                                class="ev-poll-btn <%= "going".equals(userCurrentVote)
                                                                                                 ? "selected going" : ""
                                                                                                 %>" onclick="castVote(
                                                                                                 <%= pollEventId %>, <%=
@@ -533,8 +533,7 @@
                                                                                             </div>
 
                                                                                             <button type="button"
-                                                                                                class="ev-poll-btn <%= "
-                                                                                                not_going".equals(userCurrentVote)
+                                                                                                class="ev-poll-btn <%= "not_going".equals(userCurrentVote)
                                                                                                 ? "selected not_going"
                                                                                                 : "" %>"
                                                                                                 onclick="castVote(<%=
@@ -562,8 +561,7 @@
                                                                                             </div>
 
                                                                                             <button type="button"
-                                                                                                class="ev-poll-btn <%= "
-                                                                                                maybe".equals(userCurrentVote)
+                                                                                                class="ev-poll-btn <%= "maybe".equals(userCurrentVote)
                                                                                                 ? "selected maybe" : ""
                                                                                                 %>" onclick="castVote(
                                                                                                 <%= pollEventId %>, <%=
