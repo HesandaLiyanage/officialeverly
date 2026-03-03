@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Settings;
 
 import java.io.File;
 import java.io.IOException;

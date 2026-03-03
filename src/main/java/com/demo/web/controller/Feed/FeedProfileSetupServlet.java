@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Feed;
 
 import com.demo.web.dao.FeedProfileDAO;
 import com.demo.web.model.FeedProfile;

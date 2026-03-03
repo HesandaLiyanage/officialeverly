@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Settings;
 
 import com.demo.web.dao.SubscriptionDAO;
 import com.demo.web.model.Plan;

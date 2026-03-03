@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Auth;
 
 import com.demo.web.dao.userDAO;
 import com.demo.web.dao.userSessionDAO;

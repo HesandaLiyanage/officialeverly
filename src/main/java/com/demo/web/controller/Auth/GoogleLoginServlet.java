@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Auth;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

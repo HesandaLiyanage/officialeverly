@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Notifications;
 
 import com.demo.web.dao.NotificationDAO;
 

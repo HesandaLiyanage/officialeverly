@@ -5,21 +5,13 @@
          version="4.0">
 
 
-    <!-- Debug Servlet -->
-    <servlet>
-        <servlet-name>DebugServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.DebugServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DebugServlet</servlet-name>
-        <url-pattern>/debug</url-pattern>
-    </servlet-mapping>
+    <!-- Debug Servlet (Removed/Moved to _unused) -->
 
 
     <!-- Logic servlets -->
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.LoginServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.LoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -28,7 +20,7 @@
 
     <servlet>
         <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.LogoutServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.LogoutServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -38,7 +30,7 @@
 
     <servlet>
         <servlet-name>signup</servlet-name>
-        <servlet-class>com.demo.web.controller.signupservlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.signupservlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>signup</servlet-name>
@@ -48,7 +40,7 @@
 
     <servlet>
         <servlet-name>googlecallback</servlet-name>
-        <servlet-class>com.demo.web.controller.GoogleCallback</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.GoogleCallback</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>googlecallback</servlet-name>
@@ -58,7 +50,7 @@
 
     <servlet>
         <servlet-name>googlelogin</servlet-name>
-        <servlet-class>com.demo.web.controller.GoogleLoginServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Auth.GoogleLoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>googlelogin</servlet-name>
@@ -206,7 +198,7 @@
 
     <servlet>
         <servlet-name>ViewMediaServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.ViewMediaServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Memory.ViewMediaServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ViewMediaServlet</servlet-name>
@@ -443,7 +435,7 @@
 
     <servlet>
         <servlet-name>editprofileservlet</servlet-name>
-        <servlet-class>com.demo.web.controller.editprofileservlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.editprofileservlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>editprofileservlet</servlet-name>
@@ -452,7 +444,7 @@
 
     <servlet>
         <servlet-name>LinkedDevicesServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.LinkedDevicesServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Settings.LinkedDevicesServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LinkedDevicesServlet</servlet-name>
@@ -462,7 +454,7 @@
     <!-- Feed Profile Setup Servlet -->
     <servlet>
         <servlet-name>FeedProfileSetupServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.FeedProfileSetupServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedProfileSetupServlet</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size>        <!-- 10MB -->
             <max-request-size>15728640</max-request-size>   <!-- 15MB -->

@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller._unused;
 
 import com.demo.web.dao.userDAO;
 import com.demo.web.model.user;

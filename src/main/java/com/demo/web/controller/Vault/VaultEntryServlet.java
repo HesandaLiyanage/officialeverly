@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Vault;
 
 import com.demo.web.dao.VaultDAO;
 

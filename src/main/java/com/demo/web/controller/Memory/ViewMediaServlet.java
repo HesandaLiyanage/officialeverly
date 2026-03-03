@@ -1,4 +1,4 @@
-package com.demo.web.controller;
+package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.FeedPostDAO;
 import com.demo.web.dao.MediaDAO;
