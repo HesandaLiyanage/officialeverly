@@ -511,7 +511,7 @@
     <!-- Autograph View Controller -->
     <servlet>
         <servlet-name>AutographViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Autographs.AutographViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Autographs.AutographView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AutographViewController</servlet-name>
@@ -521,7 +521,7 @@
     <!-- Group View Controller -->
     <servlet>
         <servlet-name>GroupViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Groups.GroupViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Groups.GroupsList</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>GroupViewController</servlet-name>
@@ -531,7 +531,7 @@
     <!-- Event View Controller -->
     <servlet>
         <servlet-name>EventViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Events.EventViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Events.EventView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EventViewController</servlet-name>
@@ -541,7 +541,7 @@
     <!-- Journal View Controller -->
     <servlet>
         <servlet-name>JournalViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Journals.JournalViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Journals.JournalView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>JournalViewController</servlet-name>
@@ -551,7 +551,7 @@
     <!-- Feed View Controller -->
     <servlet>
         <servlet-name>FeedViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.FeedViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FeedViewController</servlet-name>
@@ -561,7 +561,7 @@
     <!-- Create Post Servlet -->
     <servlet>
         <servlet-name>CreatePostServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.CreatePostServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedPostCreate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CreatePostServlet</servlet-name>
@@ -571,7 +571,7 @@
     <!-- Feed Profile View Controller -->
     <servlet>
         <servlet-name>FeedProfileViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.FeedProfileViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedProfileView</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FeedProfileViewController</servlet-name>
@@ -581,7 +581,7 @@
     <!-- Follow Servlet -->
     <servlet>
         <servlet-name>FollowServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.FollowServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedFollow</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FollowServlet</servlet-name>
@@ -591,7 +591,7 @@
     <!-- Followers View Controller -->
     <servlet>
         <servlet-name>FollowersViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.FollowersViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedFollowersList</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FollowersViewController</servlet-name>
@@ -601,7 +601,7 @@
     <!-- Edit Feed Profile View Controller -->
     <servlet>
         <servlet-name>EditFeedProfileViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.EditFeedProfileViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedProfileEdit</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EditFeedProfileViewController</servlet-name>
@@ -611,7 +611,7 @@
     <!-- Update Feed Profile Servlet -->
     <servlet>
         <servlet-name>UpdateFeedProfileServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.UpdateFeedProfileServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedProfileUpdate</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UpdateFeedProfileServlet</servlet-name>
@@ -621,7 +621,7 @@
     <!-- Save Post Servlet (Bookmark) -->
     <servlet>
         <servlet-name>SavePostServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.SavePostServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedPostSave</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>SavePostServlet</servlet-name>
@@ -658,7 +658,7 @@
     <!-- Block User Servlet -->
     <servlet>
         <servlet-name>BlockUserServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.BlockUserServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedBlockUser</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>BlockUserServlet</servlet-name>
@@ -668,7 +668,7 @@
     <!-- Unblock User Servlet -->
     <servlet>
         <servlet-name>UnblockUserServlet</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.UnblockUserServlet</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedUnblockUser</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UnblockUserServlet</servlet-name>
@@ -678,7 +678,7 @@
     <!-- Blocked Users View Controller -->
     <servlet>
         <servlet-name>BlockedUsersViewController</servlet-name>
-        <servlet-class>com.demo.web.controller.Feed.BlockedUsersViewController</servlet-class>
+        <servlet-class>com.demo.web.controller.Feed.FeedBlockedUsersList</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>BlockedUsersViewController</servlet-name>
