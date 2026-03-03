@@ -84,7 +84,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/vaultSetup", "/views/app/vaultSetup.jsp");
         routeToJsp.put("/addautograph", "/views/app/Autographs/addautograph.jsp");
         routeToJsp.put("/duplicatefinder", "/views/app/duplicatefinder.jsp");
-        routeToJsp.put("/morethemes", "/views/app/morethemes.jsp");
+        // /morethemes removed - Appearance feature removed
         // /sharedlinks handled by web.xml SharedLinksController
         routeToController.put("/trashmgt", "/trashmgtview");
         routeToController.put("/notifications", "/notificationsapi");
