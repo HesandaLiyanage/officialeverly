@@ -1,7 +1,7 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.memoryDAO;
-import com.demo.web.dao.MediaDAO;
+import com.demo.web.dao.Memory.memoryDAO;
+import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
 
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
-import com.demo.web.dao.SubscriptionDAO;
+import com.demo.web.dao.Settings.SubscriptionDAO;
 import com.demo.web.model.Plan;
 
 public class MemoriesList extends HttpServlet {

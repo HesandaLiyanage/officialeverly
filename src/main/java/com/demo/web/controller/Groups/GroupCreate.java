@@ -1,7 +1,7 @@
 package com.demo.web.controller.Groups;
 
-import com.demo.web.dao.GroupDAO;
-import com.demo.web.dao.GroupMemberDAO;
+import com.demo.web.dao.Groups.GroupDAO;
+import com.demo.web.dao.Groups.GroupMemberDAO;
 import com.demo.web.model.Group;
 import com.demo.web.model.GroupMember;
 import com.demo.web.model.user;

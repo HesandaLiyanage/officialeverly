@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
-import com.demo.web.dao.userDAO;
+import com.demo.web.dao.Auth.userDAO;
 // Remove userSessionDAO import if not needed for other features in this servlet
-// import com.demo.web.dao.userSessionDAO;
+// import com.demo.web.dao.Auth.userSessionDAO;
 import com.demo.web.model.user;
 // Remove UserSession model import if not needed for other features in this servlet
 // import com.demo.web.model.UserSession;

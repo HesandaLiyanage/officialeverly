@@ -1,6 +1,6 @@
 package com.demo.web.controller.Journals;
 
-import com.demo.web.dao.RecycleBinDAO;
+import com.demo.web.dao.Journals.RecycleBinDAO;
 import com.demo.web.model.RecycleBinItem;
 
 import javax.servlet.ServletException;
@@ -83,12 +83,12 @@ public class TrashManagementView extends HttpServlet {
             if ("restore".equals(action)) {
                 boolean success = false;
                 if ("journal".equals(item.getItemType())) {
-                    com.demo.web.dao.JournalDAO journalDAO = new com.demo.web.dao.JournalDAO();
+                    com.demo.web.dao.Journals.JournalDAO journalDAO = new com.demo.web.dao.Journals.JournalDAO();
                     success = journalDAO.restoreJournalFromRecycleBin(recycleBinId, userId);
                 } else if ("autograph".equals(item.getItemType())) {
                     // For autographs, restore by re-inserting into autograph table and removing
                     // from recycle bin
-                    com.demo.web.dao.autographDAO autographDAO = new com.demo.web.dao.autographDAO();
+                    com.demo.web.dao.Autographs.autographDAO autographDAO = new com.demo.web.dao.Autographs.autographDAO();
                     success = autographDAO.restoreAutographFromRecycleBin(recycleBinId, userId);
                 }
 

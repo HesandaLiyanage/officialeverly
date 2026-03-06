@@ -1,6 +1,6 @@
 package com.demo.web.controller.Vault;
 
-import com.demo.web.dao.VaultDAO;
+import com.demo.web.dao.Vault.VaultDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

@@ -1,6 +1,6 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.MemoryRecapDAO;
+import com.demo.web.dao.Memory.MemoryRecapDAO;
 import com.demo.web.model.Memory;
 
 import javax.servlet.ServletException;

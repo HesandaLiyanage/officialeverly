@@ -1,7 +1,7 @@
 //package com.demo.web.controller;
 //
-//import com.demo.web.dao.MediaDAO;
-//import com.demo.web.dao.userDAO;
+//import com.demo.web.dao.Memory.MediaDAO;
+//import com.demo.web.dao.Auth.userDAO;
 //import com.demo.web.model.*;
 //import com.demo.web.util.EncryptionService;
 //

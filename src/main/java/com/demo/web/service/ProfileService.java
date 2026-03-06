@@ -1,6 +1,6 @@
 package com.demo.web.service;
 
-import com.demo.web.dao.userDAO;
+import com.demo.web.dao.Auth.userDAO;
 import com.demo.web.model.user;
 
 import java.sql.SQLException;

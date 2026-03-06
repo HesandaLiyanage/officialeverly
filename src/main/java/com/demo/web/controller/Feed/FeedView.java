@@ -1,11 +1,11 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.BlockedUserDAO;
-import com.demo.web.dao.FeedFollowDAO;
-import com.demo.web.dao.FeedPostDAO;
-import com.demo.web.dao.FeedPostLikeDAO;
-import com.demo.web.dao.FeedProfileDAO;
-import com.demo.web.dao.MediaDAO;
+import com.demo.web.dao.Feed.BlockedUserDAO;
+import com.demo.web.dao.Feed.FeedFollowDAO;
+import com.demo.web.dao.Feed.FeedPostDAO;
+import com.demo.web.dao.Feed.FeedPostLikeDAO;
+import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.model.FeedPost;
 import com.demo.web.model.FeedProfile;
 import com.demo.web.model.MediaItem;

@@ -1,7 +1,7 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.FeedFollowDAO;
-import com.demo.web.dao.FeedProfileDAO;
+import com.demo.web.dao.Feed.FeedFollowDAO;
+import com.demo.web.dao.Feed.FeedProfileDAO;
 import com.demo.web.model.FeedProfile;
 
 import javax.servlet.ServletException;

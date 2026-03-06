@@ -1,10 +1,10 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.FeedCommentDAO;
-import com.demo.web.dao.FeedPostDAO;
-import com.demo.web.dao.FeedPostLikeDAO;
-import com.demo.web.dao.FeedProfileDAO;
-import com.demo.web.dao.MediaDAO;
+import com.demo.web.dao.Feed.FeedCommentDAO;
+import com.demo.web.dao.Feed.FeedPostDAO;
+import com.demo.web.dao.Feed.FeedPostLikeDAO;
+import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.model.FeedComment;
 import com.demo.web.model.FeedPost;
 import com.demo.web.model.FeedProfile;

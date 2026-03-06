@@ -1,6 +1,6 @@
 package com.demo.web.controller._unused;
 
-import com.demo.web.dao.userDAO;
+import com.demo.web.dao.Auth.userDAO;
 import com.demo.web.model.user;
 
 import javax.servlet.ServletException;

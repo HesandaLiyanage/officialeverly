@@ -1,8 +1,8 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.memoryDAO;
-import com.demo.web.dao.MediaDAO;
-import com.demo.web.dao.MemoryMemberDAO;
+import com.demo.web.dao.Memory.memoryDAO;
+import com.demo.web.dao.Memory.MediaDAO;
+import com.demo.web.dao.Memory.MemoryMemberDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
 

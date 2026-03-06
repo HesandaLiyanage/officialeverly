@@ -1,6 +1,6 @@
 package com.demo.web.service;
 
-import com.demo.web.dao.userSessionDAO;
+import com.demo.web.dao.Auth.userSessionDAO;
 import com.demo.web.model.UserSession;
 
 import java.util.List;

@@ -1,9 +1,9 @@
 // File: com/demo/web/controller/CreateJournalServlet.java
 package com.demo.web.controller.Journals;
 
-import com.demo.web.dao.JournalDAO;
+import com.demo.web.dao.Journals.JournalDAO;
 import com.demo.web.model.Journal;
-import com.demo.web.dao.JournalStreakDAO;
+import com.demo.web.dao.Journals.JournalStreakDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

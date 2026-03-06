@@ -1,8 +1,8 @@
 package com.demo.web.controller.Settings;
 
-import com.demo.web.dao.GroupInviteDAO;
-import com.demo.web.dao.autographDAO;
-import com.demo.web.dao.memoryDAO;
+import com.demo.web.dao.Groups.GroupInviteDAO;
+import com.demo.web.dao.Autographs.autographDAO;
+import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.model.GroupInvite;
 import com.demo.web.model.Memory;
 import com.demo.web.model.autograph;
@@ -22,14 +22,14 @@ public class SettingsSharedLinksView extends HttpServlet {
     private autographDAO autographDAO;
     private memoryDAO memoryDAO;
     private GroupInviteDAO groupInviteDAO;
-    private com.demo.web.dao.userDAO userDAO;
+    private com.demo.web.dao.Auth.userDAO userDAO;
 
     @Override
     public void init() throws ServletException {
         autographDAO = new autographDAO();
         memoryDAO = new memoryDAO();
         groupInviteDAO = new GroupInviteDAO();
-        userDAO = new com.demo.web.dao.userDAO();
+        userDAO = new com.demo.web.dao.Auth.userDAO();
     }
 
     @Override

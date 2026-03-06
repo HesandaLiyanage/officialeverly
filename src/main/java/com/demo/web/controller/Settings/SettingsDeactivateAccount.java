@@ -1,6 +1,6 @@
 package com.demo.web.controller.Settings;
 
-import com.demo.web.dao.userDAO;
+import com.demo.web.dao.Auth.userDAO;
 import com.demo.web.service.AuthService;
 import com.demo.web.util.SessionUtil;
 

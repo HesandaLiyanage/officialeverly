@@ -1,7 +1,7 @@
 package com.demo.web.controller.Vault;
 
-import com.demo.web.dao.VaultDAO;
-import com.demo.web.dao.JournalDAO;
+import com.demo.web.dao.Vault.VaultDAO;
+import com.demo.web.dao.Journals.JournalDAO;
 import com.demo.web.model.Journal;
 
 import javax.servlet.ServletException;

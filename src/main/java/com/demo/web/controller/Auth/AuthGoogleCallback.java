@@ -1,7 +1,7 @@
 package com.demo.web.controller.Auth;
 
-import com.demo.web.dao.userDAO;
-import com.demo.web.dao.userSessionDAO;
+import com.demo.web.dao.Auth.userDAO;
+import com.demo.web.dao.Auth.userSessionDAO;
 import com.demo.web.model.user;
 import com.demo.web.util.SessionUtil;
 import com.google.gson.JsonObject;

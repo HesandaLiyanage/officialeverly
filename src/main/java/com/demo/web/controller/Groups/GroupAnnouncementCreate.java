@@ -1,6 +1,6 @@
 package com.demo.web.controller.Groups;
 
-import com.demo.web.dao.GroupAnnouncementDAO;
+import com.demo.web.dao.Groups.GroupAnnouncementDAO;
 import com.demo.web.model.GroupAnnouncement;
 
 import javax.servlet.ServletException;

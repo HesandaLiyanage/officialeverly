@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 import javax.crypto.SecretKey;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
-import com.demo.web.dao.userDAO;
-import com.demo.web.dao.userSessionDAO;
+import com.demo.web.dao.Auth.userDAO;
+import com.demo.web.dao.Auth.userSessionDAO;
 import com.demo.web.model.user;
 import com.demo.web.util.PasswordUtil;
 

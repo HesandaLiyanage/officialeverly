@@ -1,6 +1,6 @@
 package com.demo.web.util;
 
-import com.demo.web.dao.userSessionDAO;
+import com.demo.web.dao.Auth.userSessionDAO;
 import com.demo.web.model.user;
 
 import javax.servlet.http.HttpServletRequest;

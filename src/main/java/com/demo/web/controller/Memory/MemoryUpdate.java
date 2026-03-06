@@ -1,9 +1,9 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.memoryDAO;
-import com.demo.web.dao.MediaDAO;
-import com.demo.web.dao.GroupDAO;
-import com.demo.web.dao.GroupMemberDAO;
+import com.demo.web.dao.Memory.memoryDAO;
+import com.demo.web.dao.Memory.MediaDAO;
+import com.demo.web.dao.Groups.GroupDAO;
+import com.demo.web.dao.Groups.GroupMemberDAO;
 import com.demo.web.model.Memory;
 import com.demo.web.model.MediaItem;
 import com.demo.web.model.Group;

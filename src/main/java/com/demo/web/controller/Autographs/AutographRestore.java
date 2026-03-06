@@ -1,7 +1,7 @@
 // File: src/main/java/com/demo/web/controller/Autographs/RestoreAutographServlet.java
 package com.demo.web.controller.Autographs;
 
-import com.demo.web.dao.autographDAO;
+import com.demo.web.dao.Autographs.autographDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

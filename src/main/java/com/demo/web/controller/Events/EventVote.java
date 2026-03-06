@@ -1,6 +1,6 @@
 package com.demo.web.controller.Events;
 
-import com.demo.web.dao.EventVoteDAO;
+import com.demo.web.dao.Events.EventVoteDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

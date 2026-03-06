@@ -1,6 +1,6 @@
 package com.demo.web.controller.Autographs;
 
-import com.demo.web.dao.autographDAO;
+import com.demo.web.dao.Autographs.autographDAO;
 import com.demo.web.model.autograph;
 
 import javax.servlet.ServletException;

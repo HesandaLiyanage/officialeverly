@@ -1,7 +1,7 @@
 // File: src/main/java/com/demo/web/controller/Journals/RestoreJournalServlet.java
 package com.demo.web.controller.Journals;
 
-import com.demo.web.dao.JournalDAO;
+import com.demo.web.dao.Journals.JournalDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

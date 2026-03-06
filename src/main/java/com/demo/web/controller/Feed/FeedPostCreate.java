@@ -1,8 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.FeedPostDAO;
-import com.demo.web.dao.FeedProfileDAO;
-import com.demo.web.dao.memoryDAO;
+import com.demo.web.dao.Feed.FeedPostDAO;
+import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.model.FeedPost;
 import com.demo.web.model.FeedProfile;
 import com.demo.web.model.Memory;

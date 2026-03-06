@@ -1,7 +1,7 @@
 // File: src/main/java/com/demo/web/controller/Journals/RecycleBinServlet.java
 package com.demo.web.controller.Journals;
 
-import com.demo.web.dao.RecycleBinDAO;
+import com.demo.web.dao.Journals.RecycleBinDAO;
 import com.demo.web.model.RecycleBinItem;
 
 import javax.servlet.ServletException;
@@ -80,7 +80,7 @@ public class JournalRecycleBin extends HttpServlet {
                 }
             } else if ("restore".equals(action)) {
                 // Restore via JournalDAO
-                com.demo.web.dao.JournalDAO journalDAO = new com.demo.web.dao.JournalDAO();
+                com.demo.web.dao.Journals.JournalDAO journalDAO = new com.demo.web.dao.Journals.JournalDAO();
                 boolean success = journalDAO.restoreJournalFromRecycleBin(recycleBinId, userId);
 
                 if (success) {

@@ -1,6 +1,6 @@
 package com.demo.web.controller.Notifications;
 
-import com.demo.web.dao.NotificationDAO;
+import com.demo.web.dao.Notifications.NotificationDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

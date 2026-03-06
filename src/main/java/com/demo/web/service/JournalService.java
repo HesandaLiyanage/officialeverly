@@ -1,7 +1,7 @@
 package com.demo.web.service;
 
-import com.demo.web.dao.JournalDAO;
-import com.demo.web.dao.JournalStreakDAO;
+import com.demo.web.dao.Journals.JournalDAO;
+import com.demo.web.dao.Journals.JournalStreakDAO;
 import com.demo.web.model.Journal;
 import com.demo.web.model.JournalStreak;
 

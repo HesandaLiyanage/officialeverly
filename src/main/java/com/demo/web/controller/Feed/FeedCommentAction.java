@@ -1,9 +1,9 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.FeedCommentDAO;
-import com.demo.web.dao.FeedPostDAO;
-import com.demo.web.dao.FeedProfileDAO;
-import com.demo.web.dao.NotificationDAO;
+import com.demo.web.dao.Feed.FeedCommentDAO;
+import com.demo.web.dao.Feed.FeedPostDAO;
+import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dao.Notifications.NotificationDAO;
 import com.demo.web.model.FeedComment;
 import com.demo.web.model.FeedPost;
 import com.demo.web.model.FeedProfile;
