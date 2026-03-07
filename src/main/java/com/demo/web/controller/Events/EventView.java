@@ -1,8 +1,8 @@
 package com.demo.web.controller.Events;
 
 import com.demo.web.dao.Events.EventDAO;
-import com.demo.web.model.Event;
-import com.demo.web.model.Group;
+import com.demo.web.model.Events.Event;
+import com.demo.web.model.Groups.Group;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.EventService;
 
@@ -85,13 +85,13 @@ public class EventView extends HttpServlet {
             request.setAttribute("pastCount", pastEvents.size());
             request.setAttribute("totalCount", allEvents.size());
 
-            request.getRequestDispatcher("/views/app/eventdashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Events/eventdashboard.jsp").forward(request, response);
 
         } catch (Exception e) {
             System.out.println("[DEBUG EventViewController] Error: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while fetching events: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/eventdashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Events/eventdashboard.jsp").forward(request, response);
         }
     }
 
@@ -113,13 +113,13 @@ public class EventView extends HttpServlet {
             }
 
             request.setAttribute("userGroups", userGroups);
-            request.getRequestDispatcher("/views/app/createevent.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Events/createevent.jsp").forward(request, response);
 
         } catch (Exception e) {
             System.out.println("[DEBUG EventViewController] Error: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while loading groups: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/createevent.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Events/createevent.jsp").forward(request, response);
         }
     }
 
@@ -164,7 +164,7 @@ public class EventView extends HttpServlet {
             request.setAttribute("userGroups", userGroups);
             request.setAttribute("eventGroupIds", eventGroupIds);
 
-            request.getRequestDispatcher("/views/app/editevent.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Events/editevent.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             session.setAttribute("errorMessage", "Invalid event ID");

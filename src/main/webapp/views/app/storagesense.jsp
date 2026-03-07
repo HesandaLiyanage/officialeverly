@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ page import="com.demo.web.model.Plan" %>
+    <%@ page import="com.demo.web.model.Settings.Plan" %>
         <%@ page import="java.util.List" %>
             <%@ page import="java.util.Map" %>
                 <%! String formatBytes(long bytes) { if (bytes < 1024) return bytes + " B" ; if (bytes < 1024 * 1024)

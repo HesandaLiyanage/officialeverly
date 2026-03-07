@@ -4,9 +4,9 @@ import com.demo.web.dao.Groups.GroupDAO;
 import com.demo.web.dao.Groups.GroupMemberDAO;
 import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.Group;
-import com.demo.web.model.MediaItem;
-import com.demo.web.model.Memory;
+import com.demo.web.model.Groups.Group;
+import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.model.Memory.Memory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -60,7 +60,7 @@ public class MemoryView extends HttpServlet {
 
             if (memory == null) {
                 request.setAttribute("errorMessage", "Memory not found");
-                request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Memory/memories.jsp").forward(request, response);
                 return;
             }
 
@@ -87,7 +87,7 @@ public class MemoryView extends HttpServlet {
 
             if (!hasAccess) {
                 request.setAttribute("errorMessage", "You don't have permission to view this memory");
-                request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Memory/memories.jsp").forward(request, response);
                 return;
             }
 
@@ -106,14 +106,14 @@ public class MemoryView extends HttpServlet {
             }
 
             // Forward to view page
-            request.getRequestDispatcher("/views/app/memoryview.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/memoryview.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect("/memories");
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error loading memory: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/memories.jsp").forward(request, response);
         }
     }
 }

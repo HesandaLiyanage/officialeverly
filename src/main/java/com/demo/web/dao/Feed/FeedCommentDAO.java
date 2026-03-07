@@ -1,7 +1,7 @@
 package com.demo.web.dao.Feed;
 
-import com.demo.web.model.FeedComment;
-import com.demo.web.model.FeedProfile;
+import com.demo.web.model.Feed.FeedComment;
+import com.demo.web.model.Feed.FeedProfile;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.*;

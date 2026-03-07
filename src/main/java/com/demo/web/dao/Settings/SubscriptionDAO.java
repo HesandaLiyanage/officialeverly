@@ -1,6 +1,6 @@
 package com.demo.web.dao.Settings;
 
-import com.demo.web.model.Plan;
+import com.demo.web.model.Settings.Plan;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.Connection;

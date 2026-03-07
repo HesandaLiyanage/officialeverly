@@ -2,7 +2,7 @@ package com.demo.web.controller.Feed;
 
 import com.demo.web.dao.Feed.BlockedUserDAO;
 import com.demo.web.dao.Feed.FeedProfileDAO;
-import com.demo.web.model.FeedProfile;
+import com.demo.web.model.Feed.FeedProfile;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

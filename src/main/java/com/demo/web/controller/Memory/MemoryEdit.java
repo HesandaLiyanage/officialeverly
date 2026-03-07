@@ -4,9 +4,9 @@ import com.demo.web.dao.Groups.GroupDAO;
 import com.demo.web.dao.Groups.GroupMemberDAO;
 import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.Group;
-import com.demo.web.model.MediaItem;
-import com.demo.web.model.Memory;
+import com.demo.web.model.Groups.Group;
+import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.model.Memory.Memory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -98,7 +98,7 @@ public class MemoryEdit extends HttpServlet {
             request.setAttribute("memory", memory);
             request.setAttribute("mediaItems", mediaItems);
 
-            request.getRequestDispatcher("/views/app/editmemory.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/editmemory.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect("/memories");

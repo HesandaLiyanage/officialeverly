@@ -1,6 +1,6 @@
 package com.demo.web.dao.Journals;
 
-import com.demo.web.model.JournalStreak;
+import com.demo.web.model.Journals.JournalStreak;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.*;

@@ -1,7 +1,7 @@
 package com.demo.web.service;
 
 import com.demo.web.dao.Autographs.autographDAO;
-import com.demo.web.model.autograph;
+import com.demo.web.model.Autographs.autograph;
 
 import java.util.List;
 

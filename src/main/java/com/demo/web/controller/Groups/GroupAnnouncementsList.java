@@ -2,8 +2,8 @@ package com.demo.web.controller.Groups;
 
 import com.demo.web.dao.Groups.GroupDAO;
 import com.demo.web.dao.Groups.GroupAnnouncementDAO;
-import com.demo.web.model.Group;
-import com.demo.web.model.GroupAnnouncement;
+import com.demo.web.model.Groups.Group;
+import com.demo.web.model.Groups.GroupAnnouncement;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -43,7 +43,7 @@ public class GroupAnnouncementsList extends HttpServlet {
         try {
             int groupId = Integer.parseInt(groupIdStr);
             Group group = groupDAO.findById(groupId);
-            
+
             if (group == null) {
                 response.sendRedirect(request.getContextPath() + "/groups?error=Group not found");
                 return;
@@ -53,8 +53,8 @@ public class GroupAnnouncementsList extends HttpServlet {
 
             request.setAttribute("group", group);
             request.setAttribute("announcements", announcements);
-            
-            request.getRequestDispatcher("/views/app/groupannouncement.jsp").forward(request, response);
+
+            request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupannouncement.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/groups?error=Invalid group ID");

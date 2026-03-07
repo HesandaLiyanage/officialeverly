@@ -2,7 +2,7 @@ package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Memory.MemoryMemberDAO;
-import com.demo.web.model.Memory;
+import com.demo.web.model.Memory.Memory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -57,13 +57,13 @@ public class CollabMemoryJoin extends HttpServlet {
 
             if (memory == null) {
                 request.setAttribute("errorMessage", "Invalid or expired invite link");
-                request.getRequestDispatcher("/views/app/collabmemories.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
                 return;
             }
 
             if (!memory.isCollaborative()) {
                 request.setAttribute("errorMessage", "This memory is not collaborative");
-                request.getRequestDispatcher("/views/app/collabmemories.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
                 return;
             }
 

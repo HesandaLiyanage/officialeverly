@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
   <%@ page import="java.util.List" %>
-    <%@ page import="com.demo.web.model.FeedProfile" %>
+    <%@ page import="com.demo.web.model.Feed.FeedProfile" %>
       <!DOCTYPE html>
       <html lang="en">
 

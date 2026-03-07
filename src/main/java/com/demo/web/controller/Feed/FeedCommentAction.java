@@ -4,9 +4,9 @@ import com.demo.web.dao.Feed.FeedCommentDAO;
 import com.demo.web.dao.Feed.FeedPostDAO;
 import com.demo.web.dao.Feed.FeedProfileDAO;
 import com.demo.web.dao.Notifications.NotificationDAO;
-import com.demo.web.model.FeedComment;
-import com.demo.web.model.FeedPost;
-import com.demo.web.model.FeedProfile;
+import com.demo.web.model.Feed.FeedComment;
+import com.demo.web.model.Feed.FeedPost;
+import com.demo.web.model.Feed.FeedProfile;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

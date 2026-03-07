@@ -2,8 +2,8 @@ package com.demo.web.controller.Groups;
 
 import com.demo.web.dao.Groups.GroupDAO;
 import com.demo.web.dao.Groups.GroupMemberDAO;
-import com.demo.web.model.Group;
-import com.demo.web.model.GroupMember;
+import com.demo.web.model.Groups.Group;
+import com.demo.web.model.Groups.GroupMember;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -62,7 +62,8 @@ public class GroupProfileView extends HttpServlet {
             }
 
             if (targetMember == null) {
-                response.sendRedirect(request.getContextPath() + "/groupmembers?groupId=" + groupId + "&error=Member not found");
+                response.sendRedirect(
+                        request.getContextPath() + "/groupmembers?groupId=" + groupId + "&error=Member not found");
                 return;
             }
 
@@ -74,7 +75,7 @@ public class GroupProfileView extends HttpServlet {
             request.setAttribute("isAdmin", isAdmin);
             request.setAttribute("currentUserId", currentUserId);
 
-            request.getRequestDispatcher("/views/app/groupprofile.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupprofile.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/groups?error=Invalid parameters");

@@ -1,6 +1,6 @@
 package com.demo.web.controller.Journals;
 
-import com.demo.web.model.Journal;
+import com.demo.web.model.Journals.Journal;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.JournalService;
 

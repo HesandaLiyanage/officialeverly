@@ -2,8 +2,8 @@ package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.model.Memory;
-import com.demo.web.model.MediaItem;
+import com.demo.web.model.Memory.Memory;
+import com.demo.web.model.Memory.MediaItem;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import com.demo.web.dao.Settings.SubscriptionDAO;
-import com.demo.web.model.Plan;
+import com.demo.web.model.Settings.Plan;
 
 public class MemoriesList extends HttpServlet {
 
@@ -108,12 +108,12 @@ public class MemoriesList extends HttpServlet {
             request.setAttribute("memories", memories);
 
             // Forward to JSP
-            request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/memories.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error loading memories: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/memories.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/memories.jsp").forward(request, response);
         }
     }
 }

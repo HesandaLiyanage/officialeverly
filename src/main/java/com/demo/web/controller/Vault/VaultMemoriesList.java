@@ -3,8 +3,8 @@ package com.demo.web.controller.Vault;
 import com.demo.web.dao.Vault.VaultDAO;
 import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.model.Memory;
-import com.demo.web.model.MediaItem;
+import com.demo.web.model.Memory.Memory;
+import com.demo.web.model.Memory.MediaItem;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

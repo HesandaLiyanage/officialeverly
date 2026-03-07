@@ -6,9 +6,9 @@ import com.demo.web.dao.Feed.FeedPostDAO;
 import com.demo.web.dao.Feed.FeedPostLikeDAO;
 import com.demo.web.dao.Feed.FeedProfileDAO;
 import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.model.FeedPost;
-import com.demo.web.model.FeedProfile;
-import com.demo.web.model.MediaItem;
+import com.demo.web.model.Feed.FeedPost;
+import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.model.Memory.MediaItem;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -139,13 +139,13 @@ public class FeedView extends HttpServlet {
             request.setAttribute("feedProfile", feedProfile);
             request.setAttribute("posts", posts);
             request.setAttribute("recommendedUsers", recommendedUsers);
-            request.getRequestDispatcher("/views/app/publicfeed.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Feed/publicfeed.jsp").forward(request, response);
 
         } catch (Exception e) {
             logger.severe("[FeedViewController] Error: " + e.getMessage());
             e.printStackTrace();
             // On error, just show the feed page with defaults
-            request.getRequestDispatcher("/views/app/publicfeed.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Feed/publicfeed.jsp").forward(request, response);
         }
     }
 }

@@ -2,7 +2,7 @@
 package com.demo.web.controller.Journals;
 
 import com.demo.web.dao.Journals.JournalDAO;
-import com.demo.web.model.Journal;
+import com.demo.web.model.Journals.Journal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

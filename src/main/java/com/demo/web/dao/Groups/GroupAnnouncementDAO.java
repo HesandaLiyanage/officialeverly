@@ -1,7 +1,7 @@
 package com.demo.web.dao.Groups;
 
-import com.demo.web.model.GroupAnnouncement;
-import com.demo.web.model.user;
+import com.demo.web.model.Groups.GroupAnnouncement;
+import com.demo.web.model.Auth.user;
 import com.demo.web.util.DatabaseUtil;
 import java.sql.*;
 import java.util.ArrayList;

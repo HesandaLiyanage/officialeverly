@@ -1,6 +1,6 @@
 package com.demo.web.dao.Feed;
 
-import com.demo.web.model.FeedPost;
+import com.demo.web.model.Feed.FeedPost;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.*;

@@ -2,8 +2,8 @@ package com.demo.web.service;
 
 import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.model.Memory;
-import com.demo.web.model.MediaItem;
+import com.demo.web.model.Memory.Memory;
+import com.demo.web.model.Memory.MediaItem;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

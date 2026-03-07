@@ -3,8 +3,8 @@ package com.demo.web.controller.Memory;
 import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.dao.Memory.MemoryMemberDAO;
-import com.demo.web.model.Memory;
-import com.demo.web.model.MediaItem;
+import com.demo.web.model.Memory.Memory;
+import com.demo.web.model.Memory.MediaItem;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -77,12 +77,12 @@ public class CollabMemoriesList extends HttpServlet {
             }
 
             request.setAttribute("memories", memories);
-            request.getRequestDispatcher("/views/app/collabmemories.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error loading collab memories: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/collabmemories.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
         }
     }
 }

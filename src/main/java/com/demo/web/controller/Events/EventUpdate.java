@@ -3,9 +3,9 @@ package com.demo.web.controller.Events;
 import com.demo.web.dao.Events.EventDAO;
 import com.demo.web.dao.Groups.GroupAnnouncementDAO;
 import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.model.Event;
-import com.demo.web.model.Group;
-import com.demo.web.model.GroupAnnouncement;
+import com.demo.web.model.Events.Event;
+import com.demo.web.model.Groups.Group;
+import com.demo.web.model.Groups.GroupAnnouncement;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;

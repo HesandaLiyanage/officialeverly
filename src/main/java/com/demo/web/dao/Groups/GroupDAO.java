@@ -1,6 +1,6 @@
 package com.demo.web.dao.Groups;
 
-import com.demo.web.model.Group;
+import com.demo.web.model.Groups.Group;
 import com.demo.web.util.DatabaseUtil;
 import java.sql.*;
 import java.util.ArrayList;

@@ -4,9 +4,9 @@ import com.demo.web.dao.Groups.GroupDAO;
 import com.demo.web.dao.Groups.GroupMemberDAO;
 import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.Group;
-import com.demo.web.model.MediaItem;
-import com.demo.web.model.Memory;
+import com.demo.web.model.Groups.Group;
+import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.model.Memory.Memory;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.GroupService;
 
@@ -76,7 +76,7 @@ public class GroupsList extends HttpServlet {
         // Pass DAO for legacy JSP compatibility (member count queries)
         request.setAttribute("groupDAO", groupService.getGroupDAO());
 
-        request.getRequestDispatcher("/views/app/groupdashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupdashboard.jsp").forward(request, response);
     }
 
     /**
@@ -139,7 +139,7 @@ public class GroupsList extends HttpServlet {
             request.setAttribute("currentUserRole", userRole);
             request.setAttribute("currentUserId", userId);
 
-            request.getRequestDispatcher("/views/app/groupmemories.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupmemories.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/groups");
         } catch (Exception e) {
@@ -163,7 +163,7 @@ public class GroupsList extends HttpServlet {
             }
 
             request.setAttribute("group", groupToEdit);
-            request.getRequestDispatcher("/views/app/editgroup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Groups/editgroup.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/groups");
         }

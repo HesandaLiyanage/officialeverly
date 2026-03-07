@@ -1,7 +1,7 @@
 package com.demo.web.controller._unused;
 
 import com.demo.web.dao.Auth.userDAO;
-import com.demo.web.model.user;
+import com.demo.web.model.Auth.user;
 import com.demo.web.util.DatabaseUtil;
 import com.demo.web.util.PasswordUtil;
 

@@ -2,7 +2,7 @@ package com.demo.web.controller.Auth;
 
 import com.demo.web.dao.Auth.userDAO;
 import com.demo.web.dao.Auth.userSessionDAO;
-import com.demo.web.model.user;
+import com.demo.web.model.Auth.user;
 import com.demo.web.util.PasswordUtil;
 import com.demo.web.util.SessionUtil;
 

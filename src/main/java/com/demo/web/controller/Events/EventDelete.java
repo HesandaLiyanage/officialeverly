@@ -1,7 +1,7 @@
 package com.demo.web.controller.Events;
 
 import com.demo.web.dao.Events.EventDAO;
-import com.demo.web.model.Event;
+import com.demo.web.model.Events.Event;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

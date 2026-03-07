@@ -1,6 +1,6 @@
 package com.demo.web.dao.Memory;
 
-import com.demo.web.model.Memory;
+import com.demo.web.model.Memory.Memory;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.*;

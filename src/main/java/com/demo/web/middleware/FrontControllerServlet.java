@@ -88,25 +88,29 @@ public class FrontControllerServlet extends HttpServlet {
         // /sharedlinks handled by web.xml SharedLinksController
         routeToController.put("/trashmgt", "/trashmgtview");
         routeToController.put("/notifications", "/notificationsapi");
-        routeToJsp.put("/groupprofile", "/views/app/groupprofile.jsp");
+        routeToJsp.put("/groupprofile", "/WEB-INF/views/app/Groups/groupprofile.jsp");
         routeToController.put("/groupmembers", "/groupmembersservlet");
         routeToController.put("/groupannouncement", "/groupannouncementservlet");
         routeToController.put("/createannouncement", "/createannouncementservlet");
         routeToController.put("/viewannouncement", "/viewannouncementservlet");
         // /writeautograph removed - actual feature uses /write-autograph via
         // @WebServlet
-        routeToJsp.put("/eventinfo", "/views/app/eventinfo.jsp");
-        routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
-        routeToJsp.put("/creategroup", "/views/app/creategroup.jsp");
-        routeToJsp.put("/memoryrecap", "/views/app/memoryrecap.jsp");
+        routeToJsp.put("/eventinfo", "/WEB-INF/views/app/Events/eventinfo.jsp");
+        routeToJsp.put("/creatememory", "/WEB-INF/views/app/Memory/creatememory.jsp");
+        routeToJsp.put("/memoryrecap", "/WEB-INF/views/app/Memory/memoryrecap.jsp");
         routeToJsp.put("/writejournal", "/views/app/writejournal.jsp");
         routeToJsp.put("/vaultjournals", "/views/app/vaultjournals.jsp");
-        routeToJsp.put("/feedWelcome", "/views/app/feedWelcome.jsp");
-        routeToJsp.put("/feedProfileSetup", "/views/app/feedProfileSetup.jsp");
+        routeToJsp.put("/feedWelcome", "/WEB-INF/views/app/Feed/feedWelcome.jsp");
+        routeToJsp.put("/feedProfileSetup", "/WEB-INF/views/app/Feed/feedProfileSetup.jsp");
         routeToJsp.put("/userprofile", "/views/app/userprofile.jsp");
         routeToJsp.put("/followerprofile", "/views/app/followerprofile.jsp");
         routeToJsp.put("/followingprofile", "/views/app/followingprofile.jsp");
         routeToJsp.put("/vaultpassword", "/views/app/vaultpassword.jsp");
+        routeToJsp.put("/notifications", "/views/app/notifications.jsp");
+
+        // --- Groups ---
+        routeToJsp.put("/groups", "/groupdashboard"); // Let Groups servlet handle this
+        routeToJsp.put("/creategroup", "/WEB-INF/views/app/Groups/creategroup.jsp");
 
         // Comment routes - use controller for data loading
         routeToController.put("/feedcomment", "/viewComments");

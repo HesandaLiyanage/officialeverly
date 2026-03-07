@@ -1,7 +1,7 @@
 package com.demo.web.controller.Feed;
 
 import com.demo.web.dao.Feed.FeedProfileDAO;
-import com.demo.web.model.FeedProfile;
+import com.demo.web.model.Feed.FeedProfile;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -58,7 +58,7 @@ public class FeedProfileSetup extends HttpServlet {
         }
 
         // Forward to setup page
-        request.getRequestDispatcher("/views/app/feedProfileSetup.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedProfileSetup.jsp").forward(request, response);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class FeedProfileSetup extends HttpServlet {
         // Validate username
         if (feedUsername == null || feedUsername.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Username is required.");
-            request.getRequestDispatcher("/views/app/feedProfileSetup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedProfileSetup.jsp").forward(request, response);
             return;
         }
 
@@ -99,7 +99,7 @@ public class FeedProfileSetup extends HttpServlet {
                     "Username must be 3-30 characters and can only contain letters, numbers, and underscores.");
             request.setAttribute("feedUsername", feedUsername);
             request.setAttribute("feedBio", feedBio);
-            request.getRequestDispatcher("/views/app/feedProfileSetup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedProfileSetup.jsp").forward(request, response);
             return;
         }
 
@@ -108,7 +108,7 @@ public class FeedProfileSetup extends HttpServlet {
             request.setAttribute("errorMessage", "This username is already taken. Please choose another.");
             request.setAttribute("feedUsername", feedUsername);
             request.setAttribute("feedBio", feedBio);
-            request.getRequestDispatcher("/views/app/feedProfileSetup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedProfileSetup.jsp").forward(request, response);
             return;
         }
 
@@ -117,7 +117,7 @@ public class FeedProfileSetup extends HttpServlet {
             request.setAttribute("errorMessage", "Bio must be 500 characters or less.");
             request.setAttribute("feedUsername", feedUsername);
             request.setAttribute("feedBio", feedBio);
-            request.getRequestDispatcher("/views/app/feedProfileSetup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedProfileSetup.jsp").forward(request, response);
             return;
         }
 
@@ -135,7 +135,8 @@ public class FeedProfileSetup extends HttpServlet {
                                 "Invalid file type. Allowed: JPG, JPEG, PNG, GIF, WEBP");
                         request.setAttribute("feedUsername", feedUsername);
                         request.setAttribute("feedBio", feedBio);
-                        request.getRequestDispatcher("/views/app/feedProfileSetup.jsp").forward(request, response);
+                        request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedProfileSetup.jsp").forward(request,
+                                response);
                         return;
                     }
 
@@ -187,7 +188,7 @@ public class FeedProfileSetup extends HttpServlet {
                 request.setAttribute("errorMessage", "Failed to create profile. Please try again.");
                 request.setAttribute("feedUsername", feedUsername);
                 request.setAttribute("feedBio", feedBio);
-                request.getRequestDispatcher("/views/app/feedProfileSetup.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedProfileSetup.jsp").forward(request, response);
             }
 
         } catch (Exception e) {
@@ -195,7 +196,7 @@ public class FeedProfileSetup extends HttpServlet {
             request.setAttribute("errorMessage", "An unexpected error occurred. Please try again.");
             request.setAttribute("feedUsername", feedUsername);
             request.setAttribute("feedBio", feedBio);
-            request.getRequestDispatcher("/views/app/feedProfileSetup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedProfileSetup.jsp").forward(request, response);
         }
     }
 

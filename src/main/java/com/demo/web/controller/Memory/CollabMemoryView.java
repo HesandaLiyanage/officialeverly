@@ -3,9 +3,9 @@ package com.demo.web.controller.Memory;
 import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Memory.MemoryMemberDAO;
-import com.demo.web.model.MediaItem;
-import com.demo.web.model.Memory;
-import com.demo.web.model.MemoryMember;
+import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.model.Memory.Memory;
+import com.demo.web.model.Memory.MemoryMember;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -56,7 +56,7 @@ public class CollabMemoryView extends HttpServlet {
 
             if (memory == null) {
                 request.setAttribute("errorMessage", "Memory not found");
-                request.getRequestDispatcher("/views/app/collabmemories.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
                 return;
             }
 
@@ -70,7 +70,7 @@ public class CollabMemoryView extends HttpServlet {
             // Check if user is a member
             if (!memberDao.isMember(memoryId, userId)) {
                 request.setAttribute("errorMessage", "You don't have access to this memory");
-                request.getRequestDispatcher("/views/app/collabmemories.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
                 return;
             }
 
@@ -91,7 +91,7 @@ public class CollabMemoryView extends HttpServlet {
             request.setAttribute("currentUserId", userId);
 
             // Forward to view page
-            request.getRequestDispatcher("/views/app/collabmemoryview.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemoryview.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect("/collabmemories");

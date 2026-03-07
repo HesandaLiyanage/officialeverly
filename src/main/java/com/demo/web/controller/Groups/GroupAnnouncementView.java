@@ -1,7 +1,7 @@
 package com.demo.web.controller.Groups;
 
 import com.demo.web.dao.Groups.GroupAnnouncementDAO;
-import com.demo.web.model.GroupAnnouncement;
+import com.demo.web.model.Groups.GroupAnnouncement;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +22,7 @@ public class GroupAnnouncementView extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -38,14 +38,14 @@ public class GroupAnnouncementView extends HttpServlet {
         try {
             int announcementId = Integer.parseInt(idStr);
             GroupAnnouncement announcement = announcementDAO.findById(announcementId);
-            
+
             if (announcement == null) {
                 response.sendRedirect(request.getContextPath() + "/groups?error=Announcement not found");
                 return;
             }
 
             request.setAttribute("announcement", announcement);
-            request.getRequestDispatcher("/views/app/viewannouncement.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Groups/viewannouncement.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/groups?error=Invalid announcement ID");

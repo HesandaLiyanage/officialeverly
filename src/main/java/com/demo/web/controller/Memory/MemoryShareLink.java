@@ -2,7 +2,7 @@ package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Memory.MemoryMemberDAO;
-import com.demo.web.model.Memory;
+import com.demo.web.model.Memory.Memory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -1,0 +1,170 @@
+package com.demo.web.model.Memory;
+
+import java.sql.Timestamp;
+
+public class Memory {
+    private int memoryId;
+    private String title;
+    private String description;
+    private Timestamp updatedAt;
+    private int userId;
+    private Integer coverMediaId; // Can be null
+    private Timestamp createdTimestamp;
+    private boolean isPublic;
+    private String shareKey;
+    private Timestamp expiresAt;
+    private boolean isLinkShared;
+    private boolean isCollaborative;
+    private String collabShareKey;
+    private Integer groupId; // null if not a group memory
+
+    // Constructors
+    public Memory() {
+    }
+
+    public Memory(String title, String description, int userId) {
+        this.title = title;
+        this.description = description;
+        this.userId = userId;
+        this.isPublic = false;
+        this.isLinkShared = false;
+    }
+
+    // Getters and Setters
+    public int getMemoryId() {
+        return memoryId;
+    }
+
+    public void setMemoryId(int memoryId) {
+        this.memoryId = memoryId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public Integer getCoverMediaId() {
+        return coverMediaId;
+    }
+
+    public void setCoverMediaId(Integer coverMediaId) {
+        this.coverMediaId = coverMediaId;
+    }
+
+    public Timestamp getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(Timestamp createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
+
+    public String getShareKey() {
+        return shareKey;
+    }
+
+    public void setShareKey(String shareKey) {
+        this.shareKey = shareKey;
+    }
+
+    public Timestamp getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(Timestamp expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+
+    public boolean isLinkShared() {
+        return isLinkShared;
+    }
+
+    public void setLinkShared(boolean linkShared) {
+        isLinkShared = linkShared;
+    }
+
+    public boolean isCollaborative() {
+        return isCollaborative;
+    }
+
+    public void setCollaborative(boolean collaborative) {
+        isCollaborative = collaborative;
+    }
+
+    public String getCollabShareKey() {
+        return collabShareKey;
+    }
+
+    public void setCollabShareKey(String collabShareKey) {
+        this.collabShareKey = collabShareKey;
+    }
+
+    // Add to Memory.java
+    private String coverUrl; // temporary for display
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
+
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
+    @Override
+    public String toString() {
+        return "Memory{" +
+                "memoryId=" + memoryId +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", userId=" + userId +
+                ", coverMediaId=" + coverMediaId +
+                ", isPublic=" + isPublic +
+                ", groupId=" + groupId +
+                ", createdTimestamp=" + createdTimestamp +
+                '}';
+    }
+}

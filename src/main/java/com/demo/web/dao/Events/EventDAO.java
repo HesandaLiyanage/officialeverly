@@ -1,6 +1,6 @@
 package com.demo.web.dao.Events;
 
-import com.demo.web.model.Event;
+import com.demo.web.model.Events.Event;
 import com.demo.web.util.DatabaseUtil;
 import java.sql.*;
 import java.util.ArrayList;

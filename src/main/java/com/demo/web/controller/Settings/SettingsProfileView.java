@@ -1,6 +1,6 @@
 package com.demo.web.controller.Settings;
 
-import com.demo.web.model.user;
+import com.demo.web.model.Auth.user;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.ProfileService;
 

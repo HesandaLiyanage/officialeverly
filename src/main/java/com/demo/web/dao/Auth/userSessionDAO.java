@@ -1,6 +1,6 @@
 package com.demo.web.dao.Auth;
 
-import com.demo.web.model.UserSession;
+import com.demo.web.model.Auth.UserSession;
 import com.demo.web.util.DatabaseUtil;
 
 import javax.crypto.SecretKey;

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="com.demo.web.model.FeedProfile" %>
+    <%@ page import="com.demo.web.model.Feed.FeedProfile" %>
         <% FeedProfile feedProfile=(FeedProfile) request.getAttribute("feedProfile"); if (feedProfile==null) {
             feedProfile=(FeedProfile) session.getAttribute("feedProfile"); } String feedUsername=(feedProfile !=null) ?
             feedProfile.getFeedUsername() : "" ; String feedBio=(feedProfile !=null && feedProfile.getFeedBio() !=null)

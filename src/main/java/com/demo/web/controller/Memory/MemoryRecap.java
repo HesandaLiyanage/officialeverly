@@ -1,7 +1,7 @@
 package com.demo.web.controller.Memory;
 
 import com.demo.web.dao.Memory.MemoryRecapDAO;
-import com.demo.web.model.Memory;
+import com.demo.web.model.Memory.Memory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -92,12 +92,12 @@ public class MemoryRecap extends HttpServlet {
                     ", Group: " + groupRecaps.size());
 
             // Forward to JSP
-            request.getRequestDispatcher("/views/app/memoryrecap.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/memoryrecap.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error loading memory recaps: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/memoryrecap.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/memoryrecap.jsp").forward(request, response);
         }
     }
 

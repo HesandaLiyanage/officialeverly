@@ -1,6 +1,6 @@
 package com.demo.web.dao.Groups;
 
-import com.demo.web.model.GroupInvite;
+import com.demo.web.model.Groups.GroupInvite;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.*;

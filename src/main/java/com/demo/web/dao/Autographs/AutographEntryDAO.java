@@ -1,6 +1,6 @@
 package com.demo.web.dao.Autographs;
 
-import com.demo.web.model.AutographEntry;
+import com.demo.web.model.Autographs.AutographEntry;
 import com.demo.web.util.DatabaseUtil;
 import java.sql.*;
 import java.util.ArrayList;

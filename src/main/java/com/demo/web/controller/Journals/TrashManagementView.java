@@ -1,7 +1,7 @@
 package com.demo.web.controller.Journals;
 
 import com.demo.web.dao.Journals.RecycleBinDAO;
-import com.demo.web.model.RecycleBinItem;
+import com.demo.web.model.Journals.RecycleBinItem;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

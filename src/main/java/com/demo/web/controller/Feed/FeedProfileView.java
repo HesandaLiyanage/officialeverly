@@ -5,8 +5,8 @@ import com.demo.web.dao.Feed.FeedFollowDAO;
 import com.demo.web.dao.Feed.FeedPostDAO;
 import com.demo.web.dao.Feed.FeedProfileDAO;
 import com.demo.web.dao.Feed.SavedPostDAO;
-import com.demo.web.model.FeedPost;
-import com.demo.web.model.FeedProfile;
+import com.demo.web.model.Feed.FeedPost;
+import com.demo.web.model.Feed.FeedProfile;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

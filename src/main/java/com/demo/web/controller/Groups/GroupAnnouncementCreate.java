@@ -1,7 +1,7 @@
 package com.demo.web.controller.Groups;
 
 import com.demo.web.dao.Groups.GroupAnnouncementDAO;
-import com.demo.web.model.GroupAnnouncement;
+import com.demo.web.model.Groups.GroupAnnouncement;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +22,7 @@ public class GroupAnnouncementCreate extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -36,13 +36,13 @@ public class GroupAnnouncementCreate extends HttpServlet {
         }
 
         request.setAttribute("groupId", groupIdStr);
-        request.getRequestDispatcher("/views/app/createannouncement.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Groups/createannouncement.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -57,21 +57,22 @@ public class GroupAnnouncementCreate extends HttpServlet {
         if (groupIdStr == null || title == null || content == null || title.isEmpty() || content.isEmpty()) {
             request.setAttribute("errorMessage", "All fields are required.");
             request.setAttribute("groupId", groupIdStr);
-            request.getRequestDispatcher("/views/app/createannouncement.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Groups/createannouncement.jsp").forward(request, response);
             return;
         }
 
         try {
             int groupId = Integer.parseInt(groupIdStr);
             GroupAnnouncement announcement = new GroupAnnouncement(groupId, userId, title, content);
-            
+
             boolean success = announcementDAO.createAnnouncement(announcement);
             if (success) {
                 response.sendRedirect(request.getContextPath() + "/groupannouncementservlet?groupId=" + groupId);
             } else {
                 request.setAttribute("errorMessage", "Failed to create announcement. Please try again.");
                 request.setAttribute("groupId", groupIdStr);
-                request.getRequestDispatcher("/views/app/createannouncement.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Groups/createannouncement.jsp").forward(request,
+                        response);
             }
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/groups?error=Invalid group ID");

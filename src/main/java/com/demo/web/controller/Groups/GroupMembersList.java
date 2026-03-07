@@ -2,8 +2,8 @@ package com.demo.web.controller.Groups;
 
 import com.demo.web.dao.Groups.GroupDAO;
 import com.demo.web.dao.Groups.GroupMemberDAO;
-import com.demo.web.model.Group;
-import com.demo.web.model.GroupMember;
+import com.demo.web.model.Groups.Group;
+import com.demo.web.model.Groups.GroupMember;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -79,7 +79,7 @@ public class GroupMembersList extends HttpServlet {
                 request.setAttribute("errorMessage", error);
             }
 
-            request.getRequestDispatcher("/views/app/groupmembers.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupmembers.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/groups?error=Invalid group ID");

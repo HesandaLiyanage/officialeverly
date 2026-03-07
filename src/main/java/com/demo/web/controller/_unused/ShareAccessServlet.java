@@ -1,8 +1,8 @@
 //package com.demo.web.controller;
 //
 //import com.demo.web.dao.Memory.MediaDAO;
-//import com.demo.web.model.MediaItem;
-//import com.demo.web.model.MediaShare;
+//import com.demo.web.model.Memory.MediaItem;
+//import com.demo.web.model.Memory.MediaShare;
 //
 //import javax.servlet.ServletException;
 //import javax.servlet.http.HttpServlet;

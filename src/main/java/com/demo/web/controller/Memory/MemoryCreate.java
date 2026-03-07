@@ -5,12 +5,12 @@ import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.dao.Memory.MemoryMemberDAO;
 import com.demo.web.dao.Groups.GroupDAO;
 import com.demo.web.dao.Groups.GroupMemberDAO;
-import com.demo.web.model.Memory;
-import com.demo.web.model.MediaItem;
-import com.demo.web.model.Group;
+import com.demo.web.model.Memory.Memory;
+import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.model.Groups.Group;
 import com.demo.web.dao.Settings.SubscriptionDAO;
 import com.demo.web.dao.Notifications.NotificationDAO;
-import com.demo.web.model.Plan;
+import com.demo.web.model.Settings.Plan;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;

@@ -1,8 +1,8 @@
 // File: com/demo/web/dao/autographDAO.java (With Debugging Output)
 package com.demo.web.dao.Autographs;
 
-import com.demo.web.model.autograph;
-import com.demo.web.model.RecycleBinItem;
+import com.demo.web.model.Autographs.autograph;
+import com.demo.web.model.Journals.RecycleBinItem;
 import com.demo.web.dao.Journals.RecycleBinDAO;
 import com.demo.web.util.DatabaseUtil;
 import java.sql.*;

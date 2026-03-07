@@ -1,6 +1,6 @@
 package com.demo.web.dao.Memory;
 
-import com.demo.web.model.MediaItem;
+import com.demo.web.model.Memory.MediaItem;
 import com.demo.web.util.DatabaseUtil;
 import com.demo.web.util.EncryptionService;
 import com.demo.web.util.EncryptionService.EncryptedData;

@@ -1,8 +1,8 @@
 package com.demo.web.controller.Settings;
 
 import com.demo.web.dao.Settings.SubscriptionDAO;
-import com.demo.web.model.Plan;
-import com.demo.web.model.user;
+import com.demo.web.model.Settings.Plan;
+import com.demo.web.model.Auth.user;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -1,7 +1,7 @@
 package com.demo.web.controller.Groups;
 
 import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.model.Group;
+import com.demo.web.model.Groups.Group;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -62,7 +62,7 @@ public class GroupEdit extends HttpServlet {
             if (groupName == null || groupName.trim().isEmpty()) {
                 request.setAttribute("error", "Group name is required");
                 request.setAttribute("group", existingGroup);
-                request.getRequestDispatcher("/views/app/editgroup.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Groups/editgroup.jsp").forward(request, response);
                 return;
             }
 
@@ -75,7 +75,8 @@ public class GroupEdit extends HttpServlet {
                     if (groupDAO.isUrlTaken(customLink)) {
                         request.setAttribute("error", "This group link is already taken. Please choose another.");
                         request.setAttribute("group", existingGroup);
-                        request.getRequestDispatcher("/views/app/editgroup.jsp").forward(request, response);
+                        request.getRequestDispatcher("/WEB-INF/views/app/Groups/editgroup.jsp").forward(request,
+                                response);
                         return;
                     }
                 }
@@ -122,7 +123,7 @@ public class GroupEdit extends HttpServlet {
                 System.out.println("[DEBUG EditGroupServlet] Failed to update group");
                 request.setAttribute("error", "Failed to update group. Please try again.");
                 request.setAttribute("group", existingGroup);
-                request.getRequestDispatcher("/views/app/editgroup.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Groups/editgroup.jsp").forward(request, response);
             }
 
         } catch (Exception e) {

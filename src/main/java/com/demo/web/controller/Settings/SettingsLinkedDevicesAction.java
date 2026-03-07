@@ -1,7 +1,7 @@
 package com.demo.web.controller.Settings;
 
 import com.demo.web.dao.Auth.userSessionDAO;
-import com.demo.web.model.UserSession;
+import com.demo.web.model.Auth.UserSession;
 import com.demo.web.util.SessionUtil;
 
 import javax.servlet.ServletException;

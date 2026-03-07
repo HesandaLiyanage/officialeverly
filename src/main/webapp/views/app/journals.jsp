@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
   <%@ page import="java.util.List" %>
-    <%@ page import="com.demo.web.model.Journal" %>
+    <%@ page import="com.demo.web.model.Journals.Journal" %>
       <%@ page import="java.text.SimpleDateFormat" %>
         <% List<Journal> journals = (List<Journal>) request.getAttribute("journals");
             Integer totalCount = (Integer) request.getAttribute("totalCount");

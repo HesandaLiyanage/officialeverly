@@ -5,10 +5,10 @@ import com.demo.web.dao.Feed.FeedPostDAO;
 import com.demo.web.dao.Feed.FeedPostLikeDAO;
 import com.demo.web.dao.Feed.FeedProfileDAO;
 import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.model.FeedComment;
-import com.demo.web.model.FeedPost;
-import com.demo.web.model.FeedProfile;
-import com.demo.web.model.MediaItem;
+import com.demo.web.model.Feed.FeedComment;
+import com.demo.web.model.Feed.FeedPost;
+import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.model.Memory.MediaItem;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -115,7 +115,7 @@ public class FeedCommentView extends HttpServlet {
                 " with " + comments.size() + " comments");
 
         // Forward to JSP
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/views/app/feedcomment.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedcomment.jsp");
         dispatcher.forward(request, response);
     }
 }

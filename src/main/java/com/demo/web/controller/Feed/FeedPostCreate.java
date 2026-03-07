@@ -3,9 +3,9 @@ package com.demo.web.controller.Feed;
 import com.demo.web.dao.Feed.FeedPostDAO;
 import com.demo.web.dao.Feed.FeedProfileDAO;
 import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.FeedPost;
-import com.demo.web.model.FeedProfile;
-import com.demo.web.model.Memory;
+import com.demo.web.model.Feed.FeedPost;
+import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.model.Memory.Memory;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -97,12 +97,12 @@ public class FeedPostCreate extends HttpServlet {
                 request.setAttribute("memories", new java.util.ArrayList<Memory>());
             }
             request.setAttribute("feedProfile", feedProfile);
-            request.getRequestDispatcher("/views/app/selectMemoryForPost.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Feed/selectMemoryForPost.jsp").forward(request, response);
         } else {
             // Show main create post page with options
             logger.info("[CreatePostServlet] Showing create post page for user " + userId);
             request.setAttribute("feedProfile", feedProfile);
-            request.getRequestDispatcher("/views/app/createPost.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Feed/createPost.jsp").forward(request, response);
         }
     }
 

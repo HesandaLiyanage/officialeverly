@@ -3,10 +3,10 @@ package com.demo.web.controller.Settings;
 import com.demo.web.dao.Groups.GroupInviteDAO;
 import com.demo.web.dao.Autographs.autographDAO;
 import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.GroupInvite;
-import com.demo.web.model.Memory;
-import com.demo.web.model.autograph;
-import com.demo.web.model.user;
+import com.demo.web.model.Groups.GroupInvite;
+import com.demo.web.model.Memory.Memory;
+import com.demo.web.model.Autographs.autograph;
+import com.demo.web.model.Auth.user;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

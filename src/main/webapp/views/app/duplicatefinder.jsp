@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page import="java.util.*" %>
-        <%@ page import="com.demo.web.dao.SubscriptionDAO" %>
+        <%@ page import="com.demo.web.dao.Settings.SubscriptionDAO" %>
             <%@ page import="java.text.SimpleDateFormat" %>
                 <%! String fmtBytes(long bytes) { if (bytes < 1024) return bytes + " B" ; if (bytes < 1024 * 1024)
                     return String.format("%.1f KB", bytes / 1024.0); if (bytes < 1024L * 1024 * 1024) return

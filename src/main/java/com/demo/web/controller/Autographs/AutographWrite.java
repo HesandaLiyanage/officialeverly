@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import com.demo.web.dao.Autographs.autographDAO;
-import com.demo.web.model.autograph;
+import com.demo.web.model.Autographs.autograph;
 
 @WebServlet("/write-autograph")
 public class AutographWrite extends HttpServlet {

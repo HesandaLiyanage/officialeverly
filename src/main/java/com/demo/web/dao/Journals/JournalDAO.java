@@ -1,8 +1,8 @@
 // File: src/main/java/com/demo/web/dao/JournalDAO.java
 package com.demo.web.dao.Journals;
 
-import com.demo.web.model.Journal;
-import com.demo.web.model.RecycleBinItem;
+import com.demo.web.model.Journals.Journal;
+import com.demo.web.model.Journals.RecycleBinItem;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.*;

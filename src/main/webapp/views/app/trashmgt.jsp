@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-  <%@ page import="com.demo.web.model.RecycleBinItem" %>
+  <%@ page import="com.demo.web.model.Journals.RecycleBinItem" %>
     <%@ page import="java.util.List" %>
       <%@ page import="java.text.SimpleDateFormat" %>
         <% List<RecycleBinItem> trashItems = (List<RecycleBinItem>) request.getAttribute("trashItems");

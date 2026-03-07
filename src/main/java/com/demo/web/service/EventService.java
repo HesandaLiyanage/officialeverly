@@ -2,8 +2,8 @@ package com.demo.web.service;
 
 import com.demo.web.dao.Events.EventDAO;
 import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.model.Event;
-import com.demo.web.model.Group;
+import com.demo.web.model.Events.Event;
+import com.demo.web.model.Groups.Group;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.demo.web.dao.Groups;
 
-import com.demo.web.model.GroupMember;
-import com.demo.web.model.user;
+import com.demo.web.model.Groups.GroupMember;
+import com.demo.web.model.Auth.user;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.*;

@@ -1,8 +1,8 @@
 package com.demo.web.controller.Autographs;
 
 import com.demo.web.dao.Autographs.AutographEntryDAO;
-import com.demo.web.model.AutographEntry;
-import com.demo.web.model.autograph;
+import com.demo.web.model.Autographs.AutographEntry;
+import com.demo.web.model.Autographs.autograph;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.AutographService;
 
