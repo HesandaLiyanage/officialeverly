@@ -64,7 +64,7 @@ public class SettingsSubscriptionManage extends HttpServlet {
         request.setAttribute("billingCycle", (plan.getPriceMonthly() == 0) ? "—" : "Monthly");
         request.setAttribute("renewalDate", "—");
 
-        request.getRequestDispatcher("/views/app/managesubscription.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/app/Settings/managesubscription.jsp").forward(request, response);
     }
 
     private String formatSize(long bytes) {

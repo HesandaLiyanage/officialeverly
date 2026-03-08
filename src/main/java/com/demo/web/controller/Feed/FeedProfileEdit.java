@@ -58,6 +58,6 @@ public class FeedProfileEdit extends HttpServlet {
         request.setAttribute("feedBio", feedProfile.getFeedBio());
         request.setAttribute("feedProfilePicture", feedProfile.getFeedProfilePictureUrl());
 
-        request.getRequestDispatcher("/views/app/editpublicprofile.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/app/Feed/editpublicprofile.jsp").forward(request, response);
     }
 }

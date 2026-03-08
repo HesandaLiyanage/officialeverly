@@ -170,7 +170,7 @@ public class FeedProfileView extends HttpServlet {
             request.setAttribute("currentUserProfile", currentUserProfile);
             request.setAttribute("isBlocked", isBlocked);
 
-            request.getRequestDispatcher("/views/app/userprofile.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Feed/userprofile.jsp").forward(request, response);
 
         } catch (Exception e) {
             logger.severe("[FeedProfileViewController] Error: " + e.getMessage());

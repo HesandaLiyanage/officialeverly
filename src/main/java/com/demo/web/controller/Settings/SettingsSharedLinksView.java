@@ -78,7 +78,7 @@ public class SettingsSharedLinksView extends HttpServlet {
         request.setAttribute("sharedMemories", sharedMemories);
         request.setAttribute("sharedInvites", sharedInvites);
 
-        request.getRequestDispatcher("/views/app/sharedlinks.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/app/Settings/sharedlinks.jsp").forward(request, response);
     }
 
     @Override

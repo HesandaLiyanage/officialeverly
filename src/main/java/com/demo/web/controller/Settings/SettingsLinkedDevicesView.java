@@ -52,6 +52,6 @@ public class SettingsLinkedDevicesView extends HttpServlet {
         request.setAttribute("currentSessionId", currentSessionId);
 
         // Forward to JSP
-        request.getRequestDispatcher("/views/app/linkeddevices.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/app/Settings/linkeddevices.jsp").forward(request, response);
     }
 }

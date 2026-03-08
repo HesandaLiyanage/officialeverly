@@ -43,7 +43,7 @@ public class JournalRecycleBin extends HttpServlet {
         });
         
         request.setAttribute("trashItems", trashItems);
-        request.getRequestDispatcher("/views/app/trashmgt.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/app/Journals/trashmgt.jsp").forward(request, response);
     }
 
     // ✅ ADD THIS doPost METHOD FOR PERMANENT DELETE

@@ -84,12 +84,12 @@ public class VaultMemoriesList extends HttpServlet {
 
             request.setAttribute("memories", vaultMemories);
             request.setAttribute("memoriesCount", vaultMemories.size());
-            request.getRequestDispatcher("/views/app/vaultMemories.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Vault/vaultMemories.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error loading vault memories");
-            request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
         }
     }
 
@@ -112,7 +112,7 @@ public class VaultMemoriesList extends HttpServlet {
         // Verify vault password
         if (vaultPassword == null || !vaultDAO.verifyVaultPassword(userId, vaultPassword)) {
             request.setAttribute("errorMessage", "Invalid vault password");
-            request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
             return;
         }
 
@@ -136,12 +136,12 @@ public class VaultMemoriesList extends HttpServlet {
 
             request.setAttribute("memories", vaultMemories);
             request.setAttribute("memoriesCount", vaultMemories.size());
-            request.getRequestDispatcher("/views/app/vaultMemories.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Vault/vaultMemories.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error loading vault memories");
-            request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
         }
     }
 }

@@ -118,14 +118,14 @@ public class FeedProfileUpdate extends HttpServlet {
 
             // Set profile data and forward back to edit page
             request.setAttribute("feedProfile", feedProfile);
-            request.getRequestDispatcher("/views/app/editpublicprofile.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Feed/editpublicprofile.jsp").forward(request, response);
 
         } catch (Exception e) {
             logger.severe("[UpdateFeedProfile] Error: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred. Please try again.");
             request.setAttribute("feedProfile", feedProfile);
-            request.getRequestDispatcher("/views/app/editpublicprofile.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Feed/editpublicprofile.jsp").forward(request, response);
         }
     }
 

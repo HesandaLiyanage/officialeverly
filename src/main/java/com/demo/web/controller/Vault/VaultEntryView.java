@@ -47,7 +47,7 @@ public class VaultEntryView extends HttpServlet {
         }
 
         // Show vault entry page (password prompt)
-        request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
     }
 
     /**
@@ -69,7 +69,7 @@ public class VaultEntryView extends HttpServlet {
         // Validate password
         if (password == null || password.isEmpty()) {
             request.setAttribute("errorMessage", "Password is required");
-            request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
             return;
         }
 
@@ -81,16 +81,16 @@ public class VaultEntryView extends HttpServlet {
                 // Password correct - store vault unlocked state in session
                 session.setAttribute("vault_unlocked", true);
                 request.setAttribute("vaultUnlocked", true);
-                request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
             } else {
                 // Wrong password
                 request.setAttribute("errorMessage", "Incorrect password. Please try again.");
-                request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred. Please try again.");
-            request.getRequestDispatcher("/views/app/vaultentries.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
         }
     }
 }

@@ -95,7 +95,7 @@ public class JournalEdit extends HttpServlet { // Only handles POST
                 request.setAttribute("error", "Please write something in your journal!");
                 // Re-populate the journal object for the form
                 request.setAttribute("journal", journal); // Pass the original journal back
-                request.getRequestDispatcher("/views/app/editjournal.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/app/Journals/editjournal.jsp").forward(request, response);
                 return;
             }
 
@@ -130,7 +130,7 @@ public class JournalEdit extends HttpServlet { // Only handles POST
                 request.setAttribute("error", "Failed to update journal entry. Please try again.");
                 // Pass the journal object back in case of error to re-populate the form
                 request.setAttribute("journal", journal);
-                request.getRequestDispatcher("/views/app/editjournal.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/app/Journals/editjournal.jsp").forward(request, response);
             }
 
         } catch (NumberFormatException e) {
@@ -150,7 +150,7 @@ public class JournalEdit extends HttpServlet { // Only handles POST
                 }
             } catch (Exception ex) {
                 /* Ignore error fetching journal on error page */ }
-            request.getRequestDispatcher("/views/app/editjournal.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Journals/editjournal.jsp").forward(request, response);
         }
     }
 

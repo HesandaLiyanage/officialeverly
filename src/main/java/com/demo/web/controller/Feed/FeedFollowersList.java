@@ -91,10 +91,10 @@ public class FeedFollowersList extends HttpServlet {
 
         if ("following".equals(type)) {
             pageTitle = "Following";
-            jspPage = "/views/app/following.jsp";
+            jspPage = "/views/app/Feed/following.jsp";
         } else {
             pageTitle = "Followers";
-            jspPage = "/views/app/followers.jsp";
+            jspPage = "/views/app/Feed/followers.jsp";
         }
 
         try {

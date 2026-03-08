@@ -77,6 +77,6 @@ public class SettingsStorageSenseView extends HttpServlet {
         request.setAttribute("trashCount", trashCount);
         request.setAttribute("memoryCount", memoryCount);
 
-        request.getRequestDispatcher("/views/app/storagesense.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/app/Settings/storagesense.jsp").forward(request, response);
     }
 }

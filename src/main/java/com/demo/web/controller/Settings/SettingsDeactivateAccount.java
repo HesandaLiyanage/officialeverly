@@ -81,14 +81,14 @@ public class SettingsDeactivateAccount extends HttpServlet {
             } else {
                 System.out.println("Failed to deactivate account for user ID: " + userId);
                 request.setAttribute("error", "Failed to deactivate account. Please try again.");
-                request.getRequestDispatcher("/views/app/settingsaccount.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/app/Settings/settingsaccount.jsp").forward(request, response);
             }
 
         } catch (Exception e) {
             System.err.println("Error deactivating account: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while deactivating your account.");
-            request.getRequestDispatcher("/views/app/settingsaccount.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/app/Settings/settingsaccount.jsp").forward(request, response);
         }
 
         System.out.println("=== DeactivateAccountServlet END ===");
