@@ -1,182 +1,270 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<jsp:include page="../../public/header2.jsp" />
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Everly</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard-styles.css">
+</head>
 <body>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/adminuser.css">
-
-<!-- Page Wrapper -->
-<div class="admin-page-wrapper">
-    <main class="admin-main-content">
-        <!-- Page Header with Back Button -->
-        <div class="page-header-nav">
-            <a href="/admin" class="back-button">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-            </a>
-            <h1 class="page-title">User Management</h1>
+    <div class="header">
+        <div class="logo" onclick="navigateTo('overview')">Everly</div>
+        <div class="header-right">
+            <div class="search-box">
+                <input type="text" placeholder="Search..." id="searchInput">
+                <span class="search-icon">⌕</span>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
         </div>
+    </div>
 
-        <!-- Search Section -->
-        <div class="search-section">
-            <div class="user-search-bar">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-                <input type="text" id="userSearch" placeholder="search users">
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-title">Dashboard</div>
+            <div class="nav-item" onclick="navigateTo('overview')">
+                <span>○</span> Overview
+            </div>
+            <div class="nav-item active" onclick="navigateTo('users')">
+                <span>▢</span> User Management
+            </div>
+            <div class="nav-item" onclick="navigateTo('content')">
+                <span>▢</span> Content Management
+            </div>
+            <div class="nav-item" onclick="navigateTo('settings')">
+                <span>▢</span> Settings
             </div>
         </div>
 
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">User Management</h1>
+                <p class="page-subtitle">ADMIN DASHBOARD</p>
+            </div>
 
-        <!-- User Lists Grid -->
-        <div class="user-lists-grid">
-            <!-- Most Active Users -->
-            <div class="user-list-section active">
-                <h2>Most Active users</h2>
-                <div class="user-list">
-                    <div class="user-item">
-                        <img src="https://i.pravatar.cc/150?img=12" alt="Ravi" class="user-item-avatar">
-                        <div class="user-item-info">
-                            <span class="user-item-name">Ravi</span>
-                            <span class="user-item-status">Active</span>
+            <div class="content-layout">
+                <div class="users-section">
+                    <div class="section-header">
+                        <h2 class="section-title">All Users</h2>
+                        <input type="text" class="user-search" placeholder="Search users" id="userSearch">
+                    </div>
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>user1</td>
+                                <td><span class="role-badge role-admin">Admin</span></td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit-btn" onclick="editUser('user1')">Edit</button>
+                                        <button class="action-btn delete-btn" onclick="deleteUser('user1')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>user2</td>
+                                <td><span class="role-badge role-editor">Editor</span></td>
+                                <td><span class="status-badge status-inactive">Inactive</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit-btn" onclick="editUser('user2')">Edit</button>
+                                        <button class="action-btn delete-btn" onclick="deleteUser('user2')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>user3</td>
+                                <td><span class="role-badge role-subscriber">Subscriber</span></td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit-btn" onclick="editUser('user3')">Edit</button>
+                                        <button class="action-btn delete-btn" onclick="deleteUser('user3')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>user4</td>
+                                <td><span class="role-badge role-contributor">Contributor</span></td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit-btn" onclick="editUser('user4')">Edit</button>
+                                        <button class="action-btn delete-btn" onclick="deleteUser('user4')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>user5</td>
+                                <td><span class="role-badge role-editor">Editor</span></td>
+                                <td><span class="status-badge status-inactive">Inactive</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit-btn" onclick="editUser('user5')">Edit</button>
+                                        <button class="action-btn delete-btn" onclick="deleteUser('user5')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>user6</td>
+                                <td><span class="role-badge role-subscriber">Subscriber</span></td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit-btn" onclick="editUser('user6')">Edit</button>
+                                        <button class="action-btn delete-btn" onclick="deleteUser('user6')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="right-sidebar">
+                    <div class="activity-card">
+                        <h2 class="section-title">Most Active Users</h2>
+                        <div class="user-item" onclick="viewUserDetails('user1')">
+                            <div class="user-info">
+                                <div class="user-avatar">U1</div>
+                                <div class="user-details">
+                                    <span class="user-name">user1</span>
+                                    <span class="user-role-small">Admin</span>
+                                </div>
+                            </div>
+                            <span class="activity-count">1,247</span>
+                        </div>
+                        <div class="user-item" onclick="viewUserDetails('user3')">
+                            <div class="user-info">
+                                <div class="user-avatar">U3</div>
+                                <div class="user-details">
+                                    <span class="user-name">user3</span>
+                                    <span class="user-role-small">Subscriber</span>
+                                </div>
+                            </div>
+                            <span class="activity-count">892</span>
+                        </div>
+                        <div class="user-item" onclick="viewUserDetails('user4')">
+                            <div class="user-info">
+                                <div class="user-avatar">U4</div>
+                                <div class="user-details">
+                                    <span class="user-name">user4</span>
+                                    <span class="user-role-small">Contributor</span>
+                                </div>
+                            </div>
+                            <span class="activity-count">645</span>
                         </div>
                     </div>
 
-                    <div class="user-item">
-                        <img src="https://i.pravatar.cc/150?img=45" alt="Oviya" class="user-item-avatar">
-                        <div class="user-item-info">
-                            <span class="user-item-name">Oviya</span>
-                            <span class="user-item-status">Active</span>
+                    <div class="activity-card">
+                        <h2 class="section-title">Least Active Users</h2>
+                        <div class="user-item" onclick="viewUserDetails('user2')">
+                            <div class="user-info">
+                                <div class="user-avatar">U2</div>
+                                <div class="user-details">
+                                    <span class="user-name">user2</span>
+                                    <span class="user-role-small">Editor</span>
+                                </div>
+                            </div>
+                            <span class="activity-count">12</span>
                         </div>
-                    </div>
-
-                    <div class="user-item">
-                        <img src="https://i.pravatar.cc/150?img=33" alt="Dhoni" class="user-item-avatar">
-                        <div class="user-item-info">
-                            <span class="user-item-name">Dhoni</span>
-                            <span class="user-item-status">Active</span>
+                        <div class="user-item" onclick="viewUserDetails('user5')">
+                            <div class="user-info">
+                                <div class="user-avatar">U5</div>
+                                <div class="user-details">
+                                    <span class="user-name">user5</span>
+                                    <span class="user-role-small">Editor</span>
+                                </div>
+                            </div>
+                            <span class="activity-count">8</span>
                         </div>
-                    </div>
-
-                    <div class="user-item">
-                        <img src="https://i.pravatar.cc/150?img=47" alt="Queency" class="user-item-avatar">
-                        <div class="user-item-info">
-                            <span class="user-item-name">Queency</span>
-                            <span class="user-item-status">Active</span>
+                        <div class="user-item" onclick="viewUserDetails('user6')">
+                            <div class="user-info">
+                                <div class="user-avatar">U6</div>
+                                <div class="user-details">
+                                    <span class="user-name">user6</span>
+                                    <span class="user-role-small">Subscriber</span>
+                                </div>
+                            </div>
+                            <span class="activity-count">3</span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Low Active Users -->
-            <div class="user-list-section inactive">
-                <h2>Low Active Users</h2>
-                <div class="user-list">
-                    <div class="user-item">
-                        <img src="https://i.pravatar.cc/150?img=48" alt="Sophia" class="user-item-avatar">
-                        <div class="user-item-info">
-                            <span class="user-item-name">Sophia</span>
-                            <span class="user-item-status">Inactive</span>
-                        </div>
-                    </div>
-
-                    <div class="user-item">
-                        <img src="https://i.pravatar.cc/150?img=49" alt="Elisa" class="user-item-avatar">
-                        <div class="user-item-info">
-                            <span class="user-item-name">Elisa</span>
-                            <span class="user-item-status">Inactive</span>
-                        </div>
-                    </div>
-
-                    <div class="user-item">
-                        <img src="https://i.pravatar.cc/150?img=51" alt="vijay" class="user-item-avatar">
-                        <div class="user-item-info">
-                            <span class="user-item-name">vijay</span>
-                            <span class="user-item-status">Inactive</span>
-                        </div>
-                    </div>
-
-                    <div class="user-item">
-                        <img src="https://i.pravatar.cc/150?img=52" alt="Ajith" class="user-item-avatar">
-                        <div class="user-item-info">
-                            <span class="user-item-name">Ajith</span>
-                            <span class="user-item-status">Active</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-    </main>
+    </div>
 
-    <!-- Recent Joined Sidebar -->
-    <aside class="admin-sidebar">
-        <div class="sidebar-section">
-            <h3 class="sidebar-title">Recent Joined</h3>
-            <ul class="recent-joined-list">
-                <li class="recent-joined-item">
-                    <div class="recent-joined-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">H</div>
-                    <span class="recent-joined-name">hess</span>
-                </li>
-
-                <li class="recent-joined-item">
-                    <div class="recent-joined-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">A</div>
-                    <span class="recent-joined-name">Anu</span>
-                </li>
-
-                <li class="recent-joined-item">
-                    <div class="recent-joined-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">R</div>
-                    <span class="recent-joined-name">Roy</span>
-                </li>
-
-                <li class="recent-joined-item">
-                    <div class="recent-joined-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">N</div>
-                    <span class="recent-joined-name">Nishaka</span>
-                </li>
-
-                <li class="recent-joined-item">
-                    <div class="recent-joined-avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">S</div>
-                    <span class="recent-joined-name">Sinali</span>
-                </li>
-            </ul>
-        </div>
-    </aside>
-</div>
-
-<jsp:include page="../../public/footer.jsp" />
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // User search functionality
-        const searchInput = document.getElementById('userSearch');
-        if (searchInput) {
-            searchInput.addEventListener('input', function(e) {
-                const query = e.target.value.toLowerCase();
-                const userItems = document.querySelectorAll('.user-item');
-
-                userItems.forEach(item => {
-                    const name = item.querySelector('.user-item-name').textContent.toLowerCase();
-                    if (name.includes(query)) {
-                        item.style.display = 'flex';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
+    <script>
+        function navigateTo(page) {
+            console.log(`Navigating to: \${page}`);
+            
+            if (page === 'overview') {
+                alert('Navigating to Overview page...');
+                window.location.href = '${pageContext.request.contextPath}/admin';
+            } else if (page === 'users') {
+                console.log('Already on User Management page');
+            } else if (page === 'content') {
+                alert('Navigating to Content Management page...');
+                window.location.href = '${pageContext.request.contextPath}/admincontent';
+            } else if (page === 'settings') {
+                alert('Navigating to Settings page...');
+                window.location.href = '${pageContext.request.contextPath}/adminsettings';
+            } else if (page === 'analytics') {
+                alert('Navigating to Analytics page...');
+                window.location.href = '${pageContext.request.contextPath}/adminanalytics';
+            }
         }
 
-        // Add click handlers for user items
-        const userItems = document.querySelectorAll('.user-item');
-        userItems.forEach(item => {
-            item.style.cursor = 'pointer';
-            item.addEventListener('click', function() {
-                const userName = this.querySelector('.user-item-name').textContent;
-                console.log('Viewing user profile:', userName);
-                // Add navigation or modal logic here
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logging out...');
+                window.location.href = '${pageContext.request.contextPath}/login';
+            }
+        }
+
+        function editUser(username) {
+            alert(`Opening edit panel for \${username}...`);
+        }
+
+        function deleteUser(username) {
+            if (confirm(`Are you sure you want to delete \${username}?`)) {
+                alert(`Deleting \${username}...`);
+            }
+        }
+
+        function viewUserDetails(username) {
+            alert(`Viewing detailed profile for \${username}...`);
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const searchTerm = e.target.value;
+                if (searchTerm) {
+                    alert(`Searching for: \${searchTerm}`);
+                }
+            }
+        });
+
+        document.getElementById('userSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.users-table tbody tr');
+            
+            rows.forEach(row => {
+                const username = row.querySelector('td:first-child').textContent.toLowerCase();
+                if (username.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
             });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
