@@ -26,14 +26,14 @@
             <div class="nav-item" onclick="navigateTo('overview')">
                 <span>○</span> Overview
             </div>
+            <div class="nav-item active" onclick="navigateTo('analytics')">
+                <span>▢</span> Analytics & Reports
+            </div>
             <div class="nav-item" onclick="navigateTo('users')">
                 <span>▢</span> User Management
             </div>
             <div class="nav-item" onclick="navigateTo('content')">
                 <span>▢</span> Content Management
-            </div>
-            <div class="nav-item active" onclick="navigateTo('analytics')">
-                <span>▢</span> Analytics & Reports
             </div>
             <div class="nav-item" onclick="navigateTo('settings')">
                 <span>▢</span> Settings
@@ -192,28 +192,21 @@
 
     <script>
         function navigateTo(page) {
-            console.log(`Navigating to: \${page}`);
-            
             if (page === 'overview') {
-                alert('Navigating to Overview page...');
                 window.location.href = '${pageContext.request.contextPath}/admin';
+            } else if (page === 'analytics') {
+                window.location.href = '${pageContext.request.contextPath}/adminanalytics';
             } else if (page === 'users') {
-                alert('Navigating to User Management page...');
                 window.location.href = '${pageContext.request.contextPath}/adminuser';
             } else if (page === 'content') {
-                alert('Navigating to Content Management page...');
                 window.location.href = '${pageContext.request.contextPath}/admincontent';
-            } else if (page === 'analytics') {
-                console.log('Already on Analytics & Reports page');
             } else if (page === 'settings') {
-                alert('Navigating to Settings page...');
                 window.location.href = '${pageContext.request.contextPath}/adminsettings';
             }
         }
 
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                alert('Logging out...');
                 window.location.href = '${pageContext.request.contextPath}/login';
             }
         }

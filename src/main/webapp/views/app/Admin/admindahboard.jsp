@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Everly Dashboard</title>
- <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard-styles.css">
+    <title>Overview - Everly</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard-styles.css">
 </head>
 <body>
     <div class="header">
-        <div class="logo">Everly</div>
+        <div class="logo" onclick="navigateTo('overview')">Everly</div>
         <div class="header-right">
             <div class="search-box">
                 <input type="text" placeholder="Search..." id="searchInput">
@@ -26,7 +26,7 @@
                 <span>○</span> Overview
             </div>
             <div class="nav-item" onclick="navigateTo('analytics')">
-                <span>▢</span> Analytics and Reports
+                <span>▢</span> Analytics & Reports
             </div>
             <div class="nav-item" onclick="navigateTo('users')">
                 <span>▢</span> User Management
@@ -41,13 +41,18 @@
 
         <div class="main-content">
             <div class="page-header">
-                <h1 class="page-title">Overview</h1>
-                <select class="date-selector" onchange="handleDateChange(this.value)">
-                    <option value="today">Today</option>
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
-                    <option value="year">This Year</option>
-                </select>
+                <div class="page-title-section">
+                    <h1 class="page-title">Overview</h1>
+                    <p class="page-subtitle">ADMIN DASHBOARD</p>
+                </div>
+                <div class="header-actions">
+                    <select class="date-selector" onchange="handleDateChange(this.value)">
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
             </div>
 
             <div class="stats-grid">
@@ -150,44 +155,22 @@
     </div>
 
     <script>
-        function navigateTo(page, subPage = null) {
-            console.log(`Navigating to: \${page}\${subPage ? '/' + subPage : ''}`);
-            
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                if ((page === 'overview' && item.textContent.includes('Overview')) ||
-                    (page === 'users' && item.textContent.includes('User Management')) ||
-                    (page === 'content' && item.textContent.includes('Content Management')) ||
-                    (page === 'settings' && item.textContent.includes('Settings')) ||
-                    (page === 'analytics' && item.textContent.includes('Analytics'))) {
-                    item.classList.add('active');
-                }
-            });
-            
+        function navigateTo(page) {
             if (page === 'overview') {
-                console.log('Already on Overview page');
+                window.location.href = '${pageContext.request.contextPath}/admin';
+            } else if (page === 'analytics') {
+                window.location.href = '${pageContext.request.contextPath}/adminanalytics';
             } else if (page === 'users') {
-                alert('Navigating to User Management page...');
                 window.location.href = '${pageContext.request.contextPath}/adminuser';
             } else if (page === 'content') {
-                alert('Navigating to Content Management page...');
                 window.location.href = '${pageContext.request.contextPath}/admincontent';
             } else if (page === 'settings') {
-                alert('Navigating to Settings page...');
                 window.location.href = '${pageContext.request.contextPath}/adminsettings';
-            } else if (page === 'analytics') {
-                alert('Navigating to Analytics page...');
-                window.location.href = '${pageContext.request.contextPath}/adminanalytics';
             }
         }
 
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                alert('Logging out...');
                 window.location.href = '${pageContext.request.contextPath}/login';
             }
         }
