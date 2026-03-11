@@ -685,6 +685,26 @@
         <url-pattern>/blockedusersview</url-pattern>
     </servlet-mapping>
 
+    <!-- Admin User View Controller -->
+    <servlet>
+        <servlet-name>AdminUserViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Admin.AdminUserView</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminUserViewController</servlet-name>
+        <url-pattern>/adminuserview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Admin User Action Servlet -->
+    <servlet>
+        <servlet-name>AdminUserActionServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Admin.AdminUserAction</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminUserActionServlet</servlet-name>
+        <url-pattern>/adminuseraction</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>

@@ -15,6 +15,7 @@ Successfully fix bugs and complete features in the Feed section, primarily focus
     - Changed `INNER JOIN` to `LEFT JOIN` in `FeedCommentDAO.getCommentsForPost`.
     - Updated `feedcomment.jsp` to handle null profile data gracefully (displays "Unknown" user and default avatar instead of crashing or hiding the comment).
     -Added detailed server-side logging for comment creation and retrieval.
+
 - **Key Files:**
     - `src/main/java/com/demo/web/dao/FeedCommentDAO.java`
     - `src/main/webapp/views/app/feedcomment.jsp`

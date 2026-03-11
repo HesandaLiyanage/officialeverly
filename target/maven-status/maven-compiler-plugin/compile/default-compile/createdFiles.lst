@@ -51,6 +51,7 @@ com/demo/web/controller/Feed/FeedBlockUser.class
 com/demo/web/controller/Feed/FeedPostCreate.class
 com/demo/web/util/PasswordUtil.class
 com/demo/web/controller/Feed/FeedProfileImage.class
+com/demo/web/controller/Admin/AdminUserAction.class
 com/demo/web/controller/Auth/AuthSignup.class
 com/demo/web/controller/Autographs/AutographCreate.class
 com/demo/web/controller/Feed/FeedPostSave.class
@@ -67,6 +68,7 @@ com/demo/web/model/_unused/post.class
 com/demo/web/controller/Vault/VaultMoveItem.class
 com/demo/web/dao/Feed/FeedCommentDAO.class
 com/demo/web/dao/Memory/MemoryRecapDAO.class
+com/demo/web/controller/Admin/AdminUserView.class
 com/demo/web/model/Groups/GroupInvite.class
 com/demo/web/dao/Groups/GroupMemberDAO.class
 com/demo/web/controller/Settings/SettingsDeactivateAccount.class
@@ -136,6 +138,7 @@ com/demo/web/controller/Autographs/AutographUpdate.class
 com/demo/web/dao/_unused/postDAO.class
 com/demo/web/dao/Memory/memoryDAO.class
 com/demo/web/service/AuthService.class
+com/demo/web/dao/Admin/AdminUserDAO.class
 com/demo/web/model/Memory/EncryptionKey.class
 com/demo/web/controller/Groups/GroupMembersList.class
 com/demo/web/controller/Groups/GroupsList.class

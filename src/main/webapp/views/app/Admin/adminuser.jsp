@@ -1,11 +1,128 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management - Everly</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard-styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard-styles.css">
+    <style>
+        /* Flash message styles */
+        .flash-message {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .flash-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .flash-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .flash-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: inherit;
+            padding: 0 0.5rem;
+        }
+
+        /* Confirmation modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 0.8rem;
+        }
+        .modal-text {
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: flex-end;
+        }
+        .modal-btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        .modal-btn.cancel {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        .modal-btn.cancel:hover {
+            background: #cbd5e0;
+        }
+        .modal-btn.danger {
+            background: #e53e3e;
+            color: white;
+        }
+        .modal-btn.danger:hover {
+            background: #c53030;
+        }
+        .modal-btn.confirm {
+            background: #5b4cdb;
+            color: white;
+        }
+        .modal-btn.confirm:hover {
+            background: #4a3cc0;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #718096;
+        }
+        .empty-state p {
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -41,165 +158,195 @@
 
         <div class="main-content">
             <div class="page-header">
-                <h1 class="page-title">User Management</h1>
-                <p class="page-subtitle">ADMIN DASHBOARD</p>
+                <div class="page-title-section">
+                    <h1 class="page-title">User Management</h1>
+                    <p class="page-subtitle">ADMIN DASHBOARD</p>
+                </div>
+            </div>
+
+            <!-- Flash message -->
+            <c:if test="${not empty flashMessage}">
+                <div class="flash-message ${flashType}" id="flashMsg">
+                    <span>${flashMessage}</span>
+                    <button class="flash-close" onclick="document.getElementById('flashMsg').style.display='none'">✕</button>
+                </div>
+            </c:if>
+
+            <!-- Stats cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value">${totalUsers}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Users</div>
+                    <div class="stat-value">${activeUsers}</div>
+                    <div class="stat-change positive">● Online</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Inactive Users</div>
+                    <div class="stat-value">${inactiveUsers}</div>
+                    <div class="stat-change negative">● Deactivated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">New Users (30 days)</div>
+                    <div class="stat-value">${newUsersCount}</div>
+                    <div class="stat-change positive">↑ Recent</div>
+                </div>
             </div>
 
             <div class="content-layout">
                 <div class="users-section">
                     <div class="section-header">
                         <h2 class="section-title">All Users</h2>
-                        <input type="text" class="user-search" placeholder="Search users" id="userSearch">
+                        <input type="text" class="user-search" placeholder="Search users..." id="userSearch">
                     </div>
-                    <table class="users-table">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>user1</td>
-                                <td><span class="role-badge role-admin">Admin</span></td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn edit-btn" onclick="editUser('user1')">Edit</button>
-                                        <button class="action-btn delete-btn" onclick="deleteUser('user1')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>user2</td>
-                                <td><span class="role-badge role-editor">Editor</span></td>
-                                <td><span class="status-badge status-inactive">Inactive</span></td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn edit-btn" onclick="editUser('user2')">Edit</button>
-                                        <button class="action-btn delete-btn" onclick="deleteUser('user2')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>user3</td>
-                                <td><span class="role-badge role-subscriber">Subscriber</span></td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn edit-btn" onclick="editUser('user3')">Edit</button>
-                                        <button class="action-btn delete-btn" onclick="deleteUser('user3')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>user4</td>
-                                <td><span class="role-badge role-contributor">Contributor</span></td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn edit-btn" onclick="editUser('user4')">Edit</button>
-                                        <button class="action-btn delete-btn" onclick="deleteUser('user4')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>user5</td>
-                                <td><span class="role-badge role-editor">Editor</span></td>
-                                <td><span class="status-badge status-inactive">Inactive</span></td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn edit-btn" onclick="editUser('user5')">Edit</button>
-                                        <button class="action-btn delete-btn" onclick="deleteUser('user5')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>user6</td>
-                                <td><span class="role-badge role-subscriber">Subscriber</span></td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn edit-btn" onclick="editUser('user6')">Edit</button>
-                                        <button class="action-btn delete-btn" onclick="deleteUser('user6')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <c:choose>
+                        <c:when test="${not empty allUsers}">
+                            <table class="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Joined</th>
+                                        <th>Last Login</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="user" items="${allUsers}">
+                                        <tr>
+                                            <td>${user.username}</td>
+                                            <td>${user.email}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${user.joinedAt != null}">
+                                                        <fmt:formatDate value="${user.joinedAt}" pattern="MMM d, yyyy" />
+                                                    </c:when>
+                                                    <c:otherwise>—</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${user.lastLogin != null}">
+                                                        <fmt:formatDate value="${user.lastLogin}" pattern="MMM d, yyyy HH:mm" />
+                                                    </c:when>
+                                                    <c:otherwise>Never</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${user.isActive}">
+                                                        <span class="status-badge status-active">Active</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="status-badge status-inactive">Inactive</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <div class="action-btns">
+                                                    <c:choose>
+                                                        <c:when test="${user.isActive}">
+                                                            <button class="action-btn edit-btn"
+                                                                onclick="showConfirmModal('deactivate', ${user.userId}, '${user.username}')">
+                                                                Deactivate
+                                                            </button>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <button class="action-btn edit-btn"
+                                                                onclick="showConfirmModal('activate', ${user.userId}, '${user.username}')">
+                                                                Activate
+                                                            </button>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <button class="action-btn delete-btn"
+                                                        onclick="showConfirmModal('delete', ${user.userId}, '${user.username}')">
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="empty-state">
+                                <p>No users found in the system.</p>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
 
                 <div class="right-sidebar">
                     <div class="activity-card">
                         <h2 class="section-title">Most Active Users</h2>
-                        <div class="user-item" onclick="viewUserDetails('user1')">
-                            <div class="user-info">
-                                <div class="user-avatar">U1</div>
-                                <div class="user-details">
-                                    <span class="user-name">user1</span>
-                                    <span class="user-role-small">Admin</span>
-                                </div>
-                            </div>
-                            <span class="activity-count">1,247</span>
-                        </div>
-                        <div class="user-item" onclick="viewUserDetails('user3')">
-                            <div class="user-info">
-                                <div class="user-avatar">U3</div>
-                                <div class="user-details">
-                                    <span class="user-name">user3</span>
-                                    <span class="user-role-small">Subscriber</span>
-                                </div>
-                            </div>
-                            <span class="activity-count">892</span>
-                        </div>
-                        <div class="user-item" onclick="viewUserDetails('user4')">
-                            <div class="user-info">
-                                <div class="user-avatar">U4</div>
-                                <div class="user-details">
-                                    <span class="user-name">user4</span>
-                                    <span class="user-role-small">Contributor</span>
-                                </div>
-                            </div>
-                            <span class="activity-count">645</span>
-                        </div>
+                        <c:choose>
+                            <c:when test="${not empty mostActiveUsers}">
+                                <c:forEach var="user" items="${mostActiveUsers}">
+                                    <div class="user-item">
+                                        <div class="user-info">
+                                            <div class="user-avatar">
+                                                ${fn:toUpperCase(fn:substring(user.username, 0, 1))}
+                                            </div>
+                                            <div class="user-details">
+                                                <span class="user-name">${user.username}</span>
+                                                <span class="user-role-small">${user.activityCount} actions</span>
+                                            </div>
+                                        </div>
+                                        <span class="activity-count">${user.activityCount}</span>
+                                    </div>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="empty-state"><p>No activity data available.</p></div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
 
                     <div class="activity-card">
                         <h2 class="section-title">Least Active Users</h2>
-                        <div class="user-item" onclick="viewUserDetails('user2')">
-                            <div class="user-info">
-                                <div class="user-avatar">U2</div>
-                                <div class="user-details">
-                                    <span class="user-name">user2</span>
-                                    <span class="user-role-small">Editor</span>
-                                </div>
-                            </div>
-                            <span class="activity-count">12</span>
-                        </div>
-                        <div class="user-item" onclick="viewUserDetails('user5')">
-                            <div class="user-info">
-                                <div class="user-avatar">U5</div>
-                                <div class="user-details">
-                                    <span class="user-name">user5</span>
-                                    <span class="user-role-small">Editor</span>
-                                </div>
-                            </div>
-                            <span class="activity-count">8</span>
-                        </div>
-                        <div class="user-item" onclick="viewUserDetails('user6')">
-                            <div class="user-info">
-                                <div class="user-avatar">U6</div>
-                                <div class="user-details">
-                                    <span class="user-name">user6</span>
-                                    <span class="user-role-small">Subscriber</span>
-                                </div>
-                            </div>
-                            <span class="activity-count">3</span>
-                        </div>
+                        <c:choose>
+                            <c:when test="${not empty leastActiveUsers}">
+                                <c:forEach var="user" items="${leastActiveUsers}">
+                                    <div class="user-item">
+                                        <div class="user-info">
+                                            <div class="user-avatar">
+                                                ${fn:toUpperCase(fn:substring(user.username, 0, 1))}
+                                            </div>
+                                            <div class="user-details">
+                                                <span class="user-name">${user.username}</span>
+                                                <span class="user-role-small">${user.activityCount} actions</span>
+                                            </div>
+                                        </div>
+                                        <span class="activity-count">${user.activityCount}</span>
+                                    </div>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="empty-state"><p>No activity data available.</p></div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-box">
+            <div class="modal-title" id="modalTitle">Confirm Action</div>
+            <div class="modal-text" id="modalText">Are you sure?</div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <form id="actionForm" method="POST" action="${pageContext.request.contextPath}/adminuseraction" style="display:inline;">
+                    <input type="hidden" name="action" id="modalAction">
+                    <input type="hidden" name="userId" id="modalUserId">
+                    <button type="submit" class="modal-btn danger" id="modalSubmitBtn">Confirm</button>
+                </form>
             </div>
         </div>
     </div>
@@ -225,42 +372,70 @@
             }
         }
 
-        function editUser(username) {
-            alert(`Opening edit panel for \${username}...`);
-        }
-
-        function deleteUser(username) {
-            if (confirm(`Are you sure you want to delete \${username}?`)) {
-                alert(`Deleting \${username}...`);
-            }
-        }
-
-        function viewUserDetails(username) {
-            alert(`Viewing detailed profile for \${username}...`);
-        }
-
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const searchTerm = e.target.value;
-                if (searchTerm) {
-                    alert(`Searching for: \${searchTerm}`);
-                }
-            }
-        });
-
+        /* User search filter */
         document.getElementById('userSearch').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('.users-table tbody tr');
-            
+
             rows.forEach(row => {
                 const username = row.querySelector('td:first-child').textContent.toLowerCase();
-                if (username.includes(searchTerm)) {
+                const email = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                if (username.includes(searchTerm) || email.includes(searchTerm)) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
             });
         });
+
+        /* Confirmation modal */
+        function showConfirmModal(action, userId, username) {
+            document.getElementById('modalAction').value = action;
+            document.getElementById('modalUserId').value = userId;
+
+            const submitBtn = document.getElementById('modalSubmitBtn');
+
+            if (action === 'delete') {
+                document.getElementById('modalTitle').textContent = 'Delete User';
+                document.getElementById('modalText').textContent =
+                    'Are you sure you want to permanently delete "' + username + '"? This action cannot be undone and all their data will be removed.';
+                submitBtn.textContent = 'Delete';
+                submitBtn.className = 'modal-btn danger';
+            } else if (action === 'deactivate') {
+                document.getElementById('modalTitle').textContent = 'Deactivate User';
+                document.getElementById('modalText').textContent =
+                    'Are you sure you want to deactivate "' + username + '"? They will not be able to log in until reactivated.';
+                submitBtn.textContent = 'Deactivate';
+                submitBtn.className = 'modal-btn danger';
+            } else if (action === 'activate') {
+                document.getElementById('modalTitle').textContent = 'Activate User';
+                document.getElementById('modalText').textContent =
+                    'Are you sure you want to activate "' + username + '"? They will be able to log in again.';
+                submitBtn.textContent = 'Activate';
+                submitBtn.className = 'modal-btn confirm';
+            }
+
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Auto-hide flash message after 5 seconds
+        const flashMsg = document.getElementById('flashMsg');
+        if (flashMsg) {
+            setTimeout(function() {
+                flashMsg.style.transition = 'opacity 0.5s';
+                flashMsg.style.opacity = '0';
+                setTimeout(function() { flashMsg.style.display = 'none'; }, 500);
+            }, 5000);
+        }
     </script>
 </body>
 </html>
