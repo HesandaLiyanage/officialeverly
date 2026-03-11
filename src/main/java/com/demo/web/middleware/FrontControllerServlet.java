@@ -70,55 +70,59 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
         // /profile removed - profile.jsp doesn't exist; use /publicprofile instead
         routeToController.put("/collabmemories", "/collabmemoriesview");
-        routeToJsp.put("/settingsaccount", "/views/app/settingsaccount.jsp");
+        routeToJsp.put("/settingsaccount", "/views/app/Settings/settingsaccount.jsp");
         // /managesubscription handled by web.xml ManageSubscriptionController
-        routeToJsp.put("/changeplan", "/views/app/changeplan.jsp");
-        routeToJsp.put("/familyplan", "/views/app/familyplan.jsp");
+        routeToJsp.put("/changeplan", "/views/app/Settings/changeplan.jsp");
+        routeToJsp.put("/familyplan", "/views/app/Settings/familyplan.jsp");
         routeToController.put("/settingsnotifications", "/notificationprefsapi");
-        routeToJsp.put("/settingsprivacy", "/views/app/settingsprivacy.jsp");
+        routeToJsp.put("/settingsprivacy", "/views/app/Settings/settingsprivacy.jsp");
         // /settingssubscription handled by web.xml SettingsSubscriptionController
         routeToController.put("/storagesense", "/storagesenseview");
-        routeToJsp.put("/vaultForgotPassword", "/views/app/vaultForgotPassword.jsp");
-        routeToJsp.put("/vaultmemories", "/views/app/vaultMemories.jsp");
-        routeToJsp.put("/vaultPassword", "/views/app/vaultPassword.jsp");
-        routeToJsp.put("/vaultSetup", "/views/app/vaultSetup.jsp");
+        routeToJsp.put("/vaultForgotPassword", "/views/app/Vault/vaultForgotPassword.jsp");
+        routeToJsp.put("/vaultmemories", "/views/app/Vault/vaultMemories.jsp");
+        routeToJsp.put("/vaultPassword", "/views/app/Vault/vaultPassword.jsp");
+        routeToJsp.put("/vaultSetup", "/views/app/Vault/vaultSetup.jsp");
         routeToJsp.put("/addautograph", "/views/app/Autographs/addautograph.jsp");
-        routeToJsp.put("/duplicatefinder", "/views/app/duplicatefinder.jsp");
-        routeToJsp.put("/morethemes", "/views/app/morethemes.jsp");
+        routeToJsp.put("/duplicatefinder", "/views/app/Settings/duplicatefinder.jsp");
+        // /morethemes removed - Appearance feature removed
         // /sharedlinks handled by web.xml SharedLinksController
         routeToController.put("/trashmgt", "/trashmgtview");
         routeToController.put("/notifications", "/notificationsapi");
-        routeToJsp.put("/groupprofile", "/views/app/groupprofile.jsp");
+        routeToJsp.put("/groupprofile", "/WEB-INF/views/app/Groups/groupprofile.jsp");
         routeToController.put("/groupmembers", "/groupmembersservlet");
         routeToController.put("/groupannouncement", "/groupannouncementservlet");
         routeToController.put("/createannouncement", "/createannouncementservlet");
         routeToController.put("/viewannouncement", "/viewannouncementservlet");
         // /writeautograph removed - actual feature uses /write-autograph via
         // @WebServlet
-        routeToJsp.put("/eventinfo", "/views/app/eventinfo.jsp");
-        routeToJsp.put("/creatememory", "/views/app/creatememory.jsp");
-        routeToJsp.put("/creategroup", "/views/app/creategroup.jsp");
-        routeToJsp.put("/memoryrecap", "/views/app/memoryrecap.jsp");
-        routeToJsp.put("/writejournal", "/views/app/writejournal.jsp");
-        routeToJsp.put("/vaultjournals", "/views/app/vaultjournals.jsp");
-        routeToJsp.put("/feedWelcome", "/views/app/feedWelcome.jsp");
-        routeToJsp.put("/feedProfileSetup", "/views/app/feedProfileSetup.jsp");
-        routeToJsp.put("/userprofile", "/views/app/userprofile.jsp");
-        routeToJsp.put("/followerprofile", "/views/app/followerprofile.jsp");
-        routeToJsp.put("/followingprofile", "/views/app/followingprofile.jsp");
-        routeToJsp.put("/vaultpassword", "/views/app/vaultpassword.jsp");
+        routeToJsp.put("/eventinfo", "/WEB-INF/views/app/Events/eventinfo.jsp");
+        routeToJsp.put("/creatememory", "/WEB-INF/views/app/Memory/creatememory.jsp");
+        routeToJsp.put("/memoryrecap", "/WEB-INF/views/app/Memory/memoryrecap.jsp");
+        routeToJsp.put("/writejournal", "/views/app/Journals/writejournal.jsp");
+        routeToJsp.put("/vaultjournals", "/views/app/Vault/vaultjournals.jsp");
+        routeToJsp.put("/feedWelcome", "/WEB-INF/views/app/Feed/feedWelcome.jsp");
+        routeToJsp.put("/feedProfileSetup", "/WEB-INF/views/app/Feed/feedProfileSetup.jsp");
+        routeToJsp.put("/userprofile", "/views/app/Feed/userprofile.jsp");
+        routeToJsp.put("/followerprofile", "/views/app/Feed/followerprofile.jsp");
+        routeToJsp.put("/followingprofile", "/views/app/Feed/followingprofile.jsp");
+        routeToJsp.put("/vaultpassword", "/views/app/Vault/vaultpassword.jsp");
+        routeToJsp.put("/notifications", "/views/app/Notifications/notifications.jsp");
+
+        // --- Groups ---
+        routeToJsp.put("/groups", "/groupdashboard"); // Let Groups servlet handle this
+        routeToJsp.put("/creategroup", "/WEB-INF/views/app/Groups/creategroup.jsp");
 
         // Comment routes - use controller for data loading
         routeToController.put("/feedcomment", "/viewComments");
         routeToController.put("/comments", "/viewComments");
         // /feededitprofile JSP route removed - controller route on line 162 handles it
         routeToController.put("/blockedusers", "/blockedusersview");
-        routeToJsp.put("/vaultentries", "/views/app/vaultentries.jsp");
+        routeToJsp.put("/vaultentries", "/views/app/Vault/vaultentries.jsp");
         routeToController.put("/collabmemoryview", "/collabmemoryviewservlet");
 
         // Admin pages
         routeToJsp.put("/admin", "/views/app/Admin/admindahboard.jsp");
-        routeToJsp.put("/adminuser", "/views/app/Admin/adminuser.jsp");
+        routeToController.put("/adminuser", "/adminuserview");
         routeToJsp.put("/adminsettings", "/views/app/Admin/adminsettings.jsp");
         routeToJsp.put("/adminanalytics", "/views/app/Admin/adminanalytics.jsp");
         routeToJsp.put("/admincontent", "/views/app/Admin/admincontent.jsp");

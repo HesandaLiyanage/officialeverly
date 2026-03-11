@@ -1,6 +1,6 @@
 <%@ page import="java.util.List" %>
-    <%@ page import="com.demo.web.model.autograph" %>
-        <%@ page import="com.demo.web.model.AutographActivity" %>
+    <%@ page import="com.demo.web.model.Autographs.autograph" %>
+        <%@ page import="com.demo.web.model.Autographs.AutographActivity" %>
             <%@ page import="java.text.SimpleDateFormat" %>
                 <!DOCTYPE html>
                 <html lang="en">
