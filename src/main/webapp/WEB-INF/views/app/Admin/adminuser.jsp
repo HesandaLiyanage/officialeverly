@@ -122,6 +122,21 @@
             margin-top: 0.5rem;
             font-size: 0.95rem;
         }
+
+        /* User search input */
+        .user-search {
+            padding: 0.6rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            width: 220px;
+            transition: all 0.3s;
+        }
+        .user-search:focus {
+            outline: none;
+            border-color: #5b4cdb;
+            box-shadow: 0 0 0 3px rgba(91, 76, 219, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -142,9 +157,6 @@
             <div class="nav-item" onclick="navigateTo('overview')">
                 <span>○</span> Overview
             </div>
-            <div class="nav-item" onclick="navigateTo('analytics')">
-                <span>▢</span> Analytics & Reports
-            </div>
             <div class="nav-item active" onclick="navigateTo('users')">
                 <span>▢</span> User Management
             </div>
@@ -158,10 +170,8 @@
 
         <div class="main-content">
             <div class="page-header">
-                <div class="page-title-section">
-                    <h1 class="page-title">User Management</h1>
-                    <p class="page-subtitle">ADMIN DASHBOARD</p>
-                </div>
+                <h1 class="page-title">User Management</h1>
+                <p class="page-subtitle">ADMIN DASHBOARD</p>
             </div>
 
             <!-- Flash message -->
@@ -172,34 +182,11 @@
                 </div>
             </c:if>
 
-            <!-- Stats cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total Users</div>
-                    <div class="stat-value">${totalUsers}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Users</div>
-                    <div class="stat-value">${activeUsers}</div>
-                    <div class="stat-change positive">● Online</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Inactive Users</div>
-                    <div class="stat-value">${inactiveUsers}</div>
-                    <div class="stat-change negative">● Deactivated</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">New Users (30 days)</div>
-                    <div class="stat-value">${newUsersCount}</div>
-                    <div class="stat-change positive">↑ Recent</div>
-                </div>
-            </div>
-
             <div class="content-layout">
                 <div class="users-section">
                     <div class="section-header">
                         <h2 class="section-title">All Users</h2>
-                        <input type="text" class="user-search" placeholder="Search users..." id="userSearch">
+                        <input type="text" class="user-search" placeholder="Search users" id="userSearch">
                     </div>
                     <c:choose>
                         <c:when test="${not empty allUsers}">
@@ -207,9 +194,7 @@
                                 <thead>
                                     <tr>
                                         <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Joined</th>
-                                        <th>Last Login</th>
+                                        <th>Role</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -218,21 +203,14 @@
                                     <c:forEach var="user" items="${allUsers}">
                                         <tr>
                                             <td>${user.username}</td>
-                                            <td>${user.email}</td>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${user.joinedAt != null}">
-                                                        <fmt:formatDate value="${user.joinedAt}" pattern="MMM d, yyyy" />
+                                                    <c:when test="${user.username == 'admin' || user.username == 'Admin'}">
+                                                        <span class="role-badge role-admin">Admin</span>
                                                     </c:when>
-                                                    <c:otherwise>—</c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${user.lastLogin != null}">
-                                                        <fmt:formatDate value="${user.lastLogin}" pattern="MMM d, yyyy HH:mm" />
-                                                    </c:when>
-                                                    <c:otherwise>Never</c:otherwise>
+                                                    <c:otherwise>
+                                                        <span class="role-badge role-subscriber">Member</span>
+                                                    </c:otherwise>
                                                 </c:choose>
                                             </td>
                                             <td>
@@ -289,7 +267,7 @@
                                     <div class="user-item">
                                         <div class="user-info">
                                             <div class="user-avatar">
-                                                ${fn:toUpperCase(fn:substring(user.username, 0, 1))}
+                                                ${fn:toUpperCase(fn:substring(user.username, 0, 1))}${fn:length(user.username) > 1 ? fn:substring(user.username, 1, 2) : ''}
                                             </div>
                                             <div class="user-details">
                                                 <span class="user-name">${user.username}</span>
@@ -314,7 +292,7 @@
                                     <div class="user-item">
                                         <div class="user-info">
                                             <div class="user-avatar">
-                                                ${fn:toUpperCase(fn:substring(user.username, 0, 1))}
+                                                ${fn:toUpperCase(fn:substring(user.username, 0, 1))}${fn:length(user.username) > 1 ? fn:substring(user.username, 1, 2) : ''}
                                             </div>
                                             <div class="user-details">
                                                 <span class="user-name">${user.username}</span>
@@ -374,13 +352,12 @@
 
         /* User search filter */
         document.getElementById('userSearch').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('.users-table tbody tr');
+            var searchTerm = e.target.value.toLowerCase();
+            var rows = document.querySelectorAll('.users-table tbody tr');
 
-            rows.forEach(row => {
-                const username = row.querySelector('td:first-child').textContent.toLowerCase();
-                const email = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                if (username.includes(searchTerm) || email.includes(searchTerm)) {
+            rows.forEach(function(row) {
+                var username = row.querySelector('td:first-child').textContent.toLowerCase();
+                if (username.includes(searchTerm)) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
@@ -393,7 +370,7 @@
             document.getElementById('modalAction').value = action;
             document.getElementById('modalUserId').value = userId;
 
-            const submitBtn = document.getElementById('modalSubmitBtn');
+            var submitBtn = document.getElementById('modalSubmitBtn');
 
             if (action === 'delete') {
                 document.getElementById('modalTitle').textContent = 'Delete User';
@@ -428,7 +405,7 @@
         });
 
         // Auto-hide flash message after 5 seconds
-        const flashMsg = document.getElementById('flashMsg');
+        var flashMsg = document.getElementById('flashMsg');
         if (flashMsg) {
             setTimeout(function() {
                 flashMsg.style.transition = 'opacity 0.5s';

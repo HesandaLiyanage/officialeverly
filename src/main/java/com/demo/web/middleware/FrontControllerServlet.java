@@ -120,12 +120,12 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/vaultentries", "/WEB-INF/views/app/Vault/vaultentries.jsp");
         routeToController.put("/collabmemoryview", "/collabmemoryviewservlet");
 
-        // Admin pages
-        routeToJsp.put("/admin", "/WEB-INF/views/app/Admin/admindahboard.jsp");
-        routeToJsp.put("/adminuser", "/WEB-INF/views/app/Admin/adminuser.jsp");
+        // Admin pages - routed through controllers for dynamic data
+        routeToController.put("/admin", "/adminoverviewview");
+        routeToController.put("/adminuser", "/adminuserview");
         routeToJsp.put("/adminsettings", "/WEB-INF/views/app/Admin/adminsettings.jsp");
-        routeToJsp.put("/adminanalytics", "/WEB-INF/views/app/Admin/adminanalytics.jsp");
-        routeToJsp.put("/admincontent", "/WEB-INF/views/app/Admin/admincontent.jsp");
+        routeToController.put("/adminanalytics", "/adminanalyticsview");
+        routeToController.put("/admincontent", "/admincontentview");
 
         // ========================================
         // ROUTES TO VIEW CONTROLLERS (need data fetching)

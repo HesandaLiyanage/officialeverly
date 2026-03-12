@@ -164,6 +164,8 @@ public class AdminUserDAO {
                 "DELETE FROM saved_posts WHERE feed_profile_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?)",
                 "DELETE FROM feed_follows WHERE follower_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?) OR following_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?)",
                 "DELETE FROM blocked_users WHERE blocker_profile_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?) OR blocked_profile_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?)",
+                "DELETE FROM post_reports WHERE reporter_profile_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?)",
+                "DELETE FROM post_reports WHERE post_id IN (SELECT post_id FROM feed_posts WHERE feed_profile_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?))",
                 "DELETE FROM feed_posts WHERE feed_profile_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?)",
                 "DELETE FROM feed_profiles WHERE user_id = ?",
                 "DELETE FROM autograph_entry WHERE user_id = ?",

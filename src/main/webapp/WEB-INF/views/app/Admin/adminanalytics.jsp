@@ -1,4 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics & Reports - Everly</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard-styles.css">
-
 </head>
 <body>
     <div class="header">
@@ -46,145 +48,137 @@
                     <h1 class="page-title">Analytics & Reports</h1>
                     <p class="page-subtitle">ADMIN DASHBOARD</p>
                 </div>
-                <div class="header-actions">
-                    <select class="date-selector" onchange="handleDateChange(this.value)">
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="year">This Year</option>
-                    </select>
-                    <button class="export-btn" onclick="exportReport()">Export Report</button>
-                </div>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-label">Total Views</div>
-                    <div class="stat-value">45,682</div>
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value">${totalUsers != null ? totalUsers : 0}</div>
                     <div class="stat-change positive">
-                        ↑ +12.3%
+                        Active: ${activeUsers != null ? activeUsers : 0}
                     </div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">Engagement Rate</div>
-                    <div class="stat-value">68.4%</div>
+                    <div class="stat-label">New Users (30 days)</div>
+                    <div class="stat-value">${newUsersMonth != null ? newUsersMonth : 0}</div>
                     <div class="stat-change positive">
-                        ↑ +5.2%
+                        ↑ Recent registrations
                     </div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">Avg. Session Time</div>
-                    <div class="stat-value">8m 24s</div>
-                    <div class="stat-change negative">
-                        ↓ -2.1%
-                    </div>
+                    <div class="stat-label">Total Posts</div>
+                    <div class="stat-value">${totalPosts != null ? totalPosts : 0}</div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">Bounce Rate</div>
-                    <div class="stat-value">42.1%</div>
-                    <div class="stat-change positive">
-                        ↓ -3.4%
-                    </div>
+                    <div class="stat-label">Total Memories</div>
+                    <div class="stat-value">${totalMemories != null ? totalMemories : 0}</div>
                 </div>
             </div>
 
             <div class="content-layout">
                 <div class="chart-section">
                     <div class="chart-card">
-                        <div class="card-header">
-                            <h2 class="card-title">User Growth Trends</h2>
-                            <div class="view-tabs">
-                                <button class="tab active" onclick="switchTab(this, 'daily')">Daily</button>
-                                <button class="tab" onclick="switchTab(this, 'weekly')">Weekly</button>
-                                <button class="tab" onclick="switchTab(this, 'monthly')">Monthly</button>
+                        <h2 class="card-title">Content Breakdown</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; padding: 1rem 0;">
+                            <div style="text-align: center; padding: 1.5rem; background: #eef2ff; border-radius: 10px;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #5b4cdb;">${contentBreakdown.posts != null ? contentBreakdown.posts : 0}</div>
+                                <div style="color: #718096; font-size: 0.9rem;">Feed Posts</div>
                             </div>
-                        </div>
-                        <div class="chart-placeholder">
-                            User Growth Chart - Line graph showing daily active users, new registrations, and retention rates over time
+                            <div style="text-align: center; padding: 1.5rem; background: #d1fae5; border-radius: 10px;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #065f46;">${contentBreakdown.memories != null ? contentBreakdown.memories : 0}</div>
+                                <div style="color: #718096; font-size: 0.9rem;">Memories</div>
+                            </div>
+                            <div style="text-align: center; padding: 1.5rem; background: #fef3c7; border-radius: 10px;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #92400e;">${contentBreakdown.journals != null ? contentBreakdown.journals : 0}</div>
+                                <div style="color: #718096; font-size: 0.9rem;">Journals</div>
+                            </div>
+                            <div style="text-align: center; padding: 1.5rem; background: #fce7f3; border-radius: 10px;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #9d174d;">${contentBreakdown.groups != null ? contentBreakdown.groups : 0}</div>
+                                <div style="color: #718096; font-size: 0.9rem;">Groups</div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="chart-card">
-                        <div class="card-header">
-                            <h2 class="card-title">Content Performance</h2>
-                            <div class="view-tabs">
-                                <button class="tab active" onclick="switchTab(this, 'views')">Views</button>
-                                <button class="tab" onclick="switchTab(this, 'engagement')">Engagement</button>
-                                <button class="tab" onclick="switchTab(this, 'shares')">Shares</button>
-                            </div>
-                        </div>
-                        <div class="chart-placeholder">
-                            Content Performance Chart - Bar chart comparing different content types and their engagement metrics
-                        </div>
+                        <h2 class="card-title">Most Liked Posts</h2>
+                        <c:choose>
+                            <c:when test="${not empty mostLikedPosts}">
+                                <table class="posts-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Caption</th>
+                                            <th>Likes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="post" items="${mostLikedPosts}">
+                                            <tr>
+                                                <td>${post.username}</td>
+                                                <td>${fn:length(post.caption) > 40 ? fn:substring(post.caption, 0, 40) : post.caption}${fn:length(post.caption) > 40 ? '...' : ''}</td>
+                                                <td><strong>${post.likeCount}</strong></td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </c:when>
+                            <c:otherwise>
+                                <div style="text-align: center; padding: 2rem; color: #a0aec0;">No post data available yet.</div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
 
                 <div class="right-sidebar">
-                    <div class="insights-card">
-                        <h2 class="card-title">Key Insights</h2>
-                        <div class="insight-item" onclick="viewInsight('peak')">
-                            <div class="insight-title">Peak Activity Hours</div>
-                            <div class="insight-text">Most users are active between 2-6 PM. Consider scheduling content during these hours.</div>
-                        </div>
-                        <div class="insight-item" onclick="viewInsight('retention')">
-                            <div class="insight-title">User Retention Up</div>
-                            <div class="insight-text">30-day retention improved by 8% this month compared to last month.</div>
-                        </div>
-                        <div class="insight-item" onclick="viewInsight('content')">
-                            <div class="insight-title">Top Content Type</div>
-                            <div class="insight-text">Video content receives 3x more engagement than other formats.</div>
-                        </div>
+                    <div class="insights-card" style="background: white; padding: 1.8rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                        <h2 class="card-title">Top Posters</h2>
+                        <c:choose>
+                            <c:when test="${not empty topPosters}">
+                                <c:forEach var="poster" items="${topPosters}">
+                                    <div class="user-item">
+                                        <div class="user-info">
+                                            <div class="user-avatar">
+                                                ${fn:toUpperCase(fn:substring(poster.username, 0, 1))}
+                                            </div>
+                                            <div class="user-details">
+                                                <span class="user-name">${poster.username}</span>
+                                                <span class="user-role-small">${poster.postCount} posts</span>
+                                            </div>
+                                        </div>
+                                        <span class="activity-count">${poster.postCount}</span>
+                                    </div>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <div style="text-align: center; padding: 2rem; color: #a0aec0;">No poster data available.</div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
 
-                    <div class="insights-card">
-                        <h2 class="card-title">Performance Metrics</h2>
-                        <div class="metrics-grid">
-                            <div class="metric-box">
-                                <div class="metric-label">Page Views</div>
-                                <div class="metric-value">156K</div>
+                    <div class="insights-card" style="background: white; padding: 1.8rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                        <h2 class="card-title">Platform Summary</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+                            <div style="text-align: center; padding: 1rem; background: #f7fafc; border-radius: 8px;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #1a202c;">${totalUsers != null ? totalUsers : 0}</div>
+                                <div style="font-size: 0.8rem; color: #718096;">Users</div>
                             </div>
-                            <div class="metric-box">
-                                <div class="metric-label">Sessions</div>
-                                <div class="metric-value">42K</div>
+                            <div style="text-align: center; padding: 1rem; background: #f7fafc; border-radius: 8px;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #1a202c;">${totalPosts != null ? totalPosts : 0}</div>
+                                <div style="font-size: 0.8rem; color: #718096;">Posts</div>
                             </div>
-                            <div class="metric-box">
-                                <div class="metric-label">Conversions</div>
-                                <div class="metric-value">2,341</div>
+                            <div style="text-align: center; padding: 1rem; background: #f7fafc; border-radius: 8px;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #1a202c;">${totalMemories != null ? totalMemories : 0}</div>
+                                <div style="font-size: 0.8rem; color: #718096;">Memories</div>
                             </div>
-                            <div class="metric-box">
-                                <div class="metric-label">Revenue</div>
-                                <div class="metric-value">$18K</div>
+                            <div style="text-align: center; padding: 1rem; background: #f7fafc; border-radius: 8px;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #1a202c;">${totalJournals != null ? totalJournals : 0}</div>
+                                <div style="font-size: 0.8rem; color: #718096;">Journals</div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="reports-section">
-                <h2 class="card-title">Generated Reports</h2>
-                <div class="report-item" onclick="viewReport('monthly')">
-                    <div class="report-info">
-                        <div class="report-title">Monthly Performance Report - November 2024</div>
-                        <div class="report-date">Generated on Dec 1, 2024</div>
-                    </div>
-                    <button class="download-btn" onclick="downloadReport('monthly', event)">Download</button>
-                </div>
-                <div class="report-item" onclick="viewReport('user')">
-                    <div class="report-info">
-                        <div class="report-title">User Analytics Report - Q4 2024</div>
-                        <div class="report-date">Generated on Nov 28, 2024</div>
-                    </div>
-                    <button class="download-btn" onclick="downloadReport('user', event)">Download</button>
-                </div>
-                <div class="report-item" onclick="viewReport('content')">
-                    <div class="report-info">
-                        <div class="report-title">Content Engagement Report - October 2024</div>
-                        <div class="report-date">Generated on Nov 1, 2024</div>
-                    </div>
-                    <button class="download-btn" onclick="downloadReport('content', event)">Download</button>
                 </div>
             </div>
         </div>
@@ -210,48 +204,6 @@
                 window.location.href = '${pageContext.request.contextPath}/login';
             }
         }
-
-        function handleDateChange(period) {
-            console.log(`Date range changed to: \${period}`);
-            alert(`Updating analytics data for: \${period}`);
-        }
-
-        function exportReport() {
-            alert('Exporting current analytics report as PDF...');
-        }
-
-        function switchTab(element, view) {
-            const tabs = element.parentElement.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            
-            element.classList.add('active');
-            
-            console.log(`Switched to \${view} view`);
-            alert(`Updating chart to show \${view} data...`);
-        }
-
-        function viewInsight(type) {
-            alert(`Opening detailed insight view for: \${type}`);
-        }
-
-        function viewReport(reportType) {
-            console.log(`Viewing \${reportType} report`);
-            alert(`Opening \${reportType} report viewer...`);
-        }
-
-        function downloadReport(reportType, event) {
-            event.stopPropagation();
-            alert(`Downloading \${reportType} report...`);
-        }
-
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const searchTerm = e.target.value;
-                if (searchTerm) {
-                    alert(`Searching analytics for: \${searchTerm}`);
-                }
-            }
-        });
     </script>
 </body>
 </html>
