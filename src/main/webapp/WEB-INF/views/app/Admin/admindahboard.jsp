@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,108 +47,116 @@
                     <h1 class="page-title">Overview</h1>
                     <p class="page-subtitle">ADMIN DASHBOARD</p>
                 </div>
-                <div class="header-actions">
-                    <select class="date-selector" onchange="handleDateChange(this.value)">
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="year">This Year</option>
-                    </select>
-                </div>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card" onclick="navigateTo('users')">
-                    <div class="stat-label">Active Users</div>
-                    <div class="stat-value">2,318</div>
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value">${totalUsers != null ? totalUsers : 0}</div>
                     <div class="stat-change positive">
-                        ↑ +6.08%
+                        ● Active: ${activeUsers != null ? activeUsers : 0}
                     </div>
                 </div>
 
                 <div class="stat-card" onclick="navigateTo('users')">
-                    <div class="stat-label">New Users</div>
-                    <div class="stat-value">156</div>
+                    <div class="stat-label">New Users (7 days)</div>
+                    <div class="stat-value">${newUsersWeek != null ? newUsersWeek : 0}</div>
                     <div class="stat-change positive">
-                        ↑ +15.03%
+                        ↑ Recent signups
                     </div>
                 </div>
 
                 <div class="stat-card" onclick="navigateTo('content')">
                     <div class="stat-label">Total Content</div>
-                    <div class="stat-value">3,671</div>
-                    <div class="stat-change negative">
-                        ↓ -0.03%
+                    <div class="stat-value">${totalContent != null ? totalContent : 0}</div>
+                    <div class="stat-change positive">
+                        Posts + Memories + Journals
                     </div>
                 </div>
 
+                <div class="stat-card" onclick="navigateTo('content')">
+                    <div class="stat-label">Pending Reports</div>
+                    <div class="stat-value">${pendingReports != null ? pendingReports : 0}</div>
+                    <c:choose>
+                        <c:when test="${pendingReports > 0}">
+                            <div class="stat-change negative">⚠ Needs attention</div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="stat-change positive">✓ All clear</div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
 
             <div class="content-section">
                 <div class="chart-card">
-                    <h2 class="card-title">User Analytics</h2>
-                    <div class="chart-placeholder">
-                        Interactive Chart Area - Click to view detailed analytics
+                    <h2 class="card-title">Content Breakdown</h2>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding: 1rem 0;">
+                        <div style="text-align: center; padding: 1.5rem; background: #eef2ff; border-radius: 10px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #5b4cdb;">${contentBreakdown.posts != null ? contentBreakdown.posts : 0}</div>
+                            <div style="color: #718096; font-size: 0.9rem; margin-top: 0.3rem;">Feed Posts</div>
+                        </div>
+                        <div style="text-align: center; padding: 1.5rem; background: #d1fae5; border-radius: 10px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #065f46;">${contentBreakdown.memories != null ? contentBreakdown.memories : 0}</div>
+                            <div style="color: #718096; font-size: 0.9rem; margin-top: 0.3rem;">Memories</div>
+                        </div>
+                        <div style="text-align: center; padding: 1.5rem; background: #fef3c7; border-radius: 10px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #92400e;">${contentBreakdown.journals != null ? contentBreakdown.journals : 0}</div>
+                            <div style="color: #718096; font-size: 0.9rem; margin-top: 0.3rem;">Journals</div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="right-sidebar">
                     <div class="alerts-card">
-                        <h2 class="card-title">Alerts</h2>
-                        <div class="alert-item critical" onclick="handleAlert('server')">
-                            <div class="alert-title">Server load at 95%</div>
-                            <div class="alert-time">Just now</div>
-                        </div>
-                        <div class="alert-item" onclick="handleAlert('backup')">
-                            <div class="alert-title">Database backup pending</div>
-                            <div class="alert-time">59 minutes ago</div>
-                        </div>
-                        <div class="alert-item info" onclick="handleAlert('registration')">
-                            <div class="alert-title">New user registration spike</div>
-                            <div class="alert-time">12 hours ago</div>
-                        </div>
+                        <h2 class="card-title">Recent Signups</h2>
+                        <c:choose>
+                            <c:when test="${not empty recentSignups}">
+                                <c:forEach var="user" items="${recentSignups}">
+                                    <div class="feedback-item">
+                                        <div class="feedback-header">
+                                            <span class="feedback-user">${user.username}</span>
+                                        </div>
+                                        <div class="feedback-text">${user.email}</div>
+                                        <div style="font-size: 0.8rem; color: #a0aec0; margin-top: 0.3rem;">
+                                            <c:if test="${user.joinedAt != null}">
+                                                <fmt:formatDate value="${user.joinedAt}" pattern="MMM d, yyyy" />
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <div style="text-align: center; padding: 2rem; color: #a0aec0;">No recent signups</div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
 
                     <div class="feedback-card">
-                        <h2 class="card-title">Recent Feedback</h2>
-                        <div class="feedback-item" onclick="viewFeedback(1)">
+                        <h2 class="card-title">Report Summary</h2>
+                        <div class="feedback-item">
                             <div class="feedback-header">
-                                <span class="feedback-user">John Doe</span>
-                                <div class="star-rating">
-                                    <span class="star">★</span>
-                                    <span class="star">★</span>
-                                    <span class="star">★</span>
-                                    <span class="star">★</span>
-                                    <span class="star">★</span>
-                                </div>
+                                <span class="feedback-user">Pending</span>
+                                <span class="status-badge status-pending">${reportStats.pending != null ? reportStats.pending : 0}</span>
                             </div>
-                            <div class="feedback-text">Love the new features! The interface is much more intuitive now.</div>
                         </div>
-                        <div class="feedback-item" onclick="viewFeedback(2)">
+                        <div class="feedback-item">
                             <div class="feedback-header">
-                                <span class="feedback-user">Sarah Miller</span>
-                                <div class="star-rating">
-                                    <span class="star">★</span>
-                                    <span class="star">★</span>
-                                    <span class="star">★</span>
-                                    <span class="star empty">★</span>
-                                    <span class="star empty">★</span>
-                                </div>
+                                <span class="feedback-user">Reviewed</span>
+                                <span class="status-badge status-active">${reportStats.reviewed != null ? reportStats.reviewed : 0}</span>
                             </div>
-                            <div class="feedback-text">Good overall, but the UI could be improved in some areas.</div>
                         </div>
-                        <div class="feedback-item" onclick="viewFeedback(3)">
+                        <div class="feedback-item">
                             <div class="feedback-header">
-                                <span class="feedback-user">Mike Johnson</span>
-                                <div class="star-rating">
-                                    <span class="star">★</span>
-                                    <span class="star">★</span>
-                                    <span class="star">★</span>
-                                    <span class="star">★</span>
-                                    <span class="star empty">★</span>
-                                </div>
+                                <span class="feedback-user">Dismissed</span>
+                                <span class="status-badge status-inactive">${reportStats.dismissed != null ? reportStats.dismissed : 0}</span>
                             </div>
-                            <div class="feedback-text">Great product! Looking forward to future updates.</div>
+                        </div>
+                        <div class="feedback-item">
+                            <div class="feedback-header">
+                                <span class="feedback-user">Action Taken</span>
+                                <span class="status-badge status-deleted">${reportStats.action_taken != null ? reportStats.action_taken : 0}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -174,43 +184,6 @@
                 window.location.href = '${pageContext.request.contextPath}/login';
             }
         }
-
-        function handleDateChange(period) {
-            console.log(`Date range changed to: \${period}`);
-            alert(`Updating dashboard data for: \${period}`);
-        }
-
-        function handleAlert(type) {
-            console.log(`Alert clicked: \${type}`);
-            if (type === 'server') {
-                alert('Server Load Alert: CPU usage at 95%. Would you like to view server details?');
-            } else if (type === 'backup') {
-                alert('Database Backup: Backup scheduled for 11:00 PM. View backup history?');
-            } else if (type === 'registration') {
-                alert('User Registration Spike: 45 new users in the last hour. View details?');
-            }
-        }
-
-        function viewFeedback(id) {
-            console.log(`Viewing feedback #\${id}`);
-            alert(`Opening detailed feedback view for feedback #\${id}...`);
-        }
-
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            if (searchTerm.length > 2) {
-                console.log(`Searching for: \${searchTerm}`);
-            }
-        });
-
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const searchTerm = e.target.value;
-                if (searchTerm) {
-                    alert(`Searching for: \${searchTerm}`);
-                }
-            }
-        });
     </script>
 </body>
 </html>

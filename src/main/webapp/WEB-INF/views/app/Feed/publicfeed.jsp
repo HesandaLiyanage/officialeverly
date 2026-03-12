@@ -506,7 +506,7 @@
                                                                                     <div class="menu-divider"></div>
                                                                                     <% } %>
                                                                                         <button class="menu-item"
-                                                                                            onclick="closeAllMenus()">
+                                                                                            onclick="showReportModal(<%= post.getPostId() %>)">
                                                                                             <svg width="16" height="16"
                                                                                                 viewBox="0 0 24 24"
                                                                                                 fill="none"
@@ -1029,7 +1029,127 @@
                                                             }, 300);
                                                         }, 3000);
                                                     }
+
+                                                    // ===== REPORT POST FUNCTIONALITY =====
+                                                    var reportPostId = null;
+
+                                                    function showReportModal(postId) {
+                                                        closeAllMenus();
+                                                        reportPostId = postId;
+                                                        document.getElementById('reportModal').style.display = 'flex';
+                                                        // Reset selection
+                                                        var radios = document.getElementsByName('reportReason');
+                                                        for (var i = 0; i < radios.length; i++) {
+                                                            radios[i].checked = false;
+                                                        }
+                                                        document.getElementById('reportSubmitBtn').disabled = true;
+                                                    }
+
+                                                    function closeReportModal() {
+                                                        document.getElementById('reportModal').style.display = 'none';
+                                                        reportPostId = null;
+                                                    }
+
+                                                    function enableReportSubmit() {
+                                                        document.getElementById('reportSubmitBtn').disabled = false;
+                                                    }
+
+                                                    function submitReport() {
+                                                        if (!reportPostId) return;
+
+                                                        var radios = document.getElementsByName('reportReason');
+                                                        var reason = '';
+                                                        for (var i = 0; i < radios.length; i++) {
+                                                            if (radios[i].checked) {
+                                                                reason = radios[i].value;
+                                                                break;
+                                                            }
+                                                        }
+
+                                                        if (!reason) {
+                                                            showToast('⚠️ Please select a reason');
+                                                            return;
+                                                        }
+
+                                                        document.getElementById('reportSubmitBtn').disabled = true;
+                                                        document.getElementById('reportSubmitBtn').textContent = 'Submitting...';
+
+                                                        fetch('<%= request.getContextPath() %>/reportpost', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                                            body: 'postId=' + reportPostId + '&reason=' + encodeURIComponent(reason)
+                                                        })
+                                                        .then(function(response) { return response.json(); })
+                                                        .then(function(data) {
+                                                            closeReportModal();
+                                                            if (data.success) {
+                                                                showToast('✅ ' + data.message);
+                                                            } else {
+                                                                showToast('ℹ️ ' + data.message);
+                                                            }
+                                                        })
+                                                        .catch(function(error) {
+                                                            closeReportModal();
+                                                            console.error('Error reporting post:', error);
+                                                            showToast('⚠️ Error reporting post. Please try again.');
+                                                        })
+                                                        .finally(function() {
+                                                            var btn = document.getElementById('reportSubmitBtn');
+                                                            if (btn) {
+                                                                btn.disabled = false;
+                                                                btn.textContent = 'Submit Report';
+                                                            }
+                                                        });
+                                                    }
+
+                                                    // Close report modal on overlay click
+                                                    document.getElementById('reportModal').addEventListener('click', function(e) {
+                                                        if (e.target === this) closeReportModal();
+                                                    });
                                                 </script>
+
+                                                <!-- Report Post Modal -->
+                                                <div id="reportModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center;">
+                                                    <div style="background:white; border-radius:16px; padding:2rem; max-width:400px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+                                                        <h3 style="margin:0 0 0.5rem 0; font-size:1.2rem; color:#1a202c;">Report Post</h3>
+                                                        <p style="color:#718096; font-size:0.9rem; margin:0 0 1.2rem 0;">Why are you reporting this post?</p>
+
+                                                        <div style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.5rem;">
+                                                            <label style="display:flex; align-items:center; gap:0.6rem; padding:0.7rem; border:1px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='#5b4cdb'" onmouseout="this.style.borderColor='#e2e8f0'">
+                                                                <input type="radio" name="reportReason" value="spam" onchange="enableReportSubmit()" style="accent-color:#5b4cdb;">
+                                                                <span style="font-size:0.9rem; color:#2d3748;">Spam</span>
+                                                            </label>
+                                                            <label style="display:flex; align-items:center; gap:0.6rem; padding:0.7rem; border:1px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='#5b4cdb'" onmouseout="this.style.borderColor='#e2e8f0'">
+                                                                <input type="radio" name="reportReason" value="harassment" onchange="enableReportSubmit()" style="accent-color:#5b4cdb;">
+                                                                <span style="font-size:0.9rem; color:#2d3748;">Harassment</span>
+                                                            </label>
+                                                            <label style="display:flex; align-items:center; gap:0.6rem; padding:0.7rem; border:1px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='#5b4cdb'" onmouseout="this.style.borderColor='#e2e8f0'">
+                                                                <input type="radio" name="reportReason" value="inappropriate" onchange="enableReportSubmit()" style="accent-color:#5b4cdb;">
+                                                                <span style="font-size:0.9rem; color:#2d3748;">Inappropriate content</span>
+                                                            </label>
+                                                            <label style="display:flex; align-items:center; gap:0.6rem; padding:0.7rem; border:1px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='#5b4cdb'" onmouseout="this.style.borderColor='#e2e8f0'">
+                                                                <input type="radio" name="reportReason" value="hate_speech" onchange="enableReportSubmit()" style="accent-color:#5b4cdb;">
+                                                                <span style="font-size:0.9rem; color:#2d3748;">Hate speech</span>
+                                                            </label>
+                                                            <label style="display:flex; align-items:center; gap:0.6rem; padding:0.7rem; border:1px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='#5b4cdb'" onmouseout="this.style.borderColor='#e2e8f0'">
+                                                                <input type="radio" name="reportReason" value="other" onchange="enableReportSubmit()" style="accent-color:#5b4cdb;">
+                                                                <span style="font-size:0.9rem; color:#2d3748;">Other</span>
+                                                            </label>
+                                                        </div>
+
+                                                        <div style="display:flex; gap:0.8rem; justify-content:flex-end;">
+                                                            <button onclick="closeReportModal()" style="padding:0.6rem 1.5rem; border-radius:8px; border:none; background:#e2e8f0; color:#4a5568; font-weight:500; cursor:pointer; font-size:0.9rem;">Cancel</button>
+                                                            <button id="reportSubmitBtn" onclick="submitReport()" disabled style="padding:0.6rem 1.5rem; border-radius:8px; border:none; background:#e53e3e; color:white; font-weight:500; cursor:pointer; font-size:0.9rem; opacity:0.5; transition:opacity 0.3s;">Submit Report</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <style>
+                                                    #reportSubmitBtn:not(:disabled) { opacity: 1 !important; }
+                                                    #reportSubmitBtn:not(:disabled):hover { background: #c53030 !important; }
+                                                </style>
+
                                             </body>
 
                                             </html>
+

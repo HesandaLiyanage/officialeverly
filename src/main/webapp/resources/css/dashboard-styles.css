@@ -898,3 +898,60 @@ body {
 .mt-4 {
     margin-top: 2rem;
 }
+
+/* ==================== USER LIST ITEMS (Analytics) ==================== */
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.user-item:last-child {
+    border-bottom: none;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #5b4cdb, #7c6ef0);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #1a202c;
+    font-size: 0.9rem;
+}
+
+.user-role-small {
+    font-size: 0.8rem;
+    color: #a0aec0;
+}
+
+.activity-count {
+    background: #eef2ff;
+    color: #5b4cdb;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
