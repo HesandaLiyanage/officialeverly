@@ -520,7 +520,6 @@
                                                                                         </button>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
 
                                                                     <div class="carousel-container"
                                                                         data-current-slide="0">
@@ -588,8 +587,7 @@
                                                                             <div class="carousel-dots">
                                                                                 <% for (int i=0; i < mediaCount; i++) {
                                                                                     %>
-                                                                                    <div class="carousel-dot<%= (i == 0) ? "
-                                                                                        active" : "" %>"></div>
+                                                                                    <div class="carousel-dot<%= (i == 0) ? "active" : "" %>"></div>
                                                                                     <% } %>
                                                                             </div>
                                                                             <% } %>
@@ -598,13 +596,11 @@
                                                                     <div class="post-actions">
                                                                         <div class="action-buttons">
                                                                             <button
-                                                                                class="action-btn like-btn<%= post.isLikedByCurrentUser() ? "
-                                                                                liked" : "" %>" data-post-id="<%=
+                                                                                class="action-btn like-btn<%= post.isLikedByCurrentUser() ? "liked" : "" %>" data-post-id="<%=
                                                                                     post.getPostId() %>">
                                                                                     <svg width="24" height="24"
                                                                                         viewBox="0 0 24 24"
-                                                                                        fill="<%= post.isLikedByCurrentUser() ? "
-                                                                                        #ed4956" : "none" %>"
+                                                                                        fill="<%= post.isLikedByCurrentUser() ? "#ed4956" : "none" %>"
                                                                                         stroke="<%=
                                                                                             post.isLikedByCurrentUser()
                                                                                             ? "#ed4956" : "currentColor"
