@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <jsp:include page="/views/public/header2.jsp" />
+    <jsp:include page="/WEB-INF/views/public/header2.jsp" />
     <html>
 
     <head>
@@ -146,7 +146,7 @@
                             </form>
             </div>
         </div>
-        <jsp:include page="/views/public/footer.jsp" />
+        <jsp:include page="/WEB-INF/views/public/footer.jsp" />
     </body>
 
     </html>

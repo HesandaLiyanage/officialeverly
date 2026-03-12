@@ -28,7 +28,7 @@ public class NotificationPrefs extends HttpServlet {
 
         Map<String, Boolean> prefs = notificationDAO.getPreferences(userId);
         request.setAttribute("notifPrefs", prefs);
-        request.getRequestDispatcher("/views/app/Settings/settingsnotifications.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Settings/settingsnotifications.jsp").forward(request, response);
     }
 
     /**

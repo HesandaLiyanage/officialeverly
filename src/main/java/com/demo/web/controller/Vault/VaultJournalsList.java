@@ -63,7 +63,7 @@ public class VaultJournalsList extends HttpServlet {
 
         request.setAttribute("journals", vaultJournals);
         request.setAttribute("journalsCount", vaultJournals.size());
-        request.getRequestDispatcher("/views/app/Vault/vaultjournals.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultjournals.jsp").forward(request, response);
     }
 
     /**
@@ -85,7 +85,7 @@ public class VaultJournalsList extends HttpServlet {
         // Verify vault password
         if (vaultPassword == null || !vaultDAO.verifyVaultPassword(userId, vaultPassword)) {
             request.setAttribute("errorMessage", "Invalid vault password");
-            request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultentries.jsp").forward(request, response);
             return;
         }
 
@@ -94,6 +94,6 @@ public class VaultJournalsList extends HttpServlet {
 
         request.setAttribute("journals", vaultJournals);
         request.setAttribute("journalsCount", vaultJournals.size());
-        request.getRequestDispatcher("/views/app/Vault/vaultjournals.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultjournals.jsp").forward(request, response);
     }
 }

@@ -6,7 +6,7 @@
           <%@ page import="com.demo.web.model.Groups.Group" %>
             <%@ page import="com.demo.web.dao.Groups.GroupDAO" %>
 
-              <jsp:include page="/views/public/header2.jsp" />
+              <jsp:include page="/WEB-INF/views/public/header2.jsp" />
               <html>
 
               <head>
@@ -57,7 +57,8 @@
                             <h3 style="margin: 0 0 10px; color: #374151;">No groups yet.</h3>
                             <p style="margin: 0;">Create your first group to get started!</p>
                           </div>
-                          <% } else { for (Group group : groups) { // Calculate time ago java.sql.Timestamp
+                          <% } else { for (Group group : groups) { // Calculate time ago 
+                              java.sql.Timestamp
                             createdAt=group.getCreatedAt(); long diffInMillies=Math.abs(new Date().getTime() -
                             createdAt.getTime()); long diffInDays=TimeUnit.DAYS.convert(diffInMillies,
                             TimeUnit.MILLISECONDS); String timeAgo; if (diffInDays==0) { long
@@ -114,9 +115,9 @@
                     <div class="sidebar-section">
                       <h3 class="sidebar-title">Group Announcements</h3>
                       <div class="announcements-list">
-                        <% // Display recent groups as announcements if (groups !=null && !groups.isEmpty()) { int
-                          announcementCount=0; for (Group group : groups) { if (announcementCount>= 5) break; // Show
-                          max 5 announcements
+                        <% // Display recent groups as announcements 
+                            if (groups !=null && !groups.isEmpty()) { int
+                          announcementCount=0; for (Group group : groups) { if (announcementCount>= 5) break; // Show max 5 announcements
 
                           // Calculate time ago for announcement
                           java.sql.Timestamp createdAt = group.getCreatedAt();
@@ -185,7 +186,7 @@
                   </aside>
                 </div>
 
-                <jsp:include page="/views/public/footer.jsp" />
+                <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                 <script>
                   // Modern Search Functionality

@@ -63,7 +63,7 @@ public class SettingsProfileView extends HttpServlet {
 
         // Forward to the edit profile JSP
         System.out.println("Forwarding to settingsaccounteditprofile.jsp");
-        request.getRequestDispatcher("/views/app/Settings/settingsaccounteditprofile.jsp")
+        request.getRequestDispatcher("/WEB-INF/views/app/Settings/settingsaccounteditprofile.jsp")
                 .forward(request, response);
 
         System.out.println("=== EditProfileViewController END ===");

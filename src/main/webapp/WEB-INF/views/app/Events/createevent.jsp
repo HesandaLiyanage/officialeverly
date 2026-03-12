@@ -16,7 +16,7 @@
 
             <body>
 
-                <jsp:include page="/views/public/header2.jsp" />
+                <jsp:include page="/WEB-INF/views/public/header2.jsp" />
 
                 <% List<Group> userGroups = (List<Group>) request.getAttribute("userGroups");
                         String errorMessage = (String) request.getAttribute("error");
@@ -188,7 +188,7 @@
                             </div>
                         </div>
 
-                        <jsp:include page="/views/public/footer.jsp" />
+                        <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {

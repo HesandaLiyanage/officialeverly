@@ -3,7 +3,7 @@
         <%@ page import="com.demo.web.model.Groups.GroupMember" %>
             <%@ page import="java.text.SimpleDateFormat" %>
 
-                <jsp:include page="/views/public/header2.jsp" />
+                <jsp:include page="/WEB-INF/views/public/header2.jsp" />
                 <% Group group=(Group) request.getAttribute("group"); GroupMember member=(GroupMember)
                     request.getAttribute("member"); Boolean isAdmin=(Boolean) request.getAttribute("isAdmin"); Integer
                     currentUserId=(Integer) request.getAttribute("currentUserId"); String groupName=(group !=null) ?
@@ -176,7 +176,7 @@
                             </main>
                         </div>
 
-                        <jsp:include page="/views/public/footer.jsp" />
+                        <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                         <script>
                             function confirmRemoval() {

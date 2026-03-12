@@ -4,7 +4,7 @@
             <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
                 <%@ page import="java.util.List, java.util.Map, com.demo.web.model.Memory.Memory" %>
 
-                    <jsp:include page="/views/public/header2.jsp" />
+                    <jsp:include page="/WEB-INF/views/public/header2.jsp" />
                     <html>
 
                     <body>
@@ -221,7 +221,7 @@
                         </aside>
                         </div>
 
-                        <jsp:include page="/views/public/footer.jsp" />
+                        <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                         <!-- WhatsApp Status-Style Story Viewer Modal -->
                         <div class="recap-modal-overlay" id="recapModal">

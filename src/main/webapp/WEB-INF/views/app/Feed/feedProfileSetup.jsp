@@ -15,7 +15,7 @@
 
     <body>
 
-        <jsp:include page="/views/public/header.jsp" />
+        <jsp:include page="/WEB-INF/views/public/header.jsp" />
 
         <main class="profile-container">
             <h1 class="profile-title">Create Your Feed Profile</h1>
@@ -101,7 +101,7 @@
                         </form>
         </main>
 
-        <jsp:include page="/views/public/footer.jsp" />
+        <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
