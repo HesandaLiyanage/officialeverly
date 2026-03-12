@@ -98,7 +98,7 @@ public class CollabMemoryView extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error loading memory: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/collabmemories.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/collabmemories.jsp").forward(request, response);
         }
     }
 }

@@ -47,7 +47,7 @@ public class VaultPasswordChange extends HttpServlet {
         }
 
         // Show vault password change page
-        request.getRequestDispatcher("/views/app/Vault/vaultpassword.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultpassword.jsp").forward(request, response);
     }
 
     /**
@@ -72,25 +72,25 @@ public class VaultPasswordChange extends HttpServlet {
         // Validate input
         if (currentPassword == null || currentPassword.isEmpty()) {
             request.setAttribute("errorMessage", "Current password is required");
-            request.getRequestDispatcher("/views/app/Vault/vaultpassword.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultpassword.jsp").forward(request, response);
             return;
         }
 
         if (newPassword == null || newPassword.isEmpty()) {
             request.setAttribute("errorMessage", "New password is required");
-            request.getRequestDispatcher("/views/app/Vault/vaultpassword.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultpassword.jsp").forward(request, response);
             return;
         }
 
         if (newPassword.length() < 8) {
             request.setAttribute("errorMessage", "New password must be at least 8 characters long");
-            request.getRequestDispatcher("/views/app/Vault/vaultpassword.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultpassword.jsp").forward(request, response);
             return;
         }
 
         if (!newPassword.equals(confirmPassword)) {
             request.setAttribute("errorMessage", "New passwords do not match");
-            request.getRequestDispatcher("/views/app/Vault/vaultpassword.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultpassword.jsp").forward(request, response);
             return;
         }
 
@@ -100,15 +100,15 @@ public class VaultPasswordChange extends HttpServlet {
 
             if (success) {
                 request.setAttribute("successMessage", "Vault password changed successfully!");
-                request.getRequestDispatcher("/views/app/Vault/vaultpassword.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultpassword.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Current password is incorrect");
-                request.getRequestDispatcher("/views/app/Vault/vaultpassword.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultpassword.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred. Please try again.");
-            request.getRequestDispatcher("/views/app/Vault/vaultpassword.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultpassword.jsp").forward(request, response);
         }
     }
 }

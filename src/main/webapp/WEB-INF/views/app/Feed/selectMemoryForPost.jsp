@@ -390,7 +390,7 @@
         </head>
 
         <body>
-            <jsp:include page="/views/public/header2.jsp" />
+            <jsp:include page="/WEB-INF/views/public/header2.jsp" />
 
             <div class="page-wrapper">
                 <a href="${pageContext.request.contextPath}/createPost" class="back-button">
@@ -489,7 +489,7 @@
                 </div>
             </div>
 
-            <jsp:include page="/views/public/footer.jsp" />
+            <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
             <script>
                 document.addEventListener('DOMContentLoaded', function () {

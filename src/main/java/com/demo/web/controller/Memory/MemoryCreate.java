@@ -11,6 +11,7 @@ import com.demo.web.model.Groups.Group;
 import com.demo.web.dao.Settings.SubscriptionDAO;
 import com.demo.web.dao.Notifications.NotificationDAO;
 import com.demo.web.model.Settings.Plan;
+import com.demo.web.util.EncryptionService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -203,12 +204,24 @@ public class MemoryCreate extends HttpServlet {
 
                 System.out.println("Processing file: " + originalFilename + " (" + filePart.getSize() + " bytes)");
 
-                // Generate unique filename
-                String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+                // Read file bytes for encryption
+                byte[] fileBytes = readAllBytes(filePart.getInputStream());
+                long originalSize = fileBytes.length;
 
-                // Save file to disk
+                // Encrypt the file
+                EncryptionService.FileEncryptionResult encResult = EncryptionService.encryptFile(fileBytes);
+
+                // Generate unique filename and save encrypted data to disk
+                String uniqueFilename = UUID.randomUUID().toString() + ".enc";
                 String physicalPath = PHYSICAL_UPLOAD_PATH + File.separator + uniqueFilename;
-                saveFile(filePart.getInputStream(), physicalPath);
+                try (FileOutputStream fos = new FileOutputStream(physicalPath)) {
+                    fos.write(encResult.getEncryptedFileData());
+                }
+
+                // Store the encrypted per-file key in the database
+                mediaDAO.storeMediaEncryptionKey(
+                        encResult.getKeyId(), userId,
+                        encResult.getEncryptedKey(), encResult.getKeyIv());
 
                 // Create media item in database
                 MediaItem mediaItem = new MediaItem();
@@ -216,20 +229,20 @@ public class MemoryCreate extends HttpServlet {
                 mediaItem.setFilename(uniqueFilename);
                 mediaItem.setOriginalFilename(originalFilename);
                 mediaItem.setFilePath(UPLOAD_DIR + "/" + uniqueFilename);
-                mediaItem.setFileSize(filePart.getSize());
-                mediaItem.setOriginalFileSize(filePart.getSize());
+                mediaItem.setFileSize(encResult.getEncryptedFileData().length);
+                mediaItem.setOriginalFileSize(originalSize);
                 mediaItem.setMimeType(filePart.getContentType());
                 mediaItem.setMediaType(filePart.getContentType().startsWith("image/") ? "IMAGE" : "VIDEO");
                 mediaItem.setTitle(originalFilename);
-                mediaItem.setEncrypted(false);
-                mediaItem.setEncryptionKeyId(null);
+                mediaItem.setEncrypted(true);
+                mediaItem.setEncryptionKeyId(encResult.getKeyId());
 
-                int mediaId = mediaDAO.createMediaItem(mediaItem, null);
+                int mediaId = mediaDAO.createMediaItem(mediaItem, encResult.getFileIv());
 
                 memoryDAO.linkMediaToMemory(memoryId, mediaId);
                 uploadedCount++;
 
-                System.out.println("Uploaded: " + originalFilename + " (media_id: " + mediaId + ")");
+                System.out.println("Uploaded (encrypted): " + originalFilename + " (media_id: " + mediaId + ")");
             }
 
             response.setContentType("application/json;charset=UTF-8");
@@ -268,14 +281,14 @@ public class MemoryCreate extends HttpServlet {
         }
     }
 
-    private void saveFile(InputStream inputStream, String filePath) throws IOException {
-        try (OutputStream out = new FileOutputStream(filePath)) {
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
+    private byte[] readAllBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        byte[] data = new byte[8192];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(data)) != -1) {
+            buffer.write(data, 0, bytesRead);
         }
+        return buffer.toByteArray();
     }
 
     private String getFileName(Part part) {

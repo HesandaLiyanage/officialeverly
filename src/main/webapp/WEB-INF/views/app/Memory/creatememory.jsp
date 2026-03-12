@@ -91,7 +91,7 @@
 
         <body>
 
-            <jsp:include page="/views/public/header2.jsp" />
+            <jsp:include page="/WEB-INF/views/public/header2.jsp" />
 
             <div class="page-wrapper">
                 <div class="create-memory-container">
@@ -215,7 +215,7 @@
                 </div>
             </div>
 
-            <jsp:include page="/views/public/footer.jsp" />
+            <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
             <script>
                 // Tab switching

@@ -15,7 +15,7 @@
 
     <body>
 
-        <jsp:include page="/views/public/header.jsp" />
+        <jsp:include page="/WEB-INF/views/public/header.jsp" />
 
         <main class="welcome-container">
             <div class="welcome-content">
@@ -92,7 +92,7 @@
             </div>
         </main>
 
-        <jsp:include page="/views/public/footer.jsp" />
+        <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
     </body>
 

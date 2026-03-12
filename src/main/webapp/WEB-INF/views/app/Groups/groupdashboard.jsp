@@ -6,7 +6,7 @@
           <%@ page import="com.demo.web.model.Groups.Group" %>
             <%@ page import="com.demo.web.dao.Groups.GroupDAO" %>
 
-              <jsp:include page="/views/public/header2.jsp" />
+              <jsp:include page="/WEB-INF/views/public/header2.jsp" />
               <html>
 
               <head>
@@ -185,7 +185,7 @@
                   </aside>
                 </div>
 
-                <jsp:include page="/views/public/footer.jsp" />
+                <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                 <script>
                   // Modern Search Functionality

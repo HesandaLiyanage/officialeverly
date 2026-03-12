@@ -76,6 +76,6 @@ public class FeedBlockedUsersList extends HttpServlet {
             }
         }
 
-        request.getRequestDispatcher("/views/app/Feed/blockedusers.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Feed/blockedusers.jsp").forward(request, response);
     }
 }

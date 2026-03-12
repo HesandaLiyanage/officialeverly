@@ -47,7 +47,7 @@ public class VaultSetup extends HttpServlet {
         }
 
         // Show vault setup page
-        request.getRequestDispatcher("/views/app/Vault/vaultSetup.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
     }
 
     /**
@@ -71,19 +71,19 @@ public class VaultSetup extends HttpServlet {
         // Validate passwords
         if (password == null || password.isEmpty()) {
             request.setAttribute("errorMessage", "Password is required");
-            request.getRequestDispatcher("/views/app/Vault/vaultSetup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
             return;
         }
 
         if (password.length() < 8) {
             request.setAttribute("errorMessage", "Password must be at least 8 characters long");
-            request.getRequestDispatcher("/views/app/Vault/vaultSetup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
             return;
         }
 
         if (!password.equals(confirmPassword)) {
             request.setAttribute("errorMessage", "Passwords do not match");
-            request.getRequestDispatcher("/views/app/Vault/vaultSetup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
             return;
         }
 
@@ -96,12 +96,12 @@ public class VaultSetup extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/vaultentries");
             } else {
                 request.setAttribute("errorMessage", "Failed to set up vault. Please try again.");
-                request.getRequestDispatcher("/views/app/Vault/vaultSetup.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred. Please try again.");
-            request.getRequestDispatcher("/views/app/Vault/vaultSetup.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
         }
     }
 }

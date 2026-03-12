@@ -3,7 +3,7 @@
     <%@ page import="com.demo.web.model.Groups.GroupAnnouncement" %>
       <%@ page import="java.util.List" %>
 
-        <jsp:include page="/views/public/header2.jsp" />
+        <jsp:include page="/WEB-INF/views/public/header2.jsp" />
         <html>
 
         <head>
@@ -128,7 +128,7 @@
                 </main>
               </div>
 
-              <jsp:include page="/views/public/footer.jsp" />
+              <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
               <script src="${pageContext.request.contextPath}/resources/js/groupfloating.js"></script>
 

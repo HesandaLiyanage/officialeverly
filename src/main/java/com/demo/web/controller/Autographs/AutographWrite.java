@@ -36,7 +36,7 @@ public class AutographWrite extends HttpServlet {
             request.setAttribute("shareToken", token);
 
             request.getRequestDispatcher(
-                    "/views/app/Autographs/writeautograph.jsp").forward(request, response);
+                    "/WEB-INF/views/app/Autographs/writeautograph.jsp").forward(request, response);
 
         } catch (SQLException e) {
             throw new ServletException("Database error while loading autograph", e);

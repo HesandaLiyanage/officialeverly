@@ -4,7 +4,7 @@
             <%@ page import="java.text.SimpleDateFormat" %>
                 <%@ page import="java.util.Date" %>
 
-                    <jsp:include page="/views/public/header2.jsp" />
+                    <jsp:include page="/WEB-INF/views/public/header2.jsp" />
                     <html>
 
                     <head>
@@ -334,7 +334,7 @@
                                             </aside>
                                         </div>
 
-                                        <jsp:include page="/views/public/footer.jsp" />
+                                        <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                                         <script>
                                             // Event card click handler - now works for all event cards

@@ -10,6 +10,8 @@ import com.demo.web.model.Memory.MediaItem;
 import com.demo.web.model.Memory.Memory;
 import com.demo.web.model.Groups.Group;
 
+import com.demo.web.util.EncryptionService;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.nio.file.Files;
 
 @WebServlet("/viewMedia")
 public class MediaView extends HttpServlet {
@@ -146,15 +149,22 @@ public class MediaView extends HttpServlet {
             System.out.println("ERROR: Invalid mediaId format: " + mediaIdParam);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid mediaId");
         } catch (Exception e) {
+            // Check if root cause is a client disconnect (broken pipe)
+            if (isClientDisconnect(e)) {
+                System.out.println("Client disconnected for media request: " + mediaIdParam);
+                return;
+            }
             System.out.println("ERROR serving media: " + e.getClass().getName() + " - " + e.getMessage());
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "Error serving media: " + e.getMessage());
+            if (!response.isCommitted()) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Error serving media: " + e.getMessage());
+            }
         }
     }
 
     /**
-     * Serve file directly from disk
+     * Serve file from disk, decrypting if necessary
      */
     private void serveFile(MediaItem mediaItem, HttpServletResponse response) throws IOException {
         // Extract just the filename from the relative path
@@ -169,7 +179,7 @@ public class MediaView extends HttpServlet {
         String filePath = PHYSICAL_UPLOAD_PATH + File.separator + filename;
         File file = new File(filePath);
 
-        System.out.println("  → Looking for file at: " + filePath);
+        System.out.println("  -> Looking for file at: " + filePath);
 
         if (!file.exists()) {
             throw new FileNotFoundException("File not found: " + filePath);
@@ -177,24 +187,85 @@ public class MediaView extends HttpServlet {
 
         // Set response headers
         response.setContentType(mediaItem.getMimeType());
-        response.setContentLength((int) file.length());
-        response.setHeader("Cache-Control", "private, max-age=3600"); // Cache 1 hour
+        response.setHeader("Cache-Control", "private, max-age=3600");
 
-        // Stream file to browser
+        if (mediaItem.isEncrypted() && mediaItem.getEncryptionKeyId() != null) {
+            // Decrypt and serve
+            serveEncryptedFile(mediaItem, file, response);
+        } else {
+            // Serve unencrypted (legacy files)
+            serveUnencryptedFile(file, response);
+        }
+
+        System.out.println("Served media: " + mediaItem.getOriginalFilename());
+    }
+
+    private void serveEncryptedFile(MediaItem mediaItem, File file, HttpServletResponse response) throws IOException {
+        byte[] decryptedData;
+
+        try {
+            // Read encrypted file data
+            byte[] encryptedData = Files.readAllBytes(file.toPath());
+
+            // Get the encryption key from database (access control already verified above)
+            MediaDAO.EncryptionKeyData keyData = mediaDAO.getMediaEncryptionKey(
+                    mediaItem.getEncryptionKeyId());
+
+            if (keyData == null) {
+                throw new IOException("Encryption key not found for media " + mediaItem.getMediaId());
+            }
+
+            // Decrypt the file
+            decryptedData = EncryptionService.decryptFile(
+                    encryptedData, mediaItem.getEncryptionIv(),
+                    keyData.getEncryptedKey(), keyData.getIv());
+
+        } catch (Exception e) {
+            throw new IOException("Failed to decrypt media " + mediaItem.getMediaId() + ": " + e.getMessage(), e);
+        }
+
+        // Write decrypted data to response (outside try-catch so client disconnects don't look like decrypt errors)
+        response.setContentLength(decryptedData.length);
+        try (OutputStream out = response.getOutputStream()) {
+            out.write(decryptedData);
+            out.flush();
+        } catch (IOException e) {
+            // Client disconnected (broken pipe) — this is normal for videos where
+            // the browser cancels the request (e.g., range requests, user navigates away)
+            System.out.println("Client disconnected while streaming media " + mediaItem.getMediaId()
+                    + " (" + mediaItem.getOriginalFilename() + ")");
+        }
+    }
+
+    private void serveUnencryptedFile(File file, HttpServletResponse response) throws IOException {
+        response.setContentLength((int) file.length());
         try (FileInputStream fis = new FileInputStream(file);
                 OutputStream out = response.getOutputStream()) {
-
             byte[] buffer = new byte[8192];
             int bytesRead;
-
             while ((bytesRead = fis.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesRead);
             }
-
             out.flush();
         }
+    }
 
-        System.out.println("✓ Served media: " + mediaItem.getOriginalFilename() +
-                " (" + file.length() + " bytes)");
+    /**
+     * Check if an exception is caused by the client disconnecting (broken pipe).
+     * This is normal for video elements that issue range requests or when users navigate away.
+     */
+    private boolean isClientDisconnect(Throwable e) {
+        Throwable cause = e;
+        while (cause != null) {
+            String name = cause.getClass().getName();
+            if (name.contains("ClientAbortException")) {
+                return true;
+            }
+            if (cause instanceof IOException && "Broken pipe".equals(cause.getMessage())) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 }

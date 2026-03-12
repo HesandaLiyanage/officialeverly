@@ -16,7 +16,7 @@
                                     List<FeedProfile> recommendedUsers = (List<FeedProfile>)
                                             request.getAttribute("recommendedUsers");
                                             %>
-                                            <jsp:include page="/views/public/header2.jsp" />
+                                            <jsp:include page="/WEB-INF/views/public/header2.jsp" />
                                             <html>
 
                                             <head>
@@ -756,7 +756,7 @@
                                                     </svg>
                                                 </a>
 
-                                                <jsp:include page="/views/public/footer.jsp" />
+                                                <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                                                 <script>
                                                     var contextPath = '${pageContext.request.contextPath}';

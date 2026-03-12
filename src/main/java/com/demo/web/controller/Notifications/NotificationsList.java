@@ -32,7 +32,7 @@ public class NotificationsList extends HttpServlet {
 
         request.setAttribute("notifications", notifications);
         request.setAttribute("unreadCount", unreadCount);
-        request.getRequestDispatcher("/views/app/Notifications/notifications.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Notifications/notifications.jsp").forward(request, response);
     }
 
     /**

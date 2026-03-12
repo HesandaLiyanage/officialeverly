@@ -663,10 +663,8 @@
 }
 
 /* ============================================ */
-/* PAGE WRAPPER (for pages with fixed header)   */
+/* PAGE WRAPPER                                  */
 /* ============================================ */
 .page-wrapper {
-    padding-top: 65px;
-    /* Height of fixed header */
-    min-height: 100vh;
+    flex: 1;
 }

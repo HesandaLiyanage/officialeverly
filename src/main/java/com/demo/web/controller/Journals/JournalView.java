@@ -78,13 +78,13 @@ public class JournalView extends HttpServlet {
             request.setAttribute("streakDays", streakDays);
             request.setAttribute("longestStreak", longestStreak);
 
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
 
         } catch (Exception e) {
             System.out.println("[DEBUG JournalViewController] Error: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while loading journals: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
         }
     }
 
@@ -102,24 +102,24 @@ public class JournalView extends HttpServlet {
             if (journal == null) {
                 System.out.println("[DEBUG JournalViewController] Journal not found or access denied");
                 request.setAttribute("error", "Journal entry not found or you don't have permission to view it.");
-                request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
                 return;
             }
 
             System.out.println("[DEBUG JournalViewController] Found journal: " + journal.getTitle());
 
             request.setAttribute("journal", journal);
-            request.getRequestDispatcher("/views/app/Journals/journalview.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journalview.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             System.out.println("[DEBUG JournalViewController] Invalid journal ID format");
             request.setAttribute("error", "Invalid Journal ID.");
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
         } catch (Exception e) {
             System.out.println("[DEBUG JournalViewController] Error: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while loading the journal entry: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
         }
     }
 
@@ -137,24 +137,24 @@ public class JournalView extends HttpServlet {
             if (journal == null) {
                 System.out.println("[DEBUG JournalViewController] Journal not found or access denied");
                 request.setAttribute("error", "Journal entry not found or you don't have permission to edit it.");
-                request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
                 return;
             }
 
             System.out.println("[DEBUG JournalViewController] Found journal: " + journal.getTitle());
 
             request.setAttribute("journal", journal);
-            request.getRequestDispatcher("/views/app/Journals/editjournal.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/editjournal.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             System.out.println("[DEBUG JournalViewController] Invalid journal ID format");
             request.setAttribute("error", "Invalid Journal ID.");
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
         } catch (Exception e) {
             System.out.println("[DEBUG JournalViewController] Error: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while loading the journal entry: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
         }
     }
 }

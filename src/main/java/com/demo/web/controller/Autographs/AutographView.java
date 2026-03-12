@@ -60,7 +60,7 @@ public class AutographView extends HttpServlet {
             int userId) throws ServletException, IOException {
         List<autograph> autographs = autographService.getAutographsByUserId(userId);
         request.setAttribute("autographs", autographs);
-        request.getRequestDispatcher("/views/app/Autographs/autographcontent.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Autographs/autographcontent.jsp").forward(request, response);
     }
 
     /**
@@ -89,7 +89,7 @@ public class AutographView extends HttpServlet {
                 request.setAttribute("entries", java.util.Collections.emptyList());
             }
 
-            request.getRequestDispatcher("/views/app/Autographs/viewautograph.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Autographs/viewautograph.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/autographs");
         }
@@ -110,7 +110,7 @@ public class AutographView extends HttpServlet {
             }
 
             request.setAttribute("autograph", autographToEdit);
-            request.getRequestDispatcher("/views/app/Autographs/editautograph.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Autographs/editautograph.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/autographs");
         }

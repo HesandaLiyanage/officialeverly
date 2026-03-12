@@ -48,7 +48,7 @@ public class TrashManagementView extends HttpServlet {
         });
 
         request.setAttribute("trashItems", allItems);
-        request.getRequestDispatcher("/views/app/Journals/trashmgt.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Journals/trashmgt.jsp").forward(request, response);
     }
 
     @Override
