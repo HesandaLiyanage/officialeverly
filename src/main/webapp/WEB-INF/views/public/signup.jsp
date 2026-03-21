@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
     <!DOCTYPE html>
     <html lang="en">
 
@@ -20,12 +22,11 @@
             <h1>Create Account</h1>
             <p>Join Everly and start preserving your memories</p>
 
-            <% String errorMessage=(String) request.getAttribute("errorMessage"); %>
-                <% if (errorMessage !=null) { %>
-                    <div class="error">
-                        <%= errorMessage %>
-                    </div>
-                    <% } %>
+            <c:if test="${not empty errorMessage}">
+                <div class="error">
+                    <c:out value="${errorMessage}" />
+                </div>
+            </c:if>
 
                         <form class="signup-form" action="${pageContext.request.contextPath}/signupservlet"
                             method="post" id="signupForm">

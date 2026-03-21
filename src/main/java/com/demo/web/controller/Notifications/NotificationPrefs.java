@@ -1,66 +1,68 @@
 package com.demo.web.controller.Notifications;
 
-import com.demo.web.dao.Notifications.NotificationDAO;
+import com.demo.web.dto.Notifications.NotificationPrefsGetRequest;
+import com.demo.web.dto.Notifications.NotificationPrefsGetResponse;
+import com.demo.web.dto.Notifications.NotificationPrefsPostRequest;
+import com.demo.web.dto.Notifications.NotificationPrefsPostResponse;
+import com.demo.web.service.NotificationService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
 @WebServlet("/notificationprefsapi")
 public class NotificationPrefs extends HttpServlet {
 
-    private final NotificationDAO notificationDAO = new NotificationDAO();
+    private NotificationService notificationService;
 
-    /**
-     * GET: Return the notification preferences page with current settings.
-     */
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        notificationService = new NotificationService();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         Integer userId = (Integer) request.getSession().getAttribute("user_id");
-        if (userId == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        NotificationPrefsGetRequest req = new NotificationPrefsGetRequest(userId);
+        
+        NotificationPrefsGetResponse res = notificationService.getPreferences(req);
+
+        if (res.getRedirectUrl() != null) {
+            response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
             return;
         }
 
-        Map<String, Boolean> prefs = notificationDAO.getPreferences(userId);
-        request.setAttribute("notifPrefs", prefs);
+        request.setAttribute("notifPrefs", res.getPrefs());
         request.getRequestDispatcher("/WEB-INF/views/app/Settings/settingsnotifications.jsp").forward(request, response);
     }
 
-    /**
-     * POST: Toggle a specific notification preference on/off (AJAX).
-     * Expects: notifType (string), enabled (boolean)
-     * Returns: JSON response.
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
         Integer userId = (Integer) request.getSession().getAttribute("user_id");
-        if (userId == null) {
-            response.setStatus(401);
-            out.write("{\"success\": false, \"error\": \"Not authenticated\"}");
-            return;
-        }
-
         String notifType = request.getParameter("notifType");
         String enabledStr = request.getParameter("enabled");
 
-        if (notifType == null || enabledStr == null) {
-            response.setStatus(400);
-            out.write("{\"success\": false, \"error\": \"Missing parameters\"}");
-            return;
+        NotificationPrefsPostRequest req = new NotificationPrefsPostRequest(userId, notifType, enabledStr);
+        NotificationPrefsPostResponse res = notificationService.updatePreference(req);
+
+        if (!res.isSuccess() && res.getStatusCode() != 0) {
+            response.setStatus(res.getStatusCode());
+            if (res.getErrorMessage() != null) {
+                out.write("{\"success\": false, \"error\": \"" + res.getErrorMessage() + "\"}");
+                return;
+            }
         }
 
-        boolean enabled = Boolean.parseBoolean(enabledStr);
-        boolean success = notificationDAO.updatePreference(userId, notifType, enabled);
-
-        out.write("{\"success\": " + success + "}");
+        out.write("{\"success\": " + res.isSuccess() + "}");
     }
 }

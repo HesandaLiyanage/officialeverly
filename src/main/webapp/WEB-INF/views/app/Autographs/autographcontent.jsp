@@ -1,8 +1,8 @@
-<%@ page import="java.util.List" %>
-    <%@ page import="com.demo.web.model.Autographs.autograph" %>
-        <%@ page import="com.demo.web.model.Autographs.AutographActivity" %>
-            <%@ page import="java.text.SimpleDateFormat" %>
-                <!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE html>
                 <html lang="en">
 
                 <head>
@@ -48,29 +48,27 @@
                             <div class="autographs-grid" id="autographsGrid"
                                 style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
 
-                                <%-- Check if the 'autographs' attribute exists and is not empty --%>
-                                    <% List<autograph> autographs = (List<autograph>)
-                                            request.getAttribute("autographs");
-                                            if (autographs != null && !autographs.isEmpty()) {
-                                            for (autograph ag : autographs) {
-                                            // Format the date
-                                            String formattedDate = ag.getCreatedAt() != null ?
-                                            ag.getCreatedAt().toString().substring(0, 10) : "Unknown Date";
-                                            %>
+                                <c:choose>
+                                    <c:when test="${not empty autographs}">
+                                        <c:forEach items="${autographs}" var="ag">
                                             <!-- Added data-autograph-id attribute -->
-                                            <div class="autograph-card" data-autograph-id="<%= ag.getAutographId() %>"
-                                                data-title="<%= ag.getTitle() %>">
-                                                <% String picUrl=ag.getAutographPicUrl(); String bgUrl=(picUrl !=null &&
-                                                    !picUrl.isEmpty()) ? picUrl : "default.jpg" ; %>
+                                            <div class="autograph-card" data-autograph-id="${ag.autographId}"
+                                                data-title="${fn:escapeXml(ag.title)}">
+                                                <c:set var="bgUrl" value="${not empty ag.autographPicUrl ? ag.autographPicUrl : 'default.jpg'}" />
                                                     <div class="autograph-image"
-                                                        style="background-image: url('<%= request.getContextPath() %>/dbimages/<%= bgUrl %>')">
+                                                        style="background-image: url('${pageContext.request.contextPath}/dbimages/${bgUrl}')">
                                                     </div>
                                                     <div class="autograph-content">
                                                         <h3 class="autograph-title">
-                                                            <%= ag.getTitle() %>
+                                                            ${fn:escapeXml(ag.title)}
                                                         </h3>
                                                         <p class="autograph-date">
-                                                            <%= formattedDate %>
+                                                            <c:choose>
+                                                                <c:when test="${not empty ag.createdAt}">
+                                                                    <fmt:formatDate value="${ag.createdAt}" pattern="yyyy-MM-dd" />
+                                                                </c:when>
+                                                                <c:otherwise>Unknown Date</c:otherwise>
+                                                            </c:choose>
                                                         </p>
                                                         <div class="autograph-meta">
                                                             <span class="autograph-count">
@@ -82,11 +80,12 @@
                                                                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                                                                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                                                 </svg>
-                                                                <%= "N/A" %> signatures
+                                                                N/A signatures
                                                                     <!-- You might need to calculate the signature count from another table -->
                                                             </span>
+                                                            <c:set var="escapedTitle" value="${fn:escapeXml(ag.title).replace('\\'', '\\\\\\'')}" />
                                                             <button class="share-btn"
-                                                                onclick="openSharePopup(event, '<%= ag.getAutographId() %>', '<%= ag.getTitle() %>')">
+                                                                onclick="openSharePopup(event, '${ag.autographId}', '${escapedTitle}')">
                                                                 <svg viewBox="0 0 24 24" stroke-width="2"
                                                                     stroke-linecap="round" stroke-linejoin="round">
                                                                     <circle cx="18" cy="5" r="3"></circle>
@@ -102,7 +101,9 @@
                                                         </div>
                                                     </div>
                                             </div>
-                                            <% } } else { %>
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise>
                                                 <div style="text-align: center; padding: 40px; color: #6b7280;">
                                                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
                                                         stroke="currentColor" stroke-width="1.5"
@@ -117,7 +118,8 @@
                                                         heartfelt
                                                         messages!</p>
                                                 </div>
-                                                <% } %>
+                                    </c:otherwise>
+                                </c:choose>
 
                             </div>
 
@@ -130,60 +132,28 @@
                                 <h3 class="sidebar-title">Recent Activity</h3>
                                 <div class="activity-list">
 
-                                    <% List<AutographActivity> recentActivities = (List<AutographActivity>)
-                                            request.getAttribute("recentActivities");
-                                            if (recentActivities != null && !recentActivities.isEmpty()) {
-                                            // Define gradient colors for avatars
-                                            String[] gradients = {
-                                            "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                                            "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-                                            "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
-                                            "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-                                            "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
-                                            "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-                                            "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
-                                            };
-                                            int colorIndex = 0;
-
-                                            for (AutographActivity activity : recentActivities) {
-                                            // Calculate relative time
-                                            long diffMs = System.currentTimeMillis() -
-                                            activity.getCreatedAt().getTime();
-                                            long diffSec = diffMs / 1000;
-                                            long diffMin = diffSec / 60;
-                                            long diffHour = diffMin / 60;
-                                            long diffDay = diffHour / 24;
-
-                                            String relativeTime;
-                                            if (diffMin < 1) { relativeTime="Just now" ; } else if (diffMin < 60) {
-                                                relativeTime=diffMin + " min ago" ; } else if (diffHour < 24) {
-                                                relativeTime=diffHour + " hour" + (diffHour> 1 ? "s" : "") + " ago";
-                                                } else {
-                                                String pattern = "MMM d";
-                                                relativeTime = new
-                                                SimpleDateFormat(pattern).format(activity.getCreatedAt());
-                                                }
-
-                                                String gradient = gradients[colorIndex % gradients.length];
-                                                colorIndex++;
-                                                %>
+                                    <c:choose>
+                                        <c:when test="${not empty recentActivities}">
+                                            <c:forEach items="${recentActivities}" var="activity">
                                                 <div class="activity-item">
-                                                    <div class="activity-avatar" style="background: <%= gradient %>;">
+                                                    <div class="activity-avatar" style="background: ${activity.avatarGradient};">
                                                         <span>
-                                                            <%= activity.getInitials() %>
+                                                            ${activity.initials}
                                                         </span>
                                                     </div>
                                                     <div class="activity-info">
                                                         <p class="activity-text"><strong>
-                                                                <%= activity.getInviteeUsername() %>
-                                                            </strong> wrote in <%= activity.getBookTitle() %>
+                                                                ${fn:escapeXml(activity.inviteeUsername)}
+                                                            </strong> wrote in ${fn:escapeXml(activity.bookTitle)}
                                                         </p>
                                                         <span class="activity-time">
-                                                            <%= relativeTime %>
+                                                            ${activity.relativeTime}
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <% } } else { %>
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:otherwise>
                                                     <div style="text-align: center; padding: 20px; color: #9ca3af;">
                                                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
                                                             stroke="currentColor" stroke-width="1.5"
@@ -197,7 +167,8 @@
                                                             Share your autograph books to start collecting
                                                             signatures!</p>
                                                     </div>
-                                                    <% } %>
+                                        </c:otherwise>
+                                    </c:choose>
 
                                 </div>
                             </div>

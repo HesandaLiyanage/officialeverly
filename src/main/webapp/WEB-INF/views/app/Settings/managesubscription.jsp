@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
     <!DOCTYPE html>
     <html>
 
@@ -27,10 +29,6 @@
                     <p style="margin: 0;">View and manage your current plan, billing, and storage usage.</p>
                 </div>
 
-                <% // Retrieve attributes for scriptlet logic 
-                    String pName=(String) request.getAttribute("planName");
-                    if(pName==null) { pName="Basic" ; } %>
-
                     <div class="manage-sub-layout">
 
                         <!-- Current Plan Card -->
@@ -41,27 +39,29 @@
                             </h3>
                             <div class="current-plan-header">
                                 <div class="current-plan-info">
-                                    <h4>${planName}</h4>
+                                    <h4><c:out value="${planName}" /></h4>
                                     <p>
-                                        ${planPrice}
-                                        ${!billingCycle.equals("—") ? "• Billed " : ""}${!billingCycle.equals("—") ?
-                                        billingCycle : ""}
+                                        <c:out value="${planPrice}" />
+                                        <c:if test="${billingCycle != '—'}"> • Billed <c:out value="${billingCycle}" /></c:if>
                                     </p>
                                 </div>
                                 <span class="plan-status-badge active">Active</span>
                             </div>
                             <div class="plan-detail-row">
                                 <span class="plan-detail-label">Billing cycle</span>
-                                <span class="plan-detail-value">${billingCycle}</span>
+                                <span class="plan-detail-value"><c:out value="${billingCycle}" /></span>
                             </div>
                             <div class="plan-detail-row">
                                 <span class="plan-detail-label">Next renewal</span>
-                                <span class="plan-detail-value">${renewalDate}</span>
+                                <span class="plan-detail-value"><c:out value="${renewalDate}" /></span>
                             </div>
                             <div class="plan-detail-row">
                                 <span class="plan-detail-label">Payment method</span>
                                 <span class="plan-detail-value">
-                                    ${planName == 'Basic' ? 'None (Free plan)' : '•••• 4242'}
+                                    <c:choose>
+                                        <c:when test="${isBasicPlan}">None (Free plan)</c:when>
+                                        <c:otherwise>•••• 4242</c:otherwise>
+                                    </c:choose>
                                 </span>
                             </div>
                             <div class="sub-actions">
@@ -72,9 +72,9 @@
                                     </svg>
                                     Upgrade Plan
                                 </a>
-                                <% if (!"Basic".equals(pName)) { %>
+                                <c:if test="${not isBasicPlan}">
                                     <button class="sub-btn outline" id="cancelSubBtn">Cancel Subscription</button>
-                                    <% } %>
+                                </c:if>
                             </div>
                         </div>
 
@@ -87,14 +87,17 @@
                             <div class="storage-bar-container">
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                                     <span style="font-size: 14px; font-weight: 600; color: #1a1a2e;">
-                                        ${storageUsedFormatted} used
+                                        <c:out value="${storageUsedFormatted}" /> used
                                     </span>
                                     <span style="font-size: 14px; color: #9ca3af;">
-                                        ${storageTotalFormatted} total
+                                        <c:out value="${storageTotalFormatted}" /> total
                                     </span>
                                 </div>
                                 <div class="storage-bar-bg">
-                                    <div class="storage-bar-fill ${storagePercentage < 50 ? 'low' : (storagePercentage < 80 ? 'medium' : 'high')}"
+                                    <c:set var="barClass" value="low" />
+                                    <c:if test="${storagePercentage >= 50}"><c:set var="barClass" value="medium" /></c:if>
+                                    <c:if test="${storagePercentage >= 80}"><c:set var="barClass" value="high" /></c:if>
+                                    <div class="storage-bar-fill ${barClass}"
                                         style="width: ${storagePercentage}%;">
                                     </div>
                                 </div>
@@ -106,7 +109,7 @@
                             <div class="storage-breakdown">
                                 <div class="storage-item">
                                     <span class="storage-dot" style="background: #9A74D8;"></span>
-                                    Photos — ${storageUsedFormatted} <!-- Simplified breakdown -->
+                                    Photos — <c:out value="${storageUsedFormatted}" />
                                 </div>
                             </div>
 
@@ -119,10 +122,10 @@
                                     </svg>
                                     Storage Sense
                                 </a>
-                                <% if ((Integer)request.getAttribute("storagePercentage")> 70) { %>
+                                <c:if test="${needsMoreSpace}">
                                     <a href="${pageContext.request.contextPath}/changeplan" class="sub-btn primary">Need
                                         More Space?</a>
-                                    <% } %>
+                                </c:if>
                             </div>
                         </div>
 
@@ -173,15 +176,17 @@
                             Billing History
                         </h3>
 
-                        <% if ("Basic".equals(pName)) { %>
-                            <div style="text-align: center; padding: 40px 20px; color: #9ca3af;">
-                                <div style="font-size: 36px; margin-bottom: 12px;">📋</div>
-                                <p style="font-size: 15px; font-weight: 500; margin-bottom: 4px;">No billing history yet
-                                </p>
-                                <p style="font-size: 13px;">Upgrade to a paid plan to start seeing your invoices here.
-                                </p>
-                            </div>
-                            <% } else { %>
+                        <c:choose>
+                            <c:when test="${isBasicPlan}">
+                                <div style="text-align: center; padding: 40px 20px; color: #9ca3af;">
+                                    <div style="font-size: 36px; margin-bottom: 12px;">📋</div>
+                                    <p style="font-size: 15px; font-weight: 500; margin-bottom: 4px;">No billing history yet
+                                    </p>
+                                    <p style="font-size: 13px;">Upgrade to a paid plan to start seeing your invoices here.
+                                    </p>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
                                 <table class="billing-table">
                                     <thead>
                                         <tr>
@@ -196,14 +201,15 @@
                                         <!-- Placeholder Data -->
                                         <tr>
                                             <td>Feb 1, 2026</td>
-                                            <td>${planName} Plan — Monthly</td>
-                                            <td>${planPrice}</td>
+                                            <td><c:out value="${planName}" /> Plan — Monthly</td>
+                                            <td><c:out value="${planPrice}" /></td>
                                             <td><span class="billing-status paid">Paid</span></td>
                                             <td><a href="#" class="billing-download">Download</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <% } %>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
 
             </div>

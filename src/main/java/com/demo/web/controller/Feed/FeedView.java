@@ -135,10 +135,25 @@ public class FeedView extends HttpServlet {
                     + ", posts: " + posts.size()
                     + ", recommended: " + recommendedUsers.size());
 
+            // Pre-compute display values for the JSP
+            String feedUsername = feedProfile.getFeedUsername() != null ? feedProfile.getFeedUsername() : "user";
+            String feedProfilePic = feedProfile.getFeedProfilePictureUrl() != null
+                    ? feedProfile.getFeedProfilePictureUrl()
+                    : "/resources/assets/default-feed-avatar.png";
+            String feedInitials = feedProfile.getInitials() != null ? feedProfile.getInitials() : "U";
+            boolean hasDefaultPic = feedProfilePic.startsWith("/resources/assets/default")
+                    || feedProfilePic.contains("default");
+            int currentProfileId = feedProfile.getFeedProfileId();
+
             // Set attributes and show feed
             request.setAttribute("feedProfile", feedProfile);
             request.setAttribute("posts", posts);
             request.setAttribute("recommendedUsers", recommendedUsers);
+            request.setAttribute("feedUsername", feedUsername);
+            request.setAttribute("feedProfilePic", feedProfilePic);
+            request.setAttribute("feedInitials", feedInitials);
+            request.setAttribute("hasDefaultPic", hasDefaultPic);
+            request.setAttribute("currentProfileId", currentProfileId);
             request.getRequestDispatcher("/WEB-INF/views/app/Feed/publicfeed.jsp").forward(request, response);
 
         } catch (Exception e) {

@@ -1,34 +1,26 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.dao.Groups.GroupMemberDAO;
-import com.demo.web.model.Memory.MediaItem;
-import com.demo.web.model.Memory.Memory;
-import com.demo.web.model.Groups.Group;
+import com.demo.web.dto.Memory.MemoryDeleteRequest;
+import com.demo.web.dto.Memory.MemoryDeleteResponse;
+import com.demo.web.service.MemoryService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Servlet for deleting a memory and its associated media
  */
 public class MemoryDelete extends HttpServlet {
 
-    private memoryDAO memoryDao;
-    private MediaDAO mediaDao;
+    private MemoryService memoryService;
 
     @Override
     public void init() throws ServletException {
-        memoryDao = new memoryDAO();
-        mediaDao = new MediaDAO();
+        memoryService = new MemoryService();
     }
 
     @Override
@@ -51,66 +43,20 @@ public class MemoryDelete extends HttpServlet {
             int memoryId = Integer.parseInt(idParam);
             int userId = (int) session.getAttribute("user_id");
 
-            // Fetch memory
-            Memory memory = memoryDao.getMemoryById(memoryId);
+            MemoryDeleteRequest deleteRequest = new MemoryDeleteRequest();
+            deleteRequest.setMemoryId(memoryId);
+            deleteRequest.setUserId(userId);
 
-            if (memory == null) {
+            MemoryDeleteResponse deleteResponse = memoryService.deleteMemory(deleteRequest);
+
+            if (!deleteResponse.isSuccess()) {
                 response.sendRedirect("/memories");
                 return;
             }
 
-            // Check delete permissions
-            boolean canDelete = false;
-            boolean isGroupMemory = (memory.getGroupId() != null);
-            Integer groupId = memory.getGroupId();
-
-            if (isGroupMemory) {
-                GroupDAO groupDAO = new GroupDAO();
-                GroupMemberDAO groupMemberDAO = new GroupMemberDAO();
-                Group group = groupDAO.findById(groupId);
-                boolean isAdmin = (group != null && group.getUserId() == userId);
-                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
-                canDelete = isAdmin || "editor".equals(memberRole);
-            } else {
-                canDelete = (memory.getUserId() == userId);
-            }
-
-            if (!canDelete) {
-                if (isGroupMemory) {
-                    response.sendRedirect("/groupmemories?groupId=" + groupId);
-                } else {
-                    response.sendRedirect("/memories");
-                }
-                return;
-            }
-
-            // Get associated media items to delete files
-            List<MediaItem> mediaItems = mediaDao.getMediaByMemoryId(memoryId);
-
-            // Delete physical media files
-            for (MediaItem item : mediaItems) {
-                try {
-                    String filePath = item.getFilePath();
-                    if (filePath != null && !filePath.isEmpty()) {
-                        File file = new File(filePath);
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                    }
-                    // Delete media record from database
-                    mediaDao.deleteMediaItem(item.getMediaId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    // Continue deleting other items
-                }
-            }
-
-            // Delete memory (memory_media entries will cascade)
-            memoryDao.deleteMemory(memoryId);
-
-            // Redirect back
-            if (isGroupMemory && groupId != null) {
-                response.sendRedirect("/groupmemories?groupId=" + groupId);
+            // Redirect back exactly to where it came from
+            if (deleteResponse.getGroupId() != null) {
+                response.sendRedirect("/groupmemories?groupId=" + deleteResponse.getGroupId());
             } else {
                 response.sendRedirect("/memories");
             }

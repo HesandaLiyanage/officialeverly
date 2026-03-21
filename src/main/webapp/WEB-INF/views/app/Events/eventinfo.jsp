@@ -1,92 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="com.demo.web.model.Events.Event" %>
-        <%@ page import="com.demo.web.model.Groups.Group" %>
-            <%@ page import="com.demo.web.dao.Events.EventDAO" %>
-                <%@ page import="com.demo.web.dao.Groups.GroupDAO" %>
-                    <%@ page import="com.demo.web.dao.Events.EventVoteDAO" %>
-                        <%@ page import="java.text.SimpleDateFormat" %>
-                            <%@ page import="java.util.List" %>
-                                <%@ page import="java.util.Map" %>
-                                    <%@ page import="java.util.ArrayList" %>
-                                        <% Integer userId=(Integer) session.getAttribute("user_id"); if (userId==null) {
-                                            response.sendRedirect(request.getContextPath() + "/login" ); return; }
-                                            String eventIdParam=request.getParameter("id"); if (eventIdParam==null ||
-                                            eventIdParam.trim().isEmpty()) {
-                                            session.setAttribute("errorMessage", "Event ID is required" );
-                                            response.sendRedirect(request.getContextPath() + "/events" ); return; }
-                                            String groupIdParam=request.getParameter("groupId"); Integer
-                                            filterGroupId=null; if (groupIdParam !=null &&
-                                            !groupIdParam.trim().isEmpty()) { try {
-                                            filterGroupId=Integer.parseInt(groupIdParam); } catch (NumberFormatException
-                                            ignore) {} } Event event=null; List<Group> eventGroups = new ArrayList<>();
-                                                try {
-                                                int eventId = Integer.parseInt(eventIdParam);
-                                                EventDAO eventDAO = new EventDAO();
-                                                event = eventDAO.findById(eventId);
-                                                if (event == null) {
-                                                session.setAttribute("errorMessage", "Event not found");
-                                                response.sendRedirect(request.getContextPath() + "/events"); return;
-                                                }
-
-                                                GroupDAO groupDAO = new GroupDAO();
-                                                List<Integer> groupIds = eventDAO.getGroupIdsForEvent(eventId);
-                                                    if (groupIds.isEmpty()) { groupIds.add(event.getGroupId()); }
-                                                    for (int gid : groupIds) {
-                                                    Group g = groupDAO.findById(gid);
-                                                    if (g != null) eventGroups.add(g);
-                                                    }
-
-                                                    boolean hasAccess = false;
-                                                    for (Group g : eventGroups) {
-                                                    if (g.getUserId() == userId) { hasAccess = true; break; }
-                                                    }
-                                                    if (!hasAccess) {
-                                                    session.setAttribute("errorMessage", "You don't have permission to view this event");
-                                                    response.sendRedirect(request.getContextPath() + "/events"); return;
-                                                    }
-                                                    } catch (NumberFormatException e) {
-                                                    session.setAttribute("errorMessage", "Invalid event ID");
-                                                    response.sendRedirect(request.getContextPath() + "/events"); return;
-                                                    } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                    session.setAttribute("errorMessage", "An error occurred while loading the event");
-                                                    response.sendRedirect(request.getContextPath() + "/events"); return;
-                                                    }
-
-                                                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-                                                    String formattedDate = dateFormat.format(event.getEventDate());
-                                                    String eventPicUrl = event.getEventPicUrl();
-                                                    boolean hasImage = (eventPicUrl != null && !eventPicUrl.isEmpty());
-                                                    String displayPicUrl = hasImage ? request.getContextPath() + "/" +
-                                                    eventPicUrl : null;
-                                                    boolean isPastEvent = event.getEventDate().before(new
-                                                    java.util.Date());
-
-                                                    StringBuilder groupNamesStr = new StringBuilder();
-                                                    for (int i = 0; i < eventGroups.size(); i++) {
-                                                        groupNamesStr.append(eventGroups.get(i).getName()); if (i <
-                                                        eventGroups.size() - 1) groupNamesStr.append(", ");
-    }
-
-    List<Group> pollGroups;
-    if (filterGroupId != null) {
-        pollGroups = new ArrayList<>();
-        for (Group g : eventGroups) {
-            if (g.getGroupId() == filterGroupId) { pollGroups.add(g); break; }
-        }
-    } else {
-        pollGroups = eventGroups;
-    }
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
-<html lang=" en">
+<html lang="en">
 
                                                         <head>
                                                             <meta charset="UTF-8">
                                                             <meta name="viewport"
                                                                 content="width=device-width, initial-scale=1.0">
                                                             <title>
-                                                                <%= event.getTitle() %> - Everly
+                                                                ${fn:escapeXml(event.title)} - Everly
                                                             </title>
                                                             <link
                                                                 href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
@@ -419,9 +342,10 @@
                                                                 <div class="mv-wrapper">
                                                                     <!-- LEFT: Event Banner -->
                                                                     <div class="mv-media-section">
-                                                                        <% if (hasImage) { %>
+                                                                        <c:choose>
+                                                                            <c:when test="${hasImage}">
                                                                             <div class="ev-banner-area">
-                                                                                <% if (isPastEvent) { %>
+                                                                                <c:if test="${isPastEvent}">
                                                                                     <div class="ev-past-badge">
                                                                                         <svg width="12" height="12"
                                                                                             viewBox="0 0 24 24"
@@ -436,13 +360,14 @@
                                                                                         </svg>
                                                                                         Past Event
                                                                                     </div>
-                                                                                    <% } %>
-                                                                                        <img src="<%= displayPicUrl %>"
-                                                                                            alt="<%= event.getTitle() %>">
+                                                                                    </c:if>
+                                                                                        <img src="${displayPicUrl}"
+                                                                                            alt="${fn:escapeXml(event.title)}">
                                                                             </div>
-                                                                            <% } else { %>
+                                                                            </c:when>
+                                                                            <c:otherwise>
                                                                                 <div class="ev-no-image">
-                                                                                    <% if (isPastEvent) { %>
+                                                                                    <c:if test="${isPastEvent}">
                                                                                         <div class="ev-past-badge"
                                                                                             style="position: static; margin-bottom: 8px;">
                                                                                             <svg width="12" height="12"
@@ -458,7 +383,7 @@
                                                                                             </svg>
                                                                                             Past Event
                                                                                         </div>
-                                                                                        <% } %>
+                                                                                        </c:if>
                                                                                             <svg viewBox="0 0 24 24"
                                                                                                 fill="none"
                                                                                                 stroke="currentColor"
@@ -478,10 +403,11 @@
                                                                                                 </line>
                                                                                             </svg>
                                                                                             <h3>
-                                                                                                <%= event.getTitle() %>
+                                                                                            ${fn:escapeXml(event.title)}
                                                                                             </h3>
                                                                                 </div>
-                                                                                <% } %>
+                                                                                </c:otherwise>
+                                                                        </c:choose>
                                                                     </div>
 
                                                                     <!-- RIGHT: Details Section -->
@@ -518,8 +444,7 @@
                                                                                             </path>
                                                                                             <circle cx="9" cy="7" r="4">
                                                                                             </circle>
-                                                                                        </svg>
-                                                                                        <%= groupNamesStr.toString() %>
+                                                                                        ${fn:escapeXml(groupNamesStr)}
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -530,8 +455,8 @@
                                                                             <!-- Title -->
                                                                             <div class="mv-info-group">
                                                                                 <div class="mv-info-value title">
-                                                                                    <%= event.getTitle() %>
-                                                                                </div>
+                                                                                ${fn:escapeXml(event.title)}
+                                                                            </div>
                                                                             </div>
 
                                                                             <div class="mv-divider"></div>
@@ -553,7 +478,7 @@
                                                                                         <line x1="3" y1="10" x2="21"
                                                                                             y2="10"></line>
                                                                                     </svg>
-                                                                                    <%= formattedDate %>
+                                                                                    ${fn:escapeXml(formattedDate)}
                                                                                 </div>
                                                                             </div>
 
@@ -562,7 +487,7 @@
                                                                                 <div class="mv-info-label">Shared With
                                                                                 </div>
                                                                                 <div class="ev-groups-chips">
-                                                                                    <% for (Group g : eventGroups) { %>
+                                                                                    <c:forEach var="g" items="${eventGroups}">
                                                                                         <span class="ev-group-chip">
                                                                                             <svg width="10" height="10"
                                                                                                 viewBox="0 0 24 24"
@@ -575,29 +500,26 @@
                                                                                                 <circle cx="9" cy="7"
                                                                                                     r="4"></circle>
                                                                                             </svg>
-                                                                                            <%= g.getName() %>
+                                                                                            ${fn:escapeXml(g.name)}
                                                                                         </span>
-                                                                                        <% } %>
+                                                                                    </c:forEach>
                                                                                 </div>
                                                                             </div>
 
-                                                                            <% if (event.getDescription() !=null &&
-                                                                                !event.getDescription().isEmpty()) { %>
+                                                                            <c:if test="${not empty event.description}">
                                                                                 <div class="mv-divider"></div>
                                                                                 <div class="mv-info-group">
                                                                                     <div class="mv-info-label">About
                                                                                     </div>
                                                                                     <div class="mv-info-value"
                                                                                         style="white-space: pre-wrap;">
-                                                                                        <%= event.getDescription() %>
+                                                                                        ${fn:escapeXml(event.description)}
                                                                                     </div>
                                                                                 </div>
-                                                                                <% } %>
+                                                                            </c:if>
 
                                                                                     <!-- Voting Polls -->
-                                                                                    <% if (!pollGroups.isEmpty()) {
-                                                                                        EventVoteDAO voteDAO=new
-                                                                                        EventVoteDAO(); %>
+                                                                                    <c:if test="${not empty pollGroups}">
                                                                                         <div class="mv-divider"></div>
                                                                                         <div class="mv-info-group">
                                                                                             <div class="ev-polls-title">
@@ -617,39 +539,21 @@
                                                                                                 Polls
                                                                                             </div>
 
-                                                                                            <% for (Group pollGroup :
-                                                                                                pollGroups) { int
-                                                                                                pgId=pollGroup.getGroupId();
-                                                                                                int
-                                                                                                eId=event.getEventId();
-                                                                                                Map<String, Integer> vc
-                                                                                                =
-                                                                                                voteDAO.getVoteCounts(eId,
-                                                                                                pgId);
-                                                                                                String uv =
-                                                                                                voteDAO.getUserVote(eId,
-                                                                                                pgId, userId);
-                                                                                                List<Map<String, Object>
-                                                                                                    > voters =
-                                                                                                    voteDAO.getVoters(eId,
-                                                                                                    pgId);
-                                                                                                    int total =
-                                                                                                    vc.get("total");
-                                                                                                    int gc =
-                                                                                                    vc.get("going");
-                                                                                                    int ngc =
-                                                                                                    vc.get("not_going");
-                                                                                                    int mc =
-                                                                                                    vc.get("maybe");
-                                                                                                    %>
+                                                                                            <c:forEach var="pollGroup" items="${pollGroups}">
+                                                                                                <c:set var="pgId" value="${pollGroup.groupId}"/>
+                                                                                                <c:set var="vc" value="${voteCountsMap[pgId]}"/>
+                                                                                                <c:set var="uv" value="${userVoteMap[pgId]}"/>
+                                                                                                <c:set var="voters" value="${votersMap[pgId]}"/>
+                                                                                                <c:set var="total" value="${vc.total != null ? vc.total : 0}"/>
+                                                                                                <c:set var="gc" value="${vc.going != null ? vc.going : 0}"/>
+                                                                                                <c:set var="ngc" value="${vc.not_going != null ? vc.not_going : 0}"/>
+                                                                                                <c:set var="mc" value="${vc.maybe != null ? vc.maybe : 0}"/>
+
                                                                                                     <div class="ev-poll-card"
-                                                                                                        data-event-id="<%= eId %>"
-                                                                                                        data-group-id="<%= pgId %>">
-                                                                                                        <% if
-                                                                                                            (pollGroups.size()>
-                                                                                                            1) { %>
-                                                                                                            <div
-                                                                                                                class="ev-poll-group-name">
+                                                                                                        data-event-id="${event.eventId}"
+                                                                                                        data-group-id="${pgId}">
+                                                                                                        <c:if test="${fn:length(pollGroups) > 1}">
+                                                                                                            <div class="ev-poll-group-name">
                                                                                                                 <svg width="12"
                                                                                                                     height="12"
                                                                                                                     viewBox="0 0 24 24"
@@ -665,10 +569,9 @@
                                                                                                                         r="4">
                                                                                                                     </circle>
                                                                                                                 </svg>
-                                                                                                                <%= pollGroup.getName()
-                                                                                                                    %>
+                                                                                                                ${fn:escapeXml(pollGroup.name)}
                                                                                                             </div>
-                                                                                                            <% } %>
+                                                                                                        </c:if>
                                                                                                                 <div
                                                                                                                     class="ev-poll-question">
                                                                                                                     Are
@@ -690,202 +593,117 @@
                                                                                                                     class="ev-poll-options">
                                                                                                                     <button
                                                                                                                         type="button"
-                                                                                                                        class="ev-poll-btn <%= "going".equals(uv)
-                                                                                                                        ? "selected going"
-                                                                                                                        : ""
-                                                                                                                        %>"
-                                                                                                                        onclick="castVote(
-                                                                                                                        <%= eId
-                                                                                                                            %>
-                                                                                                                            ,
-                                                                                                                            <%= pgId
-                                                                                                                                %>
-                                                                                                                                ,
-                                                                                                                                'going',
-                                                                                                                                this)">
+                                                                                                                        class="ev-poll-btn ${uv == 'going' ? 'selected going' : ''}"
+                                                                                                                        onclick="castVote(${event.eventId}, ${pgId}, 'going', this)">
                                                                                                                                 <span
                                                                                                                                     class="ev-poll-btn-left"><span
                                                                                                                                         class="ev-poll-btn-icon">✅</span>Going</span>
                                                                                                                                 <span
                                                                                                                                     class="ev-poll-count"
-                                                                                                                                    id="count-going-<%= pgId %>">
-                                                                                                                                    <%= gc
-                                                                                                                                        %>
+                                                                                                                                    id="count-going-${pgId}">
+                                                                                                                                    ${gc}
                                                                                                                                 </span>
                                                                                                                     </button>
                                                                                                                     <div
                                                                                                                         class="ev-poll-bar-wrap">
                                                                                                                         <div class="ev-poll-bar going"
-                                                                                                                            id="bar-going-<%= pgId %>"
-                                                                                                                            style="width:<%= total > 0 ? (gc * 100 / total) : 0 %>%">
+                                                                                                                            id="bar-going-${pgId}"
+                                                                                                                            style="width:${total > 0 ? (gc * 100 / total) : 0}%">
                                                                                                                         </div>
                                                                                                                     </div>
 
                                                                                                                     <button
                                                                                                                         type="button"
-                                                                                                                        class="ev-poll-btn <%= "not_going".equals(uv)
-                                                                                                                        ? "selected not_going"
-                                                                                                                        : ""
-                                                                                                                        %>"
-                                                                                                                        onclick="castVote(
-                                                                                                                        <%= eId
-                                                                                                                            %>
-                                                                                                                            ,
-                                                                                                                            <%= pgId
-                                                                                                                                %>
-                                                                                                                                ,
-                                                                                                                                'not_going',
-                                                                                                                                this)">
+                                                                                                                        class="ev-poll-btn ${uv == 'not_going' ? 'selected not_going' : ''}"
+                                                                                                                        onclick="castVote(${event.eventId}, ${pgId}, 'not_going', this)">
                                                                                                                                 <span
                                                                                                                                     class="ev-poll-btn-left"><span
                                                                                                                                         class="ev-poll-btn-icon">❌</span>Not
                                                                                                                                     Going</span>
                                                                                                                                 <span
                                                                                                                                     class="ev-poll-count"
-                                                                                                                                    id="count-not_going-<%= pgId %>">
-                                                                                                                                    <%= ngc
-                                                                                                                                        %>
+                                                                                                                                    id="count-not_going-${pgId}">
+                                                                                                                                    ${ngc}
                                                                                                                                 </span>
                                                                                                                     </button>
                                                                                                                     <div
                                                                                                                         class="ev-poll-bar-wrap">
                                                                                                                         <div class="ev-poll-bar not_going"
-                                                                                                                            id="bar-not_going-<%= pgId %>"
-                                                                                                                            style="width:<%= total > 0 ? (ngc * 100 / total) : 0 %>%">
+                                                                                                                            id="bar-not_going-${pgId}"
+                                                                                                                            style="width:${total > 0 ? (ngc * 100 / total) : 0}%">
                                                                                                                         </div>
                                                                                                                     </div>
 
                                                                                                                     <button
                                                                                                                         type="button"
-                                                                                                                        class="ev-poll-btn <%= "maybe".equals(uv)
-                                                                                                                        ? "selected maybe"
-                                                                                                                        : ""
-                                                                                                                        %>"
-                                                                                                                        onclick="castVote(
-                                                                                                                        <%= eId
-                                                                                                                            %>
-                                                                                                                            ,
-                                                                                                                            <%= pgId
-                                                                                                                                %>
-                                                                                                                                ,
-                                                                                                                                'maybe',
-                                                                                                                                this)">
+                                                                                                                        class="ev-poll-btn ${uv == 'maybe' ? 'selected maybe' : ''}"
+                                                                                                                        onclick="castVote(${event.eventId}, ${pgId}, 'maybe', this)">
                                                                                                                                 <span
                                                                                                                                     class="ev-poll-btn-left"><span
                                                                                                                                         class="ev-poll-btn-icon">🤔</span>Maybe</span>
                                                                                                                                 <span
                                                                                                                                     class="ev-poll-count"
-                                                                                                                                    id="count-maybe-<%= pgId %>">
-                                                                                                                                    <%= mc
-                                                                                                                                        %>
+                                                                                                                                    id="count-maybe-${pgId}">
+                                                                                                                                    ${mc}
                                                                                                                                 </span>
                                                                                                                     </button>
                                                                                                                     <div
                                                                                                                         class="ev-poll-bar-wrap">
                                                                                                                         <div class="ev-poll-bar maybe"
-                                                                                                                            id="bar-maybe-<%= pgId %>"
-                                                                                                                            style="width:<%= total > 0 ? (mc * 100 / total) : 0 %>%">
+                                                                                                                            id="bar-maybe-${pgId}"
+                                                                                                                            style="width:${total > 0 ? (mc * 100 / total) : 0}%">
                                                                                                                         </div>
                                                                                                                     </div>
                                                                                                                 </div>
 
                                                                                                                 <p class="ev-poll-total"
-                                                                                                                    id="poll-total-<%= pgId %>">
-                                                                                                                    <%= total
-                                                                                                                        %>
-                                                                                                                        vote
-                                                                                                                        <%= total
-                                                                                                                            !=1
-                                                                                                                            ? "s"
-                                                                                                                            : ""
-                                                                                                                            %>
+                                                                                                                    id="poll-total-${pgId}">
+                                                                                                                    ${total} vote${total != 1 ? 's' : ''}
                                                                                                                 </p>
 
                                                                                                                 <button
                                                                                                                     type="button"
                                                                                                                     class="ev-poll-voters-toggle"
-                                                                                                                    onclick="toggleVoters(<%= pgId %>)">Show
+                                                                                                                    onclick="toggleVoters(${pgId})">Show
                                                                                                                     who
                                                                                                                     voted</button>
                                                                                                                 <div class="ev-poll-voters-list"
-                                                                                                                    id="voters-list-<%= pgId %>">
-                                                                                                                    <% if
-                                                                                                                        (voters
-                                                                                                                        !=null
-                                                                                                                        &&
-                                                                                                                        !voters.isEmpty())
-                                                                                                                        {
-                                                                                                                        for
-                                                                                                                        (Map<String,
-                                                                                                                        Object>
-                                                                                                                        voter
-                                                                                                                        :
-                                                                                                                        voters)
-                                                                                                                        {
-                                                                                                                        String
-                                                                                                                        vn
-                                                                                                                        =
-                                                                                                                        (String)
-                                                                                                                        voter.get("username");
-                                                                                                                        String
-                                                                                                                        vv
-                                                                                                                        =
-                                                                                                                        (String)
-                                                                                                                        voter.get("vote");
-                                                                                                                        String
-                                                                                                                        vl
-                                                                                                                        =
-                                                                                                                        "going".equals(vv)
-                                                                                                                        ?
-                                                                                                                        "Going"
-                                                                                                                        :
-                                                                                                                        "not_going".equals(vv)
-                                                                                                                        ?
-                                                                                                                        "Not Going"
-                                                                                                                        :
-                                                                                                                        "Maybe";
-                                                                                                                        %>
-                                                                                                                        <div
-                                                                                                                            class="ev-poll-voter">
-                                                                                                                            <div
-                                                                                                                                class="ev-poll-voter-avatar">
-                                                                                                                                <%= vn.substring(0,
-                                                                                                                                    1).toUpperCase()
-                                                                                                                                    %>
-                                                                                                                            </div>
-                                                                                                                            <span
-                                                                                                                                class="ev-poll-voter-name">
-                                                                                                                                <%= vn
-                                                                                                                                    %>
-                                                                                                                            </span>
-                                                                                                                            <span
-                                                                                                                                class="ev-poll-voter-badge <%= vv %>">
-                                                                                                                                <%= vl
-                                                                                                                                    %>
-                                                                                                                            </span>
-                                                                                                                        </div>
-                                                                                                                        <% } }
-                                                                                                                            else
-                                                                                                                            {
-                                                                                                                            %>
-                                                                                                                            <p
-                                                                                                                                style="font-size: 12px; color: #9ca3af; padding: 6px 0;">
-                                                                                                                                No
-                                                                                                                                votes
-                                                                                                                                yet.
+                                                                                                                    id="voters-list-${pgId}">
+                                                                                                                    <c:choose>
+                                                                                                                        <c:when test="${not empty voters}">
+                                                                                                                            <c:forEach var="voter" items="${voters}">
+                                                                                                                                <c:set var="vn" value="${voter.username}"/>
+                                                                                                                                <c:set var="vv" value="${voter.vote}"/>
+                                                                                                                                <c:set var="vl" value="${vv == 'going' ? 'Going' : (vv == 'not_going' ? 'Not Going' : 'Maybe')}"/>
+                                                                                                                                <div class="ev-poll-voter">
+                                                                                                                                    <div class="ev-poll-voter-avatar">
+                                                                                                                                        ${fn:toUpperCase(fn:substring(vn, 0, 1))}
+                                                                                                                                    </div>
+                                                                                                                                    <span class="ev-poll-voter-name">
+                                                                                                                                        ${fn:escapeXml(vn)}
+                                                                                                                                    </span>
+                                                                                                                                    <span class="ev-poll-voter-badge ${vv}">
+                                                                                                                                        ${vl}
+                                                                                                                                    </span>
+                                                                                                                                </div>
+                                                                                                                            </c:forEach>
+                                                                                                                        </c:when>
+                                                                                                                        <c:otherwise>
+                                                                                                                            <p style="font-size: 12px; color: #9ca3af; padding: 6px 0;">
+                                                                                                                                No votes yet.
                                                                                                                             </p>
-                                                                                                                            <% }
-                                                                                                                                %>
+                                                                                                                        </c:otherwise>
+                                                                                                                    </c:choose>
                                                                                                                 </div>
                                                                                                     </div>
-                                                                                                    <% } %>
+                                                                                            </c:forEach>
                                                                                         </div>
-                                                                                        <% } %>
+                                                                                    </c:if>
                                                                         </div>
 
                                                                         <!-- Actions Bar -->
                                                                         <div class="mv-actions-bar">
-                                                                            <a href="${pageContext.request.contextPath}/editevent?event_id=<%= eventIdParam %>"
+                                                                            <a href="${pageContext.request.contextPath}/editevent?event_id=${event.eventId}"
                                                                                 class="mv-action-btn secondary">
                                                                                 <svg viewBox="0 0 24 24" fill="none"
                                                                                     stroke="currentColor"
@@ -912,8 +730,8 @@
                                                                                 </svg>
                                                                                 Delete
                                                                             </button>
-                                                                            <% if (isPastEvent) { %>
-                                                                                <a href="${pageContext.request.contextPath}/groupmemories?groupId=<%= event.getGroupId() %>"
+                                                                            <c:if test="${isPastEvent}">
+                                                                                <a href="${pageContext.request.contextPath}/groupmemories?groupId=${event.groupId}"
                                                                                     class="mv-action-btn primary">
                                                                                     <svg viewBox="0 0 24 24" fill="none"
                                                                                         stroke="currentColor"
@@ -929,7 +747,7 @@
                                                                                     </svg>
                                                                                     Memories
                                                                                 </a>
-                                                                                <% } %>
+                                                                            </c:if>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -939,7 +757,7 @@
                                                                 action="${pageContext.request.contextPath}/deleteEvent"
                                                                 style="display:none;">
                                                                 <input type="hidden" name="event_id"
-                                                                    value="<%= eventIdParam %>">
+                                                                    value="${event.eventId}">
                                                             </form>
 
                                                             <script>

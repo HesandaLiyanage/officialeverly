@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -111,10 +113,13 @@ public class FeedFollowersList extends HttpServlet {
             }
 
             // For each user, check if current user follows them
+            Map<Integer, Boolean> followStatusMap = new HashMap<>();
             for (FeedProfile profile : userList) {
                 boolean isFollowing = feedFollowDAO.isFollowing(
                         currentUserProfile.getFeedProfileId(),
                         profile.getFeedProfileId());
+                followStatusMap.put(profile.getFeedProfileId(), isFollowing);
+                // Keep individual attributes for backward compatibility
                 request.setAttribute("isFollowing_" + profile.getFeedProfileId(), isFollowing);
             }
 
@@ -124,12 +129,18 @@ public class FeedFollowersList extends HttpServlet {
             // Continue with empty list - page will show "no followers/following yet"
         }
 
+        boolean isOwn = profileId == currentUserProfile.getFeedProfileId();
+        String profileUsername = (profileToView != null) ? profileToView.getFeedUsername() : "user";
+        int currentProfId = currentUserProfile.getFeedProfileId();
+
         // Set attributes
         request.setAttribute("userList", userList);
         request.setAttribute("pageTitle", pageTitle);
         request.setAttribute("profileToView", profileToView);
         request.setAttribute("currentUserProfile", currentUserProfile);
-        request.setAttribute("isOwnProfile", profileId == currentUserProfile.getFeedProfileId());
+        request.setAttribute("isOwnProfile", isOwn);
+        request.setAttribute("profileUsername", profileUsername);
+        request.setAttribute("currentProfileId", currentProfId);
 
         logger.info("[FollowersViewController] Forwarding to " + jspPage + " with " + userList.size() + " users");
         request.getRequestDispatcher(jspPage).forward(request, response);

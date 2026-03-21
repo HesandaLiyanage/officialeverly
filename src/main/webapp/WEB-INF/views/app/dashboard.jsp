@@ -1,14 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true" %>
-<%
-    // Check if user is logged in
-    String username = (String) session.getAttribute("username");
-    if (username == null) {
-        // Not logged in → redirect to login page
-        response.sendRedirect("view?page=login");
-        return;
-    }
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<c:if test="${empty sessionScope.username}">
+    <c:redirect url="view?page=login" />
+</c:if>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,7 +20,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>Welcome, <%= username %>!</h1>
+    <h1>Welcome, ${fn:escapeXml(sessionScope.username)}!</h1>
     <p>This is your dashboard.</p>
     <a href="logout">Logout</a>
 </div>

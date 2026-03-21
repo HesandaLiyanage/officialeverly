@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,15 +18,13 @@
     <h1>Change Vault Password</h1>
     <p>Update your vault password to keep your memories secure</p>
 
-    <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
-    <% if (errorMessage != null) { %>
-    <div class="error"><%= errorMessage %></div>
-    <% } %>
+    <c:if test="${not empty errorMessage}">
+    <div class="error">${errorMessage}</div>
+    </c:if>
 
-    <% String successMessage = (String) request.getAttribute("successMessage"); %>
-    <% if (successMessage != null) { %>
-    <div class="success"><%= successMessage %></div>
-    <% } %>
+    <c:if test="${not empty successMessage}">
+    <div class="success">${successMessage}</div>
+    </c:if>
 
     <form action="${pageContext.request.contextPath}/changevaultpassword" method="POST" class="vault-form" id="vaultForm">
         <div class="form-group">

@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <!DOCTYPE html>
     <html>
 
@@ -22,16 +23,13 @@
                         Subscription</a>
                 </div>
 
-                <% String currentPlan=(String) request.getAttribute("currentPlan"); if (currentPlan==null)
-                    currentPlan="Basic" ; boolean isFamilyPlan="Family" .equals(currentPlan); %>
-
                     <!-- Hero Section -->
                     <div class="family-hero">
                         <div class="family-hero-content">
                             <h2>Everly Family Plan</h2>
                             <p>Share your subscription with up to 6 family members. Everyone gets their own private
                                 space, plus access to a shared family journal and storage pool.</p>
-                            <% if (!isFamilyPlan) { %>
+                            <c:if test="${not isFamilyPlan}">
                                 <a href="${pageContext.request.contextPath}/changeplan" class="sub-btn primary">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2">
@@ -39,7 +37,7 @@
                                     </svg>
                                     Upgrade to Family — $9.99/mo
                                 </a>
-                                <% } %>
+                            </c:if>
                         </div>
                         <div class="family-hero-illustration">
                             <svg width="180" height="140" viewBox="0 0 180 140" fill="none"
@@ -67,7 +65,8 @@
                         </div>
                     </div>
 
-                    <% if (isFamilyPlan) { %>
+                    <c:choose>
+                        <c:when test="${isFamilyPlan}">
 
                         <!-- Shared Storage -->
                         <div class="shared-storage-card">
@@ -200,7 +199,8 @@
                             </div>
                         </div>
 
-                        <% } else { %>
+                        </c:when>
+                        <c:otherwise>
                             <!-- Not on Family Plan — Show Upsell -->
                             <div class="sub-card" style="text-align: center; padding: 48px;">
                                 <div style="font-size: 64px; margin-bottom: 16px;">👨‍👩‍👧‍👦</div>
@@ -233,7 +233,8 @@
                                     Upgrade to Family Plan →
                                 </a>
                             </div>
-                            <% } %>
+                        </c:otherwise>
+                    </c:choose>
 
             </div>
         </div>

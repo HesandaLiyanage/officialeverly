@@ -1,471 +1,203 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ page import="com.demo.web.model.Settings.Plan" %>
-        <%@ page import="java.util.List" %>
-            <%@ page import="java.util.Map" %>
-                <%! String formatBytes(long bytes) { if (bytes < 1024) return bytes + " B" ; if (bytes < 1024 * 1024)
-                    return String.format("%.1f KB", bytes / 1024.0); if (bytes < 1024L * 1024 * 1024) return
-                    String.format("%.1f MB", bytes / (1024.0 * 1024)); return String.format("%.2f GB", bytes / (1024.0 *
-                    1024 * 1024)); } %>
-                    <% Plan plan=(Plan) request.getAttribute("plan"); long usedStorageBytes=(Long)
-                        request.getAttribute("usedStorageBytes"); long storageLimitBytes=(Long)
-                        request.getAttribute("storageLimitBytes"); int usedPercent=(Integer)
-                        request.getAttribute("usedPercent"); List<Map<String, Object>> topMemories = (List<Map<String,
-                            Object>>) request.getAttribute("topMemories");
-                            List<Map<String, Object>> topGroups = (List<Map<String, Object>>)
-                                    request.getAttribute("topGroups");
-                                    int duplicateCount = (Integer) request.getAttribute("duplicateCount");
-                                    long duplicateSize = (Long) request.getAttribute("duplicateSize");
-                                    int trashCount = (Integer) request.getAttribute("trashCount");
-                                    int memoryCount = (Integer) request.getAttribute("memoryCount");
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<!DOCTYPE html>
+<html>
 
-                                    String usedDisplay = formatBytes(usedStorageBytes);
-                                    String limitDisplay = formatBytes(storageLimitBytes);
-                                    String freeDisplay = formatBytes(storageLimitBytes - usedStorageBytes);
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Sense | Everly</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/settings.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/subscription.css">
+</head>
 
-                                    String progressColor = usedPercent < 60 ? "#22c55e" : usedPercent < 85 ? "#f59e0b"
-                                        : "#ef4444" ; %>
-                                        <!DOCTYPE html>
-                                        <html>
+<body>
+    <jsp:include page="/WEB-INF/views/public/header2.jsp" />
 
-                                        <head>
-                                            <meta charset="UTF-8">
-                                            <title>Settings - Storage Sense</title>
-                                            <link rel="stylesheet" type="text/css"
-                                                href="${pageContext.request.contextPath}/resources/css/settings.css">
-                                            <style>
-                                                .ss-main {
-                                                    margin-top: 8px;
-                                                }
+    <div class="subscription-page">
+        <div class="subscription-container">
 
-                                                .ss-gauge-card {
-                                                    background: linear-gradient(135deg, #f8f5ff 0%, #f0ebff 100%);
-                                                    border-radius: 16px;
-                                                    padding: 28px 32px;
-                                                    margin-bottom: 24px;
-                                                    border: 1px solid #e8e0ff;
-                                                }
+            <!-- Back -->
+            <div class="back-option" style="margin-bottom: 20px;">
+                <a href="${pageContext.request.contextPath}/managesubscription" class="back-link">← Back to
+                    Subscription</a>
+            </div>
 
-                                                .ss-gauge-header {
-                                                    display: flex;
-                                                    justify-content: space-between;
-                                                    align-items: center;
-                                                    margin-bottom: 16px;
-                                                }
+            <div class="subscription-header" style="text-align: left; margin-bottom: 36px;">
+                <h1 style="font-size: 32px;">📊 Storage Sense</h1>
+                <p style="margin: 0;">Understand and manage your storage usage.</p>
+            </div>
 
-                                                .ss-gauge-plan {
-                                                    display: inline-flex;
-                                                    align-items: center;
-                                                    gap: 6px;
-                                                    font-size: 12px;
-                                                    font-weight: 700;
-                                                    color: #9A74D8;
-                                                    background: white;
-                                                    padding: 5px 12px;
-                                                    border-radius: 20px;
-                                                    border: 1px solid #e8e0ff;
-                                                }
+            <!-- Overall usage card -->
+            <div class="sub-card" style="margin-bottom: 28px;">
+                <h3>
+                    <span class="card-icon purple">💾</span>
+                    Total Storage
+                </h3>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 14px; font-weight: 600; color: #1a1a2e;">
+                        <c:out value="${usedFormatted}" /> used
+                    </span>
+                    <span style="font-size: 14px; color: #9ca3af;">
+                        <c:out value="${totalFormatted}" /> total
+                    </span>
+                </div>
+                <div class="storage-bar-bg">
+                    <div class="storage-bar-fill"
+                        style="width: ${usedPercent}%; background: ${progressBarColor};">
+                    </div>
+                </div>
+                <span style="font-size: 13px; color: #9ca3af;">${usedPercent}% used</span>
+            </div>
 
-                                                .ss-gauge-usage {
-                                                    font-size: 13px;
-                                                    font-weight: 600;
-                                                    color: #6b7280;
-                                                }
+            <!-- Content type breakdown -->
+            <div class="sub-card" style="margin-bottom: 28px;">
+                <h3>
+                    <span class="card-icon blue">📁</span>
+                    By Content Type
+                </h3>
+                <c:choose>
+                    <c:when test="${not empty contentTypeDisplay}">
+                        <c:forEach var="ct" items="${contentTypeDisplay}">
+                            <div style="margin-bottom: 14px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="font-size: 14px; font-weight: 500; color: #1a1a2e;">
+                                        <c:out value="${ct.name}" />
+                                    </span>
+                                    <span style="font-size: 13px; color: #9ca3af;">
+                                        <c:out value="${ct.sizeFormatted}" />
+                                    </span>
+                                </div>
+                                <div class="storage-bar-bg" style="height: 6px;">
+                                    <div style="width: ${ct.percent}%; background: ${ct.color}; height: 100%; border-radius: 3px;"></div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <p style="color: #9ca3af; text-align: center; padding: 20px;">No content data available</p>
+                    </c:otherwise>
+                </c:choose>
+            </div>
 
-                                                .ss-gauge-usage strong {
-                                                    color: #1f2937;
-                                                    font-size: 18px;
-                                                }
+            <!-- Top Memories by Storage -->
+            <div class="sub-card" style="margin-bottom: 28px;">
+                <h3>
+                    <span class="card-icon green">📸</span>
+                    Top Memories by Storage
+                </h3>
+                <c:choose>
+                    <c:when test="${not empty topMemoryDisplay}">
+                        <c:forEach var="mem" items="${topMemoryDisplay}">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f3f4f6;">
+                                <span style="font-size: 14px; color: #1a1a2e;">
+                                    <c:out value="${mem.title}" />
+                                </span>
+                                <span style="font-size: 13px; color: #9ca3af; font-weight: 500;">
+                                    <c:out value="${mem.sizeFormatted}" />
+                                </span>
+                            </div>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <p style="color: #9ca3af; text-align: center; padding: 20px;">No memories yet</p>
+                    </c:otherwise>
+                </c:choose>
+            </div>
 
-                                                .ss-progress-track {
-                                                    height: 10px;
-                                                    background: #e5e7eb;
-                                                    border-radius: 10px;
-                                                    overflow: hidden;
-                                                    margin-bottom: 8px;
-                                                }
+            <!-- Top Groups by Storage -->
+            <div class="sub-card" style="margin-bottom: 28px;">
+                <h3>
+                    <span class="card-icon orange">👥</span>
+                    Top Groups by Storage
+                </h3>
+                <c:choose>
+                    <c:when test="${not empty topGroupDisplay}">
+                        <c:forEach var="grp" items="${topGroupDisplay}">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f3f4f6;">
+                                <span style="font-size: 14px; color: #1a1a2e;">
+                                    <c:out value="${grp.groupName}" />
+                                </span>
+                                <span style="font-size: 13px; color: #9ca3af; font-weight: 500;">
+                                    <c:out value="${grp.sizeFormatted}" />
+                                </span>
+                            </div>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <p style="color: #9ca3af; text-align: center; padding: 20px;">No group data</p>
+                    </c:otherwise>
+                </c:choose>
+            </div>
 
-                                                .ss-progress-fill {
-                                                    height: 100%;
-                                                    border-radius: 10px;
-                                                    transition: width 0.8s ease;
-                                                }
+            <!-- Quick Actions -->
+            <div class="sub-card" style="margin-bottom: 28px;">
+                <h3>
+                    <span class="card-icon purple">⚡</span>
+                    Quick Actions
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                    <!-- Duplicate Finder -->
+                    <a href="${pageContext.request.contextPath}/duplicatefinder"
+                        style="display: flex; align-items: center; gap: 12px; padding: 16px; background: #fdfbff; border-radius: 12px; border: 1px solid #f0e6ff; text-decoration: none; transition: all 0.2s;">
+                        <span style="font-size: 24px;">🔍</span>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600; color: #1a1a2e;">Find Duplicates</div>
+                            <div style="font-size: 12px; color: #9ca3af;">
+                                ${duplicateCount} duplicate files • <c:out value="${duplicateSizeFormatted}" />
+                            </div>
+                        </div>
+                    </a>
 
-                                                .ss-progress-labels {
-                                                    display: flex;
-                                                    justify-content: space-between;
-                                                    font-size: 11px;
-                                                    color: #9ca3af;
-                                                    font-weight: 500;
-                                                }
+                    <!-- Empty Trash -->
+                    <a href="${pageContext.request.contextPath}/trashmgt"
+                        style="display: flex; align-items: center; gap: 12px; padding: 16px; background: #fdfbff; border-radius: 12px; border: 1px solid #f0e6ff; text-decoration: none; transition: all 0.2s;">
+                        <span style="font-size: 24px;">🗑️</span>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600; color: #1a1a2e;">Empty Trash</div>
+                            <div style="font-size: 12px; color: #9ca3af;">${trashCount} items in trash</div>
+                        </div>
+                    </a>
 
-                                                .ss-memory-count {
-                                                    font-size: 12px;
-                                                    color: #6b7280;
-                                                    margin-top: 10px;
-                                                }
+                    <!-- Upgrade Storage -->
+                    <a href="${pageContext.request.contextPath}/changeplan"
+                        style="display: flex; align-items: center; gap: 12px; padding: 16px; background: #fdfbff; border-radius: 12px; border: 1px solid #f0e6ff; text-decoration: none; transition: all 0.2s;">
+                        <span style="font-size: 24px;">🚀</span>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600; color: #1a1a2e;">Upgrade Storage</div>
+                            <div style="font-size: 12px; color: #9ca3af;">Get more space</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
 
-                                                .ss-memory-count strong {
-                                                    color: #9A74D8;
-                                                }
+            <!-- Stats summary -->
+            <div class="sub-card" style="margin-bottom: 40px;">
+                <h3>
+                    <span class="card-icon blue">📈</span>
+                    Account Stats
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; text-align: center;">
+                    <div style="padding: 16px; background: #fdfbff; border-radius: 10px;">
+                        <div style="font-size: 24px; font-weight: 800; color: #9A74D8;">${memoryCount}</div>
+                        <div style="font-size: 12px; color: #9ca3af;">Memories</div>
+                    </div>
+                    <div style="padding: 16px; background: #fdfbff; border-radius: 10px;">
+                        <div style="font-size: 24px; font-weight: 800; color: #9A74D8;">${duplicateCount}</div>
+                        <div style="font-size: 12px; color: #9ca3af;">Duplicates</div>
+                    </div>
+                    <div style="padding: 16px; background: #fdfbff; border-radius: 10px;">
+                        <div style="font-size: 24px; font-weight: 800; color: #9A74D8;">${trashCount}</div>
+                        <div style="font-size: 12px; color: #9ca3af;">Trash Items</div>
+                    </div>
+                </div>
+            </div>
 
-                                                .ss-section-title {
-                                                    font-size: 15px;
-                                                    font-weight: 700;
-                                                    color: #1f2937;
-                                                    margin-bottom: 16px;
-                                                }
+        </div>
+    </div>
 
-                                                .ss-consumers {
-                                                    display: grid;
-                                                    grid-template-columns: 1fr 1fr;
-                                                    gap: 16px;
-                                                    margin-bottom: 28px;
-                                                }
+    <jsp:include page="/WEB-INF/views/public/footer.jsp" />
+</body>
 
-                                                .ss-consumer-card {
-                                                    background: white;
-                                                    border: 1px solid #f3f4f6;
-                                                    border-radius: 12px;
-                                                    padding: 20px;
-                                                }
-
-                                                .ss-consumer-title {
-                                                    font-size: 13px;
-                                                    font-weight: 700;
-                                                    color: #6b7280;
-                                                    margin-bottom: 14px;
-                                                }
-
-                                                .ss-consumer-item {
-                                                    display: flex;
-                                                    align-items: center;
-                                                    gap: 10px;
-                                                    padding: 8px 0;
-                                                    border-bottom: 1px solid #f9fafb;
-                                                }
-
-                                                .ss-consumer-item:last-child {
-                                                    border-bottom: none;
-                                                }
-
-                                                .ss-consumer-rank {
-                                                    width: 22px;
-                                                    height: 22px;
-                                                    border-radius: 6px;
-                                                    background: #f3f0ff;
-                                                    color: #9A74D8;
-                                                    display: flex;
-                                                    align-items: center;
-                                                    justify-content: center;
-                                                    font-size: 10px;
-                                                    font-weight: 800;
-                                                    flex-shrink: 0;
-                                                }
-
-                                                .ss-consumer-info {
-                                                    flex: 1;
-                                                    min-width: 0;
-                                                }
-
-                                                .ss-consumer-name {
-                                                    font-size: 13px;
-                                                    font-weight: 600;
-                                                    color: #1f2937;
-                                                    white-space: nowrap;
-                                                    overflow: hidden;
-                                                    text-overflow: ellipsis;
-                                                }
-
-                                                .ss-consumer-meta {
-                                                    font-size: 11px;
-                                                    color: #9ca3af;
-                                                }
-
-                                                .ss-consumer-size {
-                                                    font-size: 12px;
-                                                    font-weight: 700;
-                                                    color: #374151;
-                                                    flex-shrink: 0;
-                                                }
-
-                                                .ss-empty-state {
-                                                    text-align: center;
-                                                    padding: 16px;
-                                                    color: #9ca3af;
-                                                    font-size: 13px;
-                                                    font-style: italic;
-                                                }
-
-                                                .ss-manage-grid {
-                                                    display: grid;
-                                                    grid-template-columns: 1fr 1fr;
-                                                    gap: 12px;
-                                                    margin-bottom: 24px;
-                                                }
-
-                                                .ss-manage-card {
-                                                    display: flex;
-                                                    align-items: center;
-                                                    gap: 14px;
-                                                    background: white;
-                                                    border: 1px solid #f3f4f6;
-                                                    border-radius: 12px;
-                                                    padding: 16px 20px;
-                                                    cursor: pointer;
-                                                    transition: all 0.2s;
-                                                    text-decoration: none;
-                                                    color: inherit;
-                                                }
-
-                                                .ss-manage-card:hover {
-                                                    border-color: #9A74D8;
-                                                    background: #faf8ff;
-                                                    transform: translateY(-1px);
-                                                    box-shadow: 0 2px 8px rgba(154, 116, 216, 0.12);
-                                                }
-
-                                                .ss-manage-icon {
-                                                    width: 44px;
-                                                    height: 44px;
-                                                    border-radius: 10px;
-                                                    display: flex;
-                                                    align-items: center;
-                                                    justify-content: center;
-                                                    font-size: 20px;
-                                                    flex-shrink: 0;
-                                                }
-
-                                                .ss-manage-icon.duplicates {
-                                                    background: #fef3c7;
-                                                }
-
-                                                .ss-manage-icon.trash {
-                                                    background: #fee2e2;
-                                                }
-
-                                                .ss-manage-text {
-                                                    flex: 1;
-                                                }
-
-                                                .ss-manage-title {
-                                                    font-size: 14px;
-                                                    font-weight: 700;
-                                                    color: #1f2937;
-                                                    margin-bottom: 2px;
-                                                }
-
-                                                .ss-manage-desc {
-                                                    font-size: 12px;
-                                                    color: #9ca3af;
-                                                }
-
-                                                .ss-manage-badge {
-                                                    font-size: 11px;
-                                                    font-weight: 700;
-                                                    padding: 3px 10px;
-                                                    border-radius: 12px;
-                                                    flex-shrink: 0;
-                                                }
-
-                                                .ss-manage-badge.duplicates {
-                                                    background: #fef3c7;
-                                                    color: #d97706;
-                                                }
-
-                                                .ss-manage-badge.trash {
-                                                    background: #fee2e2;
-                                                    color: #dc2626;
-                                                }
-
-                                                .ss-upgrade-btn {
-                                                    display: inline-flex;
-                                                    align-items: center;
-                                                    gap: 8px;
-                                                    background: #9A74D8;
-                                                    color: white;
-                                                    border: none;
-                                                    border-radius: 12px;
-                                                    padding: 12px 24px;
-                                                    font-size: 14px;
-                                                    font-weight: 700;
-                                                    cursor: pointer;
-                                                    text-decoration: none;
-                                                    transition: all 0.2s;
-                                                    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.3);
-                                                }
-
-                                                .ss-upgrade-btn:hover {
-                                                    background: #8a64c8;
-                                                    transform: translateY(-1px);
-                                                    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.4);
-                                                }
-
-                                                @media (max-width: 768px) {
-                                                    .ss-consumers {
-                                                        grid-template-columns: 1fr;
-                                                    }
-
-                                                    .ss-manage-grid {
-                                                        grid-template-columns: 1fr;
-                                                    }
-                                                }
-                                            </style>
-                                        </head>
-
-                                        <body>
-                                            <jsp:include page="/WEB-INF/views/public/header2.jsp" />
-                                            <div class="settings-container">
-                                                <h2>Settings</h2>
-                                                <div class="settings-tabs">
-                                                    <a href="${pageContext.request.contextPath}/settingsaccount"
-                                                        class="tab">Account</a>
-                                                    <a href="${pageContext.request.contextPath}/settingssubscription"
-                                                        class="tab">Subscription</a>
-                                                    <a href="${pageContext.request.contextPath}/settingsprivacy"
-                                                        class="tab">Privacy &amp; Security</a>
-                                                    <a href="#" class="tab active">Storage Sense</a>
-                                                    <a href="${pageContext.request.contextPath}/settingsnotifications"
-                                                        class="tab">Notifications</a>
-                                                </div>
-
-                                                <div class="ss-main">
-                                                    <!-- Storage Gauge -->
-                                                    <div class="ss-gauge-card">
-                                                        <div class="ss-gauge-header">
-                                                            <span class="ss-gauge-plan">&#9733; <%= plan.getName() %>
-                                                                    Plan</span>
-                                                            <div class="ss-gauge-usage">
-                                                                <strong>
-                                                                    <%= usedDisplay %>
-                                                                </strong> of <%= limitDisplay %>
-                                                            </div>
-                                                        </div>
-                                                        <div class="ss-progress-track">
-                                                            <div class="ss-progress-fill"
-                                                                style="width: <%= usedPercent %>%; background: <%= progressColor %>;">
-                                                            </div>
-                                                        </div>
-                                                        <div class="ss-progress-labels">
-                                                            <span>
-                                                                <%= usedPercent %>% used
-                                                            </span>
-                                                            <span>
-                                                                <%= freeDisplay %> free
-                                                            </span>
-                                                        </div>
-                                                        <p class="ss-memory-count"><strong>
-                                                                <%= memoryCount %>
-                                                            </strong> memories stored</p>
-                                                    </div>
-
-                                                    <!-- Top Storage Consumers -->
-                                                    <div class="ss-section-title">Top Storage Consumers</div>
-                                                    <div class="ss-consumers">
-                                                        <div class="ss-consumer-card">
-                                                            <div class="ss-consumer-title">Top Memories</div>
-                                                            <% if (topMemories !=null && !topMemories.isEmpty()) { int
-                                                                rank=1; boolean hasData=false; for (Map<String, Object>
-                                                                mem : topMemories) {
-                                                                long mSize = (Long) mem.get("totalSize");
-                                                                if (mSize == 0) continue;
-                                                                hasData = true;
-                                                                %>
-                                                                <div class="ss-consumer-item">
-                                                                    <div class="ss-consumer-rank">
-                                                                        <%= rank %>
-                                                                    </div>
-                                                                    <div class="ss-consumer-info">
-                                                                        <div class="ss-consumer-name">
-                                                                            <%= mem.get("title") !=null ?
-                                                                                mem.get("title") : "Untitled" %>
-                                                                        </div>
-                                                                        <div class="ss-consumer-meta">
-                                                                            <%= mem.get("fileCount") %> files
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="ss-consumer-size">
-                                                                        <%= formatBytes(mSize) %>
-                                                                    </div>
-                                                                </div>
-                                                                <% rank++; } if (!hasData) { %>
-                                                                    <div class="ss-empty-state">No data yet</div>
-                                                                    <% } } else { %>
-                                                                        <div class="ss-empty-state">No memories yet
-                                                                        </div>
-                                                                        <% } %>
-                                                        </div>
-
-                                                        <div class="ss-consumer-card">
-                                                            <div class="ss-consumer-title">Top Groups</div>
-                                                            <% if (topGroups !=null && !topGroups.isEmpty()) { int
-                                                                gRank=1; boolean gHasData=false; for (Map<String,
-                                                                Object> grp : topGroups) {
-                                                                long gSize = (Long) grp.get("totalSize");
-                                                                if (gSize == 0) continue;
-                                                                gHasData = true;
-                                                                %>
-                                                                <div class="ss-consumer-item">
-                                                                    <div class="ss-consumer-rank">
-                                                                        <%= gRank %>
-                                                                    </div>
-                                                                    <div class="ss-consumer-info">
-                                                                        <div class="ss-consumer-name">
-                                                                            <%= grp.get("name") %>
-                                                                        </div>
-                                                                        <div class="ss-consumer-meta">
-                                                                            <%= grp.get("memoryCount") %> memories
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="ss-consumer-size">
-                                                                        <%= formatBytes(gSize) %>
-                                                                    </div>
-                                                                </div>
-                                                                <% gRank++; } if (!gHasData) { %>
-                                                                    <div class="ss-empty-state">No data yet</div>
-                                                                    <% } } else { %>
-                                                                        <div class="ss-empty-state">No groups yet</div>
-                                                                        <% } %>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Manage Storage -->
-                                                    <div class="ss-section-title">Manage Storage</div>
-                                                    <div class="ss-manage-grid">
-                                                        <a href="${pageContext.request.contextPath}/duplicatefinder"
-                                                            class="ss-manage-card">
-                                                            <div class="ss-manage-icon duplicates">&#128450;</div>
-                                                            <div class="ss-manage-text">
-                                                                <div class="ss-manage-title">Duplicate Finder</div>
-                                                                <div class="ss-manage-desc">Review and delete duplicate
-                                                                    files</div>
-                                                            </div>
-                                                            <% if (duplicateCount> 0) { %>
-                                                                <span class="ss-manage-badge duplicates">
-                                                                    <%= duplicateCount %> found
-                                                                </span>
-                                                                <% } %>
-                                                        </a>
-                                                        <a href="${pageContext.request.contextPath}/trashmgt"
-                                                            class="ss-manage-card">
-                                                            <div class="ss-manage-icon trash">&#128465;</div>
-                                                            <div class="ss-manage-text">
-                                                                <div class="ss-manage-title">Trash Management</div>
-                                                                <div class="ss-manage-desc">Recover or permanently
-                                                                    delete items</div>
-                                                            </div>
-                                                            <% if (trashCount> 0) { %>
-                                                                <span class="ss-manage-badge trash">
-                                                                    <%= trashCount %> items
-                                                                </span>
-                                                                <% } %>
-                                                        </a>
-                                                    </div>
-
-                                                    <a href="${pageContext.request.contextPath}/plans"
-                                                        class="ss-upgrade-btn">&#9733; Upgrade Storage</a>
-                                                </div>
-                                            </div>
-                                            <jsp:include page="/WEB-INF/views/public/footer.jsp" />
-                                        </body>
-
-                                        </html>
+</html>

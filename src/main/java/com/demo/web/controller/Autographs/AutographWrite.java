@@ -1,47 +1,42 @@
 package com.demo.web.controller.Autographs;
 
+import com.demo.web.dto.Autographs.AutographWriteRequest;
+import com.demo.web.dto.Autographs.AutographWriteResponse;
+import com.demo.web.service.AutographService;
+
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
-import javax.servlet.annotation.WebServlet;
-import com.demo.web.dao.Autographs.autographDAO;
-import com.demo.web.model.Autographs.autograph;
 
 @WebServlet("/write-autograph")
 public class AutographWrite extends HttpServlet {
 
+    private AutographService autographService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.autographService = new AutographService();
+    }
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String token = request.getParameter("token");
+        AutographWriteRequest req = new AutographWriteRequest(request.getParameter("token"));
+        AutographWriteResponse res = autographService.getWriteView(req);
 
-        if (token == null || token.isEmpty()) {
-            response.sendError(404);
+        if (!res.isSuccess()) {
+            response.sendError(res.getErrorCode());
             return;
         }
 
-        autographDAO dao = new autographDAO();
-        try {
-            autograph ag = dao.getAutographByShareToken(token);
-
-            if (ag == null) {
-                response.sendError(404);
-                return;
-            }
-
-            request.setAttribute("autograph", ag);
-            request.setAttribute("shareToken", token);
-
-            request.getRequestDispatcher(
-                    "/WEB-INF/views/app/Autographs/writeautograph.jsp").forward(request, response);
-
-        } catch (SQLException e) {
-            throw new ServletException("Database error while loading autograph", e);
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
+        request.setAttribute("autograph", res.getAutograph());
+        request.setAttribute("shareToken", res.getShareToken());
+        request.setAttribute("displayTitle", res.getDisplayTitle());
+        request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
     }
 }

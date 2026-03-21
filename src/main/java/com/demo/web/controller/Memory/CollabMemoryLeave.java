@@ -1,6 +1,8 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.Memory.MemoryMemberDAO;
+import com.demo.web.dto.Memory.CollabActionRequest;
+import com.demo.web.dto.Memory.CollabActionResponse;
+import com.demo.web.service.MemoryService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,17 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * Servlet for leaving a collaborative memory (for members, not owners)
- */
 public class CollabMemoryLeave extends HttpServlet {
 
-    private MemoryMemberDAO memberDAO;
+    private MemoryService memoryService;
 
     @Override
     public void init() throws ServletException {
-        super.init();
-        memberDAO = new MemoryMemberDAO();
+        memoryService = new MemoryService();
     }
 
     @Override
@@ -35,7 +33,6 @@ public class CollabMemoryLeave extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
         String memoryIdParam = request.getParameter("memoryId");
 
         if (memoryIdParam == null || memoryIdParam.isEmpty()) {
@@ -45,31 +42,18 @@ public class CollabMemoryLeave extends HttpServlet {
         }
 
         try {
-            int memoryId = Integer.parseInt(memoryIdParam);
+            CollabActionRequest leaveRequest = new CollabActionRequest();
+            leaveRequest.setAction("LEAVE");
+            leaveRequest.setRequesterId((Integer) session.getAttribute("user_id"));
+            leaveRequest.setMemoryId(Integer.parseInt(memoryIdParam));
 
-            // Check if user is owner (owners cannot leave, they must delete)
-            if (memberDAO.isOwner(memoryId, userId)) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"error\": \"Owner cannot leave. Delete the memory instead.\"}");
-                return;
-            }
+            CollabActionResponse leaveResponse = memoryService.processCollabAction(leaveRequest);
 
-            // Check if user is a member
-            if (!memberDAO.isMember(memoryId, userId)) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"error\": \"You are not a member of this memory\"}");
-                return;
-            }
-
-            // Leave the memory
-            boolean left = memberDAO.leaveMembership(memoryId, userId);
-
-            if (left) {
-                System.out.println("User " + userId + " left memory " + memoryId);
+            if (leaveResponse.isSuccess()) {
                 response.getWriter().write("{\"success\": true}");
             } else {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("{\"error\": \"Failed to leave memory\"}");
+                response.setStatus(leaveResponse.getStatusCode());
+                response.getWriter().write("{\"error\": \"" + leaveResponse.getErrorMessage() + "\"}");
             }
 
         } catch (NumberFormatException e) {

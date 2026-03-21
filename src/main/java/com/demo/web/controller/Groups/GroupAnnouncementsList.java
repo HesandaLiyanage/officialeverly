@@ -1,9 +1,8 @@
 package com.demo.web.controller.Groups;
 
-import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.dao.Groups.GroupAnnouncementDAO;
-import com.demo.web.model.Groups.Group;
-import com.demo.web.model.Groups.GroupAnnouncement;
+import com.demo.web.dto.Groups.GroupAnnouncementsListRequest;
+import com.demo.web.dto.Groups.GroupAnnouncementsListResponse;
+import com.demo.web.service.GroupService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,17 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
 public class GroupAnnouncementsList extends HttpServlet {
 
-    private GroupDAO groupDAO;
-    private GroupAnnouncementDAO announcementDAO;
+    private GroupService groupService;
 
     @Override
     public void init() throws ServletException {
-        groupDAO = new GroupDAO();
-        announcementDAO = new GroupAnnouncementDAO();
+        groupService = new GroupService();
     }
 
     @Override
@@ -34,30 +30,30 @@ public class GroupAnnouncementsList extends HttpServlet {
             return;
         }
 
+        int userId = (int) session.getAttribute("user_id");
         String groupIdStr = request.getParameter("groupId");
+
         if (groupIdStr == null || groupIdStr.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/groups");
             return;
         }
 
-        try {
-            int groupId = Integer.parseInt(groupIdStr);
-            Group group = groupDAO.findById(groupId);
+        GroupAnnouncementsListRequest req = new GroupAnnouncementsListRequest(userId, groupIdStr);
+        GroupAnnouncementsListResponse res = groupService.listGroupAnnouncements(req);
 
-            if (group == null) {
-                response.sendRedirect(request.getContextPath() + "/groups?error=Group not found");
-                return;
-            }
-
-            List<GroupAnnouncement> announcements = announcementDAO.findByGroupId(groupId);
-
-            request.setAttribute("group", group);
-            request.setAttribute("announcements", announcements);
-
-            request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupannouncement.jsp").forward(request, response);
-
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/groups?error=Invalid group ID");
+        if (!res.isSuccess()) {
+            response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
+            return;
         }
+
+        request.setAttribute("group", res.getGroup());
+        request.setAttribute("groupId", res.getGroupId());
+        request.setAttribute("groupName", res.getGroupName());
+        request.setAttribute("groupDescription", res.getGroupDescription());
+        request.setAttribute("announcements", res.getAnnouncements());
+        request.setAttribute("announcementDisplayData", res.getAnnouncementDisplayData());
+
+        request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupannouncement.jsp").forward(request, response);
     }
 }
+

@@ -1,10 +1,7 @@
 package com.demo.web.controller.Vault;
 
-import com.demo.web.dao.Vault.VaultDAO;
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.model.Memory.Memory;
-import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.service.VaultService;
+import com.demo.web.dto.Vault.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,31 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
 
-/**
- * Servlet to display vault memories
- * Requires vault password verification via POST first
- */
 @WebServlet("/vaultmemories")
 public class VaultMemoriesList extends HttpServlet {
 
-    private VaultDAO vaultDAO;
-    private memoryDAO memoryDao;
-    private MediaDAO mediaDAO;
+    private VaultService vaultService;
 
     @Override
     public void init() throws ServletException {
-        vaultDAO = new VaultDAO();
-        memoryDao = new memoryDAO();
-        mediaDAO = new MediaDAO();
+        vaultService = new VaultService();
     }
 
-    /**
-     * GET - User must come from vault entry page with verified password
-     * We require POST from vault entry to access this
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -48,54 +31,35 @@ public class VaultMemoriesList extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
+        VaultMemoriesRequest req = new VaultMemoriesRequest(
+            (Integer) session.getAttribute("user_id"),
+            null, // No password for GET
+            (Boolean) session.getAttribute("vault_unlocked")
+        );
 
-        // Check if vault is set up
-        if (!vaultDAO.hasVaultSetup(userId)) {
+        VaultMemoriesResponse res = vaultService.getVaultMemories(req, request.getContextPath());
+
+        if (!res.isHasSetup()) {
             response.sendRedirect(request.getContextPath() + "/vaultSetup");
             return;
         }
 
-        // Check if vault is unlocked in session
-        Boolean vaultUnlocked = (Boolean) session.getAttribute("vault_unlocked");
-        if (vaultUnlocked == null || !vaultUnlocked) {
-            // Vault not unlocked, redirect to vault entry to verify password first
+        if (!res.isAccessGranted()) {
             response.sendRedirect(request.getContextPath() + "/vaultentries");
             return;
         }
 
-        // Vault is unlocked in session, load vault memories
-        try {
-            List<Memory> vaultMemories = memoryDao.getVaultMemoriesByUserId(userId);
-
-            // Load cover images for each memory
-            for (Memory memory : vaultMemories) {
-                if (memory.getCoverMediaId() != null) {
-                    try {
-                        MediaItem coverMedia = mediaDAO.getMediaById(memory.getCoverMediaId());
-                        if (coverMedia != null) {
-                            memory.setCoverUrl(request.getContextPath() + "/viewmedia?id=" + coverMedia.getMediaId());
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            request.setAttribute("memories", vaultMemories);
-            request.setAttribute("memoriesCount", vaultMemories.size());
-            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultMemories.jsp").forward(request, response);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Error loading vault memories");
+        if (res.getErrorMessage() != null) {
+            request.setAttribute("errorMessage", res.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultentries.jsp").forward(request, response);
+            return;
         }
+
+        request.setAttribute("memories", res.getMemories());
+        request.setAttribute("memoriesCount", res.getMemoriesCount());
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultMemories.jsp").forward(request, response);
     }
 
-    /**
-     * POST - Display vault memories after password verification
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -106,42 +70,33 @@ public class VaultMemoriesList extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
-        String vaultPassword = request.getParameter("vaultPassword");
+        VaultMemoriesRequest req = new VaultMemoriesRequest(
+            (Integer) session.getAttribute("user_id"),
+            request.getParameter("vaultPassword"),
+            null
+        );
 
-        // Verify vault password
-        if (vaultPassword == null || !vaultDAO.verifyVaultPassword(userId, vaultPassword)) {
-            request.setAttribute("errorMessage", "Invalid vault password");
+        VaultMemoriesResponse res = vaultService.getVaultMemories(req, request.getContextPath());
+
+        if (!res.isHasSetup()) {
+            response.sendRedirect(request.getContextPath() + "/vaultSetup");
+            return;
+        }
+
+        if (!res.isAccessGranted()) {
+            request.setAttribute("errorMessage", res.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultentries.jsp").forward(request, response);
             return;
         }
 
-        // Password verified, get vault memories
-        try {
-            List<Memory> vaultMemories = memoryDao.getVaultMemoriesByUserId(userId);
-
-            // Load cover images for each memory
-            for (Memory memory : vaultMemories) {
-                if (memory.getCoverMediaId() != null) {
-                    try {
-                        MediaItem coverMedia = mediaDAO.getMediaById(memory.getCoverMediaId());
-                        if (coverMedia != null) {
-                            memory.setCoverUrl(request.getContextPath() + "/viewmedia?id=" + coverMedia.getMediaId());
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            request.setAttribute("memories", vaultMemories);
-            request.setAttribute("memoriesCount", vaultMemories.size());
-            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultMemories.jsp").forward(request, response);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Error loading vault memories");
+        if (res.getErrorMessage() != null) {
+            request.setAttribute("errorMessage", res.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultentries.jsp").forward(request, response);
+            return;
         }
+
+        request.setAttribute("memories", res.getMemories());
+        request.setAttribute("memoriesCount", res.getMemoriesCount());
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultMemories.jsp").forward(request, response);
     }
 }

@@ -1,8 +1,8 @@
 package com.demo.web.controller.Groups;
 
-import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.dao.Groups.GroupMemberDAO;
-import com.demo.web.model.Groups.Group;
+import com.demo.web.dto.Groups.GroupMemberRemoveRequest;
+import com.demo.web.dto.Groups.GroupMemberRemoveResponse;
+import com.demo.web.service.GroupService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,13 +13,11 @@ import java.io.IOException;
 
 public class GroupMemberRemove extends HttpServlet {
 
-    private GroupDAO groupDAO;
-    private GroupMemberDAO groupMemberDAO;
+    private GroupService groupService;
 
     @Override
     public void init() throws ServletException {
-        groupDAO = new GroupDAO();
-        groupMemberDAO = new GroupMemberDAO();
+        groupService = new GroupService();
     }
 
     @Override
@@ -41,38 +39,9 @@ public class GroupMemberRemove extends HttpServlet {
             return;
         }
 
-        try {
-            int groupId = Integer.parseInt(groupIdStr);
-            int memberId = Integer.parseInt(memberIdStr);
+        GroupMemberRemoveRequest req = new GroupMemberRemoveRequest(currentUserId, groupIdStr, memberIdStr);
+        GroupMemberRemoveResponse res = groupService.removeGroupMember(req);
 
-            Group group = groupDAO.findById(groupId);
-            if (group == null) {
-                response.sendRedirect(request.getContextPath() + "/groups?error=Group not found");
-                return;
-            }
-
-            // Security Check: Only group creator can remove members
-            if (group.getUserId() != currentUserId) {
-                response.sendRedirect(request.getContextPath() + "/groupmembers?groupId=" + groupId + "&error=You do not have permission to remove members");
-                return;
-            }
-
-            // Prevent admin from removing themselves (optional, but usually desired for groups)
-            if (memberId == currentUserId) {
-                response.sendRedirect(request.getContextPath() + "/groupmembers?groupId=" + groupId + "&error=You cannot remove yourself");
-                return;
-            }
-
-            boolean success = groupMemberDAO.deleteGroupMember(groupId, memberId);
-
-            if (success) {
-                response.sendRedirect(request.getContextPath() + "/groupmembers?groupId=" + groupId + "&msg=Member removed successfully");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/groupmembers?groupId=" + groupId + "&error=Failed to remove member");
-            }
-
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/groups?error=Invalid parameters");
-        }
+        response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
     }
 }

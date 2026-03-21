@@ -1,15 +1,13 @@
 package com.demo.web.controller.Groups;
 
-import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.model.Groups.Group;
+import com.demo.web.dto.Groups.GroupEditRequest;
+import com.demo.web.dto.Groups.GroupEditResponse;
+import com.demo.web.service.GroupService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
@@ -17,11 +15,11 @@ import java.util.UUID;
 )
 public class GroupEdit extends HttpServlet {
 
-    private GroupDAO groupDAO;
+    private GroupService groupService;
 
     @Override
     public void init() throws ServletException {
-        groupDAO = new GroupDAO();
+        groupService = new GroupService();
     }
 
     @Override
@@ -34,100 +32,30 @@ public class GroupEdit extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
-
         try {
-            // Get group ID from form
-            String groupIdStr = request.getParameter("groupId");
-            if (groupIdStr == null || groupIdStr.trim().isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/groups");
-                return;
-            }
+            GroupEditRequest apiRequest = new GroupEditRequest();
+            apiRequest.setUserId((Integer) session.getAttribute("user_id"));
+            apiRequest.setGroupIdStr(request.getParameter("groupId"));
+            apiRequest.setGroupName(request.getParameter("g_name"));
+            apiRequest.setGroupDescription(request.getParameter("g_description"));
+            apiRequest.setCustomLink(request.getParameter("customLink"));
+            apiRequest.setFilePart(request.getPart("group_pic"));
+            apiRequest.setContextPath(request.getContextPath());
+            apiRequest.setApplicationPath(request.getServletContext().getRealPath(""));
 
-            int groupId = Integer.parseInt(groupIdStr);
+            GroupEditResponse apiResponse = groupService.editGroup(apiRequest);
 
-            // Verify ownership
-            Group existingGroup = groupDAO.findById(groupId);
-            if (existingGroup == null || existingGroup.getUserId() != userId) {
-                response.sendRedirect(request.getContextPath() + "/groups");
-                return;
-            }
-
-            // Get form parameters
-            String groupName = request.getParameter("g_name");
-            String groupDescription = request.getParameter("g_description");
-            String customLink = request.getParameter("customLink");
-
-            // Validate required fields
-            if (groupName == null || groupName.trim().isEmpty()) {
-                request.setAttribute("error", "Group name is required");
-                request.setAttribute("group", existingGroup);
+            if (apiResponse.isSuccess()) {
+                response.sendRedirect(request.getContextPath() + apiResponse.getRedirectUrl());
+            } else if (apiResponse.getGroup() != null) {
+                request.setAttribute("error", apiResponse.getErrorMessage());
+                request.setAttribute("group", apiResponse.getGroup());
                 request.getRequestDispatcher("/WEB-INF/views/app/Groups/editgroup.jsp").forward(request, response);
-                return;
-            }
-
-            // Use existing URL if customLink is not provided (link field removed from form)
-            if (customLink == null || customLink.trim().isEmpty()) {
-                customLink = existingGroup.getGroupUrl();
             } else {
-                // Check if URL is taken by another group
-                if (!customLink.equals(existingGroup.getGroupUrl())) {
-                    if (groupDAO.isUrlTaken(customLink)) {
-                        request.setAttribute("error", "This group link is already taken. Please choose another.");
-                        request.setAttribute("group", existingGroup);
-                        request.getRequestDispatcher("/WEB-INF/views/app/Groups/editgroup.jsp").forward(request,
-                                response);
-                        return;
-                    }
-                }
-            }
-
-            // Handle file upload
-            Part filePart = request.getPart("group_pic");
-            String groupPicUrl = existingGroup.getGroupPicUrl(); // Keep existing if no new file
-
-            if (filePart != null && filePart.getSize() > 0) {
-                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-                String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
-
-                // Define upload path
-                String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads" + File.separator
-                        + "groups";
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdirs();
-                }
-
-                // Save file
-                String filePath = uploadPath + File.separator + uniqueFileName;
-                filePart.write(filePath);
-
-                // Set relative URL for database
-                groupPicUrl = request.getContextPath() + "/uploads/groups/" + uniqueFileName;
-            }
-
-            // Update group object
-            existingGroup.setName(groupName.trim());
-            existingGroup.setDescription(groupDescription != null ? groupDescription.trim() : "");
-            existingGroup.setGroupPicUrl(groupPicUrl);
-            existingGroup.setGroupUrl(customLink != null ? customLink.trim() : existingGroup.getGroupUrl());
-
-            // Update in database
-            boolean success = groupDAO.updateGroup(existingGroup);
-
-            if (success) {
-                System.out.println("[DEBUG EditGroupServlet] Group updated successfully: " + existingGroup);
-                response.sendRedirect(request.getContextPath() + "/groupmemories?groupId=" + groupId);
-            } else {
-                System.out.println("[DEBUG EditGroupServlet] Failed to update group");
-                request.setAttribute("error", "Failed to update group. Please try again.");
-                request.setAttribute("group", existingGroup);
-                request.getRequestDispatcher("/WEB-INF/views/app/Groups/editgroup.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + apiResponse.getRedirectUrl());
             }
 
         } catch (Exception e) {
-            System.out.println("[DEBUG EditGroupServlet] Error: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while updating the group");
             response.sendRedirect(request.getContextPath() + "/groups");

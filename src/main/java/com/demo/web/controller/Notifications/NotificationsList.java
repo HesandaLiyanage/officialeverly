@@ -1,84 +1,69 @@
 package com.demo.web.controller.Notifications;
 
-import com.demo.web.dao.Notifications.NotificationDAO;
+import com.demo.web.dto.Notifications.NotificationsListGetRequest;
+import com.demo.web.dto.Notifications.NotificationsListGetResponse;
+import com.demo.web.dto.Notifications.NotificationsListPostRequest;
+import com.demo.web.dto.Notifications.NotificationsListPostResponse;
+import com.demo.web.service.NotificationService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
 
 @WebServlet("/notificationsapi")
 public class NotificationsList extends HttpServlet {
 
-    private final NotificationDAO notificationDAO = new NotificationDAO();
+    private NotificationService notificationService;
 
-    /**
-     * GET: Load notification list page with real data.
-     */
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        notificationService = new NotificationService();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         Integer userId = (Integer) request.getSession().getAttribute("user_id");
-        if (userId == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        NotificationsListGetRequest req = new NotificationsListGetRequest(userId);
+        
+        NotificationsListGetResponse res = notificationService.getNotifications(req);
+
+        if (res.getRedirectUrl() != null) {
+            response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
             return;
         }
 
-        List<Map<String, Object>> notifications = notificationDAO.getNotifications(userId, 50);
-        int unreadCount = notificationDAO.getUnreadCount(userId);
-
-        request.setAttribute("notifications", notifications);
-        request.setAttribute("unreadCount", unreadCount);
+        request.setAttribute("notifications", res.getNotifications());
+        request.setAttribute("unreadCount", res.getUnreadCount());
         request.getRequestDispatcher("/WEB-INF/views/app/Notifications/notifications.jsp").forward(request, response);
     }
 
-    /**
-     * POST: Handle mark-as-read or mark-all-as-read actions (AJAX).
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
         Integer userId = (Integer) request.getSession().getAttribute("user_id");
-        if (userId == null) {
-            response.setStatus(401);
-            out.write("{\"success\": false, \"error\": \"Not authenticated\"}");
-            return;
-        }
-
         String action = request.getParameter("action");
+        String notificationIdStr = request.getParameter("notificationId");
 
-        if ("markAllRead".equals(action)) {
-            boolean success = notificationDAO.markAllAsRead(userId);
-            out.write("{\"success\": " + success + "}");
-        } else if ("markRead".equals(action)) {
-            String notifIdStr = request.getParameter("notificationId");
-            if (notifIdStr != null) {
-                int notifId = Integer.parseInt(notifIdStr);
-                boolean success = notificationDAO.markAsRead(notifId, userId);
-                out.write("{\"success\": " + success + "}");
-            } else {
-                response.setStatus(400);
-                out.write("{\"success\": false, \"error\": \"Missing notificationId\"}");
+        NotificationsListPostRequest req = new NotificationsListPostRequest(userId, action, notificationIdStr);
+        NotificationsListPostResponse res = notificationService.handleAction(req);
+
+        if (!res.isSuccess() && res.getStatusCode() != 200) {
+            response.setStatus(res.getStatusCode());
+            if (res.getErrorMessage() != null) {
+                out.write("{\"success\": false, \"error\": \"" + res.getErrorMessage() + "\"}");
+                return;
             }
-        } else if ("delete".equals(action)) {
-            String notifIdStr = request.getParameter("notificationId");
-            if (notifIdStr != null) {
-                int notifId = Integer.parseInt(notifIdStr);
-                boolean success = notificationDAO.deleteNotification(notifId, userId);
-                out.write("{\"success\": " + success + "}");
-            } else {
-                response.setStatus(400);
-                out.write("{\"success\": false, \"error\": \"Missing notificationId\"}");
-            }
-        } else {
-            response.setStatus(400);
-            out.write("{\"success\": false, \"error\": \"Unknown action\"}");
         }
+
+        out.write("{\"success\": " + res.isSuccess() + "}");
     }
 }

@@ -1,8 +1,8 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.dao.Memory.MemoryMemberDAO;
-import com.demo.web.model.Memory.Memory;
+import com.demo.web.dto.Memory.CollabActionRequest;
+import com.demo.web.dto.Memory.CollabActionResponse;
+import com.demo.web.service.MemoryService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,20 +12,13 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLEncoder;
 
-/**
- * Servlet for joining a collaborative memory via invite link
- * URL: /memoryinvite?key=XXXXXX
- */
 public class CollabMemoryJoin extends HttpServlet {
 
-    private memoryDAO memoryDAO;
-    private MemoryMemberDAO memberDAO;
+    private MemoryService memoryService;
 
     @Override
     public void init() throws ServletException {
-        super.init();
-        memoryDAO = new memoryDAO();
-        memberDAO = new MemoryMemberDAO();
+        memoryService = new MemoryService();
     }
 
     @Override
@@ -52,37 +45,26 @@ public class CollabMemoryJoin extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("user_id");
 
         try {
-            // Find memory by share key
-            Memory memory = memoryDAO.getMemoryByShareKey(shareKey);
+            CollabActionRequest joinRequest = new CollabActionRequest();
+            joinRequest.setAction("JOIN");
+            joinRequest.setRequesterId(userId);
+            joinRequest.setShareKey(shareKey);
 
-            if (memory == null) {
-                request.setAttribute("errorMessage", "Invalid or expired invite link");
+            CollabActionResponse joinResponse = memoryService.processCollabAction(joinRequest);
+
+            if (!joinResponse.isSuccess()) {
+                request.setAttribute("errorMessage", joinResponse.getErrorMessage());
                 request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
                 return;
             }
 
-            if (!memory.isCollaborative()) {
-                request.setAttribute("errorMessage", "This memory is not collaborative");
-                request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
-                return;
-            }
-
-            // Check if user is already a member
-            if (memberDAO.isMember(memory.getMemoryId(), userId)) {
-                System.out.println("User " + userId + " is already a member of memory " + memory.getMemoryId());
-            } else {
-                // Add user as member
-                memberDAO.addMember(memory.getMemoryId(), userId, "member");
-                System.out.println("User " + userId + " joined memory " + memory.getMemoryId() + " via invite link");
-            }
-
-            // Redirect to the collab memory view
-            response.sendRedirect(request.getContextPath() + "/collabmemoryview?id=" + memory.getMemoryId());
+            // Redirect to the collab memory view using targetMemoryId
+            response.sendRedirect(request.getContextPath() + "/collabmemoryview?id=" + joinResponse.getTargetMemoryId());
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error joining memory: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/app/collabmemories.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
         }
     }
 }

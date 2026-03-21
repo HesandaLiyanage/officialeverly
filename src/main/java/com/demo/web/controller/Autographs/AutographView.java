@@ -1,8 +1,7 @@
 package com.demo.web.controller.Autographs;
 
-import com.demo.web.dao.Autographs.AutographEntryDAO;
-import com.demo.web.model.Autographs.AutographEntry;
-import com.demo.web.model.Autographs.autograph;
+import com.demo.web.dto.Autographs.AutographDashboardRequest;
+import com.demo.web.dto.Autographs.AutographDashboardResponse;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.AutographService;
 
@@ -11,12 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
-/**
- * View controller for autograph pages.
- * Handles GET requests for listing, viewing, and editing autographs.
- */
 public class AutographView extends HttpServlet {
 
     private AuthService authService;
@@ -33,86 +27,39 @@ public class AutographView extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Validate session
         if (!authService.isValidSession(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
         Integer userId = authService.getUserId(request);
-        String action = request.getParameter("action");
-        String idParam = request.getParameter("id");
+        AutographDashboardRequest req = new AutographDashboardRequest(
+            userId,
+            request.getParameter("action"),
+            request.getParameter("id")
+        );
 
-        // Determine the action based on parameter or default to list
-        if ("view".equals(action) && idParam != null) {
-            handleViewAutograph(request, response, userId, idParam);
-        } else if ("edit".equals(action) && idParam != null) {
-            handleEditAutograph(request, response, userId, idParam);
-        } else {
-            handleListAutographs(request, response, userId);
+        AutographDashboardResponse res = autographService.getDashboard(req);
+
+        if (res.getRedirectUrl() != null && !res.getRedirectUrl().contains("WEB-INF")) {
+            response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
+            return;
         }
-    }
 
-    /**
-     * Handles listing all autographs for the user.
-     */
-    private void handleListAutographs(HttpServletRequest request, HttpServletResponse response,
-            int userId) throws ServletException, IOException {
-        List<autograph> autographs = autographService.getAutographsByUserId(userId);
-        request.setAttribute("autographs", autographs);
-        request.getRequestDispatcher("/WEB-INF/views/app/Autographs/autographcontent.jsp").forward(request, response);
-    }
-
-    /**
-     * Handles viewing a single autograph.
-     */
-    private void handleViewAutograph(HttpServletRequest request, HttpServletResponse response,
-            int userId, String idParam) throws ServletException, IOException {
-        try {
-            int autographId = Integer.parseInt(idParam);
-            autograph autographDetail = autographService.getAutographById(autographId, userId);
-
-            if (autographDetail == null) {
-                response.sendRedirect(request.getContextPath() + "/autographs");
-                return;
+        if (res.isView() || res.isEdit()) {
+            request.setAttribute("autograph", res.getAutograph());
+            if (res.isView()) {
+                request.setAttribute("entries", res.getEntries());
+                request.setAttribute("entriesJson", res.getEntriesJson());
+                request.setAttribute("entryCount", res.getEntryCount());
             }
-
-            request.setAttribute("autograph", autographDetail);
-
-            // Load autograph entries
-            try {
-                AutographEntryDAO entryDao = new AutographEntryDAO();
-                List<AutographEntry> entries = entryDao.findByAutographId(autographId);
-                request.setAttribute("entries", entries);
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("entries", java.util.Collections.emptyList());
-            }
-
-            request.getRequestDispatcher("/WEB-INF/views/app/Autographs/viewautograph.jsp").forward(request, response);
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/autographs");
         }
-    }
 
-    /**
-     * Handles editing an autograph (display the edit form).
-     */
-    private void handleEditAutograph(HttpServletRequest request, HttpServletResponse response,
-            int userId, String idParam) throws ServletException, IOException {
-        try {
-            int autographId = Integer.parseInt(idParam);
-            autograph autographToEdit = autographService.getAutographById(autographId, userId);
-
-            if (autographToEdit == null) {
-                response.sendRedirect(request.getContextPath() + "/autographs");
-                return;
-            }
-
-            request.setAttribute("autograph", autographToEdit);
-            request.getRequestDispatcher("/WEB-INF/views/app/Autographs/editautograph.jsp").forward(request, response);
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/autographs");
+        if (res.isList()) {
+            request.setAttribute("autographs", res.getAutographs());
+            request.setAttribute("recentActivities", res.getRecentActivities());
         }
+
+        request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
     }
 }

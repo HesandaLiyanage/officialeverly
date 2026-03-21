@@ -1,57 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="java.util.*" %>
-        <%@ page import="java.sql.Timestamp" %>
-            <%! String timeAgo(Timestamp ts) { if (ts==null) return "" ; long diff=System.currentTimeMillis() -
-                ts.getTime(); long seconds=diff / 1000; if (seconds < 60) return "Just now" ; long minutes=seconds / 60;
-                if (minutes < 60) return minutes + (minutes==1 ? " minute ago" : " minutes ago" ); long hours=minutes /
-                60; if (hours < 24) return hours + (hours==1 ? " hour ago" : " hours ago" ); long days=hours / 24; if
-                (days < 7) return days + (days==1 ? " day ago" : " days ago" ); long weeks=days / 7; if (weeks < 4)
-                return weeks + (weeks==1 ? " week ago" : " weeks ago" ); long months=days / 30; if (months < 12) return
-                months + (months==1 ? " month ago" : " months ago" ); return (days / 365) + " year(s) ago" ; } String
-                getInitials(String username) { if (username==null || username.isEmpty()) return "EV" ; String[]
-                parts=username.trim().split("\\s+"); if (parts.length>= 2) {
-                return ("" + parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
-                }
-                return username.substring(0, Math.min(2, username.length())).toUpperCase();
-                }
-
-                String getGradient(String type) {
-                if ("memory_uploads".equals(type)) return "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
-                if ("comments_reactions".equals(type)) return "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)";
-                if ("group_announcements".equals(type)) return "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)";
-                if ("event_updates".equals(type)) return "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)";
-                if ("group_invites".equals(type)) return "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)";
-                if ("memory_recaps".equals(type)) return "linear-gradient(135deg, #fa709a 0%, #fee140 100%)";
-                return "linear-gradient(135deg, #9A74D8 0%, #c4a7e7 100%)";
-                }
-
-                String getTypeIcon(String type) {
-                if ("memory_uploads".equals(type)) return "&#128248;";
-                if ("comments_reactions".equals(type)) return "&#128172;";
-                if ("group_announcements".equals(type)) return "&#128227;";
-                if ("event_updates".equals(type)) return "&#128197;";
-                if ("group_invites".equals(type)) return "&#128101;";
-                if ("memory_recaps".equals(type)) return "&#128247;";
-                return "&#128276;";
-                }
-
-                String getTypeLabel(String type) {
-                if ("memory_uploads".equals(type)) return "Memory";
-                if ("comments_reactions".equals(type)) return "Social";
-                if ("group_announcements".equals(type)) return "Group";
-                if ("event_updates".equals(type)) return "Event";
-                if ("group_invites".equals(type)) return "Invite";
-                if ("memory_recaps".equals(type)) return "Recap";
-                return "Notification";
-                }
-                %>
-                <% List<Map<String, Object>> notifications = (List<Map<String, Object>>)
-                        request.getAttribute("notifications");
-                        Integer unreadCount = (Integer) request.getAttribute("unreadCount");
-                        if (notifications == null) notifications = new ArrayList<>();
-                            if (unreadCount == null) unreadCount = 0;
-                            String ctxPath = request.getContextPath();
-                            %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="ctxPath" value="${pageContext.request.contextPath}" />
                             <!DOCTYPE html>
                             <html lang="en">
 
@@ -371,13 +321,14 @@
                                     <div class="notif-page-header">
                                         <h1 class="notif-page-title">Notifications</h1>
                                         <p class="notif-page-subtitle">
-                                            <% if (unreadCount> 0) { %>
-                                                You have <strong>
-                                                    <%= unreadCount %>
-                                                </strong> unread notification<%= unreadCount !=1 ? "s" : "" %>.
-                                                    <% } else { %>
-                                                        You're all caught up!
-                                                        <% } %>
+                                            <c:choose>
+                                                <c:when test="${unreadCount > 0}">
+                                                    You have <strong>${unreadCount}</strong> unread notification${unreadCount != 1 ? 's' : ''}.
+                                                </c:when>
+                                                <c:otherwise>
+                                                    You're all caught up!
+                                                </c:otherwise>
+                                            </c:choose>
                                         </p>
                                     </div>
 
@@ -386,10 +337,9 @@
                                         <button class="notif-tab active" data-tab="all">All</button>
                                         <button class="notif-tab" data-tab="unread">
                                             Unread
-                                            <% if (unreadCount> 0) { %><span class="tab-badge">
-                                                    <%= unreadCount %>
-                                                </span>
-                                                <% } %>
+                                            <c:if test="${unreadCount > 0}">
+                                                <span class="tab-badge">${unreadCount}</span>
+                                            </c:if>
                                         </button>
                                         <button class="notif-tab" data-tab="comments_reactions">Comments</button>
                                         <button class="notif-tab" data-tab="group_announcements">Announcements</button>
@@ -398,84 +348,70 @@
 
                                     <!-- Notifications -->
                                     <div class="notif-list" id="notifList">
-                                        <% if (notifications.isEmpty()) { %>
-                                            <div class="notif-empty">
-                                                <div class="notif-empty-icon">&#128276;</div>
-                                                <h3>No notifications yet</h3>
-                                                <p>When something happens, you'll see it here.</p>
-                                            </div>
-                                            <% } else { for (Map<String, Object> n : notifications) {
-                                                boolean isRead = (Boolean) n.get("isRead");
-                                                String type = (String) n.get("notifType");
-                                                String message = (String) n.get("message");
-                                                String link = (String) n.get("link");
-                                                Timestamp createdAt = (Timestamp) n.get("createdAt");
-                                                String actorUsername = (String) n.get("actorUsername");
-                                                int notifId = (Integer) n.get("notificationId");
-                                                String initials = getInitials(actorUsername);
-                                                boolean hasActor = (actorUsername != null && !actorUsername.isEmpty());
-                                                %>
-                                                <div class="notif-card <%= !isRead ? " unread" : "" %>"
-                                                    data-id="<%= notifId %>" data-type="<%= type %>" data-read="<%=
-                                                                isRead %>"
-                                                                <% if (link !=null && !link.isEmpty()) { %>
-                                                                    onclick="goToNotif('<%= ctxPath + link %>', <%=
-                                                                            notifId %>)"<% } %>>
-                                                                                <% if (hasActor) { %>
-                                                                                    <div class="notif-avatar"
-                                                                                        style="background: <%= getGradient(type) %>">
-                                                                                        <%= initials %>
-                                                                                    </div>
-                                                                                    <% } else { %>
-                                                                                        <div
-                                                                                            class="notif-avatar system">
-                                                                                            <%= getTypeIcon(type) %>
-                                                                                        </div>
-                                                                                        <% } %>
-                                                                                            <div class="notif-body">
-                                                                                                <p class="notif-msg">
-                                                                                                    <% if (hasActor) {
-                                                                                                        %><strong>
-                                                                                                            <%= actorUsername
-                                                                                                                %>
-                                                                                                        </strong>
-                                                                                                        <% } %>
-                                                                                                            <%= message
-                                                                                                                %>
-                                                                                                </p>
-                                                                                                <div class="notif-meta">
-                                                                                                    <span
-                                                                                                        class="notif-time">
-                                                                                                        <%= timeAgo(createdAt)
-                                                                                                            %>
-                                                                                                    </span>
-                                                                                                    <span
-                                                                                                        class="notif-type-badge">
-                                                                                                        <%= getTypeLabel(type)
-                                                                                                            %>
-                                                                                                    </span>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <% if (!isRead) { %>
-                                                                                                <div
-                                                                                                    class="notif-unread-dot">
-                                                                                                </div>
-                                                                                                <% } %>
+                                        <c:choose>
+                                            <c:when test="${empty notifications}">
+                                                <div class="notif-empty">
+                                                    <div class="notif-empty-icon">&#128276;</div>
+                                                    <h3>No notifications yet</h3>
+                                                    <p>When something happens, you'll see it here.</p>
                                                 </div>
-                                                <% } } %>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:forEach var="n" items="${notifications}">
+                                                    <c:set var="isRead" value="${n.isRead}" />
+                                                    <c:set var="type" value="${n.notifType}" />
+                                                    <c:set var="notifId" value="${n.notificationId}" />
+                                                    <c:set var="link" value="${n.link}" />
+                                                    <c:set var="hasActor" value="${not empty n.actorUsername}" />
+                                                    <div class="notif-card ${!isRead ? 'unread' : ''}"
+                                                        data-id="${notifId}" data-type="${type}" data-read="${isRead}"
+                                                        <c:if test="${not empty link}">
+                                                            onclick="goToNotif('${ctxPath}${link}', ${notifId})"
+                                                        </c:if>>
+                                                        <c:choose>
+                                                            <c:when test="${hasActor}">
+                                                                <div class="notif-avatar" style="background: ${n.gradient}">
+                                                                    ${n.initials}
+                                                                </div>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <div class="notif-avatar system">
+                                                                    ${n.typeIcon}
+                                                                </div>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <div class="notif-body">
+                                                            <p class="notif-msg">
+                                                                <c:if test="${hasActor}">
+                                                                    <strong>${n.actorUsername}</strong>
+                                                                </c:if>
+                                                                ${n.message}
+                                                            </p>
+                                                            <div class="notif-meta">
+                                                                <span class="notif-time">${n.timeAgo}</span>
+                                                                <span class="notif-type-badge">${n.typeLabel}</span>
+                                                            </div>
+                                                        </div>
+                                                        <c:if test="${!isRead}">
+                                                            <div class="notif-unread-dot"></div>
+                                                        </c:if>
+                                                    </div>
+                                                </c:forEach>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
 
-                                    <% if (!notifications.isEmpty()) { %>
+                                    <c:if test="${not empty notifications}">
                                         <div class="notif-actions">
                                             <button class="notif-action-btn primary" id="markAllReadBtn">
                                                 &#10003; Mark all as read
                                             </button>
                                         </div>
-                                        <% } %>
+                                    </c:if>
 
-                                            <a href="<%= ctxPath %>/settingsnotifications" class="notif-settings-link">
-                                                &#9881; Manage notification preferences
-                                            </a>
+                                    <a href="${ctxPath}/settingsnotifications" class="notif-settings-link">
+                                        &#9881; Manage notification preferences
+                                    </a>
                                 </div>
 
                                 <div class="notif-toast" id="notifToast"></div>
@@ -483,7 +419,7 @@
                                 <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                                 <script>
-                                    const ctxPath = '<%= ctxPath %>';
+                                    const ctxPath = '${ctxPath}';
                                     const toastEl = document.getElementById('notifToast');
 
                                     function showToast(msg) {

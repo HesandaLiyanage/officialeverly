@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <!DOCTYPE html>
     <html lang="en">
 
@@ -21,12 +22,12 @@
                 <p class="page-subtitle">Fill in the details to create your new book and start collecting memories.</p>
 
                 <%-- Display error message if it exists --%>
-                    <% String errorMsg=(String) request.getAttribute("error"); if (errorMsg !=null) { %>
-                        <div
-                            style="background-color: #fee; border: 1px solid #fcc; padding: 10px; border-radius: 6px; margin-bottom: 20px; color: #c00;">
-                            <%= errorMsg %>
-                        </div>
-                        <% } %>
+                <c:if test="${not empty error}">
+                    <div
+                        style="background-color: #fee; border: 1px solid #fcc; padding: 10px; border-radius: 6px; margin-bottom: 20px; color: #c00;">
+                        ${error}
+                    </div>
+                </c:if>
 
                             <form class="autograph-form" id="autographForm" action="/addautographservlet" method="post"
                                 enctype="multipart/form-data">

@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
     <!DOCTYPE html>
     <html lang="en">
 
@@ -18,13 +20,12 @@
                 <h1>Set up your Vault</h1>
                 <p>Your Vault is a secure system where your data will be stored. Choose a strong password.</p>
 
-                <% String errorMessage=(String) request.getAttribute("errorMessage"); %>
-                    <% if (errorMessage !=null) { %>
-                        <div class="error"
-                            style="color: #ef4444; background: #fef2f2; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-                            <%= errorMessage %>
-                        </div>
-                        <% } %>
+                <c:if test="${not empty errorMessage}">
+                    <div class="error"
+                        style="color: #ef4444; background: #fef2f2; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                        <c:out value="${errorMessage}" />
+                    </div>
+                </c:if>
 
                             <form action="${pageContext.request.contextPath}/vaultSetup" method="post">
                                 <div class="form-group">

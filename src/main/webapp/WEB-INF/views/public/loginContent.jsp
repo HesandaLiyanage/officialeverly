@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
   <!DOCTYPE html>
   <html lang="en">
 
@@ -20,28 +22,23 @@
       <h1>Log in to Everly</h1>
       <p>Sign in to continue preserving your memories</p>
 
-      <% String infoMessage=(String) request.getAttribute("infoMessage"); %>
-        <% String deactivatedParam=request.getParameter("deactivated"); %>
-          <% if (infoMessage !=null || "true" .equals(deactivatedParam)) { %>
-            <div class="error" style="background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;">
-              <%= infoMessage !=null ? infoMessage
-                : "Your account has been deactivated. You can reactivate it by logging in again." %>
-            </div>
-            <% } %>
+      <c:if test="${not empty infoMessage or param.deactivated == 'true'}">
+        <div class="error" style="background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;">
+          <c:out value="${not empty infoMessage ? infoMessage : 'Your account has been deactivated. You can reactivate it by logging in again.'}" />
+        </div>
+      </c:if>
 
-              <% String errorMessage=(String) request.getAttribute("errorMessage"); %>
-                <% if (errorMessage !=null) { %>
-                  <div class="error">
-                    <%= errorMessage %>
-                  </div>
-                  <% } %>
+      <c:if test="${not empty errorMessage}">
+        <div class="error">
+          <c:out value="${errorMessage}" />
+        </div>
+      </c:if>
 
-                    <form action="${pageContext.request.contextPath}/loginservlet" method="POST" class="login-form">
-                      <!-- Preserve redirect URL if present -->
-                      <% String redirectUrl=request.getParameter("redirect"); %>
-                        <% if (redirectUrl !=null && !redirectUrl.isEmpty()) { %>
-                          <input type="hidden" name="redirect" value="<%= redirectUrl %>">
-                          <% } %>
+      <form action="${pageContext.request.contextPath}/loginservlet" method="POST" class="login-form">
+        <!-- Preserve redirect URL if present -->
+        <c:if test="${not empty param.redirect}">
+          <input type="hidden" name="redirect" value="${fn:escapeXml(param.redirect)}">
+        </c:if>
 
                             <div class="form-group">
                               <label for="email">Username</label>
