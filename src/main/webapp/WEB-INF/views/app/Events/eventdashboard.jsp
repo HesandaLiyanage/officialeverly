@@ -2,6 +2,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Dashboard - Everly</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/events.css">
+</head>
+<body>
+
 <jsp:include page="/WEB-INF/views/public/header2.jsp" />
 
                                         <!-- Wrap everything after header -->
