@@ -1,12 +1,8 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.dao.Groups.GroupMemberDAO;
-import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.Groups.Group;
-import com.demo.web.model.Memory.MediaItem;
-import com.demo.web.model.Memory.Memory;
+import com.demo.web.dto.Memory.MemoryViewRequest;
+import com.demo.web.dto.Memory.MemoryViewResponse;
+import com.demo.web.service.MemoryService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Servlet for viewing a single memory with its associated media.
@@ -22,17 +17,11 @@ import java.util.List;
  */
 public class MemoryView extends HttpServlet {
 
-    private memoryDAO memoryDao;
-    private MediaDAO mediaDao;
-    private GroupDAO groupDAO;
-    private GroupMemberDAO groupMemberDAO;
+    private MemoryService memoryService;
 
     @Override
     public void init() throws ServletException {
-        memoryDao = new memoryDAO();
-        mediaDao = new MediaDAO();
-        groupDAO = new GroupDAO();
-        groupMemberDAO = new GroupMemberDAO();
+        memoryService = new MemoryService();
     }
 
     @Override
@@ -55,54 +44,27 @@ public class MemoryView extends HttpServlet {
             int memoryId = Integer.parseInt(idParam);
             int userId = (int) session.getAttribute("user_id");
 
-            // Fetch memory
-            Memory memory = memoryDao.getMemoryById(memoryId);
+            MemoryViewRequest viewRequest = new MemoryViewRequest();
+            viewRequest.setMemoryId(memoryId);
+            viewRequest.setUserId(userId);
 
-            if (memory == null) {
-                request.setAttribute("errorMessage", "Memory not found");
+            MemoryViewResponse viewResponse = memoryService.viewMemory(viewRequest);
+
+            if (!viewResponse.isSuccess()) {
+                request.setAttribute("errorMessage", viewResponse.getErrorMessage());
                 request.getRequestDispatcher("/WEB-INF/views/app/Memory/memories.jsp").forward(request, response);
                 return;
             }
 
-            // Check access permissions
-            boolean isOwner = (memory.getUserId() == userId);
-            boolean isGroupMemory = (memory.getGroupId() != null);
-            boolean hasAccess = isOwner;
-            boolean isAdmin = false;
-            boolean canEdit = isOwner;
-            String userRole = isOwner ? "admin" : null;
-            Group group = null;
-
-            if (isGroupMemory) {
-                int groupId = memory.getGroupId();
-                group = groupDAO.findById(groupId);
-                isAdmin = (group != null && group.getUserId() == userId);
-                boolean isMember = groupMemberDAO.isUserMember(groupId, userId);
-                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
-
-                hasAccess = isAdmin || isMember;
-                userRole = isAdmin ? "admin" : memberRole;
-                canEdit = isAdmin || "editor".equals(memberRole);
-            }
-
-            if (!hasAccess) {
-                request.setAttribute("errorMessage", "You don't have permission to view this memory");
-                request.getRequestDispatcher("/WEB-INF/views/app/Memory/memories.jsp").forward(request, response);
-                return;
-            }
-
-            // Fetch associated media items
-            List<MediaItem> mediaItems = mediaDao.getMediaByMemoryId(memoryId);
-
-            // Set attributes for JSP
-            request.setAttribute("memory", memory);
-            request.setAttribute("mediaItems", mediaItems);
-            request.setAttribute("isGroupMemory", isGroupMemory);
-            request.setAttribute("canEdit", canEdit);
-            request.setAttribute("userRole", userRole);
-            request.setAttribute("isAdmin", isAdmin || isOwner);
-            if (group != null) {
-                request.setAttribute("group", group);
+            // Set attributes for JSP exactly as before
+            request.setAttribute("memory", viewResponse.getMemory());
+            request.setAttribute("mediaItems", viewResponse.getMediaItems());
+            request.setAttribute("isGroupMemory", viewResponse.isGroupMemory());
+            request.setAttribute("canEdit", viewResponse.isCanEdit());
+            request.setAttribute("userRole", viewResponse.getUserRole());
+            request.setAttribute("isAdmin", viewResponse.isAdmin());
+            if (viewResponse.getGroup() != null) {
+                request.setAttribute("group", viewResponse.getGroup());
             }
 
             // Forward to view page

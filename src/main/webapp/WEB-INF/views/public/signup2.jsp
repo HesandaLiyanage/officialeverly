@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
     <!DOCTYPE html>
     <html lang="en">
 
@@ -19,12 +21,11 @@
         <main class="profile-container">
             <h1 class="profile-title">Tell us about Yourself</h1>
 
-            <% String errorMessage=(String) request.getAttribute("errorMessage"); %>
-                <% if (errorMessage !=null) { %>
-                    <div class="error">
-                        <%= errorMessage %>
-                    </div>
-                    <% } %>
+            <c:if test="${not empty errorMessage}">
+                <div class="error">
+                    <c:out value="${errorMessage}" />
+                </div>
+            </c:if>
 
                         <form class="profile-form" action="${pageContext.request.contextPath}/signupservlet"
                             method="post" id="profileForm">

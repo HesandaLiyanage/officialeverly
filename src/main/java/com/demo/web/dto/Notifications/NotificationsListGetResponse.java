@@ -1,0 +1,3 @@
+package com.demo.web.dto.Notifications;
+
+import java.util.List; import java.util.Map; public class NotificationsListGetResponse { private List<Map<String, Object>> notifications; private int unreadCount; private String redirectUrl; public List<Map<String, Object>> getNotifications() { return notifications; } public void setNotifications(List<Map<String, Object>> notifications) { this.notifications = notifications; } public int getUnreadCount() { return unreadCount; } public void setUnreadCount(int unreadCount) { this.unreadCount = unreadCount; } public String getRedirectUrl() { return redirectUrl; } public void setRedirectUrl(String redirectUrl) { this.redirectUrl = redirectUrl; } }

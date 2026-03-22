@@ -1,0 +1,3 @@
+package com.demo.web.dto.Journals;
+
+public class JournalCreateRequest { private Integer userId; private String content; private String decorationsJson; private String backgroundTheme; public JournalCreateRequest(Integer userId, String content, String decorationsJson, String backgroundTheme) { this.userId = userId; this.content = content; this.decorationsJson = decorationsJson; this.backgroundTheme = backgroundTheme; } public Integer getUserId() { return userId; } public String getContent() { return content; } public String getDecorationsJson() { return decorationsJson; } public String getBackgroundTheme() { return backgroundTheme; } }

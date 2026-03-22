@@ -1,12 +1,6 @@
 package com.demo.web.controller.Groups;
 
-import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.dao.Groups.GroupMemberDAO;
-import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.Groups.Group;
-import com.demo.web.model.Memory.MediaItem;
-import com.demo.web.model.Memory.Memory;
+import com.demo.web.dto.Groups.*;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.GroupService;
 
@@ -15,37 +9,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
-/**
- * View controller for group pages.
- * Handles GET requests for listing, viewing, and editing groups.
- */
 public class GroupsList extends HttpServlet {
 
     private AuthService authService;
     private GroupService groupService;
-    private GroupDAO groupDAO;
-    private GroupMemberDAO groupMemberDAO;
-    private memoryDAO memoryDao;
-    private MediaDAO mediaDAO;
 
     @Override
     public void init() throws ServletException {
         super.init();
         authService = new AuthService();
         groupService = new GroupService();
-        groupDAO = new GroupDAO();
-        groupMemberDAO = new GroupMemberDAO();
-        memoryDao = new memoryDAO();
-        mediaDAO = new MediaDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Validate session
         if (!authService.isValidSession(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -55,7 +35,6 @@ public class GroupsList extends HttpServlet {
         String action = request.getParameter("action");
         String groupIdParam = request.getParameter("groupId");
 
-        // Determine the action
         if ("memories".equals(action) && groupIdParam != null) {
             handleGroupMemories(request, response, userId, groupIdParam);
         } else if ("edit".equals(action) && groupIdParam != null) {
@@ -65,107 +44,67 @@ public class GroupsList extends HttpServlet {
         }
     }
 
-    /**
-     * Handles listing all groups for the user.
-     */
-    private void handleListGroups(HttpServletRequest request, HttpServletResponse response,
-            int userId) throws ServletException, IOException {
-        List<Group> groups = groupService.getGroupsByUserId(userId);
+    private void handleListGroups(HttpServletRequest request, HttpServletResponse response, int userId) throws ServletException, IOException {
+        GroupsListRequest apiRequest = new GroupsListRequest();
+        apiRequest.setUserId(userId);
+        
+        GroupsListResponse apiResponse = groupService.listGroups(apiRequest);
 
-        request.setAttribute("groups", groups);
-        // Pass DAO for legacy JSP compatibility (member count queries)
-        request.setAttribute("groupDAO", groupService.getGroupDAO());
+        if (apiResponse.getErrorMessage() != null) {
+            request.setAttribute("error", apiResponse.getErrorMessage());
+        }
+
+        request.setAttribute("groups", apiResponse.getGroups());
+        request.setAttribute("groupDisplayData", apiResponse.getGroupDisplayData());
+        request.setAttribute("announcementDisplayData", apiResponse.getAnnouncementDisplayData());
 
         request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupdashboard.jsp").forward(request, response);
     }
 
-    /**
-     * Handles viewing a group's memories.
-     * Only group members (admin + members) can access.
-     */
-    private void handleGroupMemories(HttpServletRequest request, HttpServletResponse response,
-            int userId, String groupIdParam) throws ServletException, IOException {
-        try {
-            int groupId = Integer.parseInt(groupIdParam);
-            Group groupDetail = groupDAO.findById(groupId);
+    private void handleGroupMemories(HttpServletRequest request, HttpServletResponse response, int userId, String groupIdParam) throws ServletException, IOException {
+        GroupsListMemoriesRequest apiRequest = new GroupsListMemoriesRequest();
+        apiRequest.setUserId(userId);
+        apiRequest.setGroupIdParam(groupIdParam);
 
-            if (groupDetail == null) {
-                response.sendRedirect(request.getContextPath() + "/groups");
-                return;
-            }
+        GroupsListMemoriesResponse apiResponse = groupService.getGroupMemories(apiRequest);
 
-            // Authorization: only admin or members can access group memories
-            boolean isAdmin = (groupDetail.getUserId() == userId);
-            boolean isMember = groupMemberDAO.isUserMember(groupId, userId);
-
-            if (!isAdmin && !isMember) {
-                System.out.println("[SECURITY] User " + userId + " attempted to access memories of group " + groupId
-                        + " without permission");
-                response.sendRedirect(request.getContextPath() + "/groups?error=Access denied");
-                return;
-            }
-
-            // Get user's role in the group
-            String userRole;
-            if (isAdmin) {
-                userRole = "admin";
-            } else {
-                userRole = groupMemberDAO.getMemberRole(groupId, userId);
-            }
-
-            // Fetch real memories for this group
-            List<Memory> memories = memoryDao.getMemoriesByGroupId(groupId);
-
-            // For each memory, get the first media item as cover image
-            for (Memory memory : memories) {
-                try {
-                    List<MediaItem> mediaItems = mediaDAO.getMediaByMemoryId(memory.getMemoryId());
-                    if (!mediaItems.isEmpty()) {
-                        MediaItem coverMedia = mediaItems.get(0);
-                        request.setAttribute("cover_" + memory.getMemoryId(),
-                                request.getContextPath() + "/viewMedia?mediaId=" + coverMedia.getMediaId());
-                    }
-                } catch (Exception e) {
-                    System.err.println(
-                            "Error getting media for group memory " + memory.getMemoryId() + ": " + e.getMessage());
-                }
-            }
-
-            request.setAttribute("group", groupDetail);
-            request.setAttribute("groupId", groupId);
-            request.setAttribute("memories", memories);
-            request.setAttribute("isAdmin", isAdmin);
-            request.setAttribute("isMember", isMember);
-            request.setAttribute("currentUserRole", userRole);
-            request.setAttribute("currentUserId", userId);
-
-            request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupmemories.jsp").forward(request, response);
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/groups");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/groups?error=Error loading memories");
+        if (apiResponse.getRedirectUrl() != null) {
+            response.sendRedirect(request.getContextPath() + apiResponse.getRedirectUrl());
+            return;
         }
+
+        if (apiResponse.getCoverImageUrls() != null) {
+            apiResponse.getCoverImageUrls().forEach((memId, rawPath) -> {
+                request.setAttribute("cover_" + memId, request.getContextPath() + rawPath);
+            });
+        }
+
+        request.setAttribute("group", apiResponse.getGroup());
+        request.setAttribute("groupId", apiResponse.getGroupId());
+        request.setAttribute("groupName", apiResponse.getGroupName());
+        request.setAttribute("memories", apiResponse.getMemories());
+        request.setAttribute("isAdmin", apiResponse.isAdmin());
+        request.setAttribute("isMember", apiResponse.isMember());
+        request.setAttribute("currentUserRole", apiResponse.getCurrentUserRole());
+        request.setAttribute("currentUserId", apiResponse.getCurrentUserId());
+        request.setAttribute("canCreate", apiResponse.isCanCreate());
+
+        request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupmemories.jsp").forward(request, response);
     }
 
-    /**
-     * Handles editing a group (display the edit form).
-     */
-    private void handleEditGroup(HttpServletRequest request, HttpServletResponse response,
-            int userId, String groupIdParam) throws ServletException, IOException {
-        try {
-            int groupId = Integer.parseInt(groupIdParam);
-            Group groupToEdit = groupService.getGroupById(groupId, userId);
+    private void handleEditGroup(HttpServletRequest request, HttpServletResponse response, int userId, String groupIdParam) throws ServletException, IOException {
+        GroupsListEditRequest apiRequest = new GroupsListEditRequest();
+        apiRequest.setUserId(userId);
+        apiRequest.setGroupIdParam(groupIdParam);
 
-            if (groupToEdit == null) {
-                response.sendRedirect(request.getContextPath() + "/groups");
-                return;
-            }
+        GroupsListEditResponse apiResponse = groupService.getGroupForEditDisplay(apiRequest);
 
-            request.setAttribute("group", groupToEdit);
-            request.getRequestDispatcher("/WEB-INF/views/app/Groups/editgroup.jsp").forward(request, response);
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/groups");
+        if (apiResponse.getRedirectUrl() != null) {
+            response.sendRedirect(request.getContextPath() + apiResponse.getRedirectUrl());
+            return;
         }
+
+        request.setAttribute("group", apiResponse.getGroup());
+        request.getRequestDispatcher("/WEB-INF/views/app/Groups/editgroup.jsp").forward(request, response);
     }
 }

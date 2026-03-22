@@ -1,0 +1,3 @@
+package com.demo.web.dto.Vault;
+
+public class VaultMoveItemRequest { private int userId; private String type; private String idStr; private String action; private String vaultPassword; public VaultMoveItemRequest(int userId, String type, String idStr, String action, String vaultPassword) { this.userId = userId; this.type = type; this.idStr = idStr; this.action = action; this.vaultPassword = vaultPassword; } public int getUserId() { return userId; } public String getType() { return type; } public String getIdStr() { return idStr; } public String getAction() { return action; } public String getVaultPassword() { return vaultPassword; } }

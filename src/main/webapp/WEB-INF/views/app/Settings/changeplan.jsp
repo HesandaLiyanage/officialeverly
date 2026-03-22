@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
     <!DOCTYPE html>
     <html>
 
@@ -27,9 +29,6 @@
                     <p>Pick the plan that best fits your needs. You can upgrade or downgrade anytime.</p>
                 </div>
 
-                <% String currentPlan=(String) request.getAttribute("currentPlan"); if (currentPlan==null)
-                    currentPlan="Basic" ; %>
-
                     <!-- Billing Toggle -->
                     <div class="billing-toggle">
                         <span class="active" id="monthlyLabel">Monthly</span>
@@ -45,7 +44,7 @@
                     <div class="plans-grid">
 
                         <!-- Basic -->
-                        <div class="plan-card-new <%= currentPlan.equals(" Basic") ? "" : "" %>" id="planBasic">
+                        <div class="plan-card-new" id="planBasic">
                             <span class="plan-tier">Starter</span>
                             <h3 class="plan-name">Basic</h3>
                             <p class="plan-desc">For getting started</p>
@@ -54,12 +53,15 @@
                                     data-annual="0">0</span>
                                 <span class="period">/ month</span>
                             </div>
-                            <% if (currentPlan.equals("Basic")) { %>
-                                <button class="plan-cta current">Current Plan</button>
-                                <% } else { %>
+                            <c:choose>
+                                <c:when test="${isBasic}">
+                                    <button class="plan-cta current">Current Plan</button>
+                                </c:when>
+                                <c:otherwise>
                                     <button class="plan-cta secondary"
                                         onclick="confirmPlanChange('Basic', 'Free')">Downgrade to Basic</button>
-                                    <% } %>
+                                </c:otherwise>
+                            </c:choose>
                                         <ul class="plan-features">
                                             <li><span class="check-icon"><svg viewBox="0 0 12 12" fill="none">
                                                         <path d="M2 6l3 3 5-5" stroke="#9A74D8" stroke-width="2"
@@ -92,15 +94,20 @@
                                 <span class="period" id="premiumPeriod">/ month</span>
                                 <span class="original-price" style="display:none">$2.99/mo</span>
                             </div>
-                            <% if (currentPlan.equals("Premium")) { %>
-                                <button class="plan-cta current">Current Plan</button>
-                                <% } else { %>
+                            <c:choose>
+                                <c:when test="${isPremium}">
+                                    <button class="plan-cta current">Current Plan</button>
+                                </c:when>
+                                <c:otherwise>
                                     <button class="plan-cta primary"
                                         onclick="confirmPlanChange('Premium', getCurrentPrice('2.99', '2.39'))">
-                                        <%= currentPlan.equals("Pro") || currentPlan.equals("Family")
-                                            ? "Downgrade to Premium" : "Upgrade to Premium" %>
+                                        <c:choose>
+                                            <c:when test="${isPro || isFamily}">Downgrade to Premium</c:when>
+                                            <c:otherwise>Upgrade to Premium</c:otherwise>
+                                        </c:choose>
                                     </button>
-                                    <% } %>
+                                </c:otherwise>
+                            </c:choose>
                                         <ul class="plan-features">
                                             <li><span class="check-icon"><svg viewBox="0 0 12 12" fill="none">
                                                         <path d="M2 6l3 3 5-5" stroke="#9A74D8" stroke-width="2"
@@ -140,14 +147,20 @@
                                 <span class="period">/ month</span>
                                 <span class="original-price" style="display:none">$5.99/mo</span>
                             </div>
-                            <% if (currentPlan.equals("Pro")) { %>
-                                <button class="plan-cta current">Current Plan</button>
-                                <% } else { %>
+                            <c:choose>
+                                <c:when test="${isPro}">
+                                    <button class="plan-cta current">Current Plan</button>
+                                </c:when>
+                                <c:otherwise>
                                     <button class="plan-cta secondary"
                                         onclick="confirmPlanChange('Pro', getCurrentPrice('5.99', '4.79'))">
-                                        <%= currentPlan.equals("Family") ? "Downgrade to Pro" : "Upgrade to Pro" %>
+                                        <c:choose>
+                                            <c:when test="${isFamily}">Downgrade to Pro</c:when>
+                                            <c:otherwise>Upgrade to Pro</c:otherwise>
+                                        </c:choose>
                                     </button>
-                                    <% } %>
+                                </c:otherwise>
+                            </c:choose>
                                         <ul class="plan-features">
                                             <li><span class="check-icon"><svg viewBox="0 0 12 12" fill="none">
                                                         <path d="M2 6l3 3 5-5" stroke="#9A74D8" stroke-width="2"
@@ -183,13 +196,16 @@
                                 <span class="period">/ month</span>
                                 <span class="original-price" style="display:none">$9.99/mo</span>
                             </div>
-                            <% if (currentPlan.equals("Family")) { %>
-                                <button class="plan-cta current">Current Plan</button>
-                                <% } else { %>
+                            <c:choose>
+                                <c:when test="${isFamily}">
+                                    <button class="plan-cta current">Current Plan</button>
+                                </c:when>
+                                <c:otherwise>
                                     <button class="plan-cta secondary"
                                         onclick="confirmPlanChange('Family', getCurrentPrice('9.99', '7.99'))">Upgrade
                                         to Family</button>
-                                    <% } %>
+                                </c:otherwise>
+                            </c:choose>
                                         <ul class="plan-features">
                                             <li><span class="check-icon"><svg viewBox="0 0 12 12" fill="none">
                                                         <path d="M2 6l3 3 5-5" stroke="#9A74D8" stroke-width="2"
@@ -304,9 +320,7 @@
 
                 <div class="plan-change-summary">
                     <div class="plan-change-from">
-                        <h4 id="fromPlan">
-                            <%= currentPlan %>
-                        </h4>
+                        <h4 id="fromPlan"><c:out value="${currentPlan}" /></h4>
                         <p>Current plan</p>
                     </div>
                     <div class="plan-change-arrow">→</div>
@@ -335,7 +349,7 @@
         <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
         <script>
-            var currentPlan = '<%= currentPlan %>';
+            var currentPlan = '${fn:escapeXml(currentPlan)}';
 
             function getCurrentPrice(monthly, annual) {
                 var toggle = document.getElementById('billingToggle');

@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,23 +86,23 @@
     });
 
     // Display success/error messages if they exist
-    <% if (request.getAttribute("successMessage") != null) { %>
-    alert('<%= request.getAttribute("successMessage") %>');
+    <c:if test="${not empty successMessage}">
+    alert('${fn:escapeXml(successMessage)}');
     // Redirect to login page after successful password reset
     setTimeout(function() {
-        window.location.href = 'login.jsp';
+        window.location.href = '${pageContext.request.contextPath}/login';
     }, 2000);
-    <% } %>
+    </c:if>
 
-    <% if (request.getAttribute("errorMessage") != null) { %>
-    alert('<%= request.getAttribute("errorMessage") %>');
-    <% } %>
+    <c:if test="${not empty errorMessage}">
+    alert('${fn:escapeXml(errorMessage)}');
+    </c:if>
 
     // Check if token is expired or invalid
-    <% if (request.getAttribute("tokenError") != null) { %>
+    <c:if test="${not empty tokenError}">
     alert('This password reset link has expired or is invalid. Please request a new one.');
-    window.location.href = 'forgot-password.jsp';
-    <% } %>
+    window.location.href = '${pageContext.request.contextPath}/forgotpassword';
+    </c:if>
 </script>
 <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 </body>

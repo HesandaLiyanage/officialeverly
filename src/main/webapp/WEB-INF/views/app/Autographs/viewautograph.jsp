@@ -1,21 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
-    <% request.setCharacterEncoding("UTF-8"); response.setCharacterEncoding("UTF-8"); %>
-        <%@ page import="com.demo.web.model.Autographs.AutographEntry" %>
-            <%@ page import="com.demo.web.model.Autographs.autograph" %>
-                <%@ page import="java.util.List" %>
-                    <%@ page import="com.google.gson.Gson" %>
-                        <% autograph ag=(autograph) request.getAttribute("autograph"); List<AutographEntry> entries =
-                            (List<AutographEntry>) request.getAttribute("entries");
-                                Gson gson = new com.google.gson.GsonBuilder().disableHtmlEscaping().create();
-                                String entriesJson = gson.toJson(entries != null ? entries :
-                                java.util.Collections.emptyList());
-                                int entryCount = (entries != null) ? entries.size() : 0;
-                                String displayTitle = (ag != null) ? ag.getTitle() : "Autograph Book";
-                                String displayDesc = (ag != null && ag.getDescription() != null) ? ag.getDescription() :
-                                "";
-                                String createdDate = (ag != null && ag.getCreatedAt() != null)
-                                ? new java.text.SimpleDateFormat("MMMM d, yyyy").format(ag.getCreatedAt()) : "";
-                                %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<c:set var="displayTitle" value="${not empty autograph.title ? autograph.title : 'Autograph Book'}" />
+<c:set var="displayDesc" value="${not empty autograph.description ? autograph.description : ''}" />
                                 <!DOCTYPE html>
                                 <html lang="en">
 
@@ -23,7 +12,7 @@
                                     <meta charset="UTF-8">
                                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                                     <title>
-                                        <%= displayTitle %> - Everly
+                                        ${fn:escapeXml(displayTitle)} - Everly
                                     </title>
                                     <link
                                         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
@@ -247,8 +236,7 @@
                                                                         d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z">
                                                                     </path>
                                                                 </svg>
-                                                                <%= entryCount %> signature<%= entryCount !=1 ? "s" : ""
-                                                                        %>
+                                                                ${entryCount} signature${entryCount != 1 ? 's' : ''}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -259,12 +247,12 @@
                                                     <!-- Title -->
                                                     <div class="mv-info-group">
                                                         <div class="mv-info-value title">
-                                                            <%= displayTitle %>
+                                                            ${fn:escapeXml(displayTitle)}
                                                         </div>
                                                     </div>
 
                                                     <!-- Date -->
-                                                    <% if (!createdDate.isEmpty()) { %>
+                                                    <c:if test="${not empty autograph.createdAt}">
                                                         <div class="mv-info-group">
                                                             <div class="mv-info-value date">
                                                                 <svg viewBox="0 0 24 24" fill="none"
@@ -275,38 +263,37 @@
                                                                     <line x1="8" y1="2" x2="8" y2="6"></line>
                                                                     <line x1="3" y1="10" x2="21" y2="10"></line>
                                                                 </svg>
-                                                                <%= createdDate %>
+                                                                <fmt:formatDate value="${autograph.createdAt}" pattern="MMMM d, yyyy" />
                                                             </div>
                                                         </div>
-                                                        <% } %>
+                                                    </c:if>
 
-                                                            <!-- Description -->
-                                                            <% if (!displayDesc.isEmpty()) { %>
-                                                                <div class="mv-divider"></div>
-                                                                <div class="mv-info-group">
-                                                                    <div class="mv-info-label">Description</div>
-                                                                    <div class="mv-info-value">
-                                                                        <%= displayDesc %>
-                                                                    </div>
-                                                                </div>
-                                                                <% } %>
+                                                    <!-- Description -->
+                                                    <c:if test="${not empty displayDesc}">
+                                                        <div class="mv-divider"></div>
+                                                        <div class="mv-info-group">
+                                                            <div class="mv-info-label">Description</div>
+                                                            <div class="mv-info-value">
+                                                                ${fn:escapeXml(displayDesc)}
+                                                            </div>
+                                                        </div>
+                                                    </c:if>
 
-                                                                    <div class="mv-divider"></div>
+                                                    <div class="mv-divider"></div>
 
-                                                                    <!-- Entry count -->
-                                                                    <div class="mv-info-group">
-                                                                        <div class="mv-photo-count">
-                                                                            <svg viewBox="0 0 24 24" fill="none"
-                                                                                stroke="currentColor" stroke-width="2">
-                                                                                <path d="M12 20h9"></path>
-                                                                                <path
-                                                                                    d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z">
-                                                                                </path>
-                                                                            </svg>
-                                                                            <%= entryCount %> entr<%= entryCount !=1
-                                                                                    ? "ies" : "y" %>
-                                                                        </div>
-                                                                    </div>
+                                                    <!-- Entry count -->
+                                                    <div class="mv-info-group">
+                                                        <div class="mv-photo-count">
+                                                            <svg viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2">
+                                                                <path d="M12 20h9"></path>
+                                                                <path
+                                                                    d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z">
+                                                                </path>
+                                                            </svg>
+                                                            ${entryCount} entr${entryCount != 1 ? 'ies' : 'y'}
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <!-- Actions bar -->
@@ -387,7 +374,7 @@
 
                                     <!-- Entries data -->
                                     <div id="entriesData" style="display:none;">
-                                        <%= entriesJson %>
+                                        ${entriesJson}
                                     </div>
 
                                     <script>
@@ -473,7 +460,7 @@
 
                                         // --- Share Modal ---
                                         var shareUrl = '';
-                                        var autographId = '${autograph.getAutographId()}';
+                                        var autographId = '${autograph.autographId}';
 
                                         function openShareModal() {
                                             document.getElementById('shareModal').classList.add('active');

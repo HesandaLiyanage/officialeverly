@@ -1,9 +1,8 @@
 package com.demo.web.controller.Groups;
 
-import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.dao.Groups.GroupMemberDAO;
-import com.demo.web.model.Groups.Group;
-import com.demo.web.model.Groups.GroupMember;
+import com.demo.web.dto.Groups.GroupProfileViewRequest;
+import com.demo.web.dto.Groups.GroupProfileViewResponse;
+import com.demo.web.service.GroupService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,13 +13,11 @@ import java.io.IOException;
 
 public class GroupProfileView extends HttpServlet {
 
-    private GroupDAO groupDAO;
-    private GroupMemberDAO groupMemberDAO;
+    private GroupService groupService;
 
     @Override
     public void init() throws ServletException {
-        groupDAO = new GroupDAO();
-        groupMemberDAO = new GroupMemberDAO();
+        groupService = new GroupService();
     }
 
     @Override
@@ -33,52 +30,48 @@ public class GroupProfileView extends HttpServlet {
             return;
         }
 
-        Integer currentUserId = (Integer) session.getAttribute("user_id");
-        String groupIdStr = request.getParameter("groupId");
-        String memberIdStr = request.getParameter("memberId");
-
-        if (groupIdStr == null || groupIdStr.isEmpty() || memberIdStr == null || memberIdStr.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/groups");
-            return;
-        }
-
         try {
-            int groupId = Integer.parseInt(groupIdStr);
-            int memberId = Integer.parseInt(memberIdStr);
+            GroupProfileViewRequest apiRequest = new GroupProfileViewRequest();
+            apiRequest.setCurrentUserId((Integer) session.getAttribute("user_id"));
+            apiRequest.setGroupIdStr(request.getParameter("groupId"));
+            apiRequest.setMemberIdStr(request.getParameter("memberId"));
 
-            Group group = groupDAO.findById(groupId);
-            if (group == null) {
-                response.sendRedirect(request.getContextPath() + "/groups?error=Group not found");
+            if (apiRequest.getGroupIdStr() == null || apiRequest.getGroupIdStr().isEmpty() ||
+                apiRequest.getMemberIdStr() == null || apiRequest.getMemberIdStr().isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/groups");
                 return;
             }
 
-            // Get specific member info from the group
-            GroupMember targetMember = null;
-            for (GroupMember gm : groupMemberDAO.getMembersByGroupId(groupId)) {
-                if (gm.getUser().getId() == memberId) {
-                    targetMember = gm;
-                    break;
-                }
-            }
+            GroupProfileViewResponse apiResponse = groupService.viewGroupProfile(apiRequest);
 
-            if (targetMember == null) {
-                response.sendRedirect(
-                        request.getContextPath() + "/groupmembers?groupId=" + groupId + "&error=Member not found");
+            if (!apiResponse.isSuccess()) {
+                response.sendRedirect(request.getContextPath() + apiResponse.getRedirectUrl());
                 return;
             }
 
-            // Check if current user is admin of this group
-            boolean isAdmin = (group.getUserId() == currentUserId);
-
-            request.setAttribute("group", group);
-            request.setAttribute("member", targetMember);
-            request.setAttribute("isAdmin", isAdmin);
-            request.setAttribute("currentUserId", currentUserId);
+            request.setAttribute("group", apiResponse.getGroup());
+            request.setAttribute("member", apiResponse.getMember());
+            request.setAttribute("isAdmin", apiResponse.isAdmin());
+            request.setAttribute("currentUserId", apiResponse.getCurrentUserId());
+            request.setAttribute("groupId", apiResponse.getGroupId());
+            request.setAttribute("groupName", apiResponse.getGroupName());
+            request.setAttribute("creatorText", apiResponse.getCreatorText());
+            request.setAttribute("memberName", apiResponse.getMemberName());
+            request.setAttribute("memberEmail", apiResponse.getMemberEmail());
+            request.setAttribute("memberRole", apiResponse.getMemberRole());
+            request.setAttribute("initials", apiResponse.getInitials());
+            request.setAttribute("joinedDate", apiResponse.getJoinedDate());
+            request.setAttribute("canRemove", apiResponse.isCanRemove());
+            request.setAttribute("memberId", apiResponse.getMemberId());
+            request.setAttribute("isRoleViewer", apiResponse.isRoleViewer());
+            request.setAttribute("isRoleMember", apiResponse.isRoleMember());
+            request.setAttribute("isRoleAdmin", apiResponse.isRoleAdmin());
 
             request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupprofile.jsp").forward(request, response);
 
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             response.sendRedirect(request.getContextPath() + "/groups?error=Invalid parameters");
         }
     }
 }
+

@@ -1,8 +1,8 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.dao.Memory.MemoryMemberDAO;
-import com.demo.web.model.Memory.Memory;
+import com.demo.web.dto.Memory.MemoryShareLinkRequest;
+import com.demo.web.dto.Memory.MemoryShareLinkResponse;
+import com.demo.web.service.MemoryService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,25 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.SecureRandom;
 
-/**
- * Servlet for generating or retrieving share link for collaborative memories
- */
 public class MemoryShareLink extends HttpServlet {
 
-    private memoryDAO memoryDAO;
-    private MemoryMemberDAO memberDAO;
-
-    // Characters for generating share key
-    private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static final SecureRandom RANDOM = new SecureRandom();
+    private MemoryService memoryService;
 
     @Override
     public void init() throws ServletException {
-        super.init();
-        memoryDAO = new memoryDAO();
-        memberDAO = new MemoryMemberDAO();
+        memoryService = new MemoryService();
     }
 
     @Override
@@ -45,9 +34,7 @@ public class MemoryShareLink extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
         String memoryIdParam = request.getParameter("memoryId");
-
         if (memoryIdParam == null || memoryIdParam.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Memory ID required\"}");
@@ -55,30 +42,16 @@ public class MemoryShareLink extends HttpServlet {
         }
 
         try {
-            int memoryId = Integer.parseInt(memoryIdParam);
+            MemoryShareLinkRequest shareRequest = new MemoryShareLinkRequest();
+            shareRequest.setMemoryId(Integer.parseInt(memoryIdParam));
+            shareRequest.setUserId((Integer) session.getAttribute("user_id"));
 
-            // Check if user is owner or member
-            if (!memberDAO.isMember(memoryId, userId)) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("{\"error\": \"Not authorized\"}");
+            MemoryShareLinkResponse shareResponse = memoryService.handleShareLink(shareRequest);
+
+            if (!shareResponse.isSuccess()) {
+                response.setStatus(shareResponse.getStatusCode());
+                response.getWriter().write("{\"error\": \"" + shareResponse.getErrorMessage() + "\"}");
                 return;
-            }
-
-            // Get memory
-            Memory memory = memoryDAO.getMemoryById(memoryId);
-            if (memory == null || !memory.isCollaborative()) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                response.getWriter().write("{\"error\": \"Collaborative memory not found\"}");
-                return;
-            }
-
-            String shareKey = memory.getCollabShareKey();
-
-            // If no share key exists, generate one
-            if (shareKey == null || shareKey.isEmpty()) {
-                shareKey = generateShareKey(14);
-                memoryDAO.setCollabShareKey(memoryId, shareKey);
-                System.out.println("Generated new share key for memory " + memoryId + ": " + shareKey);
             }
 
             // Build share URL
@@ -86,12 +59,12 @@ public class MemoryShareLink extends HttpServlet {
             if (request.getServerPort() != 80 && request.getServerPort() != 443) {
                 baseUrl += ":" + request.getServerPort();
             }
-            String shareUrl = baseUrl + request.getContextPath() + "/memoryinvite?key=" + shareKey;
+            String shareUrl = baseUrl + request.getContextPath() + "/memoryinvite?key=" + shareResponse.getShareLink();
 
             try (PrintWriter out = response.getWriter()) {
                 out.write(String.format(
                         "{\"success\": true, \"shareKey\": \"%s\", \"shareUrl\": \"%s\"}",
-                        shareKey, shareUrl));
+                        shareResponse.getShareLink(), shareUrl));
             }
 
         } catch (NumberFormatException e) {
@@ -102,16 +75,5 @@ public class MemoryShareLink extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\": \"" + e.getMessage().replace("\"", "'") + "\"}");
         }
-    }
-
-    /**
-     * Generate random share key
-     */
-    private String generateShareKey(int length) {
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(CHARS.charAt(RANDOM.nextInt(CHARS.length())));
-        }
-        return sb.toString();
     }
 }

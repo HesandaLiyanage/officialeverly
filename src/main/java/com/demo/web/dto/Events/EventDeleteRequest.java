@@ -1,0 +1,3 @@
+package com.demo.web.dto.Events;
+
+public class EventDeleteRequest { private int userId; private String eventIdStr; private String realPathBase; public EventDeleteRequest(int userId, String eventIdStr, String realPathBase) { this.userId = userId; this.eventIdStr = eventIdStr; this.realPathBase = realPathBase; } public int getUserId() { return userId; } public void setUserId(int userId) { this.userId = userId; } public String getEventIdStr() { return eventIdStr; } public void setEventIdStr(String eventIdStr) { this.eventIdStr = eventIdStr; } public String getRealPathBase() { return realPathBase; } public void setRealPathBase(String realPathBase) { this.realPathBase = realPathBase; } }

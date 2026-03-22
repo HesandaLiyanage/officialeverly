@@ -54,9 +54,14 @@ public class FeedProfileEdit extends HttpServlet {
 
         // Set profile data for the form
         request.setAttribute("feedProfile", feedProfile);
-        request.setAttribute("feedUsername", feedProfile.getFeedUsername());
-        request.setAttribute("feedBio", feedProfile.getFeedBio());
+        request.setAttribute("feedUsername", feedProfile.getFeedUsername() != null ? feedProfile.getFeedUsername() : "");
+        request.setAttribute("feedBio", feedProfile.getFeedBio() != null ? feedProfile.getFeedBio() : "");
         request.setAttribute("feedProfilePicture", feedProfile.getFeedProfilePictureUrl());
+        request.setAttribute("feedInitials", feedProfile.getInitials() != null ? feedProfile.getInitials() : "U");
+        String pic = feedProfile.getFeedProfilePictureUrl();
+        boolean hasDefaultPic = (pic == null || pic.isEmpty() || pic.contains("default"));
+        request.setAttribute("hasDefaultPic", hasDefaultPic);
+        request.setAttribute("feedBioLength", feedProfile.getFeedBio() != null ? feedProfile.getFeedBio().length() : 0);
 
         request.getRequestDispatcher("/WEB-INF/views/app/Feed/editpublicprofile.jsp").forward(request, response);
     }

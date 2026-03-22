@@ -72,8 +72,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToController.put("/collabmemories", "/collabmemoriesview");
         routeToJsp.put("/settingsaccount", "/WEB-INF/views/app/Settings/settingsaccount.jsp");
         // /managesubscription handled by web.xml ManageSubscriptionController
-        routeToJsp.put("/changeplan", "/WEB-INF/views/app/Settings/changeplan.jsp");
-        routeToJsp.put("/familyplan", "/WEB-INF/views/app/Settings/familyplan.jsp");
+        routeToController.put("/changeplan", "/changeplanview");
+        routeToController.put("/familyplan", "/familyplanview");
         routeToController.put("/settingsnotifications", "/notificationprefsapi");
         routeToJsp.put("/settingsprivacy", "/WEB-INF/views/app/Settings/settingsprivacy.jsp");
         // /settingssubscription handled by web.xml SettingsSubscriptionController
@@ -83,7 +83,7 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/vaultPassword", "/WEB-INF/views/app/Vault/vaultPassword.jsp");
         routeToJsp.put("/vaultSetup", "/WEB-INF/views/app/Vault/vaultSetup.jsp");
         routeToJsp.put("/addautograph", "/WEB-INF/views/app/Autographs/addautograph.jsp");
-        routeToJsp.put("/duplicatefinder", "/WEB-INF/views/app/Settings/duplicatefinder.jsp");
+        routeToController.put("/duplicatefinder", "/duplicatefinderview");
         // /morethemes removed - Appearance feature removed
         // /sharedlinks handled by web.xml SharedLinksController
         routeToController.put("/trashmgt", "/trashmgtview");
@@ -95,9 +95,8 @@ public class FrontControllerServlet extends HttpServlet {
         routeToController.put("/viewannouncement", "/viewannouncementservlet");
         // /writeautograph removed - actual feature uses /write-autograph via
         // @WebServlet
-        routeToJsp.put("/eventinfo", "/WEB-INF/views/app/Events/eventinfo.jsp");
         routeToJsp.put("/creatememory", "/WEB-INF/views/app/Memory/creatememory.jsp");
-        routeToJsp.put("/memoryrecap", "/WEB-INF/views/app/Memory/memoryrecap.jsp");
+        routeToController.put("/memoryrecap", "/memoryrecapview");
         routeToJsp.put("/writejournal", "/WEB-INF/views/app/Journals/writejournal.jsp");
         routeToJsp.put("/vaultjournals", "/WEB-INF/views/app/Vault/vaultjournals.jsp");
         routeToJsp.put("/feedWelcome", "/WEB-INF/views/app/Feed/feedWelcome.jsp");
@@ -148,6 +147,7 @@ public class FrontControllerServlet extends HttpServlet {
 
         // Event routes (all handled by EventViewController)
         routeToController.put("/events", "/eventsview");
+        routeToController.put("/eventinfo", "/eventsview?action=info");
         routeToController.put("/createevent", "/eventsview?action=create");
         routeToController.put("/editevent", "/eventsview?action=edit");
 

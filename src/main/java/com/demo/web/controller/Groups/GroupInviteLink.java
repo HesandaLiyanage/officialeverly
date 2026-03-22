@@ -1,9 +1,8 @@
 package com.demo.web.controller.Groups;
 
-import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.dao.Groups.GroupInviteDAO;
-import com.demo.web.model.Groups.Group;
-import com.demo.web.model.Groups.GroupInvite;
+import com.demo.web.dto.Groups.GroupInviteLinkRequest;
+import com.demo.web.dto.Groups.GroupInviteLinkResponse;
+import com.demo.web.service.GroupService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,17 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
 
 public class GroupInviteLink extends HttpServlet {
 
-    private GroupDAO groupDAO;
-    private GroupInviteDAO groupInviteDAO;
+    private GroupService groupService;
 
     @Override
     public void init() throws ServletException {
-        groupDAO = new GroupDAO();
-        groupInviteDAO = new GroupInviteDAO();
+        groupService = new GroupService();
     }
 
     @Override
@@ -33,7 +29,6 @@ public class GroupInviteLink extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        // Check if user is logged in
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -50,53 +45,16 @@ public class GroupInviteLink extends HttpServlet {
             return;
         }
 
-        try {
-            int groupId = Integer.parseInt(groupIdStr);
-
-            // Check if user is the admin of this group
-            Group group = groupDAO.findById(groupId);
-            if (group == null) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                out.print("{\"error\": \"Group not found\"}");
-                return;
-            }
-
-            if (group.getUserId() != userId) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                out.print("{\"error\": \"Only group admin can generate invite links\"}");
-                return;
-            }
-
-            // Generate invite token
-            String token = groupInviteDAO.generateToken();
-
-            // Create invite record
-            GroupInvite invite = new GroupInvite();
-            invite.setGroupId(groupId);
-            invite.setInviteToken(token);
-            invite.setCreatedBy(userId);
-            invite.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-            invite.setActive(true);
-
-            boolean success = groupInviteDAO.createInvite(invite);
-
-            if (success) {
-                // Build the full invite URL
-                String baseUrl = request.getScheme() + "://" + request.getServerName();
-                if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-                    baseUrl += ":" + request.getServerPort();
-                }
-                String inviteUrl = baseUrl + request.getContextPath() + "/invite/" + token;
-
-                out.print("{\"success\": true, \"inviteUrl\": \"" + inviteUrl + "\", \"token\": \"" + token + "\"}");
-            } else {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                out.print("{\"error\": \"Failed to generate invite link\"}");
-            }
-
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"error\": \"Invalid group ID\"}");
+        String baseUrl = request.getScheme() + "://" + request.getServerName();
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+            baseUrl += ":" + request.getServerPort();
         }
+        baseUrl += request.getContextPath();
+
+        GroupInviteLinkRequest req = new GroupInviteLinkRequest(userId, groupIdStr, baseUrl);
+        GroupInviteLinkResponse res = groupService.generateGroupInviteLink(req);
+
+        response.setStatus(res.getStatusCode());
+        out.print(res.getJsonResponse());
     }
 }

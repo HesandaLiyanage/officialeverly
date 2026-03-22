@@ -1,12 +1,8 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.Groups.GroupDAO;
-import com.demo.web.dao.Groups.GroupMemberDAO;
-import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.Groups.Group;
-import com.demo.web.model.Memory.MediaItem;
-import com.demo.web.model.Memory.Memory;
+import com.demo.web.dto.Memory.MemoryEditRequest;
+import com.demo.web.dto.Memory.MemoryEditResponse;
+import com.demo.web.service.MemoryService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,26 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
-/**
- * Servlet for loading memory data into edit form.
- * Supports both personal memories (owner-only) and group memories
- * (admin/editor).
- */
 public class MemoryEdit extends HttpServlet {
 
-    private memoryDAO memoryDao;
-    private MediaDAO mediaDao;
-    private GroupDAO groupDAO;
-    private GroupMemberDAO groupMemberDAO;
+    private MemoryService memoryService;
 
     @Override
     public void init() throws ServletException {
-        memoryDao = new memoryDAO();
-        mediaDao = new MediaDAO();
-        groupDAO = new GroupDAO();
-        groupMemberDAO = new GroupMemberDAO();
+        memoryService = new MemoryService();
     }
 
     @Override
@@ -53,50 +37,29 @@ public class MemoryEdit extends HttpServlet {
         }
 
         try {
-            int memoryId = Integer.parseInt(idParam);
-            int userId = (int) session.getAttribute("user_id");
+            MemoryEditRequest apiRequest = new MemoryEditRequest();
+            apiRequest.setMemoryId(Integer.parseInt(idParam));
+            apiRequest.setUserId((Integer) session.getAttribute("user_id"));
 
-            Memory memory = memoryDao.getMemoryById(memoryId);
+            MemoryEditResponse apiResponse = memoryService.getMemoryForEdit(apiRequest);
 
-            if (memory == null) {
-                request.setAttribute("errorMessage", "Memory not found");
-                response.sendRedirect("/memories");
-                return;
-            }
-
-            boolean canEdit = false;
-            boolean isGroupMemory = (memory.getGroupId() != null);
-
-            if (isGroupMemory) {
-                int groupId = memory.getGroupId();
-                Group group = groupDAO.findById(groupId);
-                boolean isAdmin = (group != null && group.getUserId() == userId);
-                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
-                canEdit = isAdmin || "editor".equals(memberRole);
-
-                if (canEdit) {
-                    request.setAttribute("group", group);
-                    request.setAttribute("isGroupMemory", true);
-                }
-            } else {
-                // Personal memory — only owner can edit
-                canEdit = (memory.getUserId() == userId);
-            }
-
-            if (!canEdit) {
-                request.setAttribute("errorMessage", "You don't have permission to edit this memory");
-                if (isGroupMemory) {
-                    response.sendRedirect("/groupmemories?groupId=" + memory.getGroupId());
+            if (apiResponse.getErrorMessage() != null) {
+                request.setAttribute("errorMessage", apiResponse.getErrorMessage());
+                if (apiResponse.getRedirectGroupId() != null) {
+                    response.sendRedirect("/groupmemories?groupId=" + apiResponse.getRedirectGroupId());
                 } else {
                     response.sendRedirect("/memories");
                 }
                 return;
             }
 
-            List<MediaItem> mediaItems = mediaDao.getMediaByMemoryId(memoryId);
+            if (apiResponse.isGroupMemory()) {
+                request.setAttribute("group", apiResponse.getGroup());
+                request.setAttribute("isGroupMemory", true);
+            }
 
-            request.setAttribute("memory", memory);
-            request.setAttribute("mediaItems", mediaItems);
+            request.setAttribute("memory", apiResponse.getMemory());
+            request.setAttribute("mediaItems", apiResponse.getMediaItems());
 
             request.getRequestDispatcher("/WEB-INF/views/app/Memory/editmemory.jsp").forward(request, response);
 

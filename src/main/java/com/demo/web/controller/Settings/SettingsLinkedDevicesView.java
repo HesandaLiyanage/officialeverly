@@ -2,36 +2,37 @@ package com.demo.web.controller.Settings;
 
 import com.demo.web.model.Auth.UserSession;
 import com.demo.web.service.AuthService;
-import com.demo.web.service.LinkedDeviceService;
+import com.demo.web.service.SettingsService;
+import com.demo.web.dto.Settings.SettingsLinkedDevicesRequest;
+import com.demo.web.dto.Settings.SettingsLinkedDevicesResponse;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * View controller for linked devices page.
- * Handles GET requests to display user's active sessions.
- */
 public class SettingsLinkedDevicesView extends HttpServlet {
 
     private AuthService authService;
-    private LinkedDeviceService linkedDeviceService;
+    private SettingsService settingsService;
 
     @Override
     public void init() throws ServletException {
         super.init();
         authService = new AuthService();
-        linkedDeviceService = new LinkedDeviceService();
+        settingsService = new SettingsService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Validate session
         if (!authService.isValidSession(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -40,18 +41,26 @@ public class SettingsLinkedDevicesView extends HttpServlet {
         Integer userId = authService.getUserId(request);
         String currentSessionId = authService.getSessionId(request);
 
-        System.out.println("=== LinkedDevicesViewController DEBUG ===");
+        SettingsLinkedDevicesRequest req = new SettingsLinkedDevicesRequest(userId, null, currentSessionId, null);
+        SettingsLinkedDevicesResponse res = settingsService.getLinkedDevices(req);
 
-        // Get devices from service
-        List<UserSession> devices = linkedDeviceService.getUserDevices(userId, currentSessionId);
+        List<UserSession> devices = res.getDevices();
 
-        System.out.println("Found " + devices.size() + " active sessions for user ID: " + userId);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        List<Map<String, Object>> deviceDisplayData = new ArrayList<>();
+        
+        for (UserSession device : devices) {
+            Map<String, Object> displayData = new HashMap<>();
+            displayData.put("deviceName", device.getDeviceName());
+            displayData.put("deviceType", device.getDeviceType());
+            displayData.put("sessionId", device.getSessionId());
+            displayData.put("lastLogin", device.getCreatedAt() != null ? dateFormat.format(device.getCreatedAt()) : "Unknown");
+            displayData.put("isCurrentDevice", device.getSessionId().equals(currentSessionId));
+            deviceDisplayData.add(displayData);
+        }
 
-        // Set request attributes
-        request.setAttribute("devices", devices);
-        request.setAttribute("currentSessionId", currentSessionId);
+        request.setAttribute("deviceDisplayData", deviceDisplayData);
 
-        // Forward to JSP
         request.getRequestDispatcher("/WEB-INF/views/app/Settings/linkeddevices.jsp").forward(request, response);
     }
 }

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
   <!DOCTYPE html>
   <html lang="en">
 
@@ -28,14 +29,12 @@
       <p>Enter your password to access protected content</p>
 
       <!-- Password Entry Section -->
-      <div id="passwordSection" class="password-section" <% if (request.getAttribute("vaultUnlocked") !=null) { %>
-        style="display: none;"<% } %>>
-          <% String errorMessage=(String) request.getAttribute("errorMessage"); %>
-            <% if (errorMessage !=null) { %>
-              <div class="error" style="display: block;">
-                <%= errorMessage %>
-              </div>
-              <% } %>
+      <div id="passwordSection" class="password-section" <c:if test="${not empty vaultUnlocked}">style="display: none;"</c:if>>
+        <c:if test="${not empty errorMessage}">
+          <div class="error" style="display: block;">
+            ${errorMessage}
+          </div>
+        </c:if>
 
                 <form id="vaultForm" class="vault-form" action="${pageContext.request.contextPath}/vaultentries"
                   method="POST">
@@ -67,8 +66,7 @@
       </div>
 
       <!-- Navigation Section (Shown after successful password verification) -->
-      <div id="navigationSection" class="navigation-section" <% if (request.getAttribute("vaultUnlocked")==null) { %>
-        style="display: none;"<% } %>>
+      <div id="navigationSection" class="navigation-section" <c:if test="${empty vaultUnlocked}">style="display: none;"</c:if>>
           <div class="success-message">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
@@ -79,7 +77,7 @@
 
           <div class="vault-options">
             <form action="${pageContext.request.contextPath}/vaultmemories" method="POST" style="display: inline;">
-              <input type="hidden" name="vaultPassword" value="<%= request.getParameter("vaultPassword") %>">
+              <input type="hidden" name="vaultPassword" value="${param.vaultPassword}">
               <button type="submit" class="vault-option-card"
                 style="border: none; background: none; cursor: pointer; text-align: left;">
                 <div class="option-icon">
@@ -96,7 +94,7 @@
             </form>
 
             <form action="${pageContext.request.contextPath}/vaultjournals" method="POST" style="display: inline;">
-              <input type="hidden" name="vaultPassword" value="<%= request.getParameter("vaultPassword") %>">
+              <input type="hidden" name="vaultPassword" value="${param.vaultPassword}">
               <button type="submit" class="vault-option-card"
                 style="border: none; background: none; cursor: pointer; text-align: left;">
                 <div class="option-icon">

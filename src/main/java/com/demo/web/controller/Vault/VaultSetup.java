@@ -1,6 +1,7 @@
 package com.demo.web.controller.Vault;
 
-import com.demo.web.dao.Vault.VaultDAO;
+import com.demo.web.service.VaultService;
+import com.demo.web.dto.Vault.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,23 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * Servlet to handle vault password setup
- * Handles the form submission from vaultSetup.jsp
- */
 @WebServlet("/vaultSetup")
 public class VaultSetup extends HttpServlet {
 
-    private VaultDAO vaultDAO;
+    private VaultService vaultService;
 
     @Override
     public void init() throws ServletException {
-        vaultDAO = new VaultDAO();
+        vaultService = new VaultService();
     }
 
-    /**
-     * GET - Check if vault is set up and show appropriate page
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -37,22 +31,17 @@ public class VaultSetup extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
+        VaultSetupGetRequest req = new VaultSetupGetRequest((Integer) session.getAttribute("user_id"));
+        VaultSetupGetResponse res = vaultService.getSetupState(req);
 
-        // Check if vault is already set up
-        if (vaultDAO.hasVaultSetup(userId)) {
-            // Vault already set up, redirect to vault entry
+        if (res.isHasSetup()) {
             response.sendRedirect(request.getContextPath() + "/vaultentries");
             return;
         }
 
-        // Show vault setup page
         request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
     }
 
-    /**
-     * POST - Handle vault password setup
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -63,44 +52,18 @@ public class VaultSetup extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
+        VaultSetupPostRequest req = new VaultSetupPostRequest(
+            (Integer) session.getAttribute("user_id"),
+            request.getParameter("password"),
+            request.getParameter("confirm-password")
+        );
 
-        String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirm-password");
+        VaultSetupPostResponse res = vaultService.setupVault(req);
 
-        // Validate passwords
-        if (password == null || password.isEmpty()) {
-            request.setAttribute("errorMessage", "Password is required");
-            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
-            return;
-        }
-
-        if (password.length() < 8) {
-            request.setAttribute("errorMessage", "Password must be at least 8 characters long");
-            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
-            return;
-        }
-
-        if (!password.equals(confirmPassword)) {
-            request.setAttribute("errorMessage", "Passwords do not match");
-            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
-            return;
-        }
-
-        // Setup vault password
-        try {
-            boolean success = vaultDAO.setupVaultPassword(userId, password);
-
-            if (success) {
-                // Redirect to vault entry page
-                response.sendRedirect(request.getContextPath() + "/vaultentries");
-            } else {
-                request.setAttribute("errorMessage", "Failed to set up vault. Please try again.");
-                request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred. Please try again.");
+        if (res.isSuccess()) {
+            response.sendRedirect(request.getContextPath() + "/vaultentries");
+        } else {
+            request.setAttribute("errorMessage", res.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultSetup.jsp").forward(request, response);
         }
     }

@@ -1,7 +1,8 @@
-// File: src/main/java/com/demo/web/controller/Autographs/RestoreAutographServlet.java
 package com.demo.web.controller.Autographs;
 
-import com.demo.web.dao.Autographs.autographDAO;
+import com.demo.web.dto.Journals.JournalTrashRequest;
+import com.demo.web.dto.Journals.JournalTrashResponse;
+import com.demo.web.service.JournalService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +13,15 @@ import java.io.IOException;
 
 @WebServlet("/autograph/restore")
 public class AutographRestore extends HttpServlet {
+
+    private JournalService journalService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.journalService = new JournalService();
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -22,24 +32,9 @@ public class AutographRestore extends HttpServlet {
             return;
         }
 
-        String recycleBinIdStr = request.getParameter("recycleBinId");
-        if (recycleBinIdStr == null) {
-            response.sendRedirect(request.getContextPath() + "/trashmgt");
-            return;
-        }
+        JournalTrashRequest req = new JournalTrashRequest(userId, "restore", request.getParameter("recycleBinId"));
+        JournalTrashResponse res = journalService.handleTrashAction(req);
 
-        try {
-            int recycleBinId = Integer.parseInt(recycleBinIdStr);
-            autographDAO dao = new autographDAO();
-            boolean success = dao.restoreAutographFromRecycleBin(recycleBinId, userId);
-
-            if (success) {
-                response.sendRedirect(request.getContextPath() + "/trashmgt?msg=Autograph restored");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/trashmgt?error=Failed to restore");
-            }
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/trashmgt?error=Invalid ID");
-        }
+        response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
     }
 }

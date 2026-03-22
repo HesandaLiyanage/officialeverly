@@ -157,6 +157,17 @@ public class FeedProfileView extends HttpServlet {
                     + ", following: " + followingCount
                     + (savedPosts != null ? ", saved: " + savedPosts.size() : ""));
 
+            // Pre-compute display values for JSP
+            String profileUsername = profileToView.getFeedUsername() != null
+                    ? profileToView.getFeedUsername() : "user";
+            String profilePic = profileToView.getFeedProfilePictureUrl();
+            String profileBio = (profileToView.getFeedBio() != null)
+                    ? profileToView.getFeedBio() : "No bio yet";
+            String profileInitials = profileToView.getInitials() != null
+                    ? profileToView.getInitials() : "U";
+            int profileId = profileToView.getFeedProfileId();
+            boolean hasProfilePic = (profilePic != null && !profilePic.contains("default"));
+
             // Set attributes
             request.setAttribute("profileToView", profileToView);
             request.setAttribute("isOwnProfile", isOwnProfile);
@@ -169,6 +180,12 @@ public class FeedProfileView extends HttpServlet {
             request.setAttribute("recommendedUsers", recommendedUsers);
             request.setAttribute("currentUserProfile", currentUserProfile);
             request.setAttribute("isBlocked", isBlocked);
+            request.setAttribute("profileUsername", profileUsername);
+            request.setAttribute("profilePic", profilePic);
+            request.setAttribute("profileBio", profileBio);
+            request.setAttribute("profileInitials", profileInitials);
+            request.setAttribute("profileId", profileId);
+            request.setAttribute("hasProfilePic", hasProfilePic);
 
             request.getRequestDispatcher("/WEB-INF/views/app/Feed/userprofile.jsp").forward(request, response);
 

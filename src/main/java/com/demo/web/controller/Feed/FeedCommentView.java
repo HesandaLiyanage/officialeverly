@@ -101,6 +101,23 @@ public class FeedCommentView extends HttpServlet {
         // Check if current user is the post owner
         boolean isPostOwner = post.getFeedProfileId() == currentProfile.getFeedProfileId();
 
+        // Pre-compute derived values for the JSP (avoids scriptlets)
+        FeedProfile postOwner = post.getFeedProfile();
+        String ownerPic = (postOwner != null) ? postOwner.getFeedProfilePictureUrl() : null;
+        boolean hasOwnerPic = ownerPic != null && !ownerPic.isEmpty() && !ownerPic.contains("default");
+        String ownerGradient = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+
+        String postLikedClass = isLikedByUser ? "liked" : "";
+        String postFillColor = isLikedByUser ? "#ed4956" : "none";
+        String postStrokeColor = isLikedByUser ? "#ed4956" : "currentColor";
+
+        String cpUrl = currentProfile.getFeedProfilePictureUrl();
+        String cpUrlSafe = (cpUrl != null) ? cpUrl : "";
+
+        boolean hasMultipleMedia = mediaItems != null && mediaItems.size() > 1;
+        int mediaCount = (mediaItems != null) ? mediaItems.size() : 0;
+        int currentProfileId = currentProfile.getFeedProfileId();
+
         // Set attributes for JSP
         request.setAttribute("post", post);
         request.setAttribute("comments", comments);
@@ -110,6 +127,18 @@ public class FeedCommentView extends HttpServlet {
         request.setAttribute("currentProfile", currentProfile);
         request.setAttribute("isPostOwner", isPostOwner);
         request.setAttribute("mediaItems", mediaItems);
+
+        // Derived presentation attributes
+        request.setAttribute("hasOwnerPic", hasOwnerPic);
+        request.setAttribute("ownerPic", ownerPic);
+        request.setAttribute("ownerGradient", ownerGradient);
+        request.setAttribute("postLikedClass", postLikedClass);
+        request.setAttribute("postFillColor", postFillColor);
+        request.setAttribute("postStrokeColor", postStrokeColor);
+        request.setAttribute("cpUrlSafe", cpUrlSafe);
+        request.setAttribute("hasMultipleMedia", hasMultipleMedia);
+        request.setAttribute("mediaCount", mediaCount);
+        request.setAttribute("currentProfileId", currentProfileId);
 
         logger.info("[CommentsViewController] Loaded comments page for post " + postId +
                 " with " + comments.size() + " comments");

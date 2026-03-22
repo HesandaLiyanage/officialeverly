@@ -1,14 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.BlockedUserDAO;
-import com.demo.web.dao.Feed.FeedFollowDAO;
-import com.demo.web.dao.Feed.FeedPostDAO;
-import com.demo.web.dao.Feed.FeedPostLikeDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
-import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.model.Feed.FeedPost;
 import com.demo.web.model.Feed.FeedProfile;
-import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.service.FeedService;
+import com.demo.web.dto.Feed.FeedViewDTO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -29,22 +22,11 @@ import java.util.logging.Logger;
 public class FeedView extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FeedView.class.getName());
-    private FeedProfileDAO feedProfileDAO;
-    private FeedPostDAO feedPostDAO;
-    private FeedFollowDAO feedFollowDAO;
-    private FeedPostLikeDAO feedPostLikeDAO;
-    private MediaDAO mediaDAO;
-    private BlockedUserDAO blockedUserDAO;
+    private FeedService feedService;
 
     @Override
     public void init() throws ServletException {
-        feedProfileDAO = new FeedProfileDAO();
-        feedPostDAO = new FeedPostDAO();
-        feedFollowDAO = new FeedFollowDAO();
-        feedPostLikeDAO = new FeedPostLikeDAO();
-        mediaDAO = new MediaDAO();
-        blockedUserDAO = new BlockedUserDAO();
-        blockedUserDAO.ensureTableExists();
+        feedService = new FeedService();
     }
 
     @Override
@@ -68,77 +50,30 @@ public class FeedView extends HttpServlet {
 
             // If not in session, check database
             if (feedProfile == null) {
-                feedProfile = feedProfileDAO.findByUserId(userId);
+                feedProfile = feedService.getFeedProfileByUserId(userId);
 
                 if (feedProfile != null) {
-                    // Cache in session for future requests
                     session.setAttribute("feedProfile", feedProfile);
-                    logger.info("[FeedViewController] Feed profile loaded from DB and cached: @"
-                            + feedProfile.getFeedUsername());
+                    logger.info("[FeedViewController] Feed cached");
                 }
             }
 
             if (feedProfile == null) {
-                // No feed profile exists, redirect to welcome page
-                logger.info("[FeedViewController] No feed profile found, redirecting to welcome");
                 response.sendRedirect(request.getContextPath() + "/feedWelcome");
                 return;
             }
 
-            // Fetch all posts for FYP (random order)
-            List<FeedPost> posts = feedPostDAO.findAllPosts();
+            // Retrieve data via service and DTO
+            FeedViewDTO data = feedService.getFeedViewData(feedProfile, request.getContextPath());
 
-            // Filter out posts from blocked users
-            List<Integer> blockedProfileIds = blockedUserDAO.getBlockedProfileIds(feedProfile.getFeedProfileId());
-            if (!blockedProfileIds.isEmpty()) {
-                posts.removeIf(post -> {
-                    FeedProfile poster = post.getFeedProfile();
-                    return poster != null && blockedProfileIds.contains(poster.getFeedProfileId());
-                });
-                logger.info(
-                        "[FeedViewController] Filtered out posts from " + blockedProfileIds.size() + " blocked users");
-            }
-
-            // Load all media items for each post (for carousel)
-            for (FeedPost post : posts) {
-                try {
-                    List<MediaItem> mediaItems = mediaDAO.getMediaByMemoryId(post.getMemoryId());
-                    post.setMediaItems(mediaItems);
-
-                    // Set cover URL from first media if not set
-                    if (post.getCoverMediaUrl() == null && mediaItems != null && !mediaItems.isEmpty()) {
-                        post.setCoverMediaUrl(
-                                request.getContextPath() + "/viewmedia?id=" + mediaItems.get(0).getMediaId());
-                    }
-
-                    // Load like data for this post
-                    post.setLikeCount(feedPostLikeDAO.getLikeCount(post.getPostId()));
-                    post.setLikedByCurrentUser(
-                            feedPostLikeDAO.hasLikedPost(post.getPostId(), feedProfile.getFeedProfileId()));
-                } catch (Exception e) {
-                    logger.warning("[FeedViewController] Error loading media for post " + post.getPostId() + ": "
-                            + e.getMessage());
-                }
-            }
-
-            // Get recommended users for sidebar (5 random users not followed)
-            List<FeedProfile> recommendedUsers;
-            try {
-                recommendedUsers = feedFollowDAO.getRecommendedUsers(feedProfile.getFeedProfileId(), 5);
-            } catch (Exception e) {
-                // Fallback: just get random profiles from the database
-                logger.warning("[FeedViewController] feed_follows table may not exist, using fallback");
-                recommendedUsers = feedProfileDAO.findRandomProfiles(feedProfile.getFeedProfileId(), 5);
-            }
-
-            logger.info("[FeedViewController] Feed profile found: @" + feedProfile.getFeedUsername()
-                    + ", posts: " + posts.size()
-                    + ", recommended: " + recommendedUsers.size());
-
-            // Set attributes and show feed
-            request.setAttribute("feedProfile", feedProfile);
-            request.setAttribute("posts", posts);
-            request.setAttribute("recommendedUsers", recommendedUsers);
+            request.setAttribute("feedProfile", data.getFeedProfile());
+            request.setAttribute("posts", data.getPosts());
+            request.setAttribute("recommendedUsers", data.getRecommendedUsers());
+            request.setAttribute("feedUsername", data.getFeedUsername());
+            request.setAttribute("feedProfilePic", data.getFeedProfilePic());
+            request.setAttribute("feedInitials", data.getFeedInitials());
+            request.setAttribute("hasDefaultPic", data.hasDefaultPic());
+            request.setAttribute("currentProfileId", data.getCurrentProfileId());
             request.getRequestDispatcher("/WEB-INF/views/app/Feed/publicfeed.jsp").forward(request, response);
 
         } catch (Exception e) {

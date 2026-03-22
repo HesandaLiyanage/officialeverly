@@ -118,6 +118,7 @@ public class FeedProfileUpdate extends HttpServlet {
 
             // Set profile data and forward back to edit page
             request.setAttribute("feedProfile", feedProfile);
+            setDisplayAttributes(request, feedProfile);
             request.getRequestDispatcher("/WEB-INF/views/app/Feed/editpublicprofile.jsp").forward(request, response);
 
         } catch (Exception e) {
@@ -125,6 +126,7 @@ public class FeedProfileUpdate extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred. Please try again.");
             request.setAttribute("feedProfile", feedProfile);
+            setDisplayAttributes(request, feedProfile);
             request.getRequestDispatcher("/WEB-INF/views/app/Feed/editpublicprofile.jsp").forward(request, response);
         }
     }
@@ -156,5 +158,16 @@ public class FeedProfileUpdate extends HttpServlet {
             }
         }
         return false;
+    }
+
+    private void setDisplayAttributes(HttpServletRequest request, FeedProfile feedProfile) {
+        request.setAttribute("feedUsername", feedProfile.getFeedUsername() != null ? feedProfile.getFeedUsername() : "");
+        request.setAttribute("feedBio", feedProfile.getFeedBio() != null ? feedProfile.getFeedBio() : "");
+        request.setAttribute("feedProfilePicture", feedProfile.getFeedProfilePictureUrl());
+        request.setAttribute("feedInitials", feedProfile.getInitials() != null ? feedProfile.getInitials() : "U");
+        String pic = feedProfile.getFeedProfilePictureUrl();
+        boolean hasDefaultPic = (pic == null || pic.isEmpty() || pic.contains("default"));
+        request.setAttribute("hasDefaultPic", hasDefaultPic);
+        request.setAttribute("feedBioLength", feedProfile.getFeedBio() != null ? feedProfile.getFeedBio().length() : 0);
     }
 }

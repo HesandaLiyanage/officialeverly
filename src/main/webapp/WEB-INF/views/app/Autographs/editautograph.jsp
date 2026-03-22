@@ -1,11 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Create Autograph Book</title>
 
     <title>Edit Autograph Book</title>
 
@@ -19,10 +18,6 @@
 <div class="page-wrapper">
     <div class="create-autograph-container">
         <h1 class="page-title">Edit Autograph Book</h1>
-
-        <p class="page-subtitle">Update your book details and keep your cherished memories alive.</p>
-
-        <form class="autograph-form" id="autographForm" action="/updateautograph" method="post" enctype="multipart/form-data">
 
         <p class="page-subtitle">Update the details below to edit your book and keep your memories up to date.</p>
 
@@ -54,11 +49,7 @@
                         name="description"
                         id="description"
                         placeholder="A short description of your book's theme"
-                        rows="4"
-
-                </textarea>
-
-                ${autograph.description} </textarea>
+                        rows="4">${autograph.description}</textarea>
 
             </div>
 
@@ -88,15 +79,11 @@
                         />
                     </div>
 
-                    <div class="preview-container" id="previewContainer"></div>
-
                     <div class="preview-container" id="previewContainer">
                         <!-- Pre-populate preview if an image exists -->
-                        <% if (request.getAttribute("autograph") != null && ((com.demo.web.model.autograph)request.getAttribute("autograph")).getAutographPicUrl() != null) {
-                            String picUrl = ((com.demo.web.model.autograph)request.getAttribute("autograph")).getAutographPicUrl();
-                        %>
+                        <c:if test="${not empty autograph and not empty autograph.autographPicUrl}">
                         <div class="file-preview">
-                            <img src="${pageContext.request.contextPath}/dbimages/<%= picUrl %>" alt="Current Cover Preview">
+                            <img src="${pageContext.request.contextPath}/dbimages/${autograph.autographPicUrl}" alt="Current Cover Preview">
                             <button type="button" class="remove-file" onclick="removeFile()">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -104,7 +91,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <% } %>
+                        </c:if>
                     </div>
 
                 </div>
@@ -134,7 +121,7 @@
                     </button>
                 </div>
 
-                <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/username/name your auto!!!</p>
+                <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/<span id="linkDisplayValue">${autograph.title}</span></p>
             </div>
 
             <!-- Add Your Own Memory Section -->
@@ -159,23 +146,11 @@
                         Sticker
                     </button>
                 </div>
-
-                <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/<span id="linkDisplayValue">${autograph.title}</span></p>
-
             </div>
 
             <!-- Submit Buttons -->
             <div class="form-actions">
-
-                <button type="button" class="cancel-btn" onclick="window.location.href='/autographbooks'">
-                    Cancel
-                </button>
-                <button type="submit" class="submit-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-
-                <button type="button" class="cancel-btn" onclick="window.location.href='/autographs'">
+                <button type="button" class="cancel-btn" onclick="window.location.href='${pageContext.request.contextPath}/autographs'">
                     Cancel
                 </button>
                 <button type="submit" class="submit-btn">
@@ -183,14 +158,12 @@
                         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                         <polyline points="17 21 17 13 7 13 7 21"></polyline>
                         <polyline points="7 3 7 8 15 8"></polyline>
-
                     </svg>
                     Save Changes
                 </button>
             </div>
-        <svg/>
         </form>
-    <form/></div>
+    </div>
 </div>
 
 <jsp:include page="/WEB-INF/views/public/footer.jsp" />
@@ -252,10 +225,7 @@
         function handleFiles(files) {
             if (files.length === 0) return;
 
-
             const file = files[0]; // Only take first file for cover image
-
-            const file = files[0];
 
             if (!file.type.startsWith('image/')) {
                 alert('Please upload an image file');
@@ -305,21 +275,6 @@
             button.addEventListener('click', function() {
                 this.classList.toggle('active');
             });
-        });
-
-        // Form submission
-        autographForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(autographForm);
-
-            console.log('Form submitted');
-            console.log('Book Title:', formData.get('bookTitle'));
-            console.log('Description:', formData.get('description'));
-            console.log('Cover Image:', fileInput.files[0]);
-
-            // Redirect
-            window.location.href = '/autographbooks';
         });
 
     });

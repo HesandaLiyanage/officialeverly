@@ -1,154 +1,64 @@
 package com.demo.web.controller.Settings;
 
-import com.demo.web.dao.Groups.GroupInviteDAO;
-import com.demo.web.dao.Autographs.autographDAO;
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.Groups.GroupInvite;
-import com.demo.web.model.Memory.Memory;
-import com.demo.web.model.Autographs.autograph;
-import com.demo.web.model.Auth.user;
+import com.demo.web.dto.Settings.SettingsSharedLinksRequest;
+import com.demo.web.dto.Settings.SettingsSharedLinksResponse;
+import com.demo.web.service.AuthService;
+import com.demo.web.service.SettingsService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SettingsSharedLinksView extends HttpServlet {
 
-    private autographDAO autographDAO;
-    private memoryDAO memoryDAO;
-    private GroupInviteDAO groupInviteDAO;
-    private com.demo.web.dao.Auth.userDAO userDAO;
+    private AuthService authService;
+    private SettingsService settingsService;
 
     @Override
     public void init() throws ServletException {
-        autographDAO = new autographDAO();
-        memoryDAO = new memoryDAO();
-        groupInviteDAO = new GroupInviteDAO();
-        userDAO = new com.demo.web.dao.Auth.userDAO();
+        super.init();
+        authService = new AuthService();
+        settingsService = new SettingsService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        user currentUser = (session != null) ? (user) session.getAttribute("user") : null;
-
-        if (currentUser == null && session != null) {
-            // Fallback: Check if user_id exists in session (from SessionUtil)
-            Object userIdObj = session.getAttribute("user_id");
-            if (userIdObj != null) {
-                int userId = (Integer) userIdObj;
-                currentUser = userDAO.findById(userId);
-                if (currentUser != null) {
-                    session.setAttribute("user", currentUser); // Cache it
-                }
-            }
-        }
-
-        if (currentUser == null) {
-            System.out.println("SharedLinksController: User not found in session, redirecting to login.");
+        if (!authService.isValidSession(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        int userId = currentUser.getId();
+        SettingsSharedLinksRequest req = new SettingsSharedLinksRequest(authService.getUserId(request), null, null);
+        SettingsSharedLinksResponse res = settingsService.getSharedLinks(req);
 
-        // 1. Fetch Shared Autographs
-        List<autograph> allAutographs = autographDAO.findByUserId(userId);
-        List<autograph> sharedAutographs = new ArrayList<>();
-        for (autograph a : allAutographs) {
-            if (a.getShareToken() != null && !a.getShareToken().isEmpty()) {
-                sharedAutographs.add(a);
-            }
-        }
+        request.setAttribute("sharedAutographs", res.getSharedAutographs());
+        request.setAttribute("sharedMemories", res.getSharedMemories());
+        request.setAttribute("sharedInvites", res.getSharedInvites());
 
-        // 2. Fetch Shared Collaborative Memories
-        List<Memory> sharedMemories = memoryDAO.getSharedMemoriesByOwner(userId);
-
-        // 3. Fetch Active Group Invites
-        List<GroupInvite> sharedInvites = groupInviteDAO.findInvitesByCreator(userId);
-
-        request.setAttribute("sharedAutographs", sharedAutographs);
-        request.setAttribute("sharedMemories", sharedMemories);
-        request.setAttribute("sharedInvites", sharedInvites);
-
-        request.getRequestDispatcher("/WEB-INF/views/app/Settings/sharedlinks.jsp").forward(request, response);
+        request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        user currentUser = (session != null) ? (user) session.getAttribute("user") : null;
-
-        if (currentUser == null && session != null) {
-            Object userIdObj = session.getAttribute("user_id");
-            if (userIdObj != null) {
-                int userId = (Integer) userIdObj;
-                currentUser = userDAO.findById(userId);
-                if (currentUser != null) {
-                    session.setAttribute("user", currentUser);
-                }
-            }
-        }
-
-        if (currentUser == null) {
+        if (!authService.isValidSession(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        String action = request.getParameter("action");
-        String idStr = request.getParameter("id");
+        SettingsSharedLinksRequest req = new SettingsSharedLinksRequest(
+            authService.getUserId(request),
+            request.getParameter("action"),
+            request.getParameter("id")
+        );
 
-        if (idStr != null && !idStr.isEmpty()) {
-            int id = Integer.parseInt(idStr);
-            boolean success = false;
+        SettingsSharedLinksResponse res = settingsService.revokeSharedLink(req);
 
-            try {
-                if ("revokeAutograph".equals(action)) {
-                    // Update autograph token to null
-                    autograph ag = autographDAO.findById(id);
-                    if (ag != null && ag.getUserId() == currentUser.getId()) {
-                        success = autographDAO.revokeShareToken(id);
-                    }
-                } else if ("revokeCollab".equals(action)) {
-                    // Update memory collab key to null
-                    Memory mem = memoryDAO.getMemoryById(id);
-                    if (mem != null && mem.getUserId() == currentUser.getId()) {
-                        success = memoryDAO.setCollabShareKey(id, null);
-                    }
-                } else if ("revokeGroup".equals(action)) {
-                    // Delete invite
-                    // We trust the ID belongs to user or user has permission (handled by DAO
-                    // findByToken if implemented, but here direct delete)
-                    // Currently DAO doesn't checking ownership in delete, but given ID is usually
-                    // obscure...
-                    // Ideally we should check if invite.createdBy == currentUser.getId().
-                    // But assume safe for now as this is admin/settings page.
-                    // For thoroughness:
-                    // GroupInvite inv = groupInviteDAO.findById(id); // define finding by ID if
-                    // needed.
-                    // But deleteInvite(id) is sufficient for MVP.
-                    success = groupInviteDAO.deleteInvite(id);
-                }
-
-                if (success) {
-                    System.out.println("Successfully revoked " + action + " for ID " + id);
-                } else {
-                    System.err.println("Failed to revoke " + action + " for ID " + id);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        response.sendRedirect(request.getContextPath() + "/sharedlinks");
+        response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
     }
 }
