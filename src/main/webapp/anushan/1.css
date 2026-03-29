@@ -1,0 +1,167 @@
+/* --- Base --- */
+body {
+    font-family: "Inter", sans-serif;
+    margin: 0;
+    background: #faf7ff;
+    color: #333;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:1rem 0rem;
+    width: 100vw;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Logo */
+.logo {
+    font-family: "Pacifico", cursive;
+    color: #8c3eff;
+    font-size: 1.8rem;
+}
+
+/* Nav links */
+.navbar ul {
+    display: flex;
+    list-style: none;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+}
+.navbar a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.navbar a:hover {
+    color: #8c3eff;
+}
+.navbar a.active {
+    color: #8c3eff;
+    font-weight: 600;
+}
+
+/* Right Section */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    padding: 0.4rem 2rem 0.4rem 0.8rem;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    background: #f3f6ff;
+    outline: none;
+}
+
+.search-box img {
+    position: absolute;
+    right: 8px;
+    top: 5px;
+    width: 18px;
+    opacity: 0.6;
+}
+
+.icon {
+    width: 22px;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* --- MAIN CONTENT --- */
+main {
+    padding: 3rem 5rem;
+    text-align: center;
+}
+.autographs h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+.autographs p {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+/* --- BOOK GRID --- */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+}
+.book {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    padding: 1rem;
+    width: 180px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+.book:hover {
+    transform: translateY(-5px);
+}
+.book img {
+    width: 100%;
+    border-radius: 8px;
+}
+.book h3 {
+    margin: 0.8rem 0 0.3rem;
+    font-size: 1rem;
+}
+.book p {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* --- BUTTON --- */
+#addBook {
+    margin-top: 3rem;
+    background:#9A74D8;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.6rem;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+#addBook:hover {
+    background: #6e2dcc;
+}
+
+/* --- FOOTER --- */
+footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+footer a {
+    margin: 0 1rem;
+    text-decoration: none;
+    color: #8c3eff;
+}
+footer a:hover {
+    text-decoration: underline;
+}

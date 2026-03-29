@@ -1,0 +1,190 @@
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background-color: #faf7ff;
+    color: #1e1e1e;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+
+    padding:0 1rem 0 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #8c3eff;
+    font-family: "Pacifico", cursive;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    color: #8c3eff;
+}
+
+/* Right Section */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    padding: 0.4rem 2rem 0.4rem 0.8rem;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    background: #f3f6ff;
+    outline: none;
+}
+
+.search-box img {
+    position: absolute;
+    right: 8px;
+    top: 5px;
+    width: 18px;
+    opacity: 0.6;
+}
+
+.icon {
+    width: 22px;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* simple styles for Create Event form */
+body {
+    font-family: Arial, sans-serif;
+    background: #fbfbfc;
+    color: #111;
+    margin: 0;
+    padding: 20px;
+}
+
+/* container */
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* title */
+h1 {
+    font-size: 24px;
+    margin-bottom: 18px;
+}
+
+/* labels and fields */
+label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+input[type="text"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e6eef2;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+/* textarea height */
+textarea {
+    min-height: 100px;
+}
+
+/* dashed upload box */
+.upload-area {
+    border: 2px dashed #e6eef2;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    margin: 18px 0;
+    background: #fff;
+}
+
+/* buttons */
+.button-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.btn {
+    padding: 10px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* primary purple button */
+.btn-primary {
+    background: #7b5cf5;
+    color: #fff;
+}
+
+/* cancel button */
+.btn-cancel {
+    background: #efe8ff;
+    color: #444;
+}
+
+/* small responsive tweak */
+@media (max-width: 600px) {
+    .container { padding: 12px; }
+    .button-row { justify-content: stretch; flex-direction: column; }
+}
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+footer a {
+    color: #8c3eff;
+    margin: 0 1rem;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
