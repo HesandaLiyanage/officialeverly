@@ -1,8 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.SavedPostDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dto.Feed.FeedActionResponse;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,25 +11,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Logger;
 
 /**
  * SavePostServlet - Handles save/unsave (bookmark) actions for posts.
- * 
- * Route: /savePost
- * Method: POST
- * Parameters: action (save/unsave), postId
+ * Thin controller — all business logic delegated to FeedService.
  */
 public class FeedPostSave extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FeedPostSave.class.getName());
-    private SavedPostDAO savedPostDAO;
-    private FeedProfileDAO feedProfileDAO;
+    private FeedService feedService;
 
     @Override
     public void init() throws ServletException {
-        savedPostDAO = new SavedPostDAO();
-        feedProfileDAO = new FeedProfileDAO();
+        feedService = new FeedService();
     }
 
     @Override
@@ -40,28 +33,11 @@ public class FeedPostSave extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        HttpSession session = request.getSession(false);
+        // 1. Authenticate
+        FeedProfile currentProfile = resolveProfile(request, response);
+        if (currentProfile == null) return;
 
-        // Check if user is logged in
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            out.print("{\"success\": false, \"error\": \"Not authenticated\"}");
-            return;
-        }
-
-        // Get current user's feed profile
-        FeedProfile currentUserProfile = (FeedProfile) session.getAttribute("feedProfile");
-        if (currentUserProfile == null) {
-            Integer userId = (Integer) session.getAttribute("user_id");
-            currentUserProfile = feedProfileDAO.findByUserId(userId);
-            if (currentUserProfile == null) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"success\": false, \"error\": \"No feed profile\"}");
-                return;
-            }
-            session.setAttribute("feedProfile", currentUserProfile);
-        }
-
+        // 2. Extract parameters
         String action = request.getParameter("action");
         String postIdStr = request.getParameter("postId");
 
@@ -80,36 +56,38 @@ public class FeedPostSave extends HttpServlet {
             return;
         }
 
-        int currentProfileId = currentUserProfile.getFeedProfileId();
-        boolean success = false;
-        boolean isSaved = false;
+        // 3. Delegate to service
+        FeedActionResponse result = feedService.handlePostSave(postId, action, currentProfile.getFeedProfileId());
 
-        try {
-            if ("save".equals(action)) {
-                success = savedPostDAO.savePost(currentProfileId, postId);
-                isSaved = true;
-                logger.info("[SavePostServlet] Profile " + currentProfileId + " saved post " + postId);
-            } else if ("unsave".equals(action)) {
-                success = savedPostDAO.unsavePost(currentProfileId, postId);
-                isSaved = false;
-                logger.info("[SavePostServlet] Profile " + currentProfileId + " unsaved post " + postId);
-            } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"success\": false, \"error\": \"Invalid action\"}");
-                return;
-            }
-
-            // Return JSON response
-            String json = String.format(
-                    "{\"success\": %b, \"isSaved\": %b}",
-                    success, isSaved);
-            out.print(json);
-
-        } catch (Exception e) {
-            logger.severe("[SavePostServlet] Error: " + e.getMessage());
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.print("{\"success\": false, \"error\": \"Server error\"}");
+        // 4. Return response
+        if (!result.isSuccess() && result.getError() != null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.print("{\"success\": false, \"error\": \"" + result.getError() + "\"}");
+        } else {
+            out.print(String.format("{\"success\": %b, \"isSaved\": %b}", result.isSuccess(), result.getIsSaved()));
         }
+    }
+
+    private FeedProfile resolveProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("{\"success\": false, \"error\": \"Not authenticated\"}");
+            return null;
+        }
+
+        Integer userId = (Integer) session.getAttribute("user_id");
+        FeedProfile profile = (FeedProfile) session.getAttribute("feedProfile");
+        if (profile == null) {
+            try { profile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
+            if (profile != null) session.setAttribute("feedProfile", profile);
+        }
+
+        if (profile == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"success\": false, \"error\": \"No feed profile\"}");
+            return null;
+        }
+        return profile;
     }
 }

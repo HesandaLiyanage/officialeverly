@@ -10,6 +10,8 @@ public class Journal {
     private int userId;
     private String journalPic;  // Optional picture for the journal entry
 
+    private boolean isInVault;
+
     // 🔻 NEW: Soft-delete fields for Recycle Bin
     private boolean isDeleted;
     private Timestamp deletedAt;
@@ -69,6 +71,14 @@ public class Journal {
 
     public Timestamp getRestoredAt() {
         return restoredAt;
+    }
+
+    public boolean isInVault() {
+        return isInVault;
+    }
+
+    public void setInVault(boolean inVault) {
+        isInVault = inVault;
     }
 
     public void setRestoredAt(Timestamp restoredAt) {

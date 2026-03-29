@@ -1,9 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.FeedPostLikeDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
-import com.demo.web.dao.Notifications.NotificationDAO;
+import com.demo.web.dto.Feed.FeedActionResponse;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,18 +12,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Logger;
 
 /**
- * Servlet to handle post like/unlike AJAX operations
+ * Servlet to handle post like/unlike AJAX operations.
+ * Thin controller — all business logic delegated to FeedService.
  */
 @WebServlet("/postLike")
 public class FeedPostLike extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FeedPostLike.class.getName());
-    private FeedPostLikeDAO likeDAO = new FeedPostLikeDAO();
-    private FeedProfileDAO profileDAO = new FeedProfileDAO();
-    private NotificationDAO notificationDAO = new NotificationDAO();
+    private FeedService feedService;
+
+    @Override
+    public void init() throws ServletException {
+        feedService = new FeedService();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -34,27 +35,11 @@ public class FeedPostLike extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        // Check authentication
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            out.print("{\"success\": false, \"error\": \"Not authenticated\"}");
-            return;
-        }
+        // 1. Authenticate
+        FeedProfile currentProfile = resolveProfile(request, response);
+        if (currentProfile == null) return;
 
-        Integer userId = (Integer) session.getAttribute("user_id");
-        FeedProfile currentProfile = (FeedProfile) session.getAttribute("feedProfile");
-
-        if (currentProfile == null) {
-            currentProfile = profileDAO.findByUserId(userId);
-        }
-
-        if (currentProfile == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\": false, \"error\": \"No feed profile found\"}");
-            return;
-        }
-
+        // 2. Extract parameters
         String postIdStr = request.getParameter("postId");
         String action = request.getParameter("action");
 
@@ -66,54 +51,44 @@ public class FeedPostLike extends HttpServlet {
 
         try {
             int postId = Integer.parseInt(postIdStr);
-            boolean isLiked;
 
-            if ("like".equals(action)) {
-                likeDAO.likePost(postId, currentProfile.getFeedProfileId());
-                isLiked = true;
-            } else if ("unlike".equals(action)) {
-                likeDAO.unlikePost(postId, currentProfile.getFeedProfileId());
-                isLiked = false;
-            } else if ("toggle".equals(action)) {
-                isLiked = likeDAO.toggleLike(postId, currentProfile.getFeedProfileId());
-            } else {
+            // 3. Delegate to service
+            FeedActionResponse result = feedService.handlePostLike(postId, action, currentProfile);
+
+            // 4. Return response
+            if (!result.isSuccess()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"success\": false, \"error\": \"Invalid action\"}");
-                return;
+                out.print("{\"success\": false, \"error\": \"" + result.getError() + "\"}");
+            } else {
+                out.print(String.format("{\"success\": true, \"isLiked\": %b, \"likeCount\": %d}",
+                        result.getIsLiked(), result.getLikeCount()));
             }
-
-            int newLikeCount = likeDAO.getLikeCount(postId);
-            out.print(String.format("{\"success\": true, \"isLiked\": %b, \"likeCount\": %d}", isLiked, newLikeCount));
-
-            // Send notification when liked (not unliked)
-            if (isLiked) {
-                try {
-                    int postOwnerUserId = notificationDAO.getPostOwnerUserId(postId);
-                    if (postOwnerUserId > 0) {
-                        notificationDAO.createNotification(
-                                postOwnerUserId,
-                                "comments_reactions",
-                                "New Like",
-                                "liked your post",
-                                "/feed",
-                                userId);
-                    }
-                } catch (Exception ex) {
-                    logger.warning("[PostLikeServlet] Failed to send notification: " + ex.getMessage());
-                }
-            }
-
-            logger.info("[PostLikeServlet] Profile " + currentProfile.getFeedProfileId() +
-                    (isLiked ? " liked" : " unliked") + " post " + postId);
 
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.print("{\"success\": false, \"error\": \"Invalid post ID\"}");
-        } catch (Exception e) {
-            logger.severe("[PostLikeServlet] Error: " + e.getMessage());
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.print("{\"success\": false, \"error\": \"Server error\"}");
         }
+    }
+
+    private FeedProfile resolveProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("{\"success\": false, \"error\": \"Not authenticated\"}");
+            return null;
+        }
+
+        Integer userId = (Integer) session.getAttribute("user_id");
+        FeedProfile profile = (FeedProfile) session.getAttribute("feedProfile");
+        if (profile == null) {
+            try { profile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
+        }
+
+        if (profile == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"success\": false, \"error\": \"No feed profile found\"}");
+            return null;
+        }
+        return profile;
     }
 }

@@ -14,8 +14,8 @@ import java.io.IOException;
 
 public class AuthGoogleCallback extends HttpServlet {
 
-    private static final String CLIENT_ID = "417018345621-nn7l4i95mi5u0pu9vlipd5op6cfvmc72.apps.googleusercontent.com "; 
-    private static final String CLIENT_SECRET = "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"; 
+    private static final String CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID") != null ? System.getenv("GOOGLE_CLIENT_ID") : ""; 
+    private static final String CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET") != null ? System.getenv("GOOGLE_CLIENT_SECRET") : ""; 
     private static final String REDIRECT_URI = "http://localhost:9090/googlecallback";
 
     private AuthService authService;

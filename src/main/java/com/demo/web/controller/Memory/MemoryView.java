@@ -63,6 +63,7 @@ public class MemoryView extends HttpServlet {
             request.setAttribute("canEdit", viewResponse.isCanEdit());
             request.setAttribute("userRole", viewResponse.getUserRole());
             request.setAttribute("isAdmin", viewResponse.isAdmin());
+            request.setAttribute("isInVault", viewResponse.getMemory().isInVault());
             if (viewResponse.getGroup() != null) {
                 request.setAttribute("group", viewResponse.getGroup());
             }

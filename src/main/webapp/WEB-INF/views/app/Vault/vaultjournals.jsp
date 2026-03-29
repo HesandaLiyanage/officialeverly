@@ -69,7 +69,7 @@
                             <c:choose>
                                 <c:when test="${not empty journals}">
                                     <c:forEach var="journal" items="${journals}">
-                                        <div class="journal-card" data-title="${journal.title}">
+                                        <div class="journal-card" data-title="${journal.title}" onclick="window.location.href='${pageContext.request.contextPath}/journalview?id=${journal.journalId}'" style="cursor:pointer;">
                                             <div class="journal-header">
                                                 <div class="journal-icon">
                                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"

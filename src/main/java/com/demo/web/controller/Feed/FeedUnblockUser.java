@@ -1,8 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.BlockedUserDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dto.Feed.FeedActionResponse;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,23 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
- * UnblockUserServlet - Handles unblocking users from the blocked users page.
- * Called via POST form submission from blockedusers.jsp.
- * Redirects back to the blocked users page after processing.
+ * UnblockUserServlet - Handles unblocking users.
+ * Thin controller — all business logic delegated to FeedService.
  */
 public class FeedUnblockUser extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FeedUnblockUser.class.getName());
-    private BlockedUserDAO blockedUserDAO;
-    private FeedProfileDAO feedProfileDAO;
+    private FeedService feedService;
 
     @Override
     public void init() throws ServletException {
-        blockedUserDAO = new BlockedUserDAO();
-        feedProfileDAO = new FeedProfileDAO();
+        feedService = new FeedService();
     }
 
     @Override
@@ -45,11 +40,11 @@ public class FeedUnblockUser extends HttpServlet {
             return;
         }
 
+        // 1. Resolve profile
         Integer userId = (Integer) session.getAttribute("user_id");
         FeedProfile currentProfile = (FeedProfile) session.getAttribute("feedProfile");
-
         if (currentProfile == null) {
-            currentProfile = feedProfileDAO.findByUserId(userId);
+            try { currentProfile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
         }
 
         if (currentProfile == null) {
@@ -61,6 +56,7 @@ public class FeedUnblockUser extends HttpServlet {
             return;
         }
 
+        // 2. Extract parameters
         String blockedProfileIdStr = request.getParameter("profileId");
         if (blockedProfileIdStr == null || blockedProfileIdStr.isEmpty()) {
             if (isAjax) {
@@ -74,18 +70,20 @@ public class FeedUnblockUser extends HttpServlet {
 
         try {
             int blockedProfileId = Integer.parseInt(blockedProfileIdStr);
-            boolean success = blockedUserDAO.unblockUser(currentProfile.getFeedProfileId(), blockedProfileId);
 
+            // 3. Delegate to service
+            FeedActionResponse result = feedService.unblockUser(currentProfile.getFeedProfileId(), blockedProfileId);
+
+            // 4. Return response
             if (isAjax) {
-                sendJsonResponse(response, success, success ? "User unblocked" : "Could not unblock user");
+                sendJsonResponse(response, result.isSuccess(),
+                        result.isSuccess() ? result.getMessage() : result.getError());
             } else {
-                if (success) {
-                    logger.info("[UnblockUserServlet] User " + currentProfile.getFeedProfileId()
-                            + " unblocked user " + blockedProfileId);
+                if (result.isSuccess()) {
                     session.setAttribute("flashMessage", "User unblocked successfully");
                     session.setAttribute("flashType", "success");
                 } else {
-                    session.setAttribute("flashMessage", "Could not unblock user");
+                    session.setAttribute("flashMessage", result.getError());
                     session.setAttribute("flashType", "error");
                 }
                 response.sendRedirect(request.getContextPath() + "/blockedusers");
@@ -96,16 +94,6 @@ public class FeedUnblockUser extends HttpServlet {
                 sendJsonResponse(response, false, "Invalid profile ID");
             } else {
                 session.setAttribute("flashMessage", "Invalid profile ID");
-                session.setAttribute("flashType", "error");
-                response.sendRedirect(request.getContextPath() + "/blockedusers");
-            }
-        } catch (Exception e) {
-            logger.severe("[UnblockUserServlet] Error: " + e.getMessage());
-            e.printStackTrace();
-            if (isAjax) {
-                sendJsonResponse(response, false, "Server error occurred");
-            } else {
-                session.setAttribute("flashMessage", "Server error occurred");
                 session.setAttribute("flashType", "error");
                 response.sendRedirect(request.getContextPath() + "/blockedusers");
             }

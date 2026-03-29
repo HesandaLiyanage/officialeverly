@@ -1,14 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.FeedCommentDAO;
-import com.demo.web.dao.Feed.FeedPostDAO;
-import com.demo.web.dao.Feed.FeedPostLikeDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
-import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.model.Feed.FeedComment;
-import com.demo.web.model.Feed.FeedPost;
+import com.demo.web.dto.Feed.FeedCommentViewDTO;
 import com.demo.web.model.Feed.FeedProfile;
-import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,27 +12,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Servlet to display the comments page for a post
+ * Servlet to display the comments page for a post.
+ * Thin controller — all business logic delegated to FeedService.
  */
 @WebServlet("/viewComments")
 public class FeedCommentView extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FeedCommentView.class.getName());
-    private FeedPostDAO postDAO = new FeedPostDAO();
-    private FeedCommentDAO commentDAO = new FeedCommentDAO();
-    private FeedPostLikeDAO likeDAO = new FeedPostLikeDAO();
-    private FeedProfileDAO profileDAO = new FeedProfileDAO();
-    private MediaDAO mediaDAO = new MediaDAO();
+    private FeedService feedService;
+
+    @Override
+    public void init() throws ServletException {
+        feedService = new FeedService();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Check authentication
+        // 1. Authenticate
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -47,16 +42,15 @@ public class FeedCommentView extends HttpServlet {
 
         Integer userId = (Integer) session.getAttribute("user_id");
         FeedProfile currentProfile = (FeedProfile) session.getAttribute("feedProfile");
-
         if (currentProfile == null) {
-            currentProfile = profileDAO.findByUserId(userId);
+            try { currentProfile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
         }
-
         if (currentProfile == null) {
             response.sendRedirect(request.getContextPath() + "/feedprofile/setup");
             return;
         }
 
+        // 2. Extract parameters
         String postIdStr = request.getParameter("postId");
         if (postIdStr == null) {
             response.sendRedirect(request.getContextPath() + "/feed");
@@ -71,79 +65,36 @@ public class FeedCommentView extends HttpServlet {
             return;
         }
 
-        // Get the post with all details
-        FeedPost post = postDAO.findById(postId);
-        if (post == null) {
+        // 3. Delegate to service
+        FeedCommentViewDTO dto = feedService.getCommentViewData(postId, currentProfile);
+
+        if (dto == null) {
             response.sendRedirect(request.getContextPath() + "/feed");
             return;
         }
 
-        // Get all comments for this post
-        List<FeedComment> comments = commentDAO.getCommentsForPost(postId, currentProfile.getFeedProfileId());
+        // 4. Set attributes from DTO and forward
+        request.setAttribute("post", dto.getPost());
+        request.setAttribute("comments", dto.getComments());
+        request.setAttribute("likeCount", dto.getLikeCount());
+        request.setAttribute("isLikedByUser", dto.isLikedByUser());
+        request.setAttribute("commentCount", dto.getCommentCount());
+        request.setAttribute("currentProfile", dto.getCurrentProfile());
+        request.setAttribute("isPostOwner", dto.isPostOwner());
+        request.setAttribute("mediaItems", dto.getMediaItems());
+        request.setAttribute("hasOwnerPic", dto.isHasOwnerPic());
+        request.setAttribute("ownerPic", dto.getOwnerPic());
+        request.setAttribute("ownerGradient", dto.getOwnerGradient());
+        request.setAttribute("postLikedClass", dto.getPostLikedClass());
+        request.setAttribute("postFillColor", dto.getPostFillColor());
+        request.setAttribute("postStrokeColor", dto.getPostStrokeColor());
+        request.setAttribute("cpUrlSafe", dto.getCpUrlSafe());
+        request.setAttribute("hasMultipleMedia", dto.isHasMultipleMedia());
+        request.setAttribute("mediaCount", dto.getMediaCount());
+        request.setAttribute("currentProfileId", dto.getCurrentProfileId());
 
-        // Get like count and whether current user has liked the post
-        int likeCount = likeDAO.getLikeCount(postId);
-        boolean isLikedByUser = likeDAO.hasLikedPost(postId, currentProfile.getFeedProfileId());
+        logger.info("[CommentViewController] Loaded comments for post " + postId);
 
-        // Get comment count
-        int commentCount = commentDAO.getCommentCount(postId);
-
-        // Get media items for the post's memory
-        List<MediaItem> mediaItems = null;
-        if (post.getMemoryId() > 0) {
-            try {
-                mediaItems = mediaDAO.getMediaByMemoryId(post.getMemoryId());
-            } catch (java.sql.SQLException e) {
-                logger.warning("[CommentsViewController] Error getting media items: " + e.getMessage());
-            }
-        }
-
-        // Check if current user is the post owner
-        boolean isPostOwner = post.getFeedProfileId() == currentProfile.getFeedProfileId();
-
-        // Pre-compute derived values for the JSP (avoids scriptlets)
-        FeedProfile postOwner = post.getFeedProfile();
-        String ownerPic = (postOwner != null) ? postOwner.getFeedProfilePictureUrl() : null;
-        boolean hasOwnerPic = ownerPic != null && !ownerPic.isEmpty() && !ownerPic.contains("default");
-        String ownerGradient = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
-
-        String postLikedClass = isLikedByUser ? "liked" : "";
-        String postFillColor = isLikedByUser ? "#ed4956" : "none";
-        String postStrokeColor = isLikedByUser ? "#ed4956" : "currentColor";
-
-        String cpUrl = currentProfile.getFeedProfilePictureUrl();
-        String cpUrlSafe = (cpUrl != null) ? cpUrl : "";
-
-        boolean hasMultipleMedia = mediaItems != null && mediaItems.size() > 1;
-        int mediaCount = (mediaItems != null) ? mediaItems.size() : 0;
-        int currentProfileId = currentProfile.getFeedProfileId();
-
-        // Set attributes for JSP
-        request.setAttribute("post", post);
-        request.setAttribute("comments", comments);
-        request.setAttribute("likeCount", likeCount);
-        request.setAttribute("isLikedByUser", isLikedByUser);
-        request.setAttribute("commentCount", commentCount);
-        request.setAttribute("currentProfile", currentProfile);
-        request.setAttribute("isPostOwner", isPostOwner);
-        request.setAttribute("mediaItems", mediaItems);
-
-        // Derived presentation attributes
-        request.setAttribute("hasOwnerPic", hasOwnerPic);
-        request.setAttribute("ownerPic", ownerPic);
-        request.setAttribute("ownerGradient", ownerGradient);
-        request.setAttribute("postLikedClass", postLikedClass);
-        request.setAttribute("postFillColor", postFillColor);
-        request.setAttribute("postStrokeColor", postStrokeColor);
-        request.setAttribute("cpUrlSafe", cpUrlSafe);
-        request.setAttribute("hasMultipleMedia", hasMultipleMedia);
-        request.setAttribute("mediaCount", mediaCount);
-        request.setAttribute("currentProfileId", currentProfileId);
-
-        logger.info("[CommentsViewController] Loaded comments page for post " + postId +
-                " with " + comments.size() + " comments");
-
-        // Forward to JSP
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/app/Feed/feedcomment.jsp");
         dispatcher.forward(request, response);
     }

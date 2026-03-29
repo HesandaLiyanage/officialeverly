@@ -1,8 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.BlockedUserDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dto.Feed.FeedActionResponse;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,25 +11,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Logger;
 
 /**
  * BlockUserServlet - Handles blocking users from the feed.
- * Called via AJAX from the feed post options menu.
- * Returns JSON response.
+ * Thin controller — all business logic delegated to FeedService.
  */
 public class FeedBlockUser extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FeedBlockUser.class.getName());
-    private BlockedUserDAO blockedUserDAO;
-    private FeedProfileDAO feedProfileDAO;
+    private FeedService feedService;
 
     @Override
     public void init() throws ServletException {
-        blockedUserDAO = new BlockedUserDAO();
-        feedProfileDAO = new FeedProfileDAO();
-        // Ensure the blocked_users table exists
-        blockedUserDAO.ensureTableExists();
+        feedService = new FeedService();
     }
 
     @Override
@@ -40,26 +33,11 @@ public class FeedBlockUser extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            out.write("{\"success\": false, \"message\": \"Not logged in\"}");
-            return;
-        }
+        // 1. Authenticate
+        FeedProfile currentProfile = resolveProfile(request, response);
+        if (currentProfile == null) return;
 
-        Integer userId = (Integer) session.getAttribute("user_id");
-        FeedProfile currentProfile = (FeedProfile) session.getAttribute("feedProfile");
-
-        if (currentProfile == null) {
-            currentProfile = feedProfileDAO.findByUserId(userId);
-        }
-
-        if (currentProfile == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"success\": false, \"message\": \"No feed profile found\"}");
-            return;
-        }
-
+        // 2. Extract parameters
         String targetProfileIdStr = request.getParameter("targetProfileId");
         if (targetProfileIdStr == null || targetProfileIdStr.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -70,29 +48,38 @@ public class FeedBlockUser extends HttpServlet {
         try {
             int targetProfileId = Integer.parseInt(targetProfileIdStr);
 
-            if (targetProfileId == currentProfile.getFeedProfileId()) {
-                out.write("{\"success\": false, \"message\": \"Cannot block yourself\"}");
-                return;
-            }
+            // 3. Delegate to service
+            FeedActionResponse result = feedService.blockUser(currentProfile.getFeedProfileId(), targetProfileId);
 
-            boolean success = blockedUserDAO.blockUser(currentProfile.getFeedProfileId(), targetProfileId);
-
-            if (success) {
-                logger.info("[BlockUserServlet] User " + currentProfile.getFeedProfileId()
-                        + " blocked user " + targetProfileId);
-                out.write("{\"success\": true, \"message\": \"User blocked successfully\"}");
-            } else {
-                out.write("{\"success\": false, \"message\": \"User is already blocked or could not be blocked\"}");
-            }
+            // 4. Return response
+            out.write("{\"success\": " + result.isSuccess() + ", \"message\": \"" +
+                    (result.isSuccess() ? result.getMessage() : result.getError()) + "\"}");
 
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"success\": false, \"message\": \"Invalid targetProfileId\"}");
-        } catch (Exception e) {
-            logger.severe("[BlockUserServlet] Error: " + e.getMessage());
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"success\": false, \"message\": \"Server error\"}");
         }
+    }
+
+    private FeedProfile resolveProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"success\": false, \"message\": \"Not logged in\"}");
+            return null;
+        }
+
+        Integer userId = (Integer) session.getAttribute("user_id");
+        FeedProfile profile = (FeedProfile) session.getAttribute("feedProfile");
+        if (profile == null) {
+            try { profile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
+        }
+
+        if (profile == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"success\": false, \"message\": \"No feed profile found\"}");
+            return null;
+        }
+        return profile;
     }
 }

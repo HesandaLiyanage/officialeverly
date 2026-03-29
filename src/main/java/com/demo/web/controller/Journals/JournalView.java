@@ -50,6 +50,7 @@ public class JournalView extends HttpServlet {
 
         if (res.isView() || res.isEdit()) {
             request.setAttribute("journal", res.getJournal());
+            request.setAttribute("isInVault", res.getJournal().isInVault());
             preComputeJournalAttributes(request, res.getJournal());
             request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
             return;

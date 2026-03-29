@@ -107,7 +107,7 @@ public class memoryDAO {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
                     "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
-                    "is_collaborative, collab_share_key, group_id " +
+                    "is_collaborative, collab_share_key, group_id, is_in_vault " +
                     "FROM memory WHERE memory_id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -339,6 +339,13 @@ public class memoryDAO {
             if (!rs.wasNull()) {
                 memory.setGroupId(gid);
             }
+        } catch (SQLException e) {
+            // Column may not exist in older queries
+        }
+
+        // Vault field
+        try {
+            memory.setInVault(rs.getBoolean("is_in_vault"));
         } catch (SQLException e) {
             // Column may not exist in older queries
         }
