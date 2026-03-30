@@ -1,10 +1,8 @@
 package com.demo.web.controller.Autographs;
 
-import com.demo.web.dao.Autographs.AutographEntryDAO;
-import com.demo.web.dao.Autographs.autographDAO;
-import com.demo.web.dao.Notifications.NotificationDAO;
-import com.demo.web.model.Autographs.AutographEntry;
-import com.demo.web.model.Autographs.autograph;
+import com.demo.web.dto.Autographs.AutographEntrySubmitRequest;
+import com.demo.web.dto.Autographs.AutographEntrySubmitResponse;
+import com.demo.web.service.AutographService;
 import com.demo.web.service.AuthService;
 
 import javax.servlet.ServletException;
@@ -14,20 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/**
- * Handles submission of autograph entries from shared links.
- * Mapped to /submit-autograph in web.xml.
- * Accepts POST with: token, content, author, contentPlain
- * Returns JSON: { "success": true/false, "message": "..." }
- */
 public class AutographEntrySubmit extends HttpServlet {
 
     private AuthService authService;
+    private AutographService autographService;
 
     @Override
     public void init() throws ServletException {
         super.init();
         authService = new AuthService();
+        autographService = new AutographService();
     }
 
     @Override
@@ -39,80 +33,26 @@ public class AutographEntrySubmit extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        // Validate session
         if (!authService.isValidSession(request)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             out.write("{\"success\": false, \"message\": \"You must be logged in to submit an autograph.\"}");
             return;
         }
 
-        String token = request.getParameter("token");
-        String content = request.getParameter("content");
-        String author = request.getParameter("author");
-        String contentPlain = request.getParameter("contentPlain");
+        AutographEntrySubmitRequest req = new AutographEntrySubmitRequest(
+            authService.getUserId(request),
+            request.getParameter("token"),
+            request.getParameter("content"),
+            request.getParameter("author"),
+            request.getParameter("contentPlain")
+        );
 
-        // Validate required fields
-        if (token == null || token.isEmpty()) {
-            out.write("{\"success\": false, \"message\": \"Invalid share token.\"}");
-            return;
+        AutographEntrySubmitResponse res = autographService.submitEntry(req);
+
+        if (!res.isSuccess()) {
+            response.setStatus(res.getStatusCode());
         }
-        if (content == null || content.trim().isEmpty()) {
-            out.write("{\"success\": false, \"message\": \"Please write a message.\"}");
-            return;
-        }
-        if (author == null || author.trim().isEmpty()) {
-            out.write("{\"success\": false, \"message\": \"Please enter your name.\"}");
-            return;
-        }
-
-        try {
-            int userId = authService.getUserId(request);
-
-            // Look up the autograph by share token
-            autographDAO agDao = new autographDAO();
-            autograph ag = agDao.getAutographByShareToken(token);
-
-            if (ag == null) {
-                out.write("{\"success\": false, \"message\": \"Autograph book not found or link has expired.\"}");
-                return;
-            }
-
-            // Create the entry
-            AutographEntry entry = new AutographEntry();
-            entry.setAutographId(ag.getAutographId());
-            entry.setUserId(userId);
-            entry.setContent(content);
-            entry.setContentPlain(contentPlain != null ? contentPlain : "");
-            entry.setLink(token);
-
-            AutographEntryDAO entryDao = new AutographEntryDAO();
-            boolean saved = entryDao.createEntry(entry);
-
-            if (saved) {
-                out.write("{\"success\": true, \"message\": \"Autograph submitted successfully!\"}");
-
-                // Send notification to autograph owner
-                try {
-                    NotificationDAO notifDAO = new NotificationDAO();
-                    int ownerUserId = ag.getUserId();
-                    notifDAO.createNotification(
-                            ownerUserId,
-                            "comments_reactions",
-                            "New Autograph Entry",
-                            "wrote in your autograph book",
-                            "/autographs",
-                            userId);
-                } catch (Exception ex) {
-                    // Don't fail the main request if notification fails
-                }
-            } else {
-                out.write("{\"success\": false, \"message\": \"Failed to save your autograph. Please try again.\"}");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"success\": false, \"message\": \"Server error: " + e.getMessage().replace("\"", "'") + "\"}");
-        }
+        
+        out.write("{\"success\": " + res.isSuccess() + ", \"message\": \"" + res.getMessage() + "\"}");
     }
 }

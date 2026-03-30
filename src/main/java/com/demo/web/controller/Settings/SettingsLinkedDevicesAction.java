@@ -1,102 +1,76 @@
 package com.demo.web.controller.Settings;
 
-import com.demo.web.dao.Auth.userSessionDAO;
-import com.demo.web.model.Auth.UserSession;
-import com.demo.web.util.SessionUtil;
+import com.demo.web.dto.Settings.SettingsLinkedDevicesRequest;
+import com.demo.web.dto.Settings.SettingsLinkedDevicesResponse;
+import com.demo.web.service.AuthService;
+import com.demo.web.service.SettingsService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
 public class SettingsLinkedDevicesAction extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-
-    private userSessionDAO userSessionDAO;
+    
+    private AuthService authService;
+    private SettingsService settingsService;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        userSessionDAO = new userSessionDAO();
+        authService = new AuthService();
+        settingsService = new SettingsService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Check if user is logged in
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
+        if (!authService.isValidSession(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        // Get user ID from session
-        Integer userId = (Integer) session.getAttribute("user_id");
-        String currentSessionId = session.getId();
+        SettingsLinkedDevicesRequest req = new SettingsLinkedDevicesRequest(
+            authService.getUserId(request),
+            null,
+            request.getSession(false).getId(),
+            null
+        );
 
-        // Get all active sessions for this user
-        List<UserSession> devices = userSessionDAO.getUserSessions(userId);
-        System.out.println("=== LinkedDevicesServlet DEBUG ===");
-        System.out.println("Found " + devices.size() + " active sessions for user ID: " + userId);
-        // Mark current device
-        for (UserSession device : devices) {
-            if (device.getSessionId().equals(currentSessionId)) {
-                device.setDeviceName(device.getDeviceName() + " (This device)");
-                System.out.println("Session ID: " + device.getSessionId() + ", Device Name: " + device.getDeviceName() + ", Active: " + device.isActive());
+        SettingsLinkedDevicesResponse res = settingsService.getLinkedDevices(req);
 
-            }
-        }
+        request.setAttribute("devices", res.getDevices());
+        request.setAttribute("currentSessionId", req.getCurrentSessionId());
 
-        // Pass devices to JSP
-        request.setAttribute("devices", devices);
-        request.setAttribute("currentSessionId", currentSessionId);
-
-        // Forward to JSP
-        request.getRequestDispatcher("/WEB-INF/views/settings/linkeddevices.jsp").forward(request, response);
+        request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Check if user is logged in
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
+        if (!authService.isValidSession(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        String action = request.getParameter("action");
-        Integer userId = (Integer) session.getAttribute("user_id");
-        String currentSessionId = session.getId();
+        SettingsLinkedDevicesRequest req = new SettingsLinkedDevicesRequest(
+            authService.getUserId(request),
+            request.getParameter("action"),
+            request.getSession(false).getId(),
+            request.getParameter("sessionId")
+        );
 
-        if ("removeDevice".equals(action)) {
-            // Remove specific device
-            String sessionIdToRemove = request.getParameter("sessionId");
+        SettingsLinkedDevicesResponse res = settingsService.handleLinkedDevicesAction(req);
 
-            if (sessionIdToRemove != null && !sessionIdToRemove.equals(currentSessionId)) {
-                boolean removed = SessionUtil.revokeSessionById(sessionIdToRemove);
-
-                if (removed) {
-                    request.setAttribute("success", "Device removed successfully");
-                } else {
-                    request.setAttribute("error", "Failed to remove device");
-                }
-            } else {
-                request.setAttribute("error", "Cannot remove current device");
-            }
-
-        } else if ("logoutAll".equals(action)) {
-            // Logout from all devices except current
-            int removedCount = userSessionDAO.revokeAllSessionsExcept(userId, currentSessionId);
-            request.setAttribute("success", "Logged out from " + removedCount + " device(s)");
+        if (res.isSuccess()) {
+            request.setAttribute("success", res.getSuccessMessage());
+        } else {
+            request.setAttribute("error", res.getErrorMessage());
         }
 
-        // Redirect back to GET
-        response.sendRedirect(request.getContextPath() + "/linkeddevices");
+        response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
     }
 }

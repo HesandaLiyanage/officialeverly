@@ -16,33 +16,10 @@
 
             <body>
 
-                <jsp:include page="/views/public/header2.jsp" />
-
-                <% List<Group> userGroups = (List<Group>) request.getAttribute("userGroups");
-                        String errorMessage = (String) request.getAttribute("error");
-
-                        // Check for error message in session (from redirect after failed submission)
-                        if (errorMessage == null) {
-                        errorMessage = (String) session.getAttribute("errorMessage");
-                        if (errorMessage != null) {
-                        session.removeAttribute("errorMessage");
-                        }
-                        }
-
-                        // Get form data from session if validation failed (to preserve user input)
-                        String savedTitle = (String) session.getAttribute("formData_e_title");
-                        String savedDescription = (String) session.getAttribute("formData_e_description");
-                        String savedDate = (String) session.getAttribute("formData_e_date");
-                        String savedGroupId = (String) session.getAttribute("formData_group_id");
-
-                        // Clear form data from session after reading
-                        if (savedTitle != null) {
-                        session.removeAttribute("formData_e_title");
-                        session.removeAttribute("formData_e_description");
-                        session.removeAttribute("formData_e_date");
-                        session.removeAttribute("formData_group_id");
-                        }
-                        %>
+                <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+                <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+                
+                <jsp:include page="/WEB-INF/views/public/header2.jsp" />
 
                         <div class="page-wrapper">
                             <div class="create-event-container">
@@ -50,19 +27,24 @@
                                 <p class="page-subtitle">Plan and share special moments with your group members.</p>
 
                                 <%-- Display Error Message --%>
-                                    <% if (errorMessage !=null) { %>
-                                        <div class="alert alert-error"
-                                            style="background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #c00;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2"
-                                                style="vertical-align: middle; margin-right: 8px;">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="12" y1="8" x2="12" y2="12"></line>
-                                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                                            </svg>
-                                            <%= errorMessage %>
-                                        </div>
-                                        <% } %>
+                                <c:if test="${not empty requestScope.error or not empty sessionScope.errorMessage}">
+                                    <c:set var="displayError" value="${not empty requestScope.error ? requestScope.error : sessionScope.errorMessage}" />
+                                    <!-- We use a scriptlet just to remove the session error message if it's there, but wait, EL functions could do that or we can just let controller handle it.
+                                         The controller should handle removal, but since we are modifying JSP, let's keep the removal via scriptlet or just accept it... wait, we can't easily remove attributes from session using pure JSTL without a custom tag or scriptlet.
+                                         Let's just use c:remove to remove it from session after displaying. -->
+                                    <div class="alert alert-error"
+                                        style="background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #c00;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2"
+                                            style="vertical-align: middle; margin-right: 8px;">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                        </svg>
+                                        <c:out value="${displayError}" />
+                                    </div>
+                                    <c:remove var="errorMessage" scope="session" />
+                                </c:if>
 
                                             <form class="event-form" id="eventForm"
                                                 action="${pageContext.request.contextPath}/saveEvent" method="post"
@@ -74,7 +56,8 @@
                                                             style="color: #ef4444;">*</span></label>
                                                     <input type="text" class="form-input" name="e_title" id="e_title"
                                                         placeholder="e.g., Birthday Party, Family Reunion"
-                                                        value="<%= savedTitle != null ? savedTitle : "" %>" required />
+                                                        value="<c:out value='${sessionScope.formData_e_title}' />" required />
+                                                    <c:remove var="formData_e_title" scope="session" />
                                                 </div>
 
                                                 <!-- Event Description -->
@@ -83,7 +66,8 @@
                                                     <textarea class="form-input form-textarea" name="e_description"
                                                         id="e_description"
                                                         placeholder="Describe the event and what makes it special"
-                                                        rows="4"><%= savedDescription != null ? savedDescription : "" %></textarea>
+                                                        rows="4"><c:out value='${sessionScope.formData_e_description}' /></textarea>
+                                                    <c:remove var="formData_e_description" scope="session" />
                                                 </div>
 
                                                 <!-- Event Date -->
@@ -91,7 +75,8 @@
                                                     <label class="form-label">Event Date <span
                                                             style="color: #ef4444;">*</span></label>
                                                     <input type="date" class="form-input" name="e_date" id="e_date"
-                                                        value="<%= savedDate != null ? savedDate : "" %>" required />
+                                                        value="<c:out value='${sessionScope.formData_e_date}' />" required />
+                                                    <c:remove var="formData_e_date" scope="session" />
                                                 </div>
 
                                                 <!-- Select Groups (checkboxes for multi-group) -->
@@ -101,42 +86,46 @@
                                                     <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 12px;">
                                                         Select one or more groups to share this event with.</p>
                                                     <div class="group-checkbox-list" id="groupCheckboxList">
-                                                        <% if (userGroups !=null && !userGroups.isEmpty()) { for (Group
-                                                            group : userGroups) { %>
-                                                            <label class="group-checkbox-item">
-                                                                <input type="checkbox" name="group_ids"
-                                                                    value="<%= group.getGroupId() %>"
-                                                                    class="group-checkbox" />
-                                                                <span class="group-checkbox-label">
-                                                                    <span class="group-checkbox-name">
-                                                                        <%= group.getName() %>
-                                                                    </span>
-                                                                </span>
-                                                                <span class="group-checkbox-check">
-                                                                    <svg width="16" height="16" viewBox="0 0 24 24"
-                                                                        fill="none" stroke="currentColor"
-                                                                        stroke-width="3" stroke-linecap="round"
-                                                                        stroke-linejoin="round">
-                                                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                                                    </svg>
-                                                                </span>
-                                                            </label>
-                                                            <% } } else { %>
-                                                                <p
-                                                                    style="padding: 20px; text-align: center; color: #9ca3af;">
+                                                        <c:choose>
+                                                            <c:when test="${not empty requestScope.userGroups}">
+                                                                <c:forEach var="group" items="${requestScope.userGroups}">
+                                                                    <label class="group-checkbox-item">
+                                                                        <input type="checkbox" name="group_ids"
+                                                                            value="${group.groupId}"
+                                                                            class="group-checkbox" />
+                                                                        <span class="group-checkbox-label">
+                                                                            <span class="group-checkbox-name">
+                                                                                <c:out value="${group.name}" />
+                                                                            </span>
+                                                                        </span>
+                                                                        <span class="group-checkbox-check">
+                                                                            <svg width="16" height="16" viewBox="0 0 24 24"
+                                                                                fill="none" stroke="currentColor"
+                                                                                stroke-width="3" stroke-linecap="round"
+                                                                                stroke-linejoin="round">
+                                                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </label>
+                                                                </c:forEach>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <p style="padding: 20px; text-align: center; color: #9ca3af;">
                                                                     No groups available</p>
-                                                                <% } %>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </div>
-                                                    <% if (userGroups==null || userGroups.isEmpty()) { %>
-                                                        <p
-                                                            style="font-size: 0.875rem; color: #f59e0b; margin-top: 8px;">
+                                                    <c:if test="${empty requestScope.userGroups}">
+                                                        <p style="font-size: 0.875rem; color: #f59e0b; margin-top: 8px;">
                                                             You don't have any groups yet.
                                                             <a href="${pageContext.request.contextPath}/creategroup"
                                                                 style="color: #6366f1; text-decoration: underline;">
                                                                 Create a group first
                                                             </a>
                                                         </p>
-                                                        <% } %>
+                                                    </c:if>
+                                                    <!-- Also remove formData_group_id session attribute just in case -->
+                                                    <c:remove var="formData_group_id" scope="session" />
                                                 </div>
 
                                                 <!-- Event Picture Upload Area -->
@@ -188,7 +177,7 @@
                             </div>
                         </div>
 
-                        <jsp:include page="/views/public/footer.jsp" />
+                        <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {

@@ -3,18 +3,15 @@ package com.demo.web.controller.Journals;
 import com.demo.web.model.Journals.Journal;
 import com.demo.web.service.AuthService;
 import com.demo.web.service.JournalService;
+import com.demo.web.dto.Journals.JournalDashboardRequest;
+import com.demo.web.dto.Journals.JournalDashboardResponse;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
-/**
- * View controller for journal pages.
- * Handles GET requests for listing, viewing, and editing journals.
- */
 public class JournalView extends HttpServlet {
 
     private AuthService authService;
@@ -31,130 +28,91 @@ public class JournalView extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Validate session
         if (!authService.isValidSession(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
         Integer userId = authService.getUserId(request);
-        String action = request.getParameter("action");
-        String idParam = request.getParameter("id");
+        JournalDashboardRequest req = new JournalDashboardRequest(
+            userId,
+            request.getParameter("action"),
+            request.getParameter("id")
+        );
 
-        // Determine the action
-        if ("view".equals(action) && idParam != null) {
-            handleViewJournal(request, response, userId, idParam);
-        } else if ("edit".equals(action) && idParam != null) {
-            handleEditJournal(request, response, userId, idParam);
-        } else {
-            handleListJournals(request, response, userId);
+        JournalDashboardResponse res = journalService.getDashboard(req);
+
+        if (res.getError() != null) {
+            request.setAttribute("error", res.getError());
+            request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
+            return;
         }
+
+        if (res.isView() || res.isEdit()) {
+            request.setAttribute("journal", res.getJournal());
+            request.setAttribute("isInVault", res.getJournal().isInVault());
+            preComputeJournalAttributes(request, res.getJournal());
+            request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
+            return;
+        }
+
+        if (res.isList()) {
+            request.setAttribute("journals", res.getJournals());
+            request.setAttribute("totalCount", res.getTotalCount());
+            request.setAttribute("streakDays", res.getStreakDays());
+            request.setAttribute("longestStreak", res.getLongestStreak());
+            request.setAttribute("wordCounts", res.getWordCounts());
+            request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
+            return;
+        }
+
+        request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
     }
 
-    /**
-     * Handles listing all journals for the user.
-     */
-    private void handleListJournals(HttpServletRequest request, HttpServletResponse response,
-            int userId) throws ServletException, IOException {
-        System.out.println("[DEBUG JournalViewController] Handling /journals request");
+    private void preComputeJournalAttributes(HttpServletRequest request, Journal journal) {
+        String journalTitle = journal.getTitle() != null ? journal.getTitle() : "";
+        String htmlContent = "";
+        String backgroundTheme = "";
+        String decorationsJson = "[]";
+        String rawContentForJs = "";
 
-        try {
-            // Get streak information
-            int streakDays = journalService.getCurrentStreakDays(userId);
-            int longestStreak = journalService.getLongestStreakDays(userId);
+        String rawContent = journal.getContent();
+        if (rawContent != null && !rawContent.isEmpty()) {
+            rawContentForJs = rawContent.replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                    .replace("\n", "\\n")
+                    .replace("\r", "\\r");
+            try {
+                com.google.gson.Gson gson = new com.google.gson.Gson();
+                com.google.gson.JsonObject contentObj = gson.fromJson(rawContent, com.google.gson.JsonObject.class);
 
-            System.out.println("[DEBUG JournalViewController] Current streak: " + streakDays + " days");
-            System.out.println("[DEBUG JournalViewController] Longest streak: " + longestStreak + " days");
+                com.google.gson.JsonElement htmlEl = contentObj.get("htmlContent");
+                if (htmlEl != null && !htmlEl.isJsonNull()) {
+                    htmlContent = htmlEl.getAsString();
+                }
 
-            // Get all journals
-            List<Journal> journals = journalService.getJournalsByUserId(userId);
-            int totalCount = journalService.getJournalCount(userId);
+                com.google.gson.JsonElement decEl = contentObj.get("decorations");
+                if (decEl != null && !decEl.isJsonNull() && decEl.isJsonArray()) {
+                    decorationsJson = decEl.getAsJsonArray().toString();
+                }
 
-            System.out.println("[DEBUG JournalViewController] Found " + journals.size() + " journals");
-
-            // Set attributes for JSP
-            request.setAttribute("journals", journals);
-            request.setAttribute("totalCount", totalCount);
-            request.setAttribute("streakDays", streakDays);
-            request.setAttribute("longestStreak", longestStreak);
-
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
-
-        } catch (Exception e) {
-            System.out.println("[DEBUG JournalViewController] Error: " + e.getMessage());
-            e.printStackTrace();
-            request.setAttribute("error", "An error occurred while loading journals: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
+                com.google.gson.JsonElement bgEl = contentObj.get("backgroundTheme");
+                if (bgEl != null && !bgEl.isJsonNull()) {
+                    backgroundTheme = bgEl.getAsString();
+                }
+            } catch (Exception e) {}
         }
-    }
 
-    /**
-     * Handles viewing a single journal.
-     */
-    private void handleViewJournal(HttpServletRequest request, HttpServletResponse response,
-            int userId, String idParam) throws ServletException, IOException {
-        System.out.println("[DEBUG JournalViewController] Handling /journalview request");
+        request.setAttribute("journalTitle", journalTitle);
+        request.setAttribute("journalId", journal.getJournalId());
+        request.setAttribute("htmlContent", htmlContent);
+        request.setAttribute("backgroundTheme", backgroundTheme);
+        request.setAttribute("decorationsJson", decorationsJson);
+        request.setAttribute("rawContentForJs", rawContentForJs);
 
-        try {
-            int journalId = Integer.parseInt(idParam);
-            Journal journal = journalService.getJournalById(journalId, userId);
-
-            if (journal == null) {
-                System.out.println("[DEBUG JournalViewController] Journal not found or access denied");
-                request.setAttribute("error", "Journal entry not found or you don't have permission to view it.");
-                request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
-                return;
-            }
-
-            System.out.println("[DEBUG JournalViewController] Found journal: " + journal.getTitle());
-
-            request.setAttribute("journal", journal);
-            request.getRequestDispatcher("/views/app/Journals/journalview.jsp").forward(request, response);
-
-        } catch (NumberFormatException e) {
-            System.out.println("[DEBUG JournalViewController] Invalid journal ID format");
-            request.setAttribute("error", "Invalid Journal ID.");
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
-        } catch (Exception e) {
-            System.out.println("[DEBUG JournalViewController] Error: " + e.getMessage());
-            e.printStackTrace();
-            request.setAttribute("error", "An error occurred while loading the journal entry: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
-        }
-    }
-
-    /**
-     * Handles editing a journal (display the edit form).
-     */
-    private void handleEditJournal(HttpServletRequest request, HttpServletResponse response,
-            int userId, String idParam) throws ServletException, IOException {
-        System.out.println("[DEBUG JournalViewController] Handling /editjournal request");
-
-        try {
-            int journalId = Integer.parseInt(idParam);
-            Journal journal = journalService.getJournalById(journalId, userId);
-
-            if (journal == null) {
-                System.out.println("[DEBUG JournalViewController] Journal not found or access denied");
-                request.setAttribute("error", "Journal entry not found or you don't have permission to edit it.");
-                request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
-                return;
-            }
-
-            System.out.println("[DEBUG JournalViewController] Found journal: " + journal.getTitle());
-
-            request.setAttribute("journal", journal);
-            request.getRequestDispatcher("/views/app/Journals/editjournal.jsp").forward(request, response);
-
-        } catch (NumberFormatException e) {
-            System.out.println("[DEBUG JournalViewController] Invalid journal ID format");
-            request.setAttribute("error", "Invalid Journal ID.");
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
-        } catch (Exception e) {
-            System.out.println("[DEBUG JournalViewController] Error: " + e.getMessage());
-            e.printStackTrace();
-            request.setAttribute("error", "An error occurred while loading the journal entry: " + e.getMessage());
-            request.getRequestDispatcher("/views/app/Journals/journals.jsp").forward(request, response);
-        }
+        com.google.gson.Gson gson = new com.google.gson.Gson();
+        request.setAttribute("htmlContentJson", gson.toJson(htmlContent));
+        request.setAttribute("decorationsJsonEscaped", gson.toJson(decorationsJson));
+        request.setAttribute("backgroundThemeJson", gson.toJson(backgroundTheme));
     }
 }

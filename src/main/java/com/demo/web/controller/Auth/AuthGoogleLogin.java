@@ -13,8 +13,8 @@ import java.security.SecureRandom;
 
 public class AuthGoogleLogin extends HttpServlet {
 
-    // Use the Client ID from your downloaded JSON file
-    private static final String CLIENT_ID = "your_downloaded_client_id_from_json_file"; // Replace with actual ID
+    // Use the Client ID from your downloaded JSON file or Environment Variables
+    private static final String CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID") != null ? System.getenv("GOOGLE_CLIENT_ID") : "";
     private static final String REDIRECT_URI = "http://localhost:9090/memories/callback"; // Match your registered URI
     private static final String AUTHORIZATION_ENDPOINT = "https://accounts.google.com/o/oauth2/auth";
     private static final String SCOPE = "openid email profile";

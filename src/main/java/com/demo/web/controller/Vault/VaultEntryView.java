@@ -1,6 +1,7 @@
 package com.demo.web.controller.Vault;
 
-import com.demo.web.dao.Vault.VaultDAO;
+import com.demo.web.service.VaultService;
+import com.demo.web.dto.Vault.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,23 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * Servlet to handle vault entry (password verification)
- * This is the main vault access gate
- */
 @WebServlet("/vaultentries")
 public class VaultEntryView extends HttpServlet {
 
-    private VaultDAO vaultDAO;
+    private VaultService vaultService;
 
     @Override
     public void init() throws ServletException {
-        vaultDAO = new VaultDAO();
+        vaultService = new VaultService();
     }
 
-    /**
-     * GET - Show vault entry page or redirect to setup
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -37,22 +31,17 @@ public class VaultEntryView extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
+        VaultSetupGetRequest req = new VaultSetupGetRequest((Integer) session.getAttribute("user_id"));
+        VaultSetupGetResponse res = vaultService.getSetupState(req);
 
-        // Check if vault is set up
-        if (!vaultDAO.hasVaultSetup(userId)) {
-            // Vault not set up, redirect to setup page
+        if (!res.isHasSetup()) {
             response.sendRedirect(request.getContextPath() + "/vaultSetup");
             return;
         }
 
-        // Show vault entry page (password prompt)
-        request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultentries.jsp").forward(request, response);
     }
 
-    /**
-     * POST - Verify vault password
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -63,34 +52,20 @@ public class VaultEntryView extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
-        String password = request.getParameter("vaultPassword");
+        VaultEntryPostRequest req = new VaultEntryPostRequest(
+            (Integer) session.getAttribute("user_id"), 
+            request.getParameter("vaultPassword")
+        );
 
-        // Validate password
-        if (password == null || password.isEmpty()) {
-            request.setAttribute("errorMessage", "Password is required");
-            request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
-            return;
+        VaultEntryPostResponse res = vaultService.verifyEntry(req);
+
+        if (res.isValid()) {
+            session.setAttribute("vault_unlocked", true);
+            request.setAttribute("vaultUnlocked", true);
+        } else {
+            request.setAttribute("errorMessage", res.getErrorMessage());
         }
-
-        // Verify vault password
-        try {
-            boolean isValid = vaultDAO.verifyVaultPassword(userId, password);
-
-            if (isValid) {
-                // Password correct - store vault unlocked state in session
-                session.setAttribute("vault_unlocked", true);
-                request.setAttribute("vaultUnlocked", true);
-                request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
-            } else {
-                // Wrong password
-                request.setAttribute("errorMessage", "Incorrect password. Please try again.");
-                request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred. Please try again.");
-            request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
-        }
+        
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultentries.jsp").forward(request, response);
     }
 }

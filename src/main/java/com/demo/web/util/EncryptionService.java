@@ -7,9 +7,13 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Base64;
+import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -27,6 +31,10 @@ public class EncryptionService {
     private static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256";
     private static final int PBKDF2_ITERATIONS = 100000;
     private static final int SALT_LENGTH = 32;
+
+    // Server master key (cached after first load)
+    private static SecretKey serverMasterKey;
+    private static final byte[] SERVER_KEY_SALT = "everly-server-key-salt-v1".getBytes(StandardCharsets.UTF_8);
 
     // ============================================
     // BASIC KEY OPERATIONS
@@ -277,5 +285,115 @@ public class EncryptionService {
                 encryptedMasterKey.getIv(),
                 salt
         );
+    }
+
+    // ============================================
+    // SERVER MASTER KEY (for transparent at-rest encryption)
+    // ============================================
+
+    /**
+     * Get the server master key, used to encrypt per-file keys.
+     * The key is derived from a secret configured in config/encryption.properties
+     * or falls back to a default for development.
+     */
+    public static SecretKey getServerMasterKey() throws Exception {
+        if (serverMasterKey != null) {
+            return serverMasterKey;
+        }
+
+        String secret = loadServerSecret();
+        // Use PBKDF2 to derive a proper AES key from the secret string
+        byte[] salt = MessageDigest.getInstance("SHA-256").digest(SERVER_KEY_SALT);
+        serverMasterKey = deriveKeyFromPassword(secret, salt);
+        return serverMasterKey;
+    }
+
+    private static String loadServerSecret() {
+        // Try loading from config/encryption.properties
+        try (InputStream input = EncryptionService.class.getClassLoader()
+                .getResourceAsStream("config/encryption.properties")) {
+            if (input != null) {
+                Properties props = new Properties();
+                props.load(input);
+                String secret = props.getProperty("encryption.server.secret");
+                if (secret != null && !secret.isEmpty()) {
+                    return secret;
+                }
+            }
+        } catch (IOException e) {
+            // Fall through to default
+        }
+
+        // Fallback for development
+        System.err.println("WARNING: Using default encryption secret. Set encryption.server.secret in config/encryption.properties for production.");
+        return "everly-dev-secret-change-in-production-2024";
+    }
+
+    // ============================================
+    // FILE ENCRYPTION HELPERS (for media at-rest encryption)
+    // ============================================
+
+    /**
+     * Encrypt file bytes with a new per-file key.
+     * Returns the encrypted file data, and the per-file key encrypted with the server master key.
+     */
+    public static FileEncryptionResult encryptFile(byte[] fileData) throws Exception {
+        // Generate a unique key for this file
+        SecretKey fileKey = generateKey();
+        String keyId = generateKeyId();
+
+        // Encrypt the file data with the file key
+        EncryptedData encryptedFile = encrypt(fileData, fileKey);
+
+        // Encrypt the file key with the server master key
+        SecretKey masterKey = getServerMasterKey();
+        EncryptedData encryptedFileKey = encryptKey(fileKey, masterKey);
+
+        return new FileEncryptionResult(
+                keyId,
+                encryptedFile.getEncryptedData(),
+                encryptedFile.getIv(),
+                encryptedFileKey.getEncryptedData(),
+                encryptedFileKey.getIv()
+        );
+    }
+
+    /**
+     * Decrypt file bytes using the stored encrypted key.
+     */
+    public static byte[] decryptFile(byte[] encryptedFileData, byte[] fileIv,
+                                      byte[] encryptedKey, byte[] keyIv) throws Exception {
+        // Decrypt the file key using server master key
+        SecretKey masterKey = getServerMasterKey();
+        SecretKey fileKey = decryptKey(encryptedKey, keyIv, masterKey);
+
+        // Decrypt the file data
+        return decrypt(encryptedFileData, fileIv, fileKey);
+    }
+
+    /**
+     * Result of encrypting a file - contains everything needed to store and later decrypt.
+     */
+    public static class FileEncryptionResult {
+        private final String keyId;
+        private final byte[] encryptedFileData;
+        private final byte[] fileIv;
+        private final byte[] encryptedKey;
+        private final byte[] keyIv;
+
+        public FileEncryptionResult(String keyId, byte[] encryptedFileData, byte[] fileIv,
+                                     byte[] encryptedKey, byte[] keyIv) {
+            this.keyId = keyId;
+            this.encryptedFileData = encryptedFileData;
+            this.fileIv = fileIv;
+            this.encryptedKey = encryptedKey;
+            this.keyIv = keyIv;
+        }
+
+        public String getKeyId() { return keyId; }
+        public byte[] getEncryptedFileData() { return encryptedFileData; }
+        public byte[] getFileIv() { return fileIv; }
+        public byte[] getEncryptedKey() { return encryptedKey; }
+        public byte[] getKeyIv() { return keyIv; }
     }
 }

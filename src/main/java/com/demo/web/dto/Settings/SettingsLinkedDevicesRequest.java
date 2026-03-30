@@ -1,0 +1,3 @@
+package com.demo.web.dto.Settings;
+
+public class SettingsLinkedDevicesRequest { private Integer userId; private String action; private String currentSessionId; private String sessionIdToRemove; public SettingsLinkedDevicesRequest(Integer userId, String action, String currentSessionId, String sessionIdToRemove) { this.userId = userId; this.action = action; this.currentSessionId = currentSessionId; this.sessionIdToRemove = sessionIdToRemove; } public Integer getUserId() { return userId; } public String getAction() { return action; } public String getCurrentSessionId() { return currentSessionId; } public String getSessionIdToRemove() { return sessionIdToRemove; } }

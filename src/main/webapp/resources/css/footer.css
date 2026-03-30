@@ -12,7 +12,8 @@
     align-self: stretch;
     background-color: white;
     border-top: 1px solid #e9ecef;
-    margin-top: 20px;
+    margin-top: auto; /* Pushes footer to bottom when content is short */
+    width: 100%;
 }
 
 /* Inner Layout Container */

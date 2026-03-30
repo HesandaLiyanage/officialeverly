@@ -1,8 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.FeedFollowDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dto.Feed.FeedFollowersViewDTO;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,46 +10,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * FollowersViewController - Displays followers/following lists.
- * 
- * Routes:
- * - /followersview?type=followers&profileId=xxx
- * - /followersview?type=following&profileId=xxx
+ * Thin controller — all business logic delegated to FeedService.
  */
 public class FeedFollowersList extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FeedFollowersList.class.getName());
-    private FeedFollowDAO feedFollowDAO;
-    private FeedProfileDAO feedProfileDAO;
+    private FeedService feedService;
 
     @Override
     public void init() throws ServletException {
-        feedFollowDAO = new FeedFollowDAO();
-        feedProfileDAO = new FeedProfileDAO();
+        feedService = new FeedService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // 1. Authenticate
         HttpSession session = request.getSession(false);
-
-        // Check if user is logged in
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        // Get current user's feed profile
         FeedProfile currentUserProfile = (FeedProfile) session.getAttribute("feedProfile");
         if (currentUserProfile == null) {
             Integer userId = (Integer) session.getAttribute("user_id");
-            currentUserProfile = feedProfileDAO.findByUserId(userId);
+            try { currentUserProfile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
             if (currentUserProfile == null) {
                 response.sendRedirect(request.getContextPath() + "/feedWelcome");
                 return;
@@ -57,81 +48,36 @@ public class FeedFollowersList extends HttpServlet {
             session.setAttribute("feedProfile", currentUserProfile);
         }
 
+        // 2. Extract parameters
         String type = request.getParameter("type");
         String profileIdStr = request.getParameter("profileId");
 
-        logger.info("[FollowersViewController] Request received - type: " + type + ", profileId: " + profileIdStr);
+        // 3. Delegate to service
+        FeedFollowersViewDTO dto = feedService.getFollowersViewData(type, profileIdStr, currentUserProfile);
 
-        // Default to current user's profile if no profileId specified
-        int profileId = currentUserProfile.getFeedProfileId();
-        if (profileIdStr != null && !profileIdStr.isEmpty()) {
-            try {
-                profileId = Integer.parseInt(profileIdStr);
-            } catch (NumberFormatException e) {
-                profileId = currentUserProfile.getFeedProfileId();
-            }
+        if (dto == null) {
+            response.sendRedirect(request.getContextPath() + "/feed");
+            return;
         }
 
-        // Get the profile being viewed
-        FeedProfile profileToView;
-        if (profileId == currentUserProfile.getFeedProfileId()) {
-            profileToView = currentUserProfile;
-        } else {
-            profileToView = feedProfileDAO.findByFeedProfileId(profileId);
-            if (profileToView == null) {
-                logger.warning("[FollowersViewController] Profile not found: " + profileId);
-                response.sendRedirect(request.getContextPath() + "/feed");
-                return;
-            }
+        // Set follow status for each user in the list
+        for (FeedProfile profile : dto.getUserList()) {
+            boolean isFollowing = feedService.isFollowing(
+                    currentUserProfile.getFeedProfileId(),
+                    profile.getFeedProfileId());
+            request.setAttribute("isFollowing_" + profile.getFeedProfileId(), isFollowing);
         }
 
-        List<FeedProfile> userList = new ArrayList<>();
-        String pageTitle;
-        String jspPage;
+        // 4. Set attributes from DTO and forward
+        request.setAttribute("userList", dto.getUserList());
+        request.setAttribute("pageTitle", dto.getPageTitle());
+        request.setAttribute("profileToView", dto.getProfileToView());
+        request.setAttribute("currentUserProfile", dto.getCurrentUserProfile());
+        request.setAttribute("isOwnProfile", dto.isOwnProfile());
+        request.setAttribute("profileUsername", dto.getProfileUsername());
+        request.setAttribute("currentProfileId", dto.getCurrentProfileId());
 
-        if ("following".equals(type)) {
-            pageTitle = "Following";
-            jspPage = "/views/app/Feed/following.jsp";
-        } else {
-            pageTitle = "Followers";
-            jspPage = "/views/app/Feed/followers.jsp";
-        }
-
-        try {
-            if ("following".equals(type)) {
-                // Get following list
-                userList = feedFollowDAO.getFollowing(profileId);
-                logger.info("[FollowersViewController] Getting following for profile " + profileId
-                        + ": " + userList.size() + " users");
-            } else {
-                // Default to followers
-                userList = feedFollowDAO.getFollowers(profileId);
-                logger.info("[FollowersViewController] Getting followers for profile " + profileId
-                        + ": " + userList.size() + " users");
-            }
-
-            // For each user, check if current user follows them
-            for (FeedProfile profile : userList) {
-                boolean isFollowing = feedFollowDAO.isFollowing(
-                        currentUserProfile.getFeedProfileId(),
-                        profile.getFeedProfileId());
-                request.setAttribute("isFollowing_" + profile.getFeedProfileId(), isFollowing);
-            }
-
-        } catch (Exception e) {
-            logger.warning(
-                    "[FollowersViewController] Error getting follow list (table may not exist): " + e.getMessage());
-            // Continue with empty list - page will show "no followers/following yet"
-        }
-
-        // Set attributes
-        request.setAttribute("userList", userList);
-        request.setAttribute("pageTitle", pageTitle);
-        request.setAttribute("profileToView", profileToView);
-        request.setAttribute("currentUserProfile", currentUserProfile);
-        request.setAttribute("isOwnProfile", profileId == currentUserProfile.getFeedProfileId());
-
-        logger.info("[FollowersViewController] Forwarding to " + jspPage + " with " + userList.size() + " users");
-        request.getRequestDispatcher(jspPage).forward(request, response);
+        logger.info("[FollowersController] Forwarding to " + dto.getJspPage() + " with " + dto.getUserList().size() + " users");
+        request.getRequestDispatcher(dto.getJspPage()).forward(request, response);
     }
 }

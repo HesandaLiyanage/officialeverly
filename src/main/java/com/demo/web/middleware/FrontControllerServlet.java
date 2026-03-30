@@ -39,51 +39,51 @@ public class FrontControllerServlet extends HttpServlet {
         // ========================================
         // PUBLIC PAGES (no authentication needed)
         // ========================================
-        routeToJsp.put("/", "/views/public/landing.jsp");
-        routeToJsp.put("/login", "/views/public/loginContent.jsp");
+        routeToJsp.put("/", "/WEB-INF/views/public/landing.jsp");
+        routeToJsp.put("/login", "/WEB-INF/views/public/loginContent.jsp");
         // /register and /contact removed - JSPs don't exist
-        routeToJsp.put("/aboutus", "/views/public/aboutus.jsp");
-        routeToJsp.put("/signup", "/views/public/signup.jsp");
-        routeToJsp.put("/signup2", "/views/public/signup2.jsp");
-        routeToJsp.put("/404", "/views/public/404.jsp");
-        routeToJsp.put("/checkyourinbox", "/views/public/checkyourinbox.jsp");
-        routeToJsp.put("/emailsentreset", "/views/public/emailsentreset.jsp");
-        routeToJsp.put("/emailresetsuccess", "/views/public/emailresetsuccess.jsp");
-        routeToJsp.put("/footer", "/views/public/footer.jsp");
-        routeToJsp.put("/forgotpassword", "/views/public/forgotpassword.jsp");
-        routeToJsp.put("/header", "/views/public/header.jsp");
-        routeToJsp.put("/header2", "/views/public/header2.jsp");
-        routeToJsp.put("/index", "/views/public/index.jsp");
-        routeToJsp.put("/layout", "/views/public/layout.jsp");
-        routeToJsp.put("/layout2", "/views/public/layout2.jsp");
-        routeToJsp.put("/passwordreset", "/views/public/passwordreset.jsp");
-        routeToJsp.put("/passwordresetenterpassword", "/views/public/passwordreset-enterpassword.jsp");
-        routeToJsp.put("/plans", "/views/public/plans.jsp");
-        routeToJsp.put("/signupthankyou", "/views/public/signupThankyou.jsp");
-        routeToJsp.put("/whyeverly", "/views/public/whyeverly.jsp");
-        routeToJsp.put("/youcantaccessthis", "/views/public/youcantaccessthis.jsp");
-        routeToJsp.put("/privacy", "/views/public/privacy.jsp");
+        routeToJsp.put("/aboutus", "/WEB-INF/views/public/aboutus.jsp");
+        routeToJsp.put("/signup", "/WEB-INF/views/public/signup.jsp");
+        routeToJsp.put("/signup2", "/WEB-INF/views/public/signup2.jsp");
+        routeToJsp.put("/404", "/WEB-INF/views/public/404.jsp");
+        routeToJsp.put("/checkyourinbox", "/WEB-INF/views/public/checkyourinbox.jsp");
+        routeToJsp.put("/emailsentreset", "/WEB-INF/views/public/emailsentreset.jsp");
+        routeToJsp.put("/emailresetsuccess", "/WEB-INF/views/public/emailresetsuccess.jsp");
+        routeToJsp.put("/footer", "/WEB-INF/views/public/footer.jsp");
+        routeToJsp.put("/forgotpassword", "/WEB-INF/views/public/forgotpassword.jsp");
+        routeToJsp.put("/header", "/WEB-INF/views/public/header.jsp");
+        routeToJsp.put("/header2", "/WEB-INF/views/public/header2.jsp");
+        routeToJsp.put("/index", "/WEB-INF/views/public/index.jsp");
+        routeToJsp.put("/layout", "/WEB-INF/views/public/layout.jsp");
+        routeToJsp.put("/layout2", "/WEB-INF/views/public/layout2.jsp");
+        routeToJsp.put("/passwordreset", "/WEB-INF/views/public/passwordreset.jsp");
+        routeToJsp.put("/passwordresetenterpassword", "/WEB-INF/views/public/passwordreset-enterpassword.jsp");
+        routeToJsp.put("/plans", "/WEB-INF/views/public/plans.jsp");
+        routeToJsp.put("/signupthankyou", "/WEB-INF/views/public/signupThankyou.jsp");
+        routeToJsp.put("/whyeverly", "/WEB-INF/views/public/whyeverly.jsp");
+        routeToJsp.put("/youcantaccessthis", "/WEB-INF/views/public/youcantaccessthis.jsp");
+        routeToJsp.put("/privacy", "/WEB-INF/views/public/privacy.jsp");
 
         // ========================================
         // PROTECTED PAGES (static JSPs - no data fetching)
         // ========================================
-        routeToJsp.put("/dashboard", "/views/app/dashboard.jsp");
+        routeToJsp.put("/dashboard", "/WEB-INF/views/app/dashboard.jsp");
         // /profile removed - profile.jsp doesn't exist; use /publicprofile instead
         routeToController.put("/collabmemories", "/collabmemoriesview");
-        routeToJsp.put("/settingsaccount", "/views/app/Settings/settingsaccount.jsp");
+        routeToJsp.put("/settingsaccount", "/WEB-INF/views/app/Settings/settingsaccount.jsp");
         // /managesubscription handled by web.xml ManageSubscriptionController
-        routeToJsp.put("/changeplan", "/views/app/Settings/changeplan.jsp");
-        routeToJsp.put("/familyplan", "/views/app/Settings/familyplan.jsp");
+        routeToController.put("/changeplan", "/changeplanview");
+        routeToController.put("/familyplan", "/familyplanview");
         routeToController.put("/settingsnotifications", "/notificationprefsapi");
-        routeToJsp.put("/settingsprivacy", "/views/app/Settings/settingsprivacy.jsp");
+        routeToJsp.put("/settingsprivacy", "/WEB-INF/views/app/Settings/settingsprivacy.jsp");
         // /settingssubscription handled by web.xml SettingsSubscriptionController
         routeToController.put("/storagesense", "/storagesenseview");
-        routeToJsp.put("/vaultForgotPassword", "/views/app/Vault/vaultForgotPassword.jsp");
-        routeToJsp.put("/vaultmemories", "/views/app/Vault/vaultMemories.jsp");
-        routeToJsp.put("/vaultPassword", "/views/app/Vault/vaultPassword.jsp");
-        routeToJsp.put("/vaultSetup", "/views/app/Vault/vaultSetup.jsp");
-        routeToJsp.put("/addautograph", "/views/app/Autographs/addautograph.jsp");
-        routeToJsp.put("/duplicatefinder", "/views/app/Settings/duplicatefinder.jsp");
+        routeToJsp.put("/vaultForgotPassword", "/WEB-INF/views/app/Vault/vaultForgotPassword.jsp");
+        routeToJsp.put("/vaultmemories", "/WEB-INF/views/app/Vault/vaultMemories.jsp");
+        routeToJsp.put("/vaultPassword", "/WEB-INF/views/app/Vault/vaultPassword.jsp");
+        routeToJsp.put("/vaultSetup", "/WEB-INF/views/app/Vault/vaultSetup.jsp");
+        routeToJsp.put("/addautograph", "/WEB-INF/views/app/Autographs/addautograph.jsp");
+        routeToController.put("/duplicatefinder", "/duplicatefinderview");
         // /morethemes removed - Appearance feature removed
         // /sharedlinks handled by web.xml SharedLinksController
         routeToController.put("/trashmgt", "/trashmgtview");
@@ -95,18 +95,17 @@ public class FrontControllerServlet extends HttpServlet {
         routeToController.put("/viewannouncement", "/viewannouncementservlet");
         // /writeautograph removed - actual feature uses /write-autograph via
         // @WebServlet
-        routeToJsp.put("/eventinfo", "/WEB-INF/views/app/Events/eventinfo.jsp");
         routeToJsp.put("/creatememory", "/WEB-INF/views/app/Memory/creatememory.jsp");
-        routeToJsp.put("/memoryrecap", "/WEB-INF/views/app/Memory/memoryrecap.jsp");
-        routeToJsp.put("/writejournal", "/views/app/Journals/writejournal.jsp");
-        routeToJsp.put("/vaultjournals", "/views/app/Vault/vaultjournals.jsp");
+        routeToController.put("/memoryrecap", "/memoryrecapview");
+        routeToJsp.put("/writejournal", "/WEB-INF/views/app/Journals/writejournal.jsp");
+        routeToJsp.put("/vaultjournals", "/WEB-INF/views/app/Vault/vaultjournals.jsp");
         routeToJsp.put("/feedWelcome", "/WEB-INF/views/app/Feed/feedWelcome.jsp");
         routeToJsp.put("/feedProfileSetup", "/WEB-INF/views/app/Feed/feedProfileSetup.jsp");
-        routeToJsp.put("/userprofile", "/views/app/Feed/userprofile.jsp");
-        routeToJsp.put("/followerprofile", "/views/app/Feed/followerprofile.jsp");
-        routeToJsp.put("/followingprofile", "/views/app/Feed/followingprofile.jsp");
-        routeToJsp.put("/vaultpassword", "/views/app/Vault/vaultpassword.jsp");
-        routeToJsp.put("/notifications", "/views/app/Notifications/notifications.jsp");
+        routeToJsp.put("/userprofile", "/WEB-INF/views/app/Feed/userprofile.jsp");
+        routeToJsp.put("/followerprofile", "/WEB-INF/views/app/Feed/followerprofile.jsp");
+        routeToJsp.put("/followingprofile", "/WEB-INF/views/app/Feed/followingprofile.jsp");
+        routeToJsp.put("/vaultpassword", "/WEB-INF/views/app/Vault/vaultpassword.jsp");
+        routeToJsp.put("/notifications", "/WEB-INF/views/app/Notifications/notifications.jsp");
 
         // --- Groups ---
         routeToJsp.put("/groups", "/groupdashboard"); // Let Groups servlet handle this
@@ -117,15 +116,15 @@ public class FrontControllerServlet extends HttpServlet {
         routeToController.put("/comments", "/viewComments");
         // /feededitprofile JSP route removed - controller route on line 162 handles it
         routeToController.put("/blockedusers", "/blockedusersview");
-        routeToJsp.put("/vaultentries", "/views/app/Vault/vaultentries.jsp");
+        routeToJsp.put("/vaultentries", "/WEB-INF/views/app/Vault/vaultentries.jsp");
         routeToController.put("/collabmemoryview", "/collabmemoryviewservlet");
 
-        // Admin pages
-        routeToJsp.put("/admin", "/views/app/Admin/admindahboard.jsp");
+        // Admin pages - routed through controllers for dynamic data
+        routeToController.put("/admin", "/adminoverviewview");
         routeToController.put("/adminuser", "/adminuserview");
-        routeToJsp.put("/adminsettings", "/views/app/Admin/adminsettings.jsp");
-        routeToJsp.put("/adminanalytics", "/views/app/Admin/adminanalytics.jsp");
-        routeToJsp.put("/admincontent", "/views/app/Admin/admincontent.jsp");
+        routeToJsp.put("/adminsettings", "/WEB-INF/views/app/Admin/adminsettings.jsp");
+        routeToController.put("/adminanalytics", "/adminanalyticsview");
+        routeToController.put("/admincontent", "/admincontentview");
 
         // ========================================
         // ROUTES TO VIEW CONTROLLERS (need data fetching)
@@ -148,6 +147,7 @@ public class FrontControllerServlet extends HttpServlet {
 
         // Event routes (all handled by EventViewController)
         routeToController.put("/events", "/eventsview");
+        routeToController.put("/eventinfo", "/eventsview?action=info");
         routeToController.put("/createevent", "/eventsview?action=create");
         routeToController.put("/editevent", "/eventsview?action=edit");
 
@@ -272,6 +272,6 @@ public class FrontControllerServlet extends HttpServlet {
         // ========================================
         logger.warning("Path not found: " + path);
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        request.getRequestDispatcher("/views/public/404.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/public/404.jsp").forward(request, response);
     }
 }

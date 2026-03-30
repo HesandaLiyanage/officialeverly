@@ -1,81 +1,51 @@
 package com.demo.web.controller.Settings;
 
-import com.demo.web.dao.Settings.SubscriptionDAO;
-import com.demo.web.model.Settings.Plan;
-import com.demo.web.model.Auth.user;
+import com.demo.web.dto.Settings.SettingsSubscriptionRequest;
+import com.demo.web.dto.Settings.SettingsSubscriptionResponse;
+import com.demo.web.service.AuthService;
+import com.demo.web.service.SettingsService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class SettingsSubscriptionManage extends HttpServlet {
-    private SubscriptionDAO subscriptionDAO;
+    
+    private AuthService authService;
+    private SettingsService settingsService;
 
     @Override
     public void init() throws ServletException {
-        subscriptionDAO = new SubscriptionDAO();
+        super.init();
+        authService = new AuthService();
+        settingsService = new SettingsService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        user currentUser = (session != null) ? (user) session.getAttribute("user") : null;
-
-        if (currentUser == null) {
+        
+        if (!authService.isValidSession(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        Plan plan = subscriptionDAO.getPlanByUserId(currentUser.getId());
-        if (plan == null) {
-            System.out.println(
-                    "DEBUG: User " + currentUser.getId() + " has no plan (failed fetch?), using fallback Basic.");
-            plan = subscriptionDAO.getPlanById(1); // Basic fallback
-        }
+        SettingsSubscriptionRequest req = new SettingsSubscriptionRequest(authService.getUserId(request));
+        SettingsSubscriptionResponse res = settingsService.getSubscriptionDetails(req);
 
-        long usedBytes = subscriptionDAO.getUsedStorage(currentUser.getId());
-        long totalBytes = plan.getStorageLimitBytes();
+        request.setAttribute("currentPlan", res.getCurrentPlan());
+        request.setAttribute("planName", res.getPlanName());
+        request.setAttribute("planPrice", res.getPlanPrice());
+        request.setAttribute("storageUsedFormatted", res.getStorageUsedFormatted());
+        request.setAttribute("storageTotalFormatted", res.getStorageTotalFormatted());
+        request.setAttribute("storagePercentage", res.getStoragePercentage());
+        request.setAttribute("billingCycle", res.getBillingCycle());
+        request.setAttribute("renewalDate", res.getRenewalDate());
+        request.setAttribute("isBasicPlan", res.isBasicPlan());
+        request.setAttribute("needsMoreSpace", res.isNeedsMoreSpace());
 
-        System.out.println("DEBUG: User " + currentUser.getId() + " storage: used=" + usedBytes + " bytes, total="
-                + totalBytes + " bytes");
-
-        request.setAttribute("currentPlan", plan);
-        request.setAttribute("planName", plan.getName());
-        request.setAttribute("planPrice",
-                (plan.getPriceMonthly() == 0) ? "Free" : "$" + plan.getPriceMonthly() + "/mo");
-
-        // Format sizes dynamically
-        request.setAttribute("storageUsedFormatted", formatSize(usedBytes));
-        request.setAttribute("storageTotalFormatted", formatSize(totalBytes));
-
-        // Keep raw GB logic for progress bar calculation / old references if any,
-        // but rely on formatted attributes for display text.
-
-        int pct = 0;
-        if (totalBytes > 0) {
-            pct = (int) (((double) usedBytes / totalBytes) * 100);
-        }
-        request.setAttribute("storagePercentage", pct);
-
-        request.setAttribute("billingCycle", (plan.getPriceMonthly() == 0) ? "—" : "Monthly");
-        request.setAttribute("renewalDate", "—");
-
-        request.getRequestDispatcher("/views/app/Settings/managesubscription.jsp").forward(request, response);
-    }
-
-    private String formatSize(long bytes) {
-        if (bytes <= 0)
-            return "0 GB";
-        if (bytes < 1024)
-            return bytes + " B";
-        if (bytes < 1024 * 1024)
-            return String.format("%.2f KB", bytes / 1024.0);
-        if (bytes < 1024 * 1024 * 1024)
-            return String.format("%.2f MB", bytes / (1024.0 * 1024));
-        return String.format("%.2f GB", bytes / (1024.0 * 1024 * 1024));
+        request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
     }
 }

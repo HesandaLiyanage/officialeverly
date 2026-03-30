@@ -1,8 +1,7 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.BlockedUserDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,19 +14,16 @@ import java.util.logging.Logger;
 
 /**
  * BlockedUsersViewController - Handles the blocked users page.
- * Loads the list of blocked users and forwards to blockedusers.jsp.
+ * Thin controller — all business logic delegated to FeedService.
  */
 public class FeedBlockedUsersList extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FeedBlockedUsersList.class.getName());
-    private BlockedUserDAO blockedUserDAO;
-    private FeedProfileDAO feedProfileDAO;
+    private FeedService feedService;
 
     @Override
     public void init() throws ServletException {
-        blockedUserDAO = new BlockedUserDAO();
-        feedProfileDAO = new FeedProfileDAO();
-        blockedUserDAO.ensureTableExists();
+        feedService = new FeedService();
     }
 
     @Override
@@ -40,17 +36,15 @@ public class FeedBlockedUsersList extends HttpServlet {
             return;
         }
 
+        // 1. Resolve profile
         Integer userId = (Integer) session.getAttribute("user_id");
         FeedProfile currentProfile = (FeedProfile) session.getAttribute("feedProfile");
-
         if (currentProfile == null) {
-            currentProfile = feedProfileDAO.findByUserId(userId);
-            if (currentProfile != null) {
-                session.setAttribute("feedProfile", currentProfile);
-            }
+            try { currentProfile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
+            if (currentProfile != null) session.setAttribute("feedProfile", currentProfile);
         }
 
-        // Handle flash messages from redirect
+        // Handle flash messages
         String flashMessage = (String) session.getAttribute("flashMessage");
         String flashType = (String) session.getAttribute("flashType");
         if (flashMessage != null) {
@@ -63,19 +57,14 @@ public class FeedBlockedUsersList extends HttpServlet {
             session.removeAttribute("flashType");
         }
 
+        // 2. Delegate to service
         if (currentProfile != null) {
-            try {
-                List<FeedProfile> blockedUsers = blockedUserDAO.getBlockedUsers(currentProfile.getFeedProfileId());
-                request.setAttribute("blockedUsers", blockedUsers);
-                logger.info("[BlockedUsersViewController] Loaded " + blockedUsers.size()
-                        + " blocked users for profile " + currentProfile.getFeedProfileId());
-            } catch (Exception e) {
-                logger.severe("[BlockedUsersViewController] Error loading blocked users: " + e.getMessage());
-                e.printStackTrace();
-                request.setAttribute("errorMessage", "Error loading blocked users");
-            }
+            List<FeedProfile> blockedUsers = feedService.getBlockedUsers(currentProfile.getFeedProfileId());
+            request.setAttribute("blockedUsers", blockedUsers);
+            logger.info("[BlockedUsersController] Loaded " + blockedUsers.size() + " blocked users");
         }
 
-        request.getRequestDispatcher("/views/app/Feed/blockedusers.jsp").forward(request, response);
+        // 3. Forward to view
+        request.getRequestDispatcher("/WEB-INF/views/app/Feed/blockedusers.jsp").forward(request, response);
     }
 }

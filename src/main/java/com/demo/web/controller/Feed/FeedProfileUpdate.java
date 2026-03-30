@@ -1,7 +1,9 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dto.Feed.FeedActionResponse;
+import com.demo.web.dto.Feed.FeedProfileEditDTO;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -10,43 +12,34 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 /**
  * UpdateFeedProfileServlet - Handles feed profile updates.
- * 
- * Route: /updateFeedProfile
+ * Thin controller — all business logic delegated to FeedService.
  */
-@MultipartConfig(fileSizeThreshold = 1024 * 1024, // 1 MB
-        maxFileSize = 5 * 1024 * 1024, // 5 MB
-        maxRequestSize = 10 * 1024 * 1024 // 10 MB
+@MultipartConfig(fileSizeThreshold = 1024 * 1024,   // 1 MB
+        maxFileSize = 5 * 1024 * 1024,         // 5 MB
+        maxRequestSize = 10 * 1024 * 1024      // 10 MB
 )
 public class FeedProfileUpdate extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FeedProfileUpdate.class.getName());
-    private FeedProfileDAO feedProfileDAO;
-
-    // Allowed image extensions
-    private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+    private FeedService feedService;
 
     @Override
     public void init() throws ServletException {
-        feedProfileDAO = new FeedProfileDAO();
+        feedService = new FeedService();
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // 1. Authenticate
         HttpSession session = request.getSession(false);
-
-        // Check if user is logged in
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -54,79 +47,55 @@ public class FeedProfileUpdate extends HttpServlet {
 
         Integer userId = (Integer) session.getAttribute("user_id");
 
-        // Get current user's feed profile
         FeedProfile feedProfile = (FeedProfile) session.getAttribute("feedProfile");
         if (feedProfile == null) {
-            feedProfile = feedProfileDAO.findByUserId(userId);
+            try { feedProfile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
             if (feedProfile == null) {
                 response.sendRedirect(request.getContextPath() + "/feedWelcome");
                 return;
             }
         }
 
-        try {
-            // Get form data
-            String bio = request.getParameter("bio");
-            if (bio != null) {
-                bio = bio.trim();
-                if (bio.length() > 500) {
-                    bio = bio.substring(0, 500);
-                }
-                feedProfile.setFeedBio(bio);
-            }
+        // 2. Extract form data
+        String bio = request.getParameter("bio");
 
-            // Handle profile picture upload
+        InputStream profilePicStream = null;
+        String profilePicFileName = null;
+        try {
             Part filePart = request.getPart("profile_picture");
             if (filePart != null && filePart.getSize() > 0) {
-                String fileName = getSubmittedFileName(filePart);
-                if (fileName != null && !fileName.isEmpty()) {
-                    // Validate file extension
-                    String extension = getFileExtension(fileName);
-                    if (isAllowedExtension(extension)) {
-                        // Generate unique filename
-                        String newFileName = "feed_" + userId + "_" + UUID.randomUUID().toString() + extension;
-
-                        // Save to uploads directory
-                        String uploadDir = getServletContext().getRealPath("/uploads/feed-profiles");
-                        File uploadDirFile = new File(uploadDir);
-                        if (!uploadDirFile.exists()) {
-                            uploadDirFile.mkdirs();
-                        }
-
-                        Path filePath = Paths.get(uploadDir, newFileName);
-                        Files.copy(filePart.getInputStream(), filePath);
-
-                        String profilePictureUrl = "/uploads/feed-profiles/" + newFileName;
-                        feedProfile.setFeedProfilePictureUrl(profilePictureUrl);
-                        logger.info("[UpdateFeedProfile] Uploaded new profile picture: " + profilePictureUrl);
-                    }
-                }
+                profilePicFileName = getSubmittedFileName(filePart);
+                profilePicStream = filePart.getInputStream();
             }
-
-            // Save to database
-            boolean updated = feedProfileDAO.updateProfile(feedProfile);
-
-            if (updated) {
-                // Update session with new profile data
-                session.setAttribute("feedProfile", feedProfile);
-                request.setAttribute("successMessage", "Profile updated successfully!");
-                logger.info("[UpdateFeedProfile] Profile updated for @" + feedProfile.getFeedUsername());
-            } else {
-                request.setAttribute("errorMessage", "Failed to update profile. Please try again.");
-                logger.warning("[UpdateFeedProfile] Failed to update profile for @" + feedProfile.getFeedUsername());
-            }
-
-            // Set profile data and forward back to edit page
-            request.setAttribute("feedProfile", feedProfile);
-            request.getRequestDispatcher("/views/app/Feed/editpublicprofile.jsp").forward(request, response);
-
         } catch (Exception e) {
-            logger.severe("[UpdateFeedProfile] Error: " + e.getMessage());
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred. Please try again.");
-            request.setAttribute("feedProfile", feedProfile);
-            request.getRequestDispatcher("/views/app/Feed/editpublicprofile.jsp").forward(request, response);
+            // Continue without profile picture
         }
+
+        String uploadDir = getServletContext().getRealPath("/uploads/feed-profiles");
+
+        // 3. Delegate to service
+        FeedActionResponse result = feedService.updateProfile(feedProfile, bio,
+                profilePicStream, profilePicFileName, userId, uploadDir);
+
+        // 4. Handle response
+        if (result.isSuccess()) {
+            session.setAttribute("feedProfile", feedProfile);
+            request.setAttribute("successMessage", result.getMessage());
+        } else {
+            request.setAttribute("errorMessage", result.getError());
+        }
+
+        // Set display data and forward back to edit page
+        FeedProfileEditDTO dto = feedService.getProfileEditData(feedProfile);
+        request.setAttribute("feedProfile", dto.getFeedProfile());
+        request.setAttribute("feedUsername", dto.getFeedUsername());
+        request.setAttribute("feedBio", dto.getFeedBio());
+        request.setAttribute("feedProfilePicture", dto.getFeedProfilePicture());
+        request.setAttribute("feedInitials", dto.getFeedInitials());
+        request.setAttribute("hasDefaultPic", dto.isHasDefaultPic());
+        request.setAttribute("feedBioLength", dto.getFeedBioLength());
+
+        request.getRequestDispatcher("/WEB-INF/views/app/Feed/editpublicprofile.jsp").forward(request, response);
     }
 
     private String getSubmittedFileName(Part part) {
@@ -139,22 +108,5 @@ public class FeedProfileUpdate extends HttpServlet {
             }
         }
         return null;
-    }
-
-    private String getFileExtension(String fileName) {
-        int lastDot = fileName.lastIndexOf('.');
-        if (lastDot > 0) {
-            return fileName.substring(lastDot).toLowerCase();
-        }
-        return "";
-    }
-
-    private boolean isAllowedExtension(String extension) {
-        for (String allowed : ALLOWED_EXTENSIONS) {
-            if (allowed.equalsIgnoreCase(extension)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

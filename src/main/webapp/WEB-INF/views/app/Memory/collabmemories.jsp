@@ -3,7 +3,7 @@
         <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
             <!-- Collab Memories Page Content -->
-            <jsp:include page="/views/public/header2.jsp" />
+            <jsp:include page="/WEB-INF/views/public/header2.jsp" />
             <html>
 
             <body>
@@ -193,7 +193,7 @@
                     </div>
                 </div>
 
-                <jsp:include page="/views/public/footer.jsp" />
+                <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                 <style>
                     /* Additional styles for collab memories */

@@ -1,0 +1,3 @@
+package com.demo.web.dto.Journals;
+
+import com.demo.web.model.Journals.RecycleBinItem; import java.util.List; public class JournalTrashResponse { private boolean success; private String redirectUrl; private List<RecycleBinItem> trashItems; public boolean isSuccess() { return success; } public void setSuccess(boolean success) { this.success = success; } public String getRedirectUrl() { return redirectUrl; } public void setRedirectUrl(String redirectUrl) { this.redirectUrl = redirectUrl; } public List<RecycleBinItem> getTrashItems() { return trashItems; } public void setTrashItems(List<RecycleBinItem> trashItems) { this.trashItems = trashItems; } }

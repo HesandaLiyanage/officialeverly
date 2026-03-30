@@ -77,6 +77,6 @@ public class AdminUserView extends HttpServlet {
             request.setAttribute("flashType", "error");
         }
 
-        request.getRequestDispatcher("/views/app/Admin/adminuser.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Admin/adminuser.jsp").forward(request, response);
     }
 }

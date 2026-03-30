@@ -1,0 +1,509 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+<c:set var="displayTitle" value="${not empty journalTitle ? journalTitle : 'No Journal Found'}" />
+<c:set var="displayContent" value="${not empty htmlContent ? htmlContent : '<p>No content available.</p>'}" />
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${fn:escapeXml(displayTitle)} - Everly</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/base.css">
+    <link rel="stylesheet"
+        href="${pageContext.request.contextPath}/resources/css/memoryviewer.css">
+    <style>
+        /* Journal-specific overrides */
+        .mv-media-section {
+            background: #f8f5f0;
+            position: relative;
+        }
+
+        /* Journal page area */
+        .jv-page-area {
+            width: 100%;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .jv-page {
+            width: 92%;
+            height: 92%;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .jv-page-content {
+            width: 100%;
+            height: 100%;
+            padding: 32px 28px;
+            overflow-y: auto;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #1e293b;
+            position: relative;
+            z-index: 2;
+        }
+
+        .jv-page-content::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .jv-page-content::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 2px;
+        }
+
+        /* Decorations */
+        .jv-page-content .decorations-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .jv-page-content .decoration {
+            position: absolute;
+            font-size: 2rem;
+        }
+
+        .jv-page-content .decoration.emoji {
+            font-size: 2.5rem;
+        }
+
+        .jv-page-content .decoration.doodle {
+            font-size: 3rem;
+            opacity: 0.5;
+        }
+
+        /* No content state */
+        .jv-no-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: #9ca3af;
+            gap: 12px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .jv-no-content svg {
+            width: 48px;
+            height: 48px;
+            opacity: 0.4;
+        }
+
+        .jv-no-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .jv-no-content p {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        /* Word count badge in details */
+        .jv-word-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9A74D8;
+            background: #f3f0ff;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mv-page">
+        <!-- Close button -->
+        <a href="${pageContext.request.contextPath}/journals" class="mv-close-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </a>
+
+        <div class="mv-wrapper">
+            <!-- LEFT: Journal Content Display -->
+            <div class="mv-media-section">
+                <div class="jv-page-area">
+                    <div class="jv-page" id="journalPage"
+                        <c:if test="${not empty backgroundTheme}">
+                            style="background-image: url('${fn:escapeXml(backgroundTheme)}');"
+                        </c:if>
+                        >
+                        <div class="jv-page-content" id="pageContent">
+                            ${displayContent}
+                            <c:if test="${decorationsJson != '[]'}">
+                                <div id="decorations-container" class="decorations-container"></div>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Details Section -->
+            <div class="mv-details-section">
+                <!-- Header -->
+                <div class="mv-header">
+                    <div class="mv-header-left">
+                        <div class="mv-avatar">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="mv-header-text">
+                            <h3>Journal Entry</h3>
+                            <div class="mv-type-badge">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5">
+                                    <path
+                                        d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z">
+                                    </path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                Personal Entry
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scrollable Content -->
+                <div class="mv-content">
+                    <!-- Title (Date) -->
+                    <div class="mv-info-group">
+                        <div class="mv-info-value title">${fn:escapeXml(displayTitle)}</div>
+                        <div class="jv-word-count" id="wordCount"></div>
+                    </div>
+
+                    <div class="mv-divider"></div>
+
+                    <!-- Preview text -->
+                    <div class="mv-info-group">
+                        <div class="mv-info-label">Preview</div>
+                        <div class="mv-info-value" id="textPreview"
+                            style="color: #6b7280; font-size: 13px;">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+
+                    <c:if test="${not empty backgroundTheme}">
+                        <div class="mv-divider"></div>
+                        <div class="mv-info-group">
+                            <div class="mv-photo-count">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2">
+                                    </rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                Custom theme applied
+                            </div>
+                        </div>
+                    </c:if>
+                </div>
+
+                <!-- Actions bar -->
+                <div class="mv-actions-bar">
+                    <c:if test="${not empty journal}">
+                        <a href="${pageContext.request.contextPath}/editjournal?id=${journal.journalId}"
+                            class="mv-action-btn primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path
+                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7">
+                                </path>
+                                <path
+                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">
+                                </path>
+                            </svg>
+                            Edit
+                        </a>
+                        <button class="mv-action-btn danger" id="deleteBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            </svg>
+                            Delete
+                        </button>
+                        <c:choose>
+                            <c:when test="${isInVault}">
+                                <button class="mv-action-btn vault-restore" onclick="restoreFromVault()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                                        <path d="M3 3v5h5"></path>
+                                    </svg>
+                                    Restore from Vault
+                                </button>
+                            </c:when>
+                            <c:otherwise>
+                                <button class="mv-action-btn vault" onclick="openVaultModal()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                    Move to Vault
+                                </button>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vault Password Modal -->
+    <div class="vault-modal-overlay" id="vaultModal">
+        <div class="vault-modal">
+            <button class="vault-modal-close" onclick="closeVaultModal()">&times;</button>
+            <div class="vault-modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            <h3 class="vault-modal-title">Enter Vault Password</h3>
+            <p class="vault-modal-desc">Enter your vault password to move this journal to the vault.</p>
+            <div class="vault-modal-error" id="vaultError"></div>
+            <input type="password" class="vault-modal-input" id="vaultPasswordInput" placeholder="Vault password" autocomplete="off">
+            <button class="vault-modal-submit" id="vaultSubmitBtn" onclick="submitMoveToVault()">
+                <span class="vault-btn-text">Move to Vault</span>
+                <span class="vault-btn-loading" style="display:none;">Moving...</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Delete Form -->
+    <form id="deleteJournalForm" action="${pageContext.request.contextPath}/journal/delete"
+        method="post" style="display:none;">
+        <input type="hidden" name="journalId"
+            value="${not empty journal ? journal.journalId : ''}">
+    </form>
+
+    <script>
+        // Render decorations
+        (function () {
+            var rawContent = "${rawContentForJs}";
+            if (!rawContent) return;
+
+            try {
+                var contentObj = JSON.parse(rawContent);
+                var decorations = contentObj.decorations;
+
+                if (decorations && Array.isArray(decorations)) {
+                    var container = document.getElementById('decorations-container');
+                    if (!container) return;
+
+                    decorations.forEach(function (dec) {
+                        var decoration = document.createElement('div');
+                        decoration.className = 'decoration';
+
+                        if (dec.className && dec.className.includes('emoji')) {
+                            decoration.classList.add('emoji');
+                            decoration.style.fontSize = '28px';
+                        } else if (dec.className && dec.className.includes('doodle')) {
+                            decoration.classList.add('doodle');
+                            decoration.style.fontSize = '24px';
+                            decoration.style.opacity = '0.5';
+                            if (dec.className.includes('heart')) {
+                                decoration.style.color = '#9A74D8';
+                                decoration.style.fontSize = '28px';
+                            } else if (dec.className.includes('star')) {
+                                decoration.style.color = '#fbbf24';
+                                decoration.style.fontSize = '22px';
+                            } else if (dec.className.includes('music')) {
+                                decoration.style.color = '#9A74D8';
+                                decoration.style.fontSize = '24px';
+                            }
+                        }
+
+                        decoration.textContent = dec.content;
+                        decoration.style.position = 'absolute';
+                        decoration.style.top = dec.top;
+                        decoration.style.left = dec.left;
+                        decoration.style.pointerEvents = 'none';
+                        decoration.style.userSelect = 'none';
+                        decoration.style.zIndex = '5';
+
+                        container.appendChild(decoration);
+                    });
+                }
+            } catch (e) {
+                console.error('Error parsing decorations:', e);
+            }
+        })();
+
+        // Word count and preview
+        (function () {
+            var pageContent = document.getElementById('pageContent');
+            var textContent = pageContent ? pageContent.textContent.trim() : '';
+            var words = textContent.split(/\s+/).filter(function (w) { return w.length > 0; });
+            var wordCountEl = document.getElementById('wordCount');
+            if (wordCountEl) {
+                wordCountEl.textContent = words.length + ' word' + (words.length !== 1 ? 's' : '');
+            }
+            var previewEl = document.getElementById('textPreview');
+            if (previewEl) {
+                var preview = textContent.substring(0, 120);
+                if (textContent.length > 120) preview += '...';
+                previewEl.textContent = preview || 'No text content';
+            }
+        })();
+
+        // Delete
+        var deleteBtn = document.getElementById('deleteBtn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', function () {
+                if (confirm('Move this journal to the Recycle Bin? You can restore it later.')) {
+                    document.getElementById('deleteJournalForm').submit();
+                }
+            });
+        }
+
+        // Keyboard: Escape to go back
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                var vaultModal = document.getElementById('vaultModal');
+                if (vaultModal.classList.contains('active')) {
+                    closeVaultModal();
+                    return;
+                }
+                window.location.href = '${pageContext.request.contextPath}/journals';
+            }
+        });
+
+        // Vault functions
+        function openVaultModal() {
+            document.getElementById('vaultModal').classList.add('active');
+            document.getElementById('vaultPasswordInput').value = '';
+            document.getElementById('vaultError').style.display = 'none';
+            setTimeout(function() {
+                document.getElementById('vaultPasswordInput').focus();
+            }, 100);
+        }
+
+        function closeVaultModal() {
+            document.getElementById('vaultModal').classList.remove('active');
+        }
+
+        function submitMoveToVault() {
+            var password = document.getElementById('vaultPasswordInput').value;
+            if (!password) {
+                showVaultError('Please enter your vault password.');
+                return;
+            }
+            var btn = document.getElementById('vaultSubmitBtn');
+            btn.querySelector('.vault-btn-text').style.display = 'none';
+            btn.querySelector('.vault-btn-loading').style.display = 'inline';
+            btn.disabled = true;
+
+            var formData = new FormData();
+            formData.append('type', 'journal');
+            formData.append('id', '${journal.journalId}');
+            formData.append('action', 'add');
+            formData.append('vaultPassword', password);
+
+            fetch('${pageContext.request.contextPath}/moveToVault', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = '${pageContext.request.contextPath}/journals';
+                } else if (data.redirectToSetup) {
+                    window.location.href = '${pageContext.request.contextPath}/vaultSetup';
+                } else {
+                    showVaultError(data.error || 'Failed to move to vault.');
+                    btn.querySelector('.vault-btn-text').style.display = 'inline';
+                    btn.querySelector('.vault-btn-loading').style.display = 'none';
+                    btn.disabled = false;
+                }
+            })
+            .catch(function() {
+                showVaultError('An error occurred. Please try again.');
+                btn.querySelector('.vault-btn-text').style.display = 'inline';
+                btn.querySelector('.vault-btn-loading').style.display = 'none';
+                btn.disabled = false;
+            });
+        }
+
+        function restoreFromVault() {
+            if (!confirm('Are you sure you want to restore this journal from the vault?')) return;
+            var formData = new FormData();
+            formData.append('type', 'journal');
+            formData.append('id', '${journal.journalId}');
+            formData.append('action', 'remove');
+
+            fetch('${pageContext.request.contextPath}/moveToVault', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = '${pageContext.request.contextPath}/vaultjournals';
+                } else {
+                    alert(data.error || 'Failed to restore from vault.');
+                }
+            })
+            .catch(function() {
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        function showVaultError(msg) {
+            var errEl = document.getElementById('vaultError');
+            errEl.textContent = msg;
+            errEl.style.display = 'block';
+        }
+
+        // Submit vault password on Enter key
+        document.getElementById('vaultPasswordInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') submitMoveToVault();
+        });
+
+        // Close modal on overlay click
+        document.getElementById('vaultModal').addEventListener('click', function(e) {
+            if (e.target === this) closeVaultModal();
+        });
+    </script>
+</body>
+
+</html>

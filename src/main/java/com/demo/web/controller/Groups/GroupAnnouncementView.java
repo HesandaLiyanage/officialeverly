@@ -1,7 +1,8 @@
 package com.demo.web.controller.Groups;
 
-import com.demo.web.dao.Groups.GroupAnnouncementDAO;
-import com.demo.web.model.Groups.GroupAnnouncement;
+import com.demo.web.dto.Groups.GroupAnnouncementViewRequest;
+import com.demo.web.dto.Groups.GroupAnnouncementViewResponse;
+import com.demo.web.service.GroupService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,11 +13,11 @@ import java.io.IOException;
 
 public class GroupAnnouncementView extends HttpServlet {
 
-    private GroupAnnouncementDAO announcementDAO;
+    private GroupService groupService;
 
     @Override
     public void init() throws ServletException {
-        announcementDAO = new GroupAnnouncementDAO();
+        groupService = new GroupService();
     }
 
     @Override
@@ -29,26 +30,51 @@ public class GroupAnnouncementView extends HttpServlet {
             return;
         }
 
+        Integer currentUserId = (Integer) session.getAttribute("user_id");
         String idStr = request.getParameter("id");
+
         if (idStr == null || idStr.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/groups");
             return;
         }
 
-        try {
-            int announcementId = Integer.parseInt(idStr);
-            GroupAnnouncement announcement = announcementDAO.findById(announcementId);
+        GroupAnnouncementViewRequest req = new GroupAnnouncementViewRequest(currentUserId, idStr);
+        GroupAnnouncementViewResponse res = groupService.viewGroupAnnouncement(req);
 
-            if (announcement == null) {
-                response.sendRedirect(request.getContextPath() + "/groups?error=Announcement not found");
-                return;
-            }
-
-            request.setAttribute("announcement", announcement);
-            request.getRequestDispatcher("/WEB-INF/views/app/Groups/viewannouncement.jsp").forward(request, response);
-
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/groups?error=Invalid announcement ID");
+        if (!res.isSuccess()) {
+            response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
+            return;
         }
+
+        request.setAttribute("announcement", res.getAnnouncement());
+        request.setAttribute("authorInitial", res.getAuthorInitial());
+        request.setAttribute("authorName", res.getAuthorName());
+        request.setAttribute("postDate", res.getPostDate());
+        request.setAttribute("hasEvent", res.isHasEvent());
+        
+        if (res.getEventPicUrl() != null) {
+            request.setAttribute("eventPicUrl", request.getContextPath() + res.getEventPicUrl());
+        }
+        
+        request.setAttribute("formattedEventDate", res.getFormattedEventDate());
+        request.setAttribute("linkedEventTitle", res.getLinkedEventTitle());
+        request.setAttribute("currentUserId", res.getCurrentUserId());
+
+        if (res.isHasEvent()) {
+            request.setAttribute("pollEventId", res.getPollEventId());
+            request.setAttribute("pollGroupId", res.getPollGroupId());
+            request.setAttribute("totalVotes", res.getTotalVotes());
+            request.setAttribute("goingCount", res.getGoingCount());
+            request.setAttribute("notGoingCount", res.getNotGoingCount());
+            request.setAttribute("maybeCount", res.getMaybeCount());
+            request.setAttribute("goingPercent", res.getGoingPercent());
+            request.setAttribute("notGoingPercent", res.getNotGoingPercent());
+            request.setAttribute("maybePercent", res.getMaybePercent());
+            request.setAttribute("userCurrentVote", res.getUserCurrentVote());
+            request.setAttribute("voterDisplayData", res.getVoterDisplayData());
+            request.setAttribute("totalVotesLabel", res.getTotalVotesLabel());
+        }
+
+        request.getRequestDispatcher("/WEB-INF/views/app/Groups/viewannouncement.jsp").forward(request, response);
     }
 }

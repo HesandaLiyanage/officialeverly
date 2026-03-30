@@ -91,7 +91,7 @@
 
         <body>
 
-            <jsp:include page="/views/public/header2.jsp" />
+            <jsp:include page="/WEB-INF/views/public/header2.jsp" />
 
             <div class="page-wrapper">
                 <div class="create-memory-container">
@@ -99,8 +99,7 @@
 
                     <!-- Memory Type Tabs -->
                     <div class="memory-type-tabs">
-                        <button type="button" class="memory-type-tab <c:if test='${param.type != " collab"}'>active
-                            </c:if>" id="normalTab" onclick="switchTab('normal')">
+                        <button type="button" class="memory-type-tab <c:if test='${param.type != "collab"}'>active</c:if>" id="normalTab" onclick="switchTab('normal')">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
@@ -108,8 +107,7 @@
                             </svg>
                             Memory
                         </button>
-                        <button type="button" class="memory-type-tab collab <c:if test='${param.type == "
-                            collab"}'>active</c:if>" id="collabTab" onclick="switchTab('collab')">
+                        <button type="button" class="memory-type-tab collab <c:if test='${param.type == "collab"}'>active</c:if>" id="collabTab" onclick="switchTab('collab')">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
@@ -121,7 +119,7 @@
                     </div>
 
                     <!-- Collab Info Banner -->
-                    <div class="collab-info <c:if test='${param.type == " collab"}'>visible</c:if>" id="collabInfo">
+                    <div class="collab-info <c:if test='${param.type == "collab"}'>visible</c:if>" id="collabInfo">
                         <div class="collab-info-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
@@ -215,7 +213,7 @@
                 </div>
             </div>
 
-            <jsp:include page="/views/public/footer.jsp" />
+            <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
             <script>
                 // Tab switching

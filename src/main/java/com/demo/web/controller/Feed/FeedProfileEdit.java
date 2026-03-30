@@ -1,7 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dto.Feed.FeedProfileEditDTO;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,36 +14,33 @@ import java.util.logging.Logger;
 
 /**
  * EditFeedProfileViewController - Loads feed profile data for editing.
- * 
- * Route: /feededitprofileview
+ * Thin controller — all business logic delegated to FeedService.
  */
 public class FeedProfileEdit extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FeedProfileEdit.class.getName());
-    private FeedProfileDAO feedProfileDAO;
+    private FeedService feedService;
 
     @Override
     public void init() throws ServletException {
-        feedProfileDAO = new FeedProfileDAO();
+        feedService = new FeedService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // 1. Authenticate
         HttpSession session = request.getSession(false);
-
-        // Check if user is logged in
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        // Get current user's feed profile
         FeedProfile feedProfile = (FeedProfile) session.getAttribute("feedProfile");
         if (feedProfile == null) {
             Integer userId = (Integer) session.getAttribute("user_id");
-            feedProfile = feedProfileDAO.findByUserId(userId);
+            try { feedProfile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
             if (feedProfile == null) {
                 response.sendRedirect(request.getContextPath() + "/feedWelcome");
                 return;
@@ -50,14 +48,20 @@ public class FeedProfileEdit extends HttpServlet {
             session.setAttribute("feedProfile", feedProfile);
         }
 
-        logger.info("[EditFeedProfileViewController] Loading profile for editing: @" + feedProfile.getFeedUsername());
+        // 2. Delegate to service
+        FeedProfileEditDTO dto = feedService.getProfileEditData(feedProfile);
 
-        // Set profile data for the form
-        request.setAttribute("feedProfile", feedProfile);
-        request.setAttribute("feedUsername", feedProfile.getFeedUsername());
-        request.setAttribute("feedBio", feedProfile.getFeedBio());
-        request.setAttribute("feedProfilePicture", feedProfile.getFeedProfilePictureUrl());
+        // 3. Set attributes from DTO and forward
+        request.setAttribute("feedProfile", dto.getFeedProfile());
+        request.setAttribute("feedUsername", dto.getFeedUsername());
+        request.setAttribute("feedBio", dto.getFeedBio());
+        request.setAttribute("feedProfilePicture", dto.getFeedProfilePicture());
+        request.setAttribute("feedInitials", dto.getFeedInitials());
+        request.setAttribute("hasDefaultPic", dto.isHasDefaultPic());
+        request.setAttribute("feedBioLength", dto.getFeedBioLength());
 
-        request.getRequestDispatcher("/views/app/Feed/editpublicprofile.jsp").forward(request, response);
+        logger.info("[ProfileEditController] Loading profile for editing: @" + dto.getFeedUsername());
+
+        request.getRequestDispatcher("/WEB-INF/views/app/Feed/editpublicprofile.jsp").forward(request, response);
     }
 }

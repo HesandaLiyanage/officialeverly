@@ -1,12 +1,9 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.FeedCommentDAO;
-import com.demo.web.dao.Feed.FeedPostDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
-import com.demo.web.dao.Notifications.NotificationDAO;
+import com.demo.web.dto.Feed.FeedActionResponse;
 import com.demo.web.model.Feed.FeedComment;
-import com.demo.web.model.Feed.FeedPost;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,19 +13,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Logger;
+import java.util.List;
 
 /**
- * Servlet to handle comment AJAX operations (add, delete, like)
+ * Servlet to handle comment AJAX operations (add, delete, like, unlike, getReplies).
+ * Thin controller — all business logic delegated to FeedService.
  */
 @WebServlet("/commentAction")
 public class FeedCommentAction extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FeedCommentAction.class.getName());
-    private FeedCommentDAO commentDAO = new FeedCommentDAO();
-    private FeedPostDAO postDAO = new FeedPostDAO();
-    private FeedProfileDAO profileDAO = new FeedProfileDAO();
-    private NotificationDAO notificationDAO = new NotificationDAO();
+    private FeedService feedService;
+
+    @Override
+    public void init() throws ServletException {
+        feedService = new FeedService();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -38,96 +37,60 @@ public class FeedCommentAction extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        // Check authentication
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            out.print("{\"success\": false, \"error\": \"Not authenticated\"}");
-            return;
-        }
-
-        Integer userId = (Integer) session.getAttribute("user_id");
-        FeedProfile currentProfile = (FeedProfile) session.getAttribute("feedProfile");
-
-        if (currentProfile == null) {
-            currentProfile = profileDAO.findByUserId(userId);
-        }
-
-        if (currentProfile == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\": false, \"error\": \"No feed profile found\"}");
-            return;
-        }
+        // 1. Authenticate
+        FeedProfile currentProfile = resolveProfile(request, response);
+        if (currentProfile == null) return;
 
         String action = request.getParameter("action");
 
         try {
             switch (action) {
                 case "add":
-                    handleAddComment(request, response, currentProfile);
+                    handleAdd(request, out, currentProfile);
                     break;
                 case "delete":
-                    handleDeleteComment(request, response, currentProfile);
+                    handleDelete(request, response, out, currentProfile);
                     break;
                 case "like":
-                    handleLikeComment(request, response, currentProfile);
+                    handleLike(request, out, currentProfile);
                     break;
                 case "unlike":
-                    handleUnlikeComment(request, response, currentProfile);
+                    handleUnlike(request, out, currentProfile);
                     break;
                 case "getReplies":
-                    handleGetReplies(request, response, currentProfile);
+                    handleGetReplies(request, out, currentProfile);
                     break;
                 default:
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     out.print("{\"success\": false, \"error\": \"Invalid action\"}");
             }
         } catch (Exception e) {
-            logger.severe("[FeedCommentServlet] Error: " + e.getMessage());
-            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.print("{\"success\": false, \"error\": \"Server error\"}");
         }
     }
 
-    private void handleAddComment(HttpServletRequest request, HttpServletResponse response, FeedProfile currentProfile)
-            throws IOException {
-        PrintWriter out = response.getWriter();
-
+    private void handleAdd(HttpServletRequest request, PrintWriter out, FeedProfile currentProfile) {
         String postIdStr = request.getParameter("postId");
         String commentText = request.getParameter("commentText");
         String parentCommentIdStr = request.getParameter("parentCommentId");
 
-        if (postIdStr == null || commentText == null || commentText.trim().isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        if (postIdStr == null) {
             out.print("{\"success\": false, \"error\": \"Missing required parameters\"}");
             return;
         }
 
-        int postId = Integer.parseInt(postIdStr);
-
-        FeedComment comment = new FeedComment();
-        comment.setPostId(postId);
-        comment.setFeedProfileId(currentProfile.getFeedProfileId());
-        comment.setCommentText(commentText.trim());
-
+        Integer parentCommentId = null;
         if (parentCommentIdStr != null && !parentCommentIdStr.isEmpty()) {
-            try {
-                int pid = Integer.parseInt(parentCommentIdStr);
-                if (pid > 0) {
-                    comment.setParentCommentId(pid);
-                }
-            } catch (NumberFormatException e) {
-                // Ignore invalid parent ID format
-                logger.warning("[FeedCommentServlet] Invalid parentCommentId format: " + parentCommentIdStr);
-            }
+            try { parentCommentId = Integer.parseInt(parentCommentIdStr); } catch (NumberFormatException e) { /* ignored */ }
         }
 
-        FeedComment createdComment = commentDAO.createComment(comment);
+        // Delegate to service
+        FeedActionResponse result = feedService.addComment(
+                Integer.parseInt(postIdStr), commentText, parentCommentId, currentProfile);
 
-        if (createdComment != null) {
-            // Return the comment data for rendering
-            String json = String.format(
+        if (result.isSuccess()) {
+            out.print(String.format(
                     "{\"success\": true, \"comment\": {" +
                             "\"commentId\": %d," +
                             "\"commentText\": \"%s\"," +
@@ -138,144 +101,58 @@ public class FeedCommentAction extends HttpServlet {
                             "\"likeCount\": 0," +
                             "\"isLiked\": false" +
                             "}}",
-                    createdComment.getCommentId(),
-                    escapeJson(createdComment.getCommentText()),
-                    escapeJson(currentProfile.getFeedUsername()),
-                    escapeJson(currentProfile.getInitials()),
-                    currentProfile.getFeedProfilePictureUrl() != null
-                            ? "\"" + escapeJson(currentProfile.getFeedProfilePictureUrl()) + "\""
+                    result.getCommentId(),
+                    escapeJson(result.getCommentText()),
+                    escapeJson(result.getUsername()),
+                    escapeJson(result.getInitials()),
+                    result.getProfilePictureUrl() != null
+                            ? "\"" + escapeJson(result.getProfilePictureUrl()) + "\""
                             : "null",
-                    createdComment.getRelativeTime());
-            out.print(json);
-
-            // Send notification to post owner
-            try {
-                int postOwnerUserId = notificationDAO.getPostOwnerUserId(postId);
-                int actorUserId = currentProfile.getUserId();
-                if (postOwnerUserId > 0) {
-                    notificationDAO.createNotification(
-                            postOwnerUserId,
-                            "comments_reactions",
-                            "New Comment",
-                            "commented on your post",
-                            "/feed",
-                            actorUserId);
-                }
-            } catch (Exception e) {
-                logger.warning("[FeedCommentServlet] Failed to send notification: " + e.getMessage());
-            }
+                    result.getRelativeTime()));
         } else {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.print("{\"success\": false, \"error\": \"Failed to create comment\"}");
+            out.print("{\"success\": false, \"error\": \"" + result.getError() + "\"}");
         }
     }
 
-    private void handleDeleteComment(HttpServletRequest request, HttpServletResponse response,
-            FeedProfile currentProfile)
-            throws IOException {
-        PrintWriter out = response.getWriter();
-
+    private void handleDelete(HttpServletRequest request, HttpServletResponse response, PrintWriter out, FeedProfile currentProfile) {
         String commentIdStr = request.getParameter("commentId");
-
         if (commentIdStr == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.print("{\"success\": false, \"error\": \"Missing comment ID\"}");
             return;
         }
 
-        int commentId = Integer.parseInt(commentIdStr);
+        FeedActionResponse result = feedService.deleteComment(Integer.parseInt(commentIdStr), currentProfile);
 
-        // Get the comment to check ownership
-        FeedComment comment = commentDAO.getCommentById(commentId);
-
-        if (comment == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            out.print("{\"success\": false, \"error\": \"Comment not found\"}");
-            return;
+        if (!result.isSuccess()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-
-        // Check if user owns the comment OR the post
-        FeedPost post = postDAO.findById(comment.getPostId());
-        boolean isCommentOwner = comment.getFeedProfileId() == currentProfile.getFeedProfileId();
-        boolean isPostOwner = post != null && post.getFeedProfileId() == currentProfile.getFeedProfileId();
-
-        if (!isCommentOwner && !isPostOwner) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            out.print("{\"success\": false, \"error\": \"Not authorized to delete this comment\"}");
-            return;
-        }
-
-        boolean deleted = commentDAO.deleteComment(commentId);
-
-        if (deleted) {
-            out.print("{\"success\": true}");
-        } else {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.print("{\"success\": false, \"error\": \"Failed to delete comment\"}");
-        }
+        out.print("{\"success\": " + result.isSuccess() +
+                (result.getError() != null ? ", \"error\": \"" + result.getError() + "\"" : "") + "}");
     }
 
-    private void handleLikeComment(HttpServletRequest request, HttpServletResponse response, FeedProfile currentProfile)
-            throws IOException {
-        PrintWriter out = response.getWriter();
-
-        String commentIdStr = request.getParameter("commentId");
-
-        if (commentIdStr == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\": false, \"error\": \"Missing comment ID\"}");
-            return;
-        }
-
-        int commentId = Integer.parseInt(commentIdStr);
-        boolean liked = commentDAO.likeComment(commentId, currentProfile.getFeedProfileId());
-        int newLikeCount = commentDAO.getCommentLikeCount(commentId);
-
-        out.print(String.format("{\"success\": %b, \"isLiked\": true, \"likeCount\": %d}", liked, newLikeCount));
+    private void handleLike(HttpServletRequest request, PrintWriter out, FeedProfile currentProfile) {
+        int commentId = Integer.parseInt(request.getParameter("commentId"));
+        FeedActionResponse result = feedService.likeComment(commentId, currentProfile.getFeedProfileId());
+        out.print(String.format("{\"success\": %b, \"isLiked\": true, \"likeCount\": %d}",
+                result.isSuccess(), result.getLikeCount()));
     }
 
-    private void handleUnlikeComment(HttpServletRequest request, HttpServletResponse response,
-            FeedProfile currentProfile)
-            throws IOException {
-        PrintWriter out = response.getWriter();
-
-        String commentIdStr = request.getParameter("commentId");
-
-        if (commentIdStr == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\": false, \"error\": \"Missing comment ID\"}");
-            return;
-        }
-
-        int commentId = Integer.parseInt(commentIdStr);
-        commentDAO.unlikeComment(commentId, currentProfile.getFeedProfileId());
-        int newLikeCount = commentDAO.getCommentLikeCount(commentId);
-
-        out.print(String.format("{\"success\": true, \"isLiked\": false, \"likeCount\": %d}", newLikeCount));
+    private void handleUnlike(HttpServletRequest request, PrintWriter out, FeedProfile currentProfile) {
+        int commentId = Integer.parseInt(request.getParameter("commentId"));
+        FeedActionResponse result = feedService.unlikeComment(commentId, currentProfile.getFeedProfileId());
+        out.print(String.format("{\"success\": true, \"isLiked\": false, \"likeCount\": %d}", result.getLikeCount()));
     }
 
-    private void handleGetReplies(HttpServletRequest request, HttpServletResponse response, FeedProfile currentProfile)
-            throws IOException {
-        PrintWriter out = response.getWriter();
-
-        String commentIdStr = request.getParameter("commentId");
-
-        if (commentIdStr == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\": false, \"error\": \"Missing comment ID\"}");
-            return;
-        }
-
-        int commentId = Integer.parseInt(commentIdStr);
-        java.util.List<FeedComment> replies = commentDAO.getRepliesForComment(commentId,
-                currentProfile.getFeedProfileId());
+    private void handleGetReplies(HttpServletRequest request, PrintWriter out, FeedProfile currentProfile) {
+        int commentId = Integer.parseInt(request.getParameter("commentId"));
+        List<FeedComment> replies = feedService.getRepliesForComment(commentId, currentProfile.getFeedProfileId());
 
         StringBuilder json = new StringBuilder("{\"success\": true, \"replies\": [");
         for (int i = 0; i < replies.size(); i++) {
             FeedComment reply = replies.get(i);
             FeedProfile replyProfile = reply.getFeedProfile();
-            if (i > 0)
-                json.append(",");
+            if (i > 0) json.append(",");
             json.append(String.format(
                     "{\"commentId\": %d, \"commentText\": \"%s\", \"username\": \"%s\", \"initials\": \"%s\", " +
                             "\"profilePictureUrl\": %s, \"relativeTime\": \"%s\", \"likeCount\": %d, \"isLiked\": %b, \"feedProfileId\": %d}",
@@ -295,12 +172,30 @@ public class FeedCommentAction extends HttpServlet {
         out.print(json.toString());
     }
 
-    /**
-     * Escape special characters for JSON
-     */
+    private FeedProfile resolveProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("{\"success\": false, \"error\": \"Not authenticated\"}");
+            return null;
+        }
+
+        Integer userId = (Integer) session.getAttribute("user_id");
+        FeedProfile profile = (FeedProfile) session.getAttribute("feedProfile");
+        if (profile == null) {
+            try { profile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
+        }
+
+        if (profile == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"success\": false, \"error\": \"No feed profile found\"}");
+            return null;
+        }
+        return profile;
+    }
+
     private String escapeJson(String text) {
-        if (text == null)
-            return "";
+        if (text == null) return "";
         return text
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")

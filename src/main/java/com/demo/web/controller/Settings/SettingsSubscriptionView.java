@@ -64,7 +64,7 @@ public class SettingsSubscriptionView extends HttpServlet {
         request.setAttribute("totalStorageFormatted", formatSize(totalBytes));
 
         // Forward to JSP
-        request.getRequestDispatcher("/views/app/Settings/settingssubscription.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/app/Settings/settingssubscription.jsp").forward(request, response);
     }
 
     private String formatSize(long size) {

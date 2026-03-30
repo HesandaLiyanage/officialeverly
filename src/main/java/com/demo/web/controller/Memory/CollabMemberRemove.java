@@ -1,6 +1,8 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.Memory.MemoryMemberDAO;
+import com.demo.web.dto.Memory.CollabActionRequest;
+import com.demo.web.dto.Memory.CollabActionResponse;
+import com.demo.web.service.MemoryService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,17 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * Servlet for owner to remove a member from collaborative memory
- */
 public class CollabMemberRemove extends HttpServlet {
 
-    private MemoryMemberDAO memberDAO;
+    private MemoryService memoryService;
 
     @Override
     public void init() throws ServletException {
-        super.init();
-        memberDAO = new MemoryMemberDAO();
+        memoryService = new MemoryService();
     }
 
     @Override
@@ -35,7 +33,6 @@ public class CollabMemberRemove extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
         String memoryIdParam = request.getParameter("memoryId");
         String memberIdParam = request.getParameter("memberId");
 
@@ -46,33 +43,19 @@ public class CollabMemberRemove extends HttpServlet {
         }
 
         try {
-            int memoryId = Integer.parseInt(memoryIdParam);
-            int memberIdToRemove = Integer.parseInt(memberIdParam);
+            CollabActionRequest removeRequest = new CollabActionRequest();
+            removeRequest.setAction("REMOVE");
+            removeRequest.setRequesterId((Integer) session.getAttribute("user_id"));
+            removeRequest.setMemoryId(Integer.parseInt(memoryIdParam));
+            removeRequest.setTargetUserId(Integer.parseInt(memberIdParam));
 
-            // Only owner can remove members
-            if (!memberDAO.isOwner(memoryId, userId)) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("{\"error\": \"Only the owner can remove members\"}");
-                return;
-            }
+            CollabActionResponse removeResponse = memoryService.processCollabAction(removeRequest);
 
-            // Cannot remove the owner
-            if (memberDAO.isOwner(memoryId, memberIdToRemove)) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"error\": \"Cannot remove the owner\"}");
-                return;
-            }
-
-            // Remove the member
-            boolean removed = memberDAO.removeMember(memoryId, memberIdToRemove);
-
-            if (removed) {
-                System.out.println(
-                        "Owner " + userId + " removed member " + memberIdToRemove + " from memory " + memoryId);
+            if (removeResponse.isSuccess()) {
                 response.getWriter().write("{\"success\": true}");
             } else {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("{\"error\": \"Failed to remove member\"}");
+                response.setStatus(removeResponse.getStatusCode());
+                response.getWriter().write("{\"error\": \"" + removeResponse.getErrorMessage() + "\"}");
             }
 
         } catch (NumberFormatException e) {

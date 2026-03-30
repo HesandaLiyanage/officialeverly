@@ -1,0 +1,3 @@
+package com.demo.web.dto.Auth;
+
+import com.demo.web.model.Auth.user; import javax.crypto.SecretKey; public class AuthSignupStep2Response { private boolean success; private String errorMessage; private user user; private SecretKey masterKey; public boolean isSuccess() { return success; } public void setSuccess(boolean success) { this.success = success; } public String getErrorMessage() { return errorMessage; } public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; } public user getUser() { return user; } public void setUser(user user) { this.user = user; } public SecretKey getMasterKey() { return masterKey; } public void setMasterKey(SecretKey masterKey) { this.masterKey = masterKey; } }

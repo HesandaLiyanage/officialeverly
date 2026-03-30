@@ -117,20 +117,20 @@ public class MediaDAO {
     }
 
     /**
-     * Get encrypted media key for decryption
+     * Get encrypted media key for decryption.
+     * Looks up by key_id only - access control is handled by the caller.
      */
-    public EncryptionKeyData getMediaEncryptionKey(String keyId, int userId) throws SQLException {
+    public EncryptionKeyData getMediaEncryptionKey(String keyId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT encrypted_key, iv FROM encryption_keys WHERE key_id = ? AND user_id = ?";
+            String sql = "SELECT encrypted_key, iv FROM encryption_keys WHERE key_id = ?";
 
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, keyId);
-            stmt.setInt(2, userId);
 
             rs = stmt.executeQuery();
 

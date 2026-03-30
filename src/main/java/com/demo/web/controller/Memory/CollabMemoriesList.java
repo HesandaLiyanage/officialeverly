@@ -1,10 +1,8 @@
 package com.demo.web.controller.Memory;
 
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.dao.Memory.MediaDAO;
-import com.demo.web.dao.Memory.MemoryMemberDAO;
-import com.demo.web.model.Memory.Memory;
-import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.dto.Memory.CollabMemoriesListRequest;
+import com.demo.web.dto.Memory.CollabMemoriesListResponse;
+import com.demo.web.service.MemoryService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,23 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
-/**
- * Servlet for listing collaborative memories
- */
 public class CollabMemoriesList extends HttpServlet {
 
-    private memoryDAO memoryDAO;
-    private MediaDAO mediaDAO;
-    private MemoryMemberDAO memberDAO;
+    private MemoryService memoryService;
 
     @Override
     public void init() throws ServletException {
-        super.init();
-        memoryDAO = new memoryDAO();
-        mediaDAO = new MediaDAO();
-        memberDAO = new MemoryMemberDAO();
+        memoryService = new MemoryService();
     }
 
     @Override
@@ -36,47 +25,37 @@ public class CollabMemoriesList extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-
-        // Check if user is logged in
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
-
         try {
-            // Get all collab memories where user is owner or member
-            List<Memory> memories = memoryDAO.getCollabMemoriesByUserId(userId);
+            CollabMemoriesListRequest apiRequest = new CollabMemoriesListRequest();
+            apiRequest.setUserId((Integer) session.getAttribute("user_id"));
+            apiRequest.setContextPath(request.getContextPath());
 
-            System.out.println("Found " + memories.size() + " collab memories for user " + userId);
+            CollabMemoriesListResponse apiResponse = memoryService.getCollabMemoriesList(apiRequest);
 
-            // For each memory, get cover image and member count
-            for (Memory memory : memories) {
-                try {
-                    // Get media items for this memory
-                    List<MediaItem> mediaItems = mediaDAO.getMediaByMemoryId(memory.getMemoryId());
-
-                    if (!mediaItems.isEmpty()) {
-                        MediaItem coverMedia = mediaItems.get(0);
-                        request.setAttribute("cover_" + memory.getMemoryId(),
-                                request.getContextPath() + "/viewMedia?mediaId=" + coverMedia.getMediaId());
-                    }
-
-                    // Get member count
-                    int memberCount = memberDAO.getMemberCount(memory.getMemoryId());
-                    request.setAttribute("memberCount_" + memory.getMemoryId(), memberCount);
-
-                    // Check if current user is owner
-                    boolean isOwner = memberDAO.isOwner(memory.getMemoryId(), userId);
-                    request.setAttribute("isOwner_" + memory.getMemoryId(), isOwner);
-
-                } catch (Exception e) {
-                    System.err.println("Error getting data for memory " + memory.getMemoryId() + ": " + e.getMessage());
-                }
+            request.setAttribute("memories", apiResponse.getMemories());
+            
+            // set individually attributes according to map
+            if(apiResponse.getCoverImageUrls() != null) {
+               for(java.util.Map.Entry<Integer, String> entry : apiResponse.getCoverImageUrls().entrySet()) {
+                   request.setAttribute("cover_" + entry.getKey(), entry.getValue());
+               }
+            }
+            if(apiResponse.getMemberCounts() != null) {
+               for(java.util.Map.Entry<Integer, Integer> entry : apiResponse.getMemberCounts().entrySet()) {
+                   request.setAttribute("memberCount_" + entry.getKey(), entry.getValue());
+               }
+            }
+            if(apiResponse.getIsOwnerMap() != null) {
+               for(java.util.Map.Entry<Integer, Boolean> entry : apiResponse.getIsOwnerMap().entrySet()) {
+                   request.setAttribute("isOwner_" + entry.getKey(), entry.getValue());
+               }
             }
 
-            request.setAttribute("memories", memories);
             request.getRequestDispatcher("/WEB-INF/views/app/Memory/collabmemories.jsp").forward(request, response);
 
         } catch (Exception e) {

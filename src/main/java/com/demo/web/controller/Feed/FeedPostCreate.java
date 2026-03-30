@@ -1,9 +1,7 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.FeedPostDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
-import com.demo.web.dao.Memory.memoryDAO;
-import com.demo.web.model.Feed.FeedPost;
+import com.demo.web.service.FeedService;
+import com.demo.web.dto.Feed.FeedPostCreateRequest;
 import com.demo.web.model.Feed.FeedProfile;
 import com.demo.web.model.Memory.Memory;
 import com.google.gson.Gson;
@@ -27,16 +25,12 @@ import java.util.logging.Logger;
 public class FeedPostCreate extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FeedPostCreate.class.getName());
-    private FeedPostDAO feedPostDAO;
-    private FeedProfileDAO feedProfileDAO;
-    private memoryDAO memoryDao;
+    private FeedService feedService;
     private Gson gson;
 
     @Override
     public void init() throws ServletException {
-        feedPostDAO = new FeedPostDAO();
-        feedProfileDAO = new FeedProfileDAO();
-        memoryDao = new memoryDAO();
+        feedService = new FeedService();
         gson = new Gson();
     }
 
@@ -57,7 +51,9 @@ public class FeedPostCreate extends HttpServlet {
         // Get user's feed profile
         FeedProfile feedProfile = (FeedProfile) session.getAttribute("feedProfile");
         if (feedProfile == null) {
-            feedProfile = feedProfileDAO.findByUserId(userId);
+            try {
+                feedProfile = feedService.getFeedProfileByUserId(userId);
+            } catch (Exception e) { /* ignored, defaults handled */ }
             if (feedProfile == null) {
                 response.sendRedirect(request.getContextPath() + "/feedWelcome");
                 return;
@@ -68,32 +64,9 @@ public class FeedPostCreate extends HttpServlet {
         if ("selectMemory".equals(action)) {
             // Show memory selector page
             try {
-                List<Memory> allMemories = memoryDao.getMemoriesByUserId(userId);
-                List<Memory> availableMemories = new java.util.ArrayList<>();
-
-                logger.info("[CreatePostServlet] Found " + allMemories.size() + " total memories for user " + userId);
-
-                // Filter out already-posted memories and populate cover URLs
-                for (Memory memory : allMemories) {
-                    boolean isPosted = feedPostDAO.isMemoryPosted(memory.getMemoryId(), feedProfile.getFeedProfileId());
-
-                    if (!isPosted) {
-                        Integer mediaId = feedPostDAO.getFirstMediaId(memory.getMemoryId());
-                        if (mediaId != null) {
-                            // Construct viewMedia URL for browser
-                            String coverUrl = request.getContextPath() + "/viewMedia?mediaId=" + mediaId;
-                            memory.setCoverUrl(coverUrl);
-                        }
-                        availableMemories.add(memory);
-                    }
-                }
-
-                logger.info("[CreatePostServlet] " + availableMemories.size() + " memories available to post");
-
+                List<Memory> availableMemories = feedService.getAvailableMemoriesForPost(userId, feedProfile.getFeedProfileId(), request.getContextPath());
                 request.setAttribute("memories", availableMemories);
-            } catch (java.sql.SQLException e) {
-                logger.severe("[CreatePostServlet] Error fetching memories: " + e.getMessage());
-                e.printStackTrace();
+            } catch (Exception e) {
                 request.setAttribute("memories", new java.util.ArrayList<Memory>());
             }
             request.setAttribute("feedProfile", feedProfile);
@@ -140,43 +113,8 @@ public class FeedPostCreate extends HttpServlet {
 
             int memoryId = Integer.parseInt(memoryIdStr);
 
-            // Verify memory belongs to user
-            Memory memory = memoryDao.getMemoryById(memoryId);
-            if (memory == null || memory.getUserId() != userId) {
-                jsonResponse.addProperty("success", false);
-                jsonResponse.addProperty("error", "Memory not found or access denied");
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write(gson.toJson(jsonResponse));
-                return;
-            }
-
-            // Get user's feed profile
-            FeedProfile feedProfile = (FeedProfile) session.getAttribute("feedProfile");
-            if (feedProfile == null) {
-                feedProfile = feedProfileDAO.findByUserId(userId);
-                if (feedProfile == null) {
-                    jsonResponse.addProperty("success", false);
-                    jsonResponse.addProperty("error", "Feed profile not found");
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    response.getWriter().write(gson.toJson(jsonResponse));
-                    return;
-                }
-            }
-
-            // Check if already posted
-            if (feedPostDAO.isMemoryPosted(memoryId, feedProfile.getFeedProfileId())) {
-                jsonResponse.addProperty("success", false);
-                jsonResponse.addProperty("error", "This memory is already posted");
-                response.setStatus(HttpServletResponse.SC_CONFLICT);
-                response.getWriter().write(gson.toJson(jsonResponse));
-                return;
-            }
-
-            // Create the post
-            FeedPost post = new FeedPost(memoryId, feedProfile.getFeedProfileId());
-            post.setCaption(caption != null ? caption.trim() : memory.getDescription());
-
-            int postId = feedPostDAO.createPost(post);
+            FeedPostCreateRequest createReq = new FeedPostCreateRequest(memoryId, caption, userId);
+            int postId = feedService.createFeedPost(createReq);
 
             if (postId > 0) {
                 logger.info("[CreatePostServlet] Post created: " + postId + " for memory: " + memoryId);
@@ -191,7 +129,7 @@ public class FeedPostCreate extends HttpServlet {
                 response.getWriter().write(gson.toJson(jsonResponse));
             }
 
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             jsonResponse.addProperty("success", false);
             jsonResponse.addProperty("error", "Invalid memory ID");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

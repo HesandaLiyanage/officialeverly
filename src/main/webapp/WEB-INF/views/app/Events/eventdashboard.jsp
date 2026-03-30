@@ -1,48 +1,18 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="java.util.List" %>
-        <%@ page import="com.demo.web.model.Events.Event" %>
-            <%@ page import="java.text.SimpleDateFormat" %>
-                <%@ page import="java.util.Date" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-                    <jsp:include page="/views/public/header2.jsp" />
-                    <html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Dashboard - Everly</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/events.css">
+</head>
+<body>
 
-                    <head>
-                        <link rel="stylesheet" type="text/css"
-                            href="${pageContext.request.contextPath}/resources/css/events.css">
-                        <% String successMessage=(String) session.getAttribute("successMessage"); if (successMessage
-                            !=null) { session.removeAttribute("successMessage"); %>
-                            <div class="alert alert-success"
-                                style="background: #d1fae5; border: 1px solid #6ee7b7; padding: 12px; border-radius: 8px; margin: 20px; color: #065f46;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                </svg>
-                                <%= successMessage %>
-                            </div>
-                            <% } %>
-
-
-                    </head>
-
-                    <body>
-
-                        <% List<Event> upcomingEvents = (List<Event>) request.getAttribute("upcomingEvents");
-                                List<Event> pastEvents = (List<Event>) request.getAttribute("pastEvents");
-                                        Integer upcomingCount = (Integer) request.getAttribute("upcomingCount");
-                                        Integer pastCount = (Integer) request.getAttribute("pastCount");
-                                        Integer totalCount = (Integer) request.getAttribute("totalCount");
-                                        Boolean isGroupAdmin = (Boolean) request.getAttribute("isGroupAdmin");
-
-                                        // Set defaults if null
-                                        if (upcomingCount == null) upcomingCount = 0;
-                                        if (pastCount == null) pastCount = 0;
-                                        if (totalCount == null) totalCount = 0;
-                                        if (isGroupAdmin == null) isGroupAdmin = false;
-
-                                        SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy");
-                                        %>
+<jsp:include page="/WEB-INF/views/public/header2.jsp" />
 
                                         <!-- Wrap everything after header -->
                                         <div class="page-wrapper">
@@ -98,171 +68,123 @@
                                                     style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
 
                                                     <%-- Display message if user is not a group admin --%>
-                                                        <% if (!isGroupAdmin) { %>
-                                                            <div
-                                                                style="text-align: center; padding: 40px; color: #6b7280; background: #fef3c7; border: 2px solid #fbbf24; border-radius: 12px; margin: 20px;">
-                                                                <svg width="64" height="64" viewBox="0 0 24 24"
-                                                                    fill="none" stroke="#f59e0b" stroke-width="1.5"
-                                                                    style="margin: 0 auto 20px;">
-                                                                    <path
-                                                                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
-                                                                    </path>
-                                                                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                                                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                                                                </svg>
-                                                                <h3 style="margin: 0 0 10px; color: #92400e;">You're Not
-                                                                    a Group Admin</h3>
-                                                                <p style="margin: 0; color: #78350f;">Only group admins
-                                                                    can create and view events. Please create a group
-                                                                    first to access event features.</p>
-                                                                <a href="${pageContext.request.contextPath}/creategroup"
-                                                                    style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #f59e0b; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
-                                                                    Create Your First Group
-                                                                </a>
-                                                            </div>
-                                                            <% } else if ((upcomingEvents==null ||
-                                                                upcomingEvents.isEmpty()) && (pastEvents==null ||
-                                                                pastEvents.isEmpty())) { %>
-                                                                <%-- Display message if no events exist but user is
-                                                                    admin --%>
-                                                                    <div
-                                                                        style="text-align: center; padding: 40px; color: #6b7280;">
-                                                                        <svg width="64" height="64" viewBox="0 0 24 24"
-                                                                            fill="none" stroke="currentColor"
-                                                                            stroke-width="1.5"
-                                                                            style="margin: 0 auto 20px; opacity: 0.5;">
-                                                                            <rect x="3" y="4" width="18" height="18"
-                                                                                rx="2" ry="2"></rect>
-                                                                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                                                                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                                                                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                                                                        </svg>
-                                                                        <h3 style="margin: 0 0 10px; color: #374151;">No
-                                                                            Events Yet</h3>
-                                                                        <p style="margin: 0;">Create your first event to
-                                                                            get started!</p>
-                                                                    </div>
-                                                                    <% } %>
+                                                        <c:choose>
+                                                            <c:when test="${not requestScope.isGroupAdmin}">
+                                                                <div
+                                                                    style="text-align: center; padding: 40px; color: #6b7280; background: #fef3c7; border: 2px solid #fbbf24; border-radius: 12px; margin: 20px;">
+                                                                    <svg width="64" height="64" viewBox="0 0 24 24"
+                                                                        fill="none" stroke="#f59e0b" stroke-width="1.5"
+                                                                        style="margin: 0 auto 20px;">
+                                                                        <path
+                                                                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                                                                        </path>
+                                                                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                                                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                                                    </svg>
+                                                                    <h3 style="margin: 0 0 10px; color: #92400e;">You're Not
+                                                                        a Group Admin</h3>
+                                                                    <p style="margin: 0; color: #78350f;">Only group admins
+                                                                        can create and view events. Please create a group
+                                                                        first to access event features.</p>
+                                                                    <a href="${pageContext.request.contextPath}/creategroup"
+                                                                        style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #f59e0b; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                                                                        Create Your First Group
+                                                                    </a>
+                                                                </div>
+                                                            </c:when>
+                                                            <c:when test="${empty requestScope.upcomingEvents and empty requestScope.pastEvents}">
+                                                                <%-- Display message if no events exist but user is admin --%>
+                                                                <div style="text-align: center; padding: 40px; color: #6b7280;">
+                                                                    <svg width="64" height="64" viewBox="0 0 24 24"
+                                                                        fill="none" stroke="currentColor"
+                                                                        stroke-width="1.5"
+                                                                        style="margin: 0 auto 20px; opacity: 0.5;">
+                                                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                                                    </svg>
+                                                                    <h3 style="margin: 0 0 10px; color: #374151;">No Events Yet</h3>
+                                                                    <p style="margin: 0;">Create your first event to get started!</p>
+                                                                </div>
+                                                            </c:when>
+                                                        </c:choose>
 
                                                                         <%-- Upcoming Events --%>
-                                                                            <% if (upcomingEvents !=null &&
-                                                                                !upcomingEvents.isEmpty()) { for (Event
-                                                                                event : upcomingEvents) { String
-                                                                                imageUrl=event.getEventPicUrl() !=null
-                                                                                && !event.getEventPicUrl().isEmpty() ?
-                                                                                request.getContextPath() + "/" +
-                                                                                event.getEventPicUrl()
-                                                                                : "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800"
-                                                                                ; String
-                                                                                formattedDate=displayFormat.format(new
-                                                                                Date(event.getEventDate().getTime()));
-                                                                                %>
-                                                                                <div class="event-card upcoming"
-                                                                                    data-title="<%= event.getTitle() %>"
-                                                                                    data-tab="upcoming"
-                                                                                    data-event-id="<%= event.getEventId() %>">
-                                                                                    <div class="event-image"
-                                                                                        style="background-image: url('<%= imageUrl %>')">
-                                                                                    </div>
-                                                                                    <div class="event-content">
-                                                                                        <span
-                                                                                            class="event-status upcoming-status">Upcoming</span>
-                                                                                        <h3 class="event-title">
-                                                                                            <%= event.getTitle() %>
-                                                                                        </h3>
-                                                                                        <p class="event-date">
-                                                                                            <%= formattedDate %>
-                                                                                        </p>
-                                                                                        <% if (event.getDescription()
-                                                                                            !=null &&
-                                                                                            !event.getDescription().isEmpty())
-                                                                                            { %>
-                                                                                            <p class="event-description"
-                                                                                                style="font-size: 0.875rem; color: #6b7280; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
-                                                                                                <%= event.getDescription()
-                                                                                                    %>
+                                                                            <c:if test="${not empty requestScope.upcomingEvents}">
+                                                                                <c:forEach var="event" items="${requestScope.upcomingEvents}">
+                                                                                    <c:set var="imageUrl" value="${not empty event.eventPicUrl ? pageContext.request.contextPath += '/' += event.eventPicUrl : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800'}" />
+                                                                                    <div class="event-card upcoming"
+                                                                                        data-title="<c:out value='${event.title}' />"
+                                                                                        data-tab="upcoming"
+                                                                                        data-event-id="${event.eventId}">
+                                                                                        <div class="event-image"
+                                                                                            style="background-image: url('${imageUrl}')">
+                                                                                        </div>
+                                                                                        <div class="event-content">
+                                                                                            <span class="event-status upcoming-status">Upcoming</span>
+                                                                                            <h3 class="event-title">
+                                                                                                <c:out value="${event.title}" />
+                                                                                            </h3>
+                                                                                            <p class="event-date">
+                                                                                                <fmt:formatDate value="${event.eventDate}" pattern="MMMM dd, yyyy" />
                                                                                             </p>
-                                                                                            <% } %>
+                                                                                            <c:if test="${not empty event.description}">
+                                                                                                <p class="event-description"
+                                                                                                    style="font-size: 0.875rem; color: #6b7280; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                                                                                    <c:out value="${event.description}" />
+                                                                                                </p>
+                                                                                            </c:if>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                                <% } } %>
+                                                                                </c:forEach>
+                                                                            </c:if>
 
-                                                                                    <%-- Past Events --%>
-                                                                                        <% if (pastEvents !=null &&
-                                                                                            !pastEvents.isEmpty()) { for
-                                                                                            (Event event : pastEvents) {
-                                                                                            String
-                                                                                            imageUrl=event.getEventPicUrl()
-                                                                                            !=null &&
-                                                                                            !event.getEventPicUrl().isEmpty()
-                                                                                            ? request.getContextPath()
-                                                                                            + "/" +
-                                                                                            event.getEventPicUrl()
-                                                                                            : "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800"
-                                                                                            ; String
-                                                                                            formattedDate=displayFormat.format(new
-                                                                                            Date(event.getEventDate().getTime()));
-                                                                                            %>
-                                                                                            <div class="event-card past"
-                                                                                                data-title="<%= event.getTitle() %>"
-                                                                                                data-tab="past"
-                                                                                                data-event-id="<%= event.getEventId() %>"
-                                                                                                style="display: none;">
-                                                                                                <div class="event-image"
-                                                                                                    style="background-image: url('<%= imageUrl %>')">
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    class="event-content">
-                                                                                                    <span
-                                                                                                        class="event-status past-status">Past</span>
-                                                                                                    <h3
-                                                                                                        class="event-title">
-                                                                                                        <%= event.getTitle()
-                                                                                                            %>
-                                                                                                    </h3>
-                                                                                                    <p
-                                                                                                        class="event-date">
-                                                                                                        <%= formattedDate
-                                                                                                            %>
-                                                                                                    </p>
-                                                                                                    <% if
-                                                                                                        (event.getDescription()
-                                                                                                        !=null &&
-                                                                                                        !event.getDescription().isEmpty())
-                                                                                                        { %>
-                                                                                                        <p class="event-description"
-                                                                                                            style="font-size: 0.875rem; color: #6b7280; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
-                                                                                                            <%= event.getDescription()
-                                                                                                                %>
-                                                                                                        </p>
-                                                                                                        <% } %>
-                                                                                                            <a href="${pageContext.request.contextPath}/groupmemories?groupId=<%= event.getGroupId() %>"
-                                                                                                                class="go-to-memory-btn"
-                                                                                                                onclick="event.stopPropagation();"
-                                                                                                                style="display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 8px 16px; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: white; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease;">
-                                                                                                                <svg width="16"
-                                                                                                                    height="16"
-                                                                                                                    viewBox="0 0 24 24"
-                                                                                                                    fill="none"
-                                                                                                                    stroke="currentColor"
-                                                                                                                    stroke-width="2"
-                                                                                                                    stroke-linecap="round"
-                                                                                                                    stroke-linejoin="round">
-                                                                                                                    <path
-                                                                                                                        d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
-                                                                                                                    </path>
-                                                                                                                    <circle
-                                                                                                                        cx="12"
-                                                                                                                        cy="13"
-                                                                                                                        r="4">
-                                                                                                                    </circle>
-                                                                                                                </svg>
-                                                                                                                Go to
-                                                                                                                Memories
-                                                                                                            </a>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <% } } %>
+                                                                        <%-- Past Events --%>
+                                                                            <c:if test="${not empty requestScope.pastEvents}">
+                                                                                <c:forEach var="event" items="${requestScope.pastEvents}">
+                                                                                    <c:set var="imageUrl" value="${not empty event.eventPicUrl ? pageContext.request.contextPath += '/' += event.eventPicUrl : 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800'}" />
+                                                                                    <div class="event-card past"
+                                                                                        data-title="<c:out value='${event.title}' />"
+                                                                                        data-tab="past"
+                                                                                        data-event-id="${event.eventId}"
+                                                                                        style="display: none;">
+                                                                                        <div class="event-image"
+                                                                                            style="background-image: url('${imageUrl}')">
+                                                                                        </div>
+                                                                                        <div class="event-content">
+                                                                                            <span class="event-status past-status">Past</span>
+                                                                                            <h3 class="event-title">
+                                                                                                <c:out value="${event.title}" />
+                                                                                            </h3>
+                                                                                            <p class="event-date">
+                                                                                                <fmt:formatDate value="${event.eventDate}" pattern="MMMM dd, yyyy" />
+                                                                                            </p>
+                                                                                            <c:if test="${not empty event.description}">
+                                                                                                <p class="event-description"
+                                                                                                    style="font-size: 0.875rem; color: #6b7280; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                                                                                    <c:out value="${event.description}" />
+                                                                                                </p>
+                                                                                            </c:if>
+                                                                                            <a href="${pageContext.request.contextPath}/groupmemories?groupId=${event.groupId}"
+                                                                                                class="go-to-memory-btn"
+                                                                                                onclick="event.stopPropagation();"
+                                                                                                style="display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 8px 16px; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: white; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease;">
+                                                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                                                                    stroke-linejoin="round">
+                                                                                                    <path
+                                                                                                        d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+                                                                                                    </path>
+                                                                                                    <circle cx="12" cy="13" r="4">
+                                                                                                    </circle>
+                                                                                                </svg>
+                                                                                                Go to Memories
+                                                                                            </a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </c:forEach>
+                                                                            </c:if>
                                                 </div>
                                             </main>
 
@@ -276,8 +198,7 @@
                                                             <div class="stat-info">
                                                                 <span class="stat-label">Upcoming</span>
                                                                 <span class="stat-value">
-                                                                    <%= upcomingCount %> Event<%= upcomingCount !=1
-                                                                            ? "s" : "" %>
+                                                                    <c:out value="${empty requestScope.upcomingCount ? 0 : requestScope.upcomingCount}" /> Event<c:if test="${requestScope.upcomingCount != 1}">s</c:if>
                                                                 </span>
                                                             </div>
                                                         </li>
@@ -286,8 +207,7 @@
                                                             <div class="stat-info">
                                                                 <span class="stat-label">Past</span>
                                                                 <span class="stat-value">
-                                                                    <%= pastCount %> Event<%= pastCount !=1 ? "s" : ""
-                                                                            %>
+                                                                    <c:out value="${empty requestScope.pastCount ? 0 : requestScope.pastCount}" /> Event<c:if test="${requestScope.pastCount != 1}">s</c:if>
                                                                 </span>
                                                             </div>
                                                         </li>
@@ -296,8 +216,7 @@
                                                             <div class="stat-info">
                                                                 <span class="stat-label">Total</span>
                                                                 <span class="stat-value">
-                                                                    <%= totalCount %> Event<%= totalCount !=1 ? "s" : ""
-                                                                            %>
+                                                                    <c:out value="${empty requestScope.totalCount ? 0 : requestScope.totalCount}" /> Event<c:if test="${requestScope.totalCount != 1}">s</c:if>
                                                                 </span>
                                                             </div>
                                                         </li>
@@ -307,34 +226,37 @@
                                                 <!-- Floating Action Buttons -->
                                                 <div class="floating-buttons"
                                                     style="position: static; margin-top: 20px;">
-                                                    <% if (isGroupAdmin) { %>
-                                                        <a href="${pageContext.request.contextPath}/createevent"
-                                                            class="floating-btn">
-                                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                                                stroke="currentColor" stroke-width="2.5"
-                                                                stroke-linecap="round" stroke-linejoin="round">
-                                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                            </svg>
-                                                            Create Event
-                                                        </a>
-                                                        <% } else { %>
+                                                    <c:choose>
+                                                        <c:when test="${requestScope.isGroupAdmin}">
+                                                            <a href="${pageContext.request.contextPath}/createevent"
+                                                                class="floating-btn">
+                                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                                                    stroke-linejoin="round">
+                                                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                                </svg>
+                                                                Create Event
+                                                            </a>
+                                                        </c:when>
+                                                        <c:otherwise>
                                                             <a href="${pageContext.request.contextPath}/creategroup"
                                                                 class="floating-btn" style="background: #f59e0b;">
-                                                                <svg width="18" height="18" viewBox="0 0 24 24"
-                                                                    fill="none" stroke="currentColor" stroke-width="2.5"
-                                                                    stroke-linecap="round" stroke-linejoin="round">
+                                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                                                    stroke-linejoin="round">
                                                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                                                 </svg>
                                                                 Create Group First
                                                             </a>
-                                                            <% } %>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
                                             </aside>
                                         </div>
 
-                                        <jsp:include page="/views/public/footer.jsp" />
+                                        <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
                                         <script>
                                             // Event card click handler - now works for all event cards

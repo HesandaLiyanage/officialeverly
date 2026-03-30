@@ -192,6 +192,11 @@ public class JournalDAO {
         journal.setContent(rs.getString("j_content"));
         journal.setUserId(rs.getInt("user_id"));
         journal.setJournalPic(rs.getString("journal_pic"));
+        try {
+            journal.setInVault(rs.getBoolean("is_in_vault"));
+        } catch (SQLException e) {
+            // Column may not exist in older queries
+        }
         return journal;
     }
 

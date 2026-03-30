@@ -1,8 +1,7 @@
 package com.demo.web.controller.Vault;
 
-import com.demo.web.dao.Vault.VaultDAO;
-import com.demo.web.dao.Journals.JournalDAO;
-import com.demo.web.model.Journals.Journal;
+import com.demo.web.service.VaultService;
+import com.demo.web.dto.Vault.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,27 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
-/**
- * Servlet to display vault journals
- * Requires vault password verification via POST first
- */
 @WebServlet("/vaultjournals")
 public class VaultJournalsList extends HttpServlet {
 
-    private VaultDAO vaultDAO;
-    private JournalDAO journalDAO;
+    private VaultService vaultService;
 
     @Override
     public void init() throws ServletException {
-        vaultDAO = new VaultDAO();
-        journalDAO = new JournalDAO();
+        vaultService = new VaultService();
     }
 
-    /**
-     * GET - User must come from vault entry page with verified password
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -42,33 +31,29 @@ public class VaultJournalsList extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
+        VaultJournalsRequest req = new VaultJournalsRequest(
+            (Integer) session.getAttribute("user_id"),
+            null, // No password via GET
+            (Boolean) session.getAttribute("vault_unlocked")
+        );
 
-        // Check if vault is set up
-        if (!vaultDAO.hasVaultSetup(userId)) {
+        VaultJournalsResponse res = vaultService.getVaultJournals(req);
+
+        if (!res.isHasSetup()) {
             response.sendRedirect(request.getContextPath() + "/vaultSetup");
             return;
         }
 
-        // Check if vault is unlocked in session
-        Boolean vaultUnlocked = (Boolean) session.getAttribute("vault_unlocked");
-        if (vaultUnlocked == null || !vaultUnlocked) {
-            // Vault not unlocked, redirect to vault entry to verify password first
+        if (!res.isAccessGranted()) {
             response.sendRedirect(request.getContextPath() + "/vaultentries");
             return;
         }
 
-        // Vault is unlocked in session, load vault journals
-        List<Journal> vaultJournals = journalDAO.getVaultJournalsByUserId(userId);
-
-        request.setAttribute("journals", vaultJournals);
-        request.setAttribute("journalsCount", vaultJournals.size());
-        request.getRequestDispatcher("/views/app/Vault/vaultjournals.jsp").forward(request, response);
+        request.setAttribute("journals", res.getJournals());
+        request.setAttribute("journalsCount", res.getJournalsCount());
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultjournals.jsp").forward(request, response);
     }
 
-    /**
-     * POST - Display vault journals after password verification
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -79,21 +64,27 @@ public class VaultJournalsList extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
-        String vaultPassword = request.getParameter("vaultPassword");
+        VaultJournalsRequest req = new VaultJournalsRequest(
+            (Integer) session.getAttribute("user_id"),
+            request.getParameter("vaultPassword"),
+            null
+        );
 
-        // Verify vault password
-        if (vaultPassword == null || !vaultDAO.verifyVaultPassword(userId, vaultPassword)) {
-            request.setAttribute("errorMessage", "Invalid vault password");
-            request.getRequestDispatcher("/views/app/Vault/vaultentries.jsp").forward(request, response);
+        VaultJournalsResponse res = vaultService.getVaultJournals(req);
+
+        if (!res.isHasSetup()) {
+            response.sendRedirect(request.getContextPath() + "/vaultSetup");
             return;
         }
 
-        // Password verified, get vault journals
-        List<Journal> vaultJournals = journalDAO.getVaultJournalsByUserId(userId);
+        if (!res.isAccessGranted()) {
+            request.setAttribute("errorMessage", res.getErrorMessage());
+            request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultentries.jsp").forward(request, response);
+            return;
+        }
 
-        request.setAttribute("journals", vaultJournals);
-        request.setAttribute("journalsCount", vaultJournals.size());
-        request.getRequestDispatcher("/views/app/Vault/vaultjournals.jsp").forward(request, response);
+        request.setAttribute("journals", res.getJournals());
+        request.setAttribute("journalsCount", res.getJournalsCount());
+        request.getRequestDispatcher("/WEB-INF/views/app/Vault/vaultjournals.jsp").forward(request, response);
     }
 }

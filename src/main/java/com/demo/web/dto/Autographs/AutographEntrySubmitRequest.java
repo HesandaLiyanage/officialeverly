@@ -1,0 +1,3 @@
+package com.demo.web.dto.Autographs;
+
+public class AutographEntrySubmitRequest { private Integer userId; private String token; private String content; private String author; private String contentPlain; public AutographEntrySubmitRequest(Integer userId, String token, String content, String author, String contentPlain) { this.userId = userId; this.token = token; this.content = content; this.author = author; this.contentPlain = contentPlain; } public Integer getUserId() { return userId; } public String getToken() { return token; } public String getContent() { return content; } public String getAuthor() { return author; } public String getContentPlain() { return contentPlain; } }

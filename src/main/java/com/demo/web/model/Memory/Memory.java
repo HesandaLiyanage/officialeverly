@@ -17,6 +17,7 @@ public class Memory {
     private boolean isCollaborative;
     private String collabShareKey;
     private Integer groupId; // null if not a group memory
+    private boolean isInVault;
 
     // Constructors
     public Memory() {
@@ -152,6 +153,14 @@ public class Memory {
 
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
+    }
+
+    public boolean isInVault() {
+        return isInVault;
+    }
+
+    public void setInVault(boolean inVault) {
+        isInVault = inVault;
     }
 
     @Override

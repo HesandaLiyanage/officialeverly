@@ -1,7 +1,8 @@
-// File: src/main/java/com/demo/web/controller/Journals/DeleteJournalServlet.java
 package com.demo.web.controller.Journals;
 
-import com.demo.web.dao.Journals.JournalDAO;
+import com.demo.web.dto.Journals.JournalDeleteRequest;
+import com.demo.web.dto.Journals.JournalDeleteResponse;
+import com.demo.web.service.JournalService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +13,15 @@ import java.io.IOException;
 
 @WebServlet("/journal/delete")
 public class JournalDelete extends HttpServlet {
+
+    private JournalService journalService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.journalService = new JournalService();
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -22,24 +32,9 @@ public class JournalDelete extends HttpServlet {
             return;
         }
 
-        String journalIdStr = request.getParameter("journalId");
-        if (journalIdStr == null) {
-            response.sendRedirect(request.getContextPath() + "/journals");
-            return;
-        }
+        JournalDeleteRequest req = new JournalDeleteRequest(userId, request.getParameter("journalId"));
+        JournalDeleteResponse res = journalService.deleteJournal(req);
 
-        try {
-            int journalId = Integer.parseInt(journalIdStr);
-            JournalDAO dao = new JournalDAO();
-            boolean success = dao.deleteJournalToRecycleBin(journalId, userId);
-
-            if (success) {
-                response.sendRedirect(request.getContextPath() + "/journals?msg=Journal moved to Recycle Bin");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/journals?error=Failed to delete journal");
-            }
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/journals?error=Invalid journal ID");
-        }
+        response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
     }
 }

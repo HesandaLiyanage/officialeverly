@@ -1,6 +1,8 @@
 package com.demo.web.controller.Notifications;
 
-import com.demo.web.dao.Notifications.NotificationDAO;
+import com.demo.web.dto.Notifications.NotificationCountRequest;
+import com.demo.web.dto.Notifications.NotificationCountResponse;
+import com.demo.web.service.NotificationService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +13,13 @@ import java.io.PrintWriter;
 @WebServlet("/api/notifications/unreadcount")
 public class NotificationCount extends HttpServlet {
 
-    private final NotificationDAO notificationDAO = new NotificationDAO();
+    private NotificationService notificationService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        notificationService = new NotificationService();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -20,12 +28,10 @@ public class NotificationCount extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         Integer userId = (Integer) request.getSession().getAttribute("user_id");
-        if (userId == null) {
-            out.write("{\"count\": 0}");
-            return;
-        }
+        
+        NotificationCountRequest req = new NotificationCountRequest(userId);
+        NotificationCountResponse res = notificationService.getUnreadCount(req);
 
-        int count = notificationDAO.getUnreadCount(userId);
-        out.write("{\"count\": " + count + "}");
+        out.write("{\"count\": " + res.getCount() + "}");
     }
 }

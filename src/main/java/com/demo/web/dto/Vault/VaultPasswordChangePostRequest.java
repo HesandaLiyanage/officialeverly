@@ -1,0 +1,3 @@
+package com.demo.web.dto.Vault;
+
+public class VaultPasswordChangePostRequest { private int userId; private String currentPassword; private String newPassword; private String confirmPassword; public VaultPasswordChangePostRequest(int userId, String currentPassword, String newPassword, String confirmPassword) { this.userId = userId; this.currentPassword = currentPassword; this.newPassword = newPassword; this.confirmPassword = confirmPassword; } public int getUserId() { return userId; } public String getCurrentPassword() { return currentPassword; } public String getNewPassword() { return newPassword; } public String getConfirmPassword() { return confirmPassword; } }

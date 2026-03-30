@@ -705,6 +705,46 @@
         <url-pattern>/adminuseraction</url-pattern>
     </servlet-mapping>
 
+    <!-- Admin Overview View Controller -->
+    <servlet>
+        <servlet-name>AdminOverviewViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Admin.AdminOverviewView</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminOverviewViewController</servlet-name>
+        <url-pattern>/adminoverviewview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Admin Analytics View Controller -->
+    <servlet>
+        <servlet-name>AdminAnalyticsViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Admin.AdminAnalyticsView</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminAnalyticsViewController</servlet-name>
+        <url-pattern>/adminanalyticsview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Admin Content View Controller -->
+    <servlet>
+        <servlet-name>AdminContentViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Admin.AdminContentView</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminContentViewController</servlet-name>
+        <url-pattern>/admincontentview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Admin Content Action Servlet -->
+    <servlet>
+        <servlet-name>AdminContentActionServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Admin.AdminContentAction</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminContentActionServlet</servlet-name>
+        <url-pattern>/admincontentaction</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>
