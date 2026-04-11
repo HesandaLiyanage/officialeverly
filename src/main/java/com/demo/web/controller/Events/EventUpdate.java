@@ -10,82 +10,77 @@ import javax.servlet.http.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
 public class EventUpdate extends HttpServlet {
 
-    private EventService eventService;
+  private EventService eventService;
 
-    @Override
-    public void init() throws ServletException {
-        this.eventService = new EventService();
+  @Override
+  public void init() throws ServletException {
+    this.eventService = new EventService();
+  }
+
+  @Override
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+
+    HttpSession session = request.getSession(false);
+    if (session == null || session.getAttribute("user_id") == null) {
+      response.sendRedirect(request.getContextPath() + "/login");
+      return;
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    // 1. Grab the event ID early so it is safely available for the catch block
+    String eventIdRedirect = request.getParameter("event_id");
 
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
+    try {
+      EventUpdateRequest updateRequest = new EventUpdateRequest();
+
+      // 2. Session Data
+      updateRequest.setUserId((Integer) session.getAttribute("user_id"));
+
+      // 3. Normal Text Fields (Clean and easy)
+      updateRequest.setEventIdStr(eventIdRedirect);
+      updateRequest.setTitle(request.getParameter("e_title"));
+      updateRequest.setDescription(request.getParameter("e_description"));
+      updateRequest.setDateStr(request.getParameter("e_date"));
+
+      // 4. Handling Array values for checkboxes/multi-select
+      List<Integer> selectedGroupIds = new ArrayList<>();
+      String[] groupIdsStr = request.getParameterValues("group_ids");
+
+      if (groupIdsStr != null) {
+        for (String val : groupIdsStr) {
+          if (!val.trim().isEmpty()) {
+            selectedGroupIds.add(Integer.parseInt(val.trim()));
+          }
         }
+      }
+      updateRequest.setSelectedGroupIds(selectedGroupIds);
 
-        String eventIdRedirect = null;
-        try {
-            EventUpdateRequest updateRequest = new EventUpdateRequest();
-            updateRequest.setUserId((Integer) session.getAttribute("user_id"));
-            updateRequest.setEventIdStr(getPartValue(request.getPart("event_id")));
-            updateRequest.setTitle(getPartValue(request.getPart("e_title")));
-            updateRequest.setDescription(getPartValue(request.getPart("e_description")));
-            updateRequest.setDateStr(getPartValue(request.getPart("e_date")));
-            
-            eventIdRedirect = updateRequest.getEventIdStr();
-            
-            List<Integer> selectedGroupIds = new ArrayList<>();
-            for (Part part : request.getParts()) {
-                if ("group_ids".equals(part.getName())) {
-                    String val = getPartValue(part);
-                    if (val != null && !val.trim().isEmpty()) {
-                        selectedGroupIds.add(Integer.parseInt(val.trim()));
-                    }
-                }
-            }
-            updateRequest.setSelectedGroupIds(selectedGroupIds);
-            
-            Part filePart = request.getPart("event_pic");
-            updateRequest.setFilePart(filePart);
-            
-            String uploadPath = getServletContext().getRealPath("") + File.separator + "media_uploads";
-            updateRequest.setUploadPath(uploadPath);
-            updateRequest.setRealPathBase(getServletContext().getRealPath(""));
+      // 5. Handling ONLY the actual File
+      Part filePart = request.getPart("event_pic");
+      updateRequest.setFilePart(filePart);
 
-            EventUpdateResponse res = eventService.updateEvent(updateRequest);
+      String uploadPath = getServletContext().getRealPath("") + File.separator + "media_uploads";
+      updateRequest.setUploadPath(uploadPath);
+      updateRequest.setRealPathBase(getServletContext().getRealPath(""));
 
-            if (res.isSuccess()) {
-                session.setAttribute("successMessage", "Event updated successfully!");
-                response.sendRedirect(request.getContextPath() + "/events");
-            } else {
-                session.setAttribute("errorMessage", res.getErrorMessage());
-                response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + eventIdRedirect);
-            }
-        } catch (Exception e) {
-            session.setAttribute("errorMessage", "An error occurred while updating the event: " + e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + eventIdRedirect);
-        }
+      // 6. Service call
+      EventUpdateResponse res = eventService.updateEvent(updateRequest);
+
+      if (res.isSuccess()) {
+        session.setAttribute("successMessage", "Event updated successfully!");
+        response.sendRedirect(request.getContextPath() + "/events");
+      } else {
+        session.setAttribute("errorMessage", res.getErrorMessage());
+        response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + eventIdRedirect);
+      }
+    } catch (Exception e) {
+      session.setAttribute("errorMessage", "An error occurred while updating the event: " + e.getMessage());
+      response.sendRedirect(request.getContextPath() + "/editevent?event_id=" + eventIdRedirect);
     }
-
-    private String getPartValue(Part part) throws IOException {
-        if (part == null) return null;
-        java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(part.getInputStream(), "UTF-8"));
-        StringBuilder value = new StringBuilder();
-        char[] buffer = new char[1024];
-        int length;
-        while ((length = reader.read(buffer)) > 0) {
-            value.append(buffer, 0, length);
-        }
-        return value.toString();
-    }
+  }
 }
