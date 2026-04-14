@@ -236,67 +236,104 @@ public class JournalService {
         JournalDashboardResponse response = new JournalDashboardResponse();
 
         try {
-            String action = request.getAction();
-            if ("view".equals(action) && request.getIdParam() != null) {
-                int journalId = Integer.parseInt(request.getIdParam());
-                Journal journal = getJournalById(journalId, request.getUserId());
-                if (journal == null) {
-                    response.setError("Journal entry not found or no permission.");
-                    response.setRedirectUrl("/WEB-INF/views/app/Journals/journals.jsp");
-                } else {
-                    response.setView(true);
-                    response.setJournal(journal);
-                    response.setRedirectUrl("/WEB-INF/views/app/Journals/journalview.jsp");
-                }
-            } else if ("edit".equals(action) && request.getIdParam() != null) {
-                int journalId = Integer.parseInt(request.getIdParam());
-                Journal journal = getJournalById(journalId, request.getUserId());
-                if (journal == null) {
-                    response.setError("Journal entry not found or no permission.");
-                    response.setRedirectUrl("/WEB-INF/views/app/Journals/journals.jsp");
-                } else {
-                    response.setEdit(true);
-                    response.setJournal(journal);
-                    response.setRedirectUrl("/WEB-INF/views/app/Journals/editjournal.jsp");
-                }
-            } else {
-                int streakDays = getCurrentStreakDays(request.getUserId());
-                int longestStreak = getLongestStreakDays(request.getUserId());
-                List<Journal> journals = getJournalsByUserId(request.getUserId());
-                int totalCount = getJournalCount(request.getUserId());
+            int streakDays = getCurrentStreakDays(request.getUserId());
+            int longestStreak = getLongestStreakDays(request.getUserId());
+            List<Journal> journals = getJournalsByUserId(request.getUserId());
+            int totalCount = getJournalCount(request.getUserId());
 
-                Map<Integer, Integer> wordCounts = new HashMap<>();
-                for (Journal journal : journals) {
-                    int wordCount = 0;
-                    String rawContent = journal.getContent();
-                    if (rawContent != null && !rawContent.isEmpty()) {
-                        try {
-                            com.google.gson.JsonObject cObj = new com.google.gson.Gson().fromJson(rawContent, com.google.gson.JsonObject.class);
-                            String htmlText = cObj.get("htmlContent").getAsString();
-                            String plainText = htmlText.replaceAll("<[^>]*>", "").trim();
-                            if (!plainText.isEmpty()) { wordCount = plainText.split("\\s+").length; }
-                        } catch (Exception e) {}
-                    }
-                    wordCounts.put(journal.getJournalId(), wordCount);
-                }
+            Map<Integer, Integer> wordCounts = buildWordCounts(journals);
 
-                response.setList(true);
-                response.setStreakDays(streakDays);
-                response.setLongestStreak(longestStreak);
-                response.setJournals(journals);
-                response.setTotalCount(totalCount);
-                response.setWordCounts(wordCounts);
-                response.setRedirectUrl("/WEB-INF/views/app/Journals/journals.jsp");
-            }
-        } catch (NumberFormatException e) {
-            response.setError("Invalid Journal ID.");
-            response.setRedirectUrl("/WEB-INF/views/app/Journals/journals.jsp");
+            response.setStreakDays(streakDays);
+            response.setLongestStreak(longestStreak);
+            response.setJournals(journals);
+            response.setTotalCount(totalCount);
+            response.setWordCounts(wordCounts);
         } catch (Exception e) {
             response.setError("An error occurred: " + e.getMessage());
-            response.setRedirectUrl("/WEB-INF/views/app/Journals/journals.jsp");
         }
 
         return response;
+    }
+
+    public JournalViewResponse getJournalViewData(JournalViewRequest request) {
+        JournalViewResponse response = new JournalViewResponse();
+        response.setSuccess(false);
+
+        try {
+            if (request.getJournalIdParam() == null || request.getJournalIdParam().trim().isEmpty()) {
+                response.setErrorMessage("Journal ID is required.");
+                return response;
+            }
+
+            int journalId = Integer.parseInt(request.getJournalIdParam());
+            Journal journal = getJournalById(journalId, request.getUserId());
+
+            if (journal == null) {
+                response.setErrorMessage("Journal entry not found or no permission.");
+                return response;
+            }
+
+            response.setJournal(journal);
+            response.setSuccess(true);
+        } catch (NumberFormatException e) {
+            response.setErrorMessage("Invalid Journal ID.");
+        } catch (Exception e) {
+            response.setErrorMessage("An error occurred while loading the journal.");
+        }
+
+        return response;
+    }
+
+    public JournalEditFormResponse getJournalEditFormData(JournalEditFormRequest request) {
+        JournalEditFormResponse response = new JournalEditFormResponse();
+        response.setSuccess(false);
+
+        try {
+            if (request.getJournalIdParam() == null || request.getJournalIdParam().trim().isEmpty()) {
+                response.setErrorMessage("Journal ID is required.");
+                return response;
+            }
+
+            int journalId = Integer.parseInt(request.getJournalIdParam());
+            Journal journal = getJournalById(journalId, request.getUserId());
+
+            if (journal == null) {
+                response.setErrorMessage("Journal entry not found or no permission.");
+                return response;
+            }
+
+            response.setJournal(journal);
+            response.setSuccess(true);
+        } catch (NumberFormatException e) {
+            response.setErrorMessage("Invalid Journal ID.");
+        } catch (Exception e) {
+            response.setErrorMessage("An error occurred while loading the journal.");
+        }
+
+        return response;
+    }
+
+    private Map<Integer, Integer> buildWordCounts(List<Journal> journals) {
+        Map<Integer, Integer> wordCounts = new HashMap<>();
+
+        for (Journal journal : journals) {
+            int wordCount = 0;
+            String rawContent = journal.getContent();
+            if (rawContent != null && !rawContent.isEmpty()) {
+                try {
+                    com.google.gson.JsonObject cObj = new com.google.gson.Gson().fromJson(rawContent, com.google.gson.JsonObject.class);
+                    String htmlText = cObj.get("htmlContent").getAsString();
+                    String plainText = htmlText.replaceAll("<[^>]*>", "").trim();
+                    if (!plainText.isEmpty()) {
+                        wordCount = plainText.split("\\s+").length;
+                    }
+                } catch (Exception e) {
+                }
+            }
+            wordCounts.put(journal.getJournalId(), wordCount);
+        }
+
+        return wordCounts;
     }
 
     private String buildCompleteJournalContent(String htmlContent, String decorationsJson, String backgroundTheme) {

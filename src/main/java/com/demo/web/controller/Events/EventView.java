@@ -31,10 +31,10 @@ public class EventView extends HttpServlet {
       response.sendRedirect(request.getContextPath() + "/login");
       return;
     }
-
+    // eventview?action=create , info , edit
     // 2. Extract userId from the validated session
     Integer userId = (Integer) session.getAttribute("user_id");
-
+/// /eventsinfo?id=""
     String action = request.getParameter("action");
     String eventIdParam = request.getParameter("event_id");
     if (eventIdParam == null && request.getParameter("id") != null) {
@@ -42,6 +42,7 @@ public class EventView extends HttpServlet {
     }
 
     if ("create".equals(action)) {
+
       EventCreateFormRequest req = new EventCreateFormRequest(userId);
       EventCreateFormResponse res = eventService.getCreateFormData(req);
 
@@ -71,6 +72,7 @@ public class EventView extends HttpServlet {
       request.setAttribute("userGroups", res.getUserGroups());
       request.setAttribute("eventGroupIds", res.getEventGroupIds());
       request.setAttribute("formattedDate", res.getFormattedDate());
+
       if (res.getDisplayImageUrl() != null) {
         request.setAttribute("displayImageUrl", request.getContextPath() + "/" + res.getDisplayImageUrl());
       }
@@ -85,6 +87,7 @@ public class EventView extends HttpServlet {
       request.getRequestDispatcher("/WEB-INF/views/app/Events/editevent.jsp").forward(request, response);
 
     } else if ("info".equals(action)) {
+
       EventInfoRequest req = new EventInfoRequest(userId, eventIdParam, request.getParameter("groupId"));
       EventInfoResponse res = eventService.getEventInfoData(req, request.getContextPath());
 

@@ -42,11 +42,13 @@ public class EventCreate extends HttpServlet {
       eventCreateRequest.setTitle(request.getParameter("e_title"));
       eventCreateRequest.setDescription(request.getParameter("e_description"));
       eventCreateRequest.setDateStr(request.getParameter("e_date"));
+      //eventCreateRequest.setTimeStr(request.getParameter("e_time"));
+
 
       // 3. Handling Arrays/Multiple values (Replaced the manual Part loop)
       List<Integer> selectedGroupIds = new ArrayList<>();
       String[] groupIdsStr = request.getParameterValues("group_ids");
-
+//      [" 1","   23  ",4,5,56,6]
       if (groupIdsStr != null) {
         for (String val : groupIdsStr) {
           if (!val.trim().isEmpty()) {

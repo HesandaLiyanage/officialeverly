@@ -17,6 +17,7 @@ com/demo/web/dto/Groups/GroupEditRequest.class
 com/demo/web/dto/Autographs/AutographShareRequest.class
 com/demo/web/controller/Groups/GroupEdit.class
 com/demo/web/dto/Vault/VaultJournalsRequest.class
+com/demo/web/dto/Journals/JournalEditFormRequest.class
 com/demo/web/service/SettingsService.class
 com/demo/web/model/Groups/GroupMember.class
 com/demo/web/dto/Auth/AuthSignupStep2Response.class
@@ -148,6 +149,7 @@ com/demo/web/dto/Memory/MemoryUpdateResponse.class
 com/demo/web/controller/Feed/FeedProfileEdit.class
 com/demo/web/util/ValidationUtil.class
 com/demo/web/model/Auth/user.class
+com/demo/web/dto/Journals/JournalEditFormResponse.class
 com/demo/web/dao/Groups/GroupAnnouncementDAO.class
 com/demo/web/controller/Feed/FeedProfileSetup.class
 com/demo/web/controller/Memory/CollabMemoryLeave.class
@@ -240,6 +242,7 @@ com/demo/web/controller/Groups/GroupCreate.class
 com/demo/web/controller/Admin/AdminAnalyticsView.class
 com/demo/web/dto/Journals/JournalEditRequest.class
 com/demo/web/controller/_unused/ProfilePictureServlet.class
+com/demo/web/dto/Journals/JournalViewResponse.class
 com/demo/web/dto/Notifications/NotificationsListPostRequest.class
 com/demo/web/dto/Vault/VaultSetupGetResponse.class
 com/demo/web/controller/Admin/AdminContentAction.class
@@ -248,6 +251,7 @@ com/demo/web/controller/Vault/VaultSetup.class
 com/demo/web/dto/Journals/JournalDashboardRequest.class
 com/demo/web/dto/Settings/SettingsStorageSenseResponse.class
 com/demo/web/dto/Vault/VaultJournalsResponse.class
+com/demo/web/dto/Journals/JournalViewRequest.class
 com/demo/web/dto/Events/EventDashboardResponse.class
 com/demo/web/controller/Settings/SettingsLinkedDevicesAction.class
 com/demo/web/dao/Autographs/autographDAO.class
