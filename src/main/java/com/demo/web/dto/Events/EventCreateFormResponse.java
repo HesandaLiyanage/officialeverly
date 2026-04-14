@@ -1,3 +1,28 @@
 package com.demo.web.dto.Events;
 
-import java.util.List; import com.demo.web.model.Groups.Group; public class EventCreateFormResponse { private List<Group> userGroups; private boolean noGroups; private String errorMessage; public List<Group> getUserGroups() { return userGroups; } public void setUserGroups(List<Group> userGroups) { this.userGroups = userGroups; } public boolean isNoGroups() { return noGroups; } public void setNoGroups(boolean noGroups) { this.noGroups = noGroups; } public String getErrorMessage() { return errorMessage; } public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; } }
+import java.util.List;
+import com.demo.web.model.Groups.Group;
+public class EventCreateFormResponse {
+  private List<Group> userGroups;
+  private boolean noGroups;
+  private String errorMessage;
+
+  public List<Group> getUserGroups() {
+    return userGroups;
+  }
+  public void setUserGroups(List<Group> userGroups) {
+    this.userGroups = userGroups;
+  }
+  public boolean isNoGroups() {
+    return noGroups;
+  }
+  public void setNoGroups(boolean noGroups) {
+    this.noGroups = noGroups;
+  }
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+  public void setErrorMessage(String errorMessage) {
+    this.errorMessage = errorMessage;
+  }
+}

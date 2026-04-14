@@ -9,7 +9,9 @@ public class Event {
     private Timestamp eventDate;   // Maps to 'e_date' in DB
     private Timestamp createdAt;   // Maps to 'created_at' in DB
     private int groupId;           // Maps to 'group_id' in DB
-    private String eventPicUrl;    // Maps to 'event_pic' in DB
+    private String eventPicUrl;
+    // private Timestamp eventTime;
+    // Maps to 'event_pic' in DB
 
     // Default constructor
     public Event() {

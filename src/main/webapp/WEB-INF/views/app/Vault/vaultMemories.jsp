@@ -68,7 +68,7 @@
                             <c:choose>
                                 <c:when test="${not empty memories}">
                                     <c:forEach var="memory" items="${memories}">
-                                        <div class="memory-card" data-title="${memory.title}">
+                                        <div class="memory-card" data-title="${memory.title}" onclick="window.location.href='${pageContext.request.contextPath}/memoryview?id=${memory.memoryId}'" style="cursor:pointer;">
                                             <div class="memory-image"
                                                 style="background-image: url('${not empty memory.coverUrl ? memory.coverUrl : "
                                                 https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800"}')">

@@ -1,8 +1,8 @@
 package com.demo.web.controller.Feed;
 
-import com.demo.web.dao.Feed.FeedFollowDAO;
-import com.demo.web.dao.Feed.FeedProfileDAO;
+import com.demo.web.dto.Feed.FeedActionResponse;
 import com.demo.web.model.Feed.FeedProfile;
+import com.demo.web.service.FeedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,25 +11,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Logger;
 
 /**
  * FollowServlet - Handles follow/unfollow actions via AJAX.
- * 
- * Endpoints:
- * POST /followUser?action=follow&targetProfileId=xxx
- * POST /followUser?action=unfollow&targetProfileId=xxx
+ * Thin controller — all business logic delegated to FeedService.
  */
 public class FeedFollow extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FeedFollow.class.getName());
-    private FeedFollowDAO feedFollowDAO;
-    private FeedProfileDAO feedProfileDAO;
+    private FeedService feedService;
 
     @Override
     public void init() throws ServletException {
-        feedFollowDAO = new FeedFollowDAO();
-        feedProfileDAO = new FeedProfileDAO();
+        feedService = new FeedService();
     }
 
     @Override
@@ -40,27 +33,11 @@ public class FeedFollow extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        HttpSession session = request.getSession(false);
+        // 1. Authenticate
+        FeedProfile currentProfile = resolveProfile(request, response);
+        if (currentProfile == null) return;
 
-        // Check if user is logged in
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            out.print("{\"success\": false, \"message\": \"Not logged in\"}");
-            return;
-        }
-
-        // Get current user's feed profile
-        FeedProfile currentUserProfile = (FeedProfile) session.getAttribute("feedProfile");
-        if (currentUserProfile == null) {
-            Integer userId = (Integer) session.getAttribute("user_id");
-            currentUserProfile = feedProfileDAO.findByUserId(userId);
-            if (currentUserProfile == null) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"success\": false, \"message\": \"No feed profile found\"}");
-                return;
-            }
-        }
-
+        // 2. Extract parameters
         String action = request.getParameter("action");
         String targetProfileIdStr = request.getParameter("targetProfileId");
 
@@ -72,82 +49,41 @@ public class FeedFollow extends HttpServlet {
 
         try {
             int targetProfileId = Integer.parseInt(targetProfileIdStr);
-            int currentProfileId = currentUserProfile.getFeedProfileId();
 
-            // Prevent self-follow
-            if (targetProfileId == currentProfileId) {
+            // 3. Delegate to service
+            FeedActionResponse result = feedService.handleFollow(action, currentProfile.getFeedProfileId(), targetProfileId);
+
+            // 4. Return response
+            if (!result.isSuccess()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"success\": false, \"message\": \"Cannot follow yourself\"}");
-                return;
-            }
-
-            boolean success = false;
-            String resultAction = "";
-
-            if ("follow".equals(action)) {
-                success = feedFollowDAO.follow(currentProfileId, targetProfileId);
-                resultAction = "followed";
-                logger.info("[FollowServlet] User " + currentProfileId + " followed " + targetProfileId);
-            } else if ("unfollow".equals(action)) {
-                success = feedFollowDAO.unfollow(currentProfileId, targetProfileId);
-                resultAction = "unfollowed";
-                logger.info("[FollowServlet] User " + currentProfileId + " unfollowed " + targetProfileId);
+                out.print("{\"success\": false, \"message\": \"" + result.getError() + "\"}");
             } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"success\": false, \"message\": \"Invalid action\"}");
-                return;
+                out.print("{\"success\": " + result.isSuccess() +
+                        ", \"action\": \"" + result.getAction() + "\"" +
+                        ", \"isFollowing\": " + result.getIsFollowing() +
+                        ", \"followerCount\": " + result.getFollowerCount() +
+                        ", \"followingCount\": " + result.getFollowingCount() + "}");
             }
-
-            // Get updated counts
-            int followerCount = feedFollowDAO.getFollowerCount(targetProfileId);
-            int followingCount = feedFollowDAO.getFollowingCount(currentProfileId);
-            boolean isNowFollowing = feedFollowDAO.isFollowing(currentProfileId, targetProfileId);
-
-            out.print("{\"success\": " + success +
-                    ", \"action\": \"" + resultAction + "\"" +
-                    ", \"isFollowing\": " + isNowFollowing +
-                    ", \"followerCount\": " + followerCount +
-                    ", \"followingCount\": " + followingCount + "}");
 
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.print("{\"success\": false, \"message\": \"Invalid profile ID\"}");
-        } catch (Exception e) {
-            logger.severe("[FollowServlet] Error: " + e.getMessage());
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.print("{\"success\": false, \"message\": \"Server error\"}");
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Support GET for checking follow status
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        HttpSession session = request.getSession(false);
+        // 1. Authenticate
+        FeedProfile currentProfile = resolveProfile(request, response);
+        if (currentProfile == null) return;
 
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            out.print("{\"success\": false, \"message\": \"Not logged in\"}");
-            return;
-        }
-
-        FeedProfile currentUserProfile = (FeedProfile) session.getAttribute("feedProfile");
-        if (currentUserProfile == null) {
-            Integer userId = (Integer) session.getAttribute("user_id");
-            currentUserProfile = feedProfileDAO.findByUserId(userId);
-        }
-
-        if (currentUserProfile == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\": false, \"message\": \"No feed profile found\"}");
-            return;
-        }
-
+        // 2. Extract parameters
         String targetProfileIdStr = request.getParameter("targetProfileId");
         if (targetProfileIdStr == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -157,14 +93,38 @@ public class FeedFollow extends HttpServlet {
 
         try {
             int targetProfileId = Integer.parseInt(targetProfileIdStr);
-            boolean isFollowing = feedFollowDAO.isFollowing(
-                    currentUserProfile.getFeedProfileId(), targetProfileId);
 
-            out.print("{\"success\": true, \"isFollowing\": " + isFollowing + "}");
+            // 3. Delegate to service
+            FeedActionResponse result = feedService.checkFollowStatus(currentProfile.getFeedProfileId(), targetProfileId);
+
+            // 4. Return response
+            out.print("{\"success\": true, \"isFollowing\": " + result.getIsFollowing() + "}");
 
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.print("{\"success\": false, \"message\": \"Invalid profile ID\"}");
         }
+    }
+
+    private FeedProfile resolveProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("{\"success\": false, \"message\": \"Not logged in\"}");
+            return null;
+        }
+
+        Integer userId = (Integer) session.getAttribute("user_id");
+        FeedProfile profile = (FeedProfile) session.getAttribute("feedProfile");
+        if (profile == null) {
+            try { profile = feedService.getFeedProfileByUserId(userId); } catch (Exception e) { /* ignored */ }
+        }
+
+        if (profile == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"success\": false, \"message\": \"No feed profile found\"}");
+            return null;
+        }
+        return profile;
     }
 }

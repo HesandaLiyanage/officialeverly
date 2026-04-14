@@ -1,3 +1,63 @@
 package com.demo.web.dto.Journals;
 
-import com.demo.web.model.Journals.Journal; import java.util.List; import java.util.Map; public class JournalDashboardResponse { private boolean isView; private boolean isEdit; private boolean isList; private String error; private String redirectUrl; private Journal journal; private List<Journal> journals; private int totalCount; private int streakDays; private int longestStreak; private Map<Integer, Integer> wordCounts; public boolean isView() { return isView; } public void setView(boolean view) { isView = view; } public boolean isEdit() { return isEdit; } public void setEdit(boolean edit) { isEdit = edit; } public boolean isList() { return isList; } public void setList(boolean list) { isList = list; } public String getError() { return error; } public void setError(String error) { this.error = error; } public String getRedirectUrl() { return redirectUrl; } public void setRedirectUrl(String redirectUrl) { this.redirectUrl = redirectUrl; } public Journal getJournal() { return journal; } public void setJournal(Journal journal) { this.journal = journal; } public List<Journal> getJournals() { return journals; } public void setJournals(List<Journal> journals) { this.journals = journals; } public int getTotalCount() { return totalCount; } public void setTotalCount(int totalCount) { this.totalCount = totalCount; } public int getStreakDays() { return streakDays; } public void setStreakDays(int streakDays) { this.streakDays = streakDays; } public int getLongestStreak() { return longestStreak; } public void setLongestStreak(int longestStreak) { this.longestStreak = longestStreak; } public Map<Integer, Integer> getWordCounts() { return wordCounts; } public void setWordCounts(Map<Integer, Integer> wordCounts) { this.wordCounts = wordCounts; } }
+import com.demo.web.model.Journals.Journal;
+
+import java.util.List;
+import java.util.Map;
+
+public class JournalDashboardResponse {
+    private String error;
+    private List<Journal> journals;
+    private int totalCount;
+    private int streakDays;
+    private int longestStreak;
+    private Map<Integer, Integer> wordCounts;
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public List<Journal> getJournals() {
+        return journals;
+    }
+
+    public void setJournals(List<Journal> journals) {
+        this.journals = journals;
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public int getStreakDays() {
+        return streakDays;
+    }
+
+    public void setStreakDays(int streakDays) {
+        this.streakDays = streakDays;
+    }
+
+    public int getLongestStreak() {
+        return longestStreak;
+    }
+
+    public void setLongestStreak(int longestStreak) {
+        this.longestStreak = longestStreak;
+    }
+
+    public Map<Integer, Integer> getWordCounts() {
+        return wordCounts;
+    }
+
+    public void setWordCounts(Map<Integer, Integer> wordCounts) {
+        this.wordCounts = wordCounts;
+    }
+}

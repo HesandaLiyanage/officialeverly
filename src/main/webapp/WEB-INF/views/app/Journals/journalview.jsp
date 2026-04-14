@@ -262,9 +262,50 @@
                             </svg>
                             Delete
                         </button>
+                        <c:choose>
+                            <c:when test="${isInVault}">
+                                <button class="mv-action-btn vault-restore" onclick="restoreFromVault()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                                        <path d="M3 3v5h5"></path>
+                                    </svg>
+                                    Restore from Vault
+                                </button>
+                            </c:when>
+                            <c:otherwise>
+                                <button class="mv-action-btn vault" onclick="openVaultModal()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                    Move to Vault
+                                </button>
+                            </c:otherwise>
+                        </c:choose>
                     </c:if>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Vault Password Modal -->
+    <div class="vault-modal-overlay" id="vaultModal">
+        <div class="vault-modal">
+            <button class="vault-modal-close" onclick="closeVaultModal()">&times;</button>
+            <div class="vault-modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            <h3 class="vault-modal-title">Enter Vault Password</h3>
+            <p class="vault-modal-desc">Enter your vault password to move this journal to the vault.</p>
+            <div class="vault-modal-error" id="vaultError"></div>
+            <input type="password" class="vault-modal-input" id="vaultPasswordInput" placeholder="Vault password" autocomplete="off">
+            <button class="vault-modal-submit" id="vaultSubmitBtn" onclick="submitMoveToVault()">
+                <span class="vault-btn-text">Move to Vault</span>
+                <span class="vault-btn-loading" style="display:none;">Moving...</span>
+            </button>
         </div>
     </div>
 
@@ -358,8 +399,109 @@
         // Keyboard: Escape to go back
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
+                var vaultModal = document.getElementById('vaultModal');
+                if (vaultModal.classList.contains('active')) {
+                    closeVaultModal();
+                    return;
+                }
                 window.location.href = '${pageContext.request.contextPath}/journals';
             }
+        });
+
+        // Vault functions
+        function openVaultModal() {
+            document.getElementById('vaultModal').classList.add('active');
+            document.getElementById('vaultPasswordInput').value = '';
+            document.getElementById('vaultError').style.display = 'none';
+            setTimeout(function() {
+                document.getElementById('vaultPasswordInput').focus();
+            }, 100);
+        }
+
+        function closeVaultModal() {
+            document.getElementById('vaultModal').classList.remove('active');
+        }
+
+        function submitMoveToVault() {
+            var password = document.getElementById('vaultPasswordInput').value;
+            if (!password) {
+                showVaultError('Please enter your vault password.');
+                return;
+            }
+            var btn = document.getElementById('vaultSubmitBtn');
+            btn.querySelector('.vault-btn-text').style.display = 'none';
+            btn.querySelector('.vault-btn-loading').style.display = 'inline';
+            btn.disabled = true;
+
+            var formData = new FormData();
+            formData.append('type', 'journal');
+            formData.append('id', '${journal.journalId}');
+            formData.append('action', 'add');
+            formData.append('vaultPassword', password);
+
+            fetch('${pageContext.request.contextPath}/moveToVault', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = '${pageContext.request.contextPath}/journals';
+                } else if (data.redirectToSetup) {
+                    window.location.href = '${pageContext.request.contextPath}/vaultSetup';
+                } else {
+                    showVaultError(data.error || 'Failed to move to vault.');
+                    btn.querySelector('.vault-btn-text').style.display = 'inline';
+                    btn.querySelector('.vault-btn-loading').style.display = 'none';
+                    btn.disabled = false;
+                }
+            })
+            .catch(function() {
+                showVaultError('An error occurred. Please try again.');
+                btn.querySelector('.vault-btn-text').style.display = 'inline';
+                btn.querySelector('.vault-btn-loading').style.display = 'none';
+                btn.disabled = false;
+            });
+        }
+
+        function restoreFromVault() {
+            if (!confirm('Are you sure you want to restore this journal from the vault?')) return;
+            var formData = new FormData();
+            formData.append('type', 'journal');
+            formData.append('id', '${journal.journalId}');
+            formData.append('action', 'remove');
+
+            fetch('${pageContext.request.contextPath}/moveToVault', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = '${pageContext.request.contextPath}/vaultjournals';
+                } else {
+                    alert(data.error || 'Failed to restore from vault.');
+                }
+            })
+            .catch(function() {
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        function showVaultError(msg) {
+            var errEl = document.getElementById('vaultError');
+            errEl.textContent = msg;
+            errEl.style.display = 'block';
+        }
+
+        // Submit vault password on Enter key
+        document.getElementById('vaultPasswordInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') submitMoveToVault();
+        });
+
+        // Close modal on overlay click
+        document.getElementById('vaultModal').addEventListener('click', function(e) {
+            if (e.target === this) closeVaultModal();
         });
     </script>
 </body>
