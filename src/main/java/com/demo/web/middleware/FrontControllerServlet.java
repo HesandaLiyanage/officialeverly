@@ -122,7 +122,7 @@ public class FrontControllerServlet extends HttpServlet {
         // Admin pages - routed through controllers for dynamic data
         routeToController.put("/admin", "/adminoverviewview");
         routeToController.put("/adminuser", "/adminuserview");
-        routeToJsp.put("/adminsettings", "/WEB-INF/views/app/Admin/adminsettings.jsp");
+        routeToController.put("/adminsettings", "/adminsettingsview");
         routeToController.put("/adminanalytics", "/adminanalyticsview");
         routeToController.put("/admincontent", "/admincontentview");
 

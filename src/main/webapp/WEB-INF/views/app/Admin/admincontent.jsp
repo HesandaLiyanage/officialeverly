@@ -392,7 +392,7 @@
 
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                window.location.href = '${pageContext.request.contextPath}/login';
+                window.location.href = '${pageContext.request.contextPath}/logoutservlet';
             }
         }
 

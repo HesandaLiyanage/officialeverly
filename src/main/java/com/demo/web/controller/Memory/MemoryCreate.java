@@ -1,10 +1,10 @@
 package com.demo.web.controller.Memory;
 
+import com.demo.web.dto.Memory.MemoryCreatePageRequest;
+import com.demo.web.dto.Memory.MemoryCreatePageResponse;
 import com.demo.web.dto.Memory.MemoryCreateRequest;
 import com.demo.web.dto.Memory.MemoryCreateResponse;
 import com.demo.web.service.MemoryService;
-import com.demo.web.dao.Settings.SubscriptionDAO;
-import com.demo.web.model.Settings.Plan;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -38,14 +38,16 @@ public class MemoryCreate extends HttpServlet {
 
         Integer userId = (Integer) session.getAttribute("user_id");
 
-        // UI View limit check (can also be moved to Service later, keeping simple for now)
-        SubscriptionDAO subDAO = new SubscriptionDAO();
-        int count = subDAO.getMemoryCount(userId);
-        Plan plan = subDAO.getPlanByUserId(userId);
-        if (plan == null) plan = subDAO.getPlanById(1);
+        MemoryCreatePageRequest createPageRequest = new MemoryCreatePageRequest(userId);
+        MemoryCreatePageResponse createPageResponse = memoryService.getCreatePageData(createPageRequest);
 
-        if (plan.getMemoryLimit() > 0 && count >= plan.getMemoryLimit()) {
+        if (createPageResponse.isLimitReached()) {
             response.sendRedirect(request.getContextPath() + "/changeplan?reason=limit");
+            return;
+        }
+
+        if (!createPageResponse.isAllowed()) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, createPageResponse.getErrorMessage());
             return;
         }
 

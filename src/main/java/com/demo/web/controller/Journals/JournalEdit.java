@@ -3,12 +3,12 @@ package com.demo.web.controller.Journals;
 import com.demo.web.dto.Journals.JournalEditRequest;
 import com.demo.web.dto.Journals.JournalEditResponse;
 import com.demo.web.service.JournalService;
+import com.demo.web.util.ControllerSessionUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class JournalEdit extends HttpServlet {
@@ -28,13 +28,10 @@ public class JournalEdit extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        Integer userId = ControllerSessionUtil.requireUserId(request, response);
+        if (userId == null) {
             return;
         }
-
-        Integer userId = (Integer) session.getAttribute("user_id");
 
         JournalEditRequest req = new JournalEditRequest(
             userId,

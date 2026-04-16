@@ -3,6 +3,7 @@ package com.demo.web.service;
 import java.util.Map;
 import java.util.HashMap;
 
+import com.demo.web.dao.Feed.FeedPostDAO;
 import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.dao.Memory.MemoryMemberDAO;
@@ -16,7 +17,11 @@ import com.demo.web.model.Groups.Group;
 import com.demo.web.model.Settings.Plan;
 import com.demo.web.util.EncryptionService;
 import com.demo.web.dto.Memory.MemoryCreateRequest;
+import com.demo.web.dto.Memory.MemoryCreatePageRequest;
+import com.demo.web.dto.Memory.MemoryCreatePageResponse;
 import com.demo.web.dto.Memory.MemoryCreateResponse;
+import com.demo.web.dto.Memory.MediaStreamRequest;
+import com.demo.web.dto.Memory.MediaStreamResponse;
 import com.demo.web.dto.Memory.MemoryViewRequest;
 import com.demo.web.dto.Memory.MemoryViewResponse;
 import com.demo.web.dto.Memory.MemoryUpdateRequest;
@@ -60,6 +65,7 @@ public class MemoryService {
     private SubscriptionDAO subscriptionDAO;
     private GroupDAO groupDAO;
     private GroupMemberDAO groupMemberDAO;
+    private FeedPostDAO feedPostDAO;
     private NotificationDAO notificationDAO;
     private MemoryRecapDAO recapDAO;
 
@@ -74,6 +80,7 @@ public class MemoryService {
         this.subscriptionDAO = new SubscriptionDAO();
         this.groupDAO = new GroupDAO();
         this.groupMemberDAO = new GroupMemberDAO();
+        this.feedPostDAO = new FeedPostDAO();
         this.notificationDAO = new NotificationDAO();
         this.recapDAO = new MemoryRecapDAO();
 
@@ -88,6 +95,25 @@ public class MemoryService {
     /**
      * Creates a new memory, checks business constraints, encrypts media, and sends notifications.
      */
+    public MemoryCreatePageResponse getCreatePageData(MemoryCreatePageRequest request) {
+        try {
+            Plan plan = subscriptionDAO.getPlanByUserId(request.getUserId());
+            if (plan == null) {
+                plan = subscriptionDAO.getPlanById(1);
+            }
+
+            int count = subscriptionDAO.getMemoryCount(request.getUserId());
+            if (plan.getMemoryLimit() > 0 && count >= plan.getMemoryLimit()) {
+                return MemoryCreatePageResponse.limitReached("Memory limit reached on your current plan.");
+            }
+
+            return MemoryCreatePageResponse.allowed();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return MemoryCreatePageResponse.error("Failed to validate memory creation access.");
+        }
+    }
+
     public MemoryCreateResponse createMemory(MemoryCreateRequest request) {
         int userId = request.getUserId();
         
@@ -168,6 +194,27 @@ public class MemoryService {
         }
     }
 
+    public MediaStreamResponse getMediaStreamData(MediaStreamRequest request) {
+        try {
+            MediaItem mediaItem = mediaDAO.getMediaById(request.getMediaId());
+            if (mediaItem == null) {
+                return MediaStreamResponse.error(404, "Media not found");
+            }
+
+            if (!canUserAccessMedia(mediaItem, request.getUserId(), request.getMediaId())) {
+                return MediaStreamResponse.error(403, "Access denied");
+            }
+
+            byte[] fileData = loadMediaBytes(mediaItem);
+            return MediaStreamResponse.success(mediaItem, fileData);
+        } catch (FileNotFoundException e) {
+            return MediaStreamResponse.error(404, e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return MediaStreamResponse.error(500, "Error serving media: " + e.getMessage());
+        }
+    }
+
     /**
      * Encrypts and saves media files to disk, storing DB records.
      */
@@ -217,6 +264,82 @@ public class MemoryService {
             uploadedCount++;
         }
         return uploadedCount;
+    }
+
+    private boolean canUserAccessMedia(MediaItem mediaItem, int userId, int mediaId) {
+        if (mediaItem.getUserId() == userId) {
+            return true;
+        }
+
+        try {
+            int memoryId = mediaDAO.getMemoryIdForMedia(mediaId);
+            if (memoryId <= 0) {
+                return false;
+            }
+
+            Memory memory = memoryDAO.getMemoryById(memoryId);
+            if (memory != null && memory.isCollaborative() && memberDAO.isMember(memory.getMemoryId(), userId)) {
+                return true;
+            }
+
+            if (feedPostDAO.isMemorySharedInFeed(memoryId)) {
+                return true;
+            }
+
+            if (memory != null && memory.getGroupId() != null) {
+                int groupId = memory.getGroupId();
+                Group group = groupDAO.findById(groupId);
+                boolean isGroupAdmin = group != null && group.getUserId() == userId;
+                boolean isGroupMember = groupMemberDAO.isUserMember(groupId, userId);
+                if (isGroupAdmin || isGroupMember) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error checking media access: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    private byte[] loadMediaBytes(MediaItem mediaItem) throws Exception {
+        File file = resolveMediaFile(mediaItem);
+        if (mediaItem.isEncrypted() && mediaItem.getEncryptionKeyId() != null) {
+            return decryptMediaFile(mediaItem, file);
+        }
+        return Files.readAllBytes(file.toPath());
+    }
+
+    private File resolveMediaFile(MediaItem mediaItem) throws FileNotFoundException {
+        String filename = mediaItem.getFilePath();
+        if (filename.contains("/")) {
+            filename = filename.substring(filename.lastIndexOf("/") + 1);
+        }
+        if (filename.contains(File.separator)) {
+            filename = filename.substring(filename.lastIndexOf(File.separator) + 1);
+        }
+
+        String filePath = PHYSICAL_UPLOAD_PATH + File.separator + filename;
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new FileNotFoundException("File not found: " + filePath);
+        }
+        return file;
+    }
+
+    private byte[] decryptMediaFile(MediaItem mediaItem, File file) throws Exception {
+        byte[] encryptedData = Files.readAllBytes(file.toPath());
+        MediaDAO.EncryptionKeyData keyData = mediaDAO.getMediaEncryptionKey(mediaItem.getEncryptionKeyId());
+
+        if (keyData == null) {
+            throw new IOException("Encryption key not found for media " + mediaItem.getMediaId());
+        }
+
+        return EncryptionService.decryptFile(
+                encryptedData,
+                mediaItem.getEncryptionIv(),
+                keyData.getEncryptedKey(),
+                keyData.getIv());
     }
 
     /**
@@ -500,12 +623,11 @@ public class MemoryService {
     public MemoriesListResponse getMemoriesList(MemoriesListRequest request) {
         int userId = request.getUserId();
         try {
-            SubscriptionDAO subDAO = new SubscriptionDAO();
-            Plan plan = subDAO.getPlanByUserId(userId);
-            if (plan == null) plan = subDAO.getPlanById(1);
+            Plan plan = subscriptionDAO.getPlanByUserId(userId);
+            if (plan == null) plan = subscriptionDAO.getPlanById(1);
 
-            long used = subDAO.getUsedStorage(userId);
-            int count = subDAO.getMemoryCount(userId);
+            long used = subscriptionDAO.getUsedStorage(userId);
+            int count = subscriptionDAO.getMemoryCount(userId);
 
             boolean warning = false;
             boolean full = false;

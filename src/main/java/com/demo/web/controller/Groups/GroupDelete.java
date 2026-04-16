@@ -38,7 +38,7 @@ public class GroupDelete extends HttpServlet {
             }
 
             GroupDeleteResponse apiResponse = groupService.deleteGroup(apiRequest);
-            
+
             response.sendRedirect(request.getContextPath() + apiResponse.getRedirectUrl());
 
         } catch (Exception e) {

@@ -745,6 +745,26 @@
         <url-pattern>/admincontentaction</url-pattern>
     </servlet-mapping>
 
+    <!-- Admin Settings View Controller -->
+    <servlet>
+        <servlet-name>AdminSettingsViewController</servlet-name>
+        <servlet-class>com.demo.web.controller.Admin.AdminSettingsView</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminSettingsViewController</servlet-name>
+        <url-pattern>/adminsettingsview</url-pattern>
+    </servlet-mapping>
+
+    <!-- Admin Settings Action Servlet -->
+    <servlet>
+        <servlet-name>AdminSettingsActionServlet</servlet-name>
+        <servlet-class>com.demo.web.controller.Admin.AdminSettingsAction</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminSettingsActionServlet</servlet-name>
+        <url-pattern>/adminsettingsaction</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>FrontController</servlet-name>
         <servlet-class>com.demo.web.middleware.FrontControllerServlet</servlet-class>

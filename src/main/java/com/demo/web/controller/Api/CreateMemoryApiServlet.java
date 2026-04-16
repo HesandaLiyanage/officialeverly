@@ -1,10 +1,10 @@
 package com.demo.web.controller.Api;
 
+import com.demo.web.dto.Memory.MemoryCreatePageRequest;
+import com.demo.web.dto.Memory.MemoryCreatePageResponse;
 import com.demo.web.dto.Memory.MemoryCreateRequest;
 import com.demo.web.dto.Memory.MemoryCreateResponse;
 import com.demo.web.service.MemoryService;
-import com.demo.web.dao.Settings.SubscriptionDAO;
-import com.demo.web.model.Settings.Plan;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -52,16 +52,21 @@ public class CreateMemoryApiServlet extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("user_id");
 
         try {
-            // Memory limit check
-            SubscriptionDAO subDAO = new SubscriptionDAO();
-            int count = subDAO.getMemoryCount(userId);
-            Plan plan = subDAO.getPlanByUserId(userId);
-            if (plan == null) plan = subDAO.getPlanById(1);
+            MemoryCreatePageRequest createPageRequest = new MemoryCreatePageRequest(userId);
+            MemoryCreatePageResponse createPageResponse = memoryService.getCreatePageData(createPageRequest);
 
-            if (plan.getMemoryLimit() > 0 && count >= plan.getMemoryLimit()) {
+            if (createPageResponse.isLimitReached()) {
                 response.setStatus(HttpServletResponse.SC_PAYMENT_REQUIRED);
                 jsonResponse.addProperty("success", false);
-                jsonResponse.addProperty("error", "Memory limit reached on your current plan.");
+                jsonResponse.addProperty("error", createPageResponse.getErrorMessage());
+                response.getWriter().write(gson.toJson(jsonResponse));
+                return;
+            }
+
+            if (!createPageResponse.isAllowed()) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("error", createPageResponse.getErrorMessage());
                 response.getWriter().write(gson.toJson(jsonResponse));
                 return;
             }
