@@ -3,6 +3,7 @@ package com.demo.web.controller.Events;
 import com.demo.web.service.EventService;
 import com.demo.web.dto.Events.EventUpdateRequest;
 import com.demo.web.dto.Events.EventUpdateResponse;
+import com.demo.web.util.ControllerSessionUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -26,11 +27,12 @@ public class EventUpdate extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
 
-    HttpSession session = request.getSession(false);
-    if (session == null || session.getAttribute("user_id") == null) {
-      response.sendRedirect(request.getContextPath() + "/login");
+    Integer userId = ControllerSessionUtil.requireUserId(request, response);
+    if (userId == null) {
       return;
     }
+
+    HttpSession session = request.getSession(false);
 
     // 1. Grab the event ID early so it is safely available for the catch block
     String eventIdRedirect = request.getParameter("event_id");
@@ -39,7 +41,7 @@ public class EventUpdate extends HttpServlet {
       EventUpdateRequest updateRequest = new EventUpdateRequest();
 
       // 2. Session Data
-      updateRequest.setUserId((Integer) session.getAttribute("user_id"));
+      updateRequest.setUserId(userId);
 
       // 3. Normal Text Fields (Clean and easy)
       updateRequest.setEventIdStr(eventIdRedirect);

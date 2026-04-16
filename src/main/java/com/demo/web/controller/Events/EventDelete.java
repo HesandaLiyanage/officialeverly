@@ -3,6 +3,7 @@ package com.demo.web.controller.Events;
 import com.demo.web.service.EventService;
 import com.demo.web.dto.Events.EventDeleteRequest;
 import com.demo.web.dto.Events.EventDeleteResponse;
+import com.demo.web.util.ControllerSessionUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,15 +24,16 @@ public class EventDelete extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        Integer userId = ControllerSessionUtil.requireUserId(request, response);
+        if (userId == null) {
             return;
         }
 
+        HttpSession session = request.getSession(false);
+
         try {
             EventDeleteRequest req = new EventDeleteRequest(
-                (Integer) session.getAttribute("user_id"),
+                userId,
                 request.getParameter("event_id"),
                 getServletContext().getRealPath("")
             );

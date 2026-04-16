@@ -5,7 +5,6 @@ import com.demo.web.dto.Events.EventVoteActionRequest;
 import com.demo.web.dto.Events.EventVoteActionResponse;
 import com.demo.web.dto.Events.EventVoteDataRequest;
 import com.demo.web.dto.Events.EventVoteDataResponse;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,9 +35,10 @@ public class EventVote extends HttpServlet {
             out.print("{\"success\": false, \"error\": \"Not logged in\"}");
             return;
         }
+        Integer userId = (Integer) session.getAttribute("user_id");
 
         EventVoteActionRequest req = new EventVoteActionRequest(
-            (Integer) session.getAttribute("user_id"),
+            userId,
             request.getParameter("event_id"),
             request.getParameter("group_id"),
             request.getParameter("vote")
@@ -63,9 +63,10 @@ public class EventVote extends HttpServlet {
             out.print("{\"success\": false, \"error\": \"Not logged in\"}");
             return;
         }
+        Integer userId = (Integer) session.getAttribute("user_id");
 
         EventVoteDataRequest req = new EventVoteDataRequest(
-            (Integer) session.getAttribute("user_id"),
+            userId,
             request.getParameter("event_id"),
             request.getParameter("group_id"),
             request.getParameter("type")

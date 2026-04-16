@@ -83,6 +83,7 @@ com/demo/web/dto/Events/EventCreateFormRequest.class
 com/demo/web/dto/Auth/AuthSignupStep1Response.class
 com/demo/web/dto/Autographs/AutographShareResponse.class
 com/demo/web/dto/Events/EventDeleteResponse.class
+com/demo/web/dto/Memory/MemoryCreatePageRequest.class
 com/demo/web/controller/Feed/FeedBlockedUsersList.class
 com/demo/web/controller/Settings/SettingsFamilyPlanView.class
 com/demo/web/controller/Memory/MediaView.class
@@ -101,6 +102,7 @@ com/demo/web/dto/Groups/GroupAnnouncementCreateResponse.class
 com/demo/web/dto/Memory/CollabMemoriesListResponse.class
 com/demo/web/util/EncryptionService$UserMasterKeyData.class
 com/demo/web/dao/Feed/FeedPostLikeDAO.class
+com/demo/web/util/ControllerSessionUtil.class
 com/demo/web/dto/Groups/GroupsListEditResponse.class
 com/demo/web/model/Journals/RecycleBinItem.class
 com/demo/web/controller/Autographs/AutographView.class
@@ -121,8 +123,10 @@ com/demo/web/controller/Auth/AuthGoogleCallback.class
 com/demo/web/dto/Auth/AuthSignupStep1Request.class
 com/demo/web/dao/Feed/BlockedUserDAO.class
 com/demo/web/dao/Events/EventDAO.class
+com/demo/web/dto/Memory/MemoryCreatePageResponse.class
 com/demo/web/dto/Auth/AuthGoogleCallbackRequest.class
 com/demo/web/dto/Autographs/AutographWriteRequest.class
+com/demo/web/dto/Memory/MediaStreamRequest.class
 com/demo/web/dao/Autographs/AutographEntryDAO.class
 com/demo/web/dto/Auth/AuthLoginResponse.class
 com/demo/web/controller/Autographs/AutographUpdate.class
@@ -193,6 +197,7 @@ com/demo/web/util/EncryptionService.class
 com/demo/web/dao/Memory/MediaDAO$EncryptionKeyData.class
 com/demo/web/controller/Feed/FeedCommentView.class
 com/demo/web/dto/Autographs/AutographDashboardRequest.class
+com/demo/web/controller/Admin/AdminSettingsView.class
 com/demo/web/dto/Settings/SettingsProfileRequest.class
 com/demo/web/dto/Vault/VaultPasswordChangePostResponse.class
 com/demo/web/dto/Memory/MemoryShareLinkResponse.class
@@ -244,8 +249,10 @@ com/demo/web/dto/Journals/JournalEditRequest.class
 com/demo/web/controller/_unused/ProfilePictureServlet.class
 com/demo/web/dto/Journals/JournalViewResponse.class
 com/demo/web/dto/Notifications/NotificationsListPostRequest.class
+com/demo/web/util/AdminAccessUtil.class
 com/demo/web/dto/Vault/VaultSetupGetResponse.class
 com/demo/web/controller/Admin/AdminContentAction.class
+com/demo/web/controller/Admin/AdminSettingsAction.class
 com/demo/web/controller/Events/EventVote.class
 com/demo/web/controller/Vault/VaultSetup.class
 com/demo/web/dto/Journals/JournalDashboardRequest.class
@@ -304,6 +311,7 @@ com/demo/web/model/Memory/MediaShare.class
 com/demo/web/controller/Autographs/AutographRestore.class
 com/demo/web/dto/Groups/GroupMembersListResponse.class
 com/demo/web/model/Memory/MediaItem.class
+com/demo/web/dto/Memory/MediaStreamResponse.class
 com/demo/web/dto/Memory/MemoryCreateRequest.class
 com/demo/web/controller/Memory/MemoryShareLink.class
 com/demo/web/controller/Memory/CollabMemoryView.class
@@ -318,4 +326,5 @@ com/demo/web/dto/Autographs/AutographEntrySubmitRequest.class
 com/demo/web/controller/Journals/JournalView.class
 com/demo/web/dto/Autographs/AutographWriteResponse.class
 com/demo/web/dao/Journals/RecycleBinDAO.class
+com/demo/web/dao/Admin/AdminSettingsDAO.class
 com/demo/web/controller/Admin/AdminOverviewView.class

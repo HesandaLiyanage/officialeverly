@@ -69,14 +69,14 @@ public class AdminDashboardDAO {
      * Get total groups count.
      */
     public int getTotalGroups() {
-        return getCount("SELECT COUNT(*) FROM groups");
+        return getCount("SELECT COUNT(*) FROM \"group\"");
     }
 
     /**
      * Get total events count.
      */
     public int getTotalEvents() {
-        return getCount("SELECT COUNT(*) FROM events");
+        return getCount("SELECT COUNT(*) FROM event");
     }
 
     /**

@@ -3,6 +3,7 @@ package com.demo.web.controller.Events;
 import com.demo.web.service.EventService;
 import com.demo.web.dto.Events.EventCreateRequest;
 import com.demo.web.dto.Events.EventCreateResponse;
+import com.demo.web.util.ControllerSessionUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -26,17 +27,18 @@ public class EventCreate extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
 
-    HttpSession session = request.getSession(false);
-    if (session == null || session.getAttribute("user_id") == null) {
-      response.sendRedirect(request.getContextPath() + "/login");
+    Integer userId = ControllerSessionUtil.requireUserId(request, response);
+    if (userId == null) {
       return;
     }
+
+    HttpSession session = request.getSession(false);
 
     try {
       EventCreateRequest eventCreateRequest = new EventCreateRequest();
 
       // 1. Session Data
-      eventCreateRequest.setUserId((Integer) session.getAttribute("user_id"));
+      eventCreateRequest.setUserId(userId);
 
       // 2. Normal Text Fields (Replaced getPartValue with getParameter)
       eventCreateRequest.setTitle(request.getParameter("e_title"));

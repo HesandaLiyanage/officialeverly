@@ -1,6 +1,7 @@
 package com.demo.web.controller.Admin;
 
 import com.demo.web.dao.Admin.AdminDashboardDAO;
+import com.demo.web.util.AdminAccessUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,9 +31,7 @@ public class AdminAnalyticsView extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        if (!AdminAccessUtil.requireAdmin(request, response)) {
             return;
         }
 

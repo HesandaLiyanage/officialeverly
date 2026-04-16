@@ -55,6 +55,7 @@ public class GroupAnnouncementCreate extends HttpServlet {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
 
+
         GroupAnnouncementCreateRequest req = new GroupAnnouncementCreateRequest(userId, groupIdStr, title, content);
         GroupAnnouncementCreateResponse res = groupService.createGroupAnnouncement(req);
 

@@ -3,6 +3,7 @@ package com.demo.web.controller.Journals;
 import com.demo.web.dto.Journals.JournalDeleteRequest;
 import com.demo.web.dto.Journals.JournalDeleteResponse;
 import com.demo.web.service.JournalService;
+import com.demo.web.util.ControllerSessionUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,9 +27,8 @@ public class JournalDelete extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Integer userId = (Integer) request.getSession().getAttribute("user_id");
+        Integer userId = ControllerSessionUtil.requireUserId(request, response);
         if (userId == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 

@@ -8,12 +8,12 @@ import com.demo.web.dto.Journals.JournalViewRequest;
 import com.demo.web.dto.Journals.JournalViewResponse;
 import com.demo.web.model.Journals.Journal;
 import com.demo.web.service.JournalService;
+import com.demo.web.util.ControllerSessionUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class JournalView extends HttpServlet {
@@ -29,50 +29,63 @@ public class JournalView extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        Integer userId = ControllerSessionUtil.requireUserId(request, response);
+        if (userId == null) {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("user_id");
         String action = request.getParameter("action");
         String journalIdParam = request.getParameter("id");
 
         if ("view".equals(action)) {
-            JournalViewRequest req = new JournalViewRequest(userId, journalIdParam);
-            JournalViewResponse res = journalService.getJournalViewData(req);
-
-            if (!res.isSuccess()) {
-                request.setAttribute("error", res.getErrorMessage());
-                request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
-                return;
-            }
-
-            request.setAttribute("journal", res.getJournal());
-            request.setAttribute("isInVault", res.getJournal().isInVault());
-            preComputeJournalAttributes(request, res.getJournal());
-            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journalview.jsp").forward(request, response);
+            showJournal(request, response, userId, journalIdParam);
             return;
         }
 
         if ("edit".equals(action)) {
-            JournalEditFormRequest req = new JournalEditFormRequest(userId, journalIdParam);
-            JournalEditFormResponse res = journalService.getJournalEditFormData(req);
-
-            if (!res.isSuccess()) {
-                request.setAttribute("error", res.getErrorMessage());
-                request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
-                return;
-            }
-
-            request.setAttribute("journal", res.getJournal());
-            request.setAttribute("isInVault", res.getJournal().isInVault());
-            preComputeJournalAttributes(request, res.getJournal());
-            request.getRequestDispatcher("/WEB-INF/views/app/Journals/editjournal.jsp").forward(request, response);
+            showEditForm(request, response, userId, journalIdParam);
             return;
         }
-        //dashboard
+
+        showDashboard(request, response, userId);
+    }
+
+    private void showJournal(HttpServletRequest request, HttpServletResponse response, int userId, String journalIdParam)
+            throws ServletException, IOException {
+        JournalViewRequest req = new JournalViewRequest(userId, journalIdParam);
+        JournalViewResponse res = journalService.getJournalViewData(req);
+
+        if (!res.isSuccess()) {
+            request.setAttribute("error", res.getErrorMessage());
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
+            return;
+        }
+
+        request.setAttribute("journal", res.getJournal());
+        request.setAttribute("isInVault", res.getJournal().isInVault());
+        preComputeJournalAttributes(request, res.getJournal());
+        request.getRequestDispatcher("/WEB-INF/views/app/Journals/journalview.jsp").forward(request, response);
+    }
+
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response, int userId, String journalIdParam)
+            throws ServletException, IOException {
+        JournalEditFormRequest req = new JournalEditFormRequest(userId, journalIdParam);
+        JournalEditFormResponse res = journalService.getJournalEditFormData(req);
+
+        if (!res.isSuccess()) {
+            request.setAttribute("error", res.getErrorMessage());
+            request.getRequestDispatcher("/WEB-INF/views/app/Journals/journals.jsp").forward(request, response);
+            return;
+        }
+
+        request.setAttribute("journal", res.getJournal());
+        request.setAttribute("isInVault", res.getJournal().isInVault());
+        preComputeJournalAttributes(request, res.getJournal());
+        request.getRequestDispatcher("/WEB-INF/views/app/Journals/editjournal.jsp").forward(request, response);
+    }
+
+    private void showDashboard(HttpServletRequest request, HttpServletResponse response, int userId)
+            throws ServletException, IOException {
         JournalDashboardRequest req = new JournalDashboardRequest(userId);
         JournalDashboardResponse res = journalService.getDashboard(req);
 

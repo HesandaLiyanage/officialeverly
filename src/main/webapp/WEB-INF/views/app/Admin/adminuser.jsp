@@ -157,6 +157,9 @@
             <div class="nav-item" onclick="navigateTo('overview')">
                 <span>○</span> Overview
             </div>
+            <div class="nav-item" onclick="navigateTo('analytics')">
+                <span>▢</span> Analytics & Reports
+            </div>
             <div class="nav-item active" onclick="navigateTo('users')">
                 <span>▢</span> User Management
             </div>
@@ -346,7 +349,7 @@
 
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                window.location.href = '${pageContext.request.contextPath}/login';
+                window.location.href = '${pageContext.request.contextPath}/logoutservlet';
             }
         }
 
