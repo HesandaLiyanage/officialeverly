@@ -773,6 +773,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.upload-area.has-files .preview-container {
+    display: flex;
 }
 
 .file-preview {

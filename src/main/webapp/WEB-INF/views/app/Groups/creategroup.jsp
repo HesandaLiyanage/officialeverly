@@ -28,7 +28,8 @@
                     <div class="form-group">
                         <label class="form-label">Group Name</label>
                         <input type="text" class="form-input" name="g_name" id="g_name"
-                            placeholder="e.g., Smith Family, College Friends 2024" required />
+                            placeholder="e.g., Smith Family, College Friends 2024"
+                            value="${g_name}" required />
                     </div>
 
                     <!-- Description Input -->
@@ -36,7 +37,7 @@
                         <label class="form-label">Description</label>
                         <textarea class="form-input form-textarea" name="g_description" id="g_description"
                             placeholder="Describe the purpose of this group and what memories you'll share together"
-                            rows="4"></textarea>
+                            rows="4">${g_description}</textarea>
                     </div>
 
                     <!-- Group Picture Upload Area -->
@@ -62,24 +63,6 @@
                             </div>
                             <div class="preview-container" id="previewContainer"></div>
                         </div>
-                    </div>
-
-                    <!-- Link Input -->
-                    <div class="form-group">
-                        <label class="form-label">Group Link</label>
-                        <div class="link-input-wrapper">
-                            <span class="link-prefix">everly.com/groups/</span>
-                            <input type="text" class="form-input link-input" name="customLink" id="customLink"
-                                placeholder="your-group-name" required />
-                            <button type="button" class="copy-btn" id="copyBtn" title="Copy link">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/groups/your-group-name</p>
                     </div>
 
                     <!-- Submit Buttons -->
@@ -112,9 +95,6 @@
                 const fileInput = document.getElementById('fileInput');
                 const browseBtn = document.getElementById('browseBtn');
                 const previewContainer = document.getElementById('previewContainer');
-                const customLink = document.getElementById('customLink');
-                const fullLinkDisplay = document.getElementById('fullLinkDisplay');
-                const copyBtn = document.getElementById('copyBtn');
 
                 // File upload functionality
                 browseBtn.addEventListener('click', function (e) {
@@ -184,41 +164,6 @@
                     uploadArea.classList.remove('has-files');
                     fileInput.value = '';
                 };
-
-                // Link input functionality
-                customLink.addEventListener('input', function () {
-                    const linkValue = this.value.trim() || 'your-group-name';
-                    fullLinkDisplay.textContent = `Full link: everly.com/groups/${linkValue}`;
-                });
-
-                // Copy link functionality
-                copyBtn.addEventListener('click', function () {
-                    const linkValue = customLink.value.trim() || 'your-group-name';
-                    const fullLink = `everly.com/groups/${linkValue}`;
-
-                    navigator.clipboard.writeText(fullLink).then(function () {
-                        // Visual feedback
-                        copyBtn.innerHTML = `
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                `;
-                        copyBtn.style.color = '#10b981';
-
-                        setTimeout(function () {
-                            copyBtn.innerHTML = `
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    `;
-                            copyBtn.style.color = '';
-                        }, 2000);
-                    }).catch(function (err) {
-                        alert('Failed to copy link');
-                        console.error('Copy failed:', err);
-                    });
-                });
             });
         </script>
 

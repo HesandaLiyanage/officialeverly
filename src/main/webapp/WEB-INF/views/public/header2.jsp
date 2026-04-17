@@ -1,5 +1,17 @@
 <%-- Authenticated Header Component - included via jsp:include, no HTML wrapper --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+  String headerUsername = (String) session.getAttribute("username");
+  String headerInitials = "EV";
+  if (headerUsername != null && !headerUsername.trim().isEmpty()) {
+    String[] nameParts = headerUsername.trim().split("\\s+");
+    if (nameParts.length >= 2) {
+      headerInitials = (nameParts[0].substring(0, 1) + nameParts[1].substring(0, 1)).toUpperCase();
+    } else {
+      headerInitials = headerUsername.substring(0, Math.min(2, headerUsername.length())).toUpperCase();
+    }
+  }
+%>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/base.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/header.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -67,7 +79,7 @@
 
     <div class="profile-dropdown-container">
       <div class="profile-photo" id="profilePhoto">
-        <div class="profile-initials">JD</div>
+        <div class="profile-initials"><%= headerInitials %></div>
       </div>
       <div class="profile-dropdown" id="profileDropdown">
         <a href="${pageContext.request.contextPath}/editprofile">
