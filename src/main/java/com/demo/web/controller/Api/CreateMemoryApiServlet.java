@@ -89,6 +89,7 @@ public class CreateMemoryApiServlet extends HttpServlet {
             
             createRequest.setCollaborative(false); // Mobile app doesn't support collab yet
             createRequest.setMediaFiles(request.getParts());
+            createRequest.setApplicationPath(request.getServletContext().getRealPath(""));
 
             MemoryCreateResponse createResponse = memoryService.createMemory(createRequest);
 

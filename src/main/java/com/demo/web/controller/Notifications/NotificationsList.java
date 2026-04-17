@@ -26,10 +26,14 @@ public class NotificationsList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        Integer userId = (Integer) request.getSession().getAttribute("user_id");
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        Integer userId = (Integer) session.getAttribute("user_id");
         NotificationsListGetRequest req = new NotificationsListGetRequest(userId);
-        
         NotificationsListGetResponse res = notificationService.getNotifications(req);
 
         if (res.getRedirectUrl() != null) {
@@ -49,7 +53,14 @@ public class NotificationsList extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        Integer userId = (Integer) request.getSession().getAttribute("user_id");
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            out.write("{\"success\": false, \"error\": \"Not authenticated\"}");
+            return;
+        }
+
+        Integer userId = (Integer) session.getAttribute("user_id");
         String action = request.getParameter("action");
         String notificationIdStr = request.getParameter("notificationId");
 

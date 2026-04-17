@@ -51,6 +51,7 @@ public class MemoryUpdate extends HttpServlet {
             updateRequest.setDescription(request.getParameter("memoryDescription"));
             updateRequest.setRemovedMediaIds(request.getParameterValues("removedFileIds[]"));
             updateRequest.setNewMediaFiles(request.getParts());
+            updateRequest.setApplicationPath(request.getServletContext().getRealPath(""));
 
             MemoryUpdateResponse updateResponse = memoryService.updateMemory(updateRequest);
 

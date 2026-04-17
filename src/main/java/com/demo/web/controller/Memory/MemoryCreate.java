@@ -90,6 +90,7 @@ public class MemoryCreate extends HttpServlet {
             }
 
             createRequest.setMediaFiles(request.getParts());
+            createRequest.setApplicationPath(request.getServletContext().getRealPath(""));
 
             // 3. Execute Business Logic via Service Layer
             MemoryCreateResponse createResponse = memoryService.createMemory(createRequest);

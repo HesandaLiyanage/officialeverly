@@ -53,6 +53,7 @@ public class MediaView extends HttpServlet {
             MediaStreamRequest streamRequest = new MediaStreamRequest();
             streamRequest.setUserId(userId);
             streamRequest.setMediaId(mediaId);
+            streamRequest.setApplicationPath(request.getServletContext().getRealPath(""));
 
             MediaStreamResponse streamResponse = memoryService.getMediaStreamData(streamRequest);
             if (!streamResponse.isSuccess()) {

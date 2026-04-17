@@ -27,11 +27,18 @@ public class NotificationCount extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        Integer userId = (Integer) request.getSession().getAttribute("user_id");
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            out.write("{\"count\": 0, \"success\": false}");
+            return;
+        }
+
+        Integer userId = (Integer) session.getAttribute("user_id");
         
         NotificationCountRequest req = new NotificationCountRequest(userId);
         NotificationCountResponse res = notificationService.getUnreadCount(req);
 
-        out.write("{\"count\": " + res.getCount() + "}");
+        out.write("{\"count\": " + res.getCount() + ", \"success\": " + res.isSuccess() + "}");
     }
 }

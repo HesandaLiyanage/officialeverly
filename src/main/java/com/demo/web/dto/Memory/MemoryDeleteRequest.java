@@ -3,9 +3,12 @@ package com.demo.web.dto.Memory;
 public class MemoryDeleteRequest {
     private int memoryId;
     private int userId;
+    private String applicationPath;
 
     public int getMemoryId() { return memoryId; }
     public void setMemoryId(int memoryId) { this.memoryId = memoryId; }
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
+    public String getApplicationPath() { return applicationPath; }
+    public void setApplicationPath(String applicationPath) { this.applicationPath = applicationPath; }
 }

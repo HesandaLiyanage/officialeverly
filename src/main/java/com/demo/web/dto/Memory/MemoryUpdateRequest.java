@@ -11,6 +11,7 @@ public class MemoryUpdateRequest {
     
     private String[] removedMediaIds;
     private Collection<Part> newMediaFiles;
+    private String applicationPath;
     
     public int getMemoryId() { return memoryId; }
     public void setMemoryId(int memoryId) { this.memoryId = memoryId; }
@@ -25,4 +26,6 @@ public class MemoryUpdateRequest {
     public void setRemovedMediaIds(String[] removedMediaIds) { this.removedMediaIds = removedMediaIds; }
     public Collection<Part> getNewMediaFiles() { return newMediaFiles; }
     public void setNewMediaFiles(Collection<Part> newMediaFiles) { this.newMediaFiles = newMediaFiles; }
+    public String getApplicationPath() { return applicationPath; }
+    public void setApplicationPath(String applicationPath) { this.applicationPath = applicationPath; }
 }
