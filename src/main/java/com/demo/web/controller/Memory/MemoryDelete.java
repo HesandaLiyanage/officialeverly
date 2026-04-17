@@ -46,6 +46,7 @@ public class MemoryDelete extends HttpServlet {
             MemoryDeleteRequest deleteRequest = new MemoryDeleteRequest();
             deleteRequest.setMemoryId(memoryId);
             deleteRequest.setUserId(userId);
+            deleteRequest.setApplicationPath(request.getServletContext().getRealPath(""));
 
             MemoryDeleteResponse deleteResponse = memoryService.deleteMemory(deleteRequest);
 

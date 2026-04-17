@@ -3,6 +3,7 @@ package com.demo.web.dto.Memory;
 public class MediaStreamRequest {
     private int userId;
     private int mediaId;
+    private String applicationPath;
 
     public int getUserId() {
         return userId;
@@ -18,5 +19,13 @@ public class MediaStreamRequest {
 
     public void setMediaId(int mediaId) {
         this.mediaId = mediaId;
+    }
+
+    public String getApplicationPath() {
+        return applicationPath;
+    }
+
+    public void setApplicationPath(String applicationPath) {
+        this.applicationPath = applicationPath;
     }
 }

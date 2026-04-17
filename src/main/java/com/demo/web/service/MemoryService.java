@@ -69,9 +69,7 @@ public class MemoryService {
     private NotificationDAO notificationDAO;
     private MemoryRecapDAO recapDAO;
 
-    // Path where media files are saved
     private static final String UPLOAD_DIR = "media_uploads";
-    private static final String PHYSICAL_UPLOAD_PATH = "/Users/hesandaliyanage/Documents/officialeverly/src/main/webapp/media_uploads";
 
     public MemoryService() {
         this.memoryDAO = new memoryDAO();
@@ -83,13 +81,6 @@ public class MemoryService {
         this.feedPostDAO = new FeedPostDAO();
         this.notificationDAO = new NotificationDAO();
         this.recapDAO = new MemoryRecapDAO();
-
-        // Create the upload directory if it doesn't exist
-        try {
-            Files.createDirectories(Paths.get(PHYSICAL_UPLOAD_PATH));
-        } catch (IOException e) {
-            System.err.println("Failed to create upload directory: " + e.getMessage());
-        }
     }
 
     /**
@@ -178,7 +169,7 @@ public class MemoryService {
             }
 
             // 5. Utility & DB: Encrypt and Save Files
-            int uploadedCount = processMediaUploads(request.getMediaFiles(), userId, memoryId);
+            int uploadedCount = processMediaUploads(request.getMediaFiles(), userId, memoryId, request.getApplicationPath());
 
             // 6. Utility: Send Notifications
             if (uploadedCount > 0 && request.isCollaborative()) {
@@ -205,7 +196,7 @@ public class MemoryService {
                 return MediaStreamResponse.error(403, "Access denied");
             }
 
-            byte[] fileData = loadMediaBytes(mediaItem);
+            byte[] fileData = loadMediaBytes(mediaItem, request.getApplicationPath());
             return MediaStreamResponse.success(mediaItem, fileData);
         } catch (FileNotFoundException e) {
             return MediaStreamResponse.error(404, e.getMessage());
@@ -218,9 +209,11 @@ public class MemoryService {
     /**
      * Encrypts and saves media files to disk, storing DB records.
      */
-    private int processMediaUploads(Collection<Part> fileParts, int userId, int memoryId) throws Exception {
+    private int processMediaUploads(Collection<Part> fileParts, int userId, int memoryId, String applicationPath) throws Exception {
         int uploadedCount = 0;
         if (fileParts == null) return 0;
+
+        String physicalUploadPath = getPhysicalUploadPath(applicationPath);
 
         for (Part filePart : fileParts) {
             if (!"mediaFiles".equals(filePart.getName()) || filePart.getSize() == 0) continue;
@@ -236,7 +229,7 @@ public class MemoryService {
 
             // Save encrypted data to physical disk
             String uniqueFilename = UUID.randomUUID().toString() + ".enc";
-            String physicalPath = PHYSICAL_UPLOAD_PATH + File.separator + uniqueFilename;
+            String physicalPath = physicalUploadPath + File.separator + uniqueFilename;
             try (FileOutputStream fos = new FileOutputStream(physicalPath)) {
                 fos.write(encResult.getEncryptedFileData());
             }
@@ -302,15 +295,15 @@ public class MemoryService {
         return false;
     }
 
-    private byte[] loadMediaBytes(MediaItem mediaItem) throws Exception {
-        File file = resolveMediaFile(mediaItem);
+    private byte[] loadMediaBytes(MediaItem mediaItem, String applicationPath) throws Exception {
+        File file = resolveMediaFile(mediaItem, applicationPath);
         if (mediaItem.isEncrypted() && mediaItem.getEncryptionKeyId() != null) {
             return decryptMediaFile(mediaItem, file);
         }
         return Files.readAllBytes(file.toPath());
     }
 
-    private File resolveMediaFile(MediaItem mediaItem) throws FileNotFoundException {
+    private File resolveMediaFile(MediaItem mediaItem, String applicationPath) throws Exception {
         String filename = mediaItem.getFilePath();
         if (filename.contains("/")) {
             filename = filename.substring(filename.lastIndexOf("/") + 1);
@@ -319,7 +312,7 @@ public class MemoryService {
             filename = filename.substring(filename.lastIndexOf(File.separator) + 1);
         }
 
-        String filePath = PHYSICAL_UPLOAD_PATH + File.separator + filename;
+        String filePath = getPhysicalUploadPath(applicationPath) + File.separator + filename;
         File file = new File(filePath);
         if (!file.exists()) {
             throw new FileNotFoundException("File not found: " + filePath);
@@ -519,7 +512,7 @@ public class MemoryService {
 
                     // Save physical file
                     String uniqueFilename = UUID.randomUUID().toString() + ".enc";
-                    String physicalPath = PHYSICAL_UPLOAD_PATH + File.separator + uniqueFilename;
+                    String physicalPath = getPhysicalUploadPath(request.getApplicationPath()) + File.separator + uniqueFilename;
                     try (FileOutputStream fos = new FileOutputStream(physicalPath)) {
                         fos.write(encResult.getEncryptedFileData());
                     }
@@ -596,7 +589,7 @@ public class MemoryService {
                 try {
                     String filePath = item.getFilePath();
                     if (filePath != null && !filePath.isEmpty()) {
-                        File file = new File(filePath);
+                        File file = resolveMediaFile(item, request.getApplicationPath());
                         if (file.exists()) {
                             file.delete();
                         }
@@ -614,6 +607,16 @@ public class MemoryService {
             e.printStackTrace();
             return MemoryDeleteResponse.error("Error deleting memory: " + e.getMessage(), 500);
         }
+    }
+
+    private String getPhysicalUploadPath(String applicationPath) throws Exception {
+        if (applicationPath == null || applicationPath.trim().isEmpty()) {
+            throw new IOException("Application path is not available");
+        }
+
+        String physicalUploadPath = Paths.get(applicationPath, UPLOAD_DIR).toString();
+        Files.createDirectories(Paths.get(physicalUploadPath));
+        return physicalUploadPath;
     }
 
     // ==========================================

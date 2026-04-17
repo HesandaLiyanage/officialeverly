@@ -341,9 +341,6 @@
                                                 <span class="tab-badge">${unreadCount}</span>
                                             </c:if>
                                         </button>
-                                        <button class="notif-tab" data-tab="comments_reactions">Comments</button>
-                                        <button class="notif-tab" data-tab="group_announcements">Announcements</button>
-                                        <button class="notif-tab" data-tab="event_updates">Events</button>
                                     </div>
 
                                     <!-- Notifications -->
@@ -365,6 +362,7 @@
                                                     <c:set var="hasActor" value="${not empty n.actorUsername}" />
                                                     <div class="notif-card ${!isRead ? 'unread' : ''}"
                                                         data-id="${notifId}" data-type="${type}" data-read="${isRead}"
+                                                        data-link="${not empty link ? fn:escapeXml(link) : ''}"
                                                         <c:if test="${not empty link}">
                                                             onclick="goToNotif('${ctxPath}${link}', ${notifId})"
                                                         </c:if>>
@@ -428,15 +426,64 @@
                                         setTimeout(() => toastEl.classList.remove('show'), 1500);
                                     }
 
+                                    function markNotificationCardRead(card) {
+                                        if (!card || card.dataset.read === 'true') {
+                                            return;
+                                        }
+
+                                        card.classList.remove('unread');
+                                        card.dataset.read = 'true';
+                                        const dot = card.querySelector('.notif-unread-dot');
+                                        if (dot) dot.remove();
+
+                                        const badge = document.querySelector('.tab-badge');
+                                        if (badge) {
+                                            const current = parseInt(badge.textContent, 10);
+                                            if (!isNaN(current)) {
+                                                const next = current - 1;
+                                                if (next > 0) {
+                                                    badge.textContent = next;
+                                                } else {
+                                                    badge.remove();
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     function goToNotif(link, notifId) {
                                         fetch(ctxPath + '/notificationsapi', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                             body: 'action=markRead&notificationId=' + notifId
                                         }).finally(() => {
+                                            const card = document.querySelector('.notif-card[data-id="' + notifId + '"]');
+                                            markNotificationCardRead(card);
                                             window.location.href = link;
                                         });
                                     }
+
+                                    document.querySelectorAll('.notif-card').forEach(card => {
+                                        card.addEventListener('click', function (event) {
+                                            if (this.dataset.link) {
+                                                return;
+                                            }
+
+                                            const notifId = this.dataset.id;
+                                            fetch(ctxPath + '/notificationsapi', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                                body: 'action=markRead&notificationId=' + notifId
+                                            })
+                                                .then(r => r.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        markNotificationCardRead(this);
+                                                        showToast('Notification marked as read');
+                                                    }
+                                                })
+                                                .catch(() => showToast('Failed — try again'));
+                                        });
+                                    });
 
                                     // Tab filtering
                                     document.querySelectorAll('.notif-tab').forEach(tab => {
@@ -469,13 +516,8 @@
                                                 .then(data => {
                                                     if (data.success) {
                                                         document.querySelectorAll('.notif-card.unread').forEach(card => {
-                                                            card.classList.remove('unread');
-                                                            card.dataset.read = 'true';
-                                                            const dot = card.querySelector('.notif-unread-dot');
-                                                            if (dot) dot.remove();
+                                                            markNotificationCardRead(card);
                                                         });
-                                                        const badge = document.querySelector('.tab-badge');
-                                                        if (badge) badge.remove();
                                                         showToast('All marked as read!');
                                                     }
                                                 })

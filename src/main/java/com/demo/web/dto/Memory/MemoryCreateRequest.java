@@ -14,6 +14,7 @@ public class MemoryCreateRequest {
     private boolean isCollaborative;
     private Integer groupId;
     private Collection<Part> mediaFiles;
+    private String applicationPath;
 
     // Getters and Setters
 
@@ -63,5 +64,13 @@ public class MemoryCreateRequest {
 
     public void setMediaFiles(Collection<Part> mediaFiles) {
         this.mediaFiles = mediaFiles;
+    }
+
+    public String getApplicationPath() {
+        return applicationPath;
+    }
+
+    public void setApplicationPath(String applicationPath) {
+        this.applicationPath = applicationPath;
     }
 }

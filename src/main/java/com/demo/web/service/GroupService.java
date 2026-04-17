@@ -73,14 +73,20 @@ public class GroupService {
             if (req.getGroupName() == null || req.getGroupName().trim().isEmpty()) {
                 return GroupCreateResponse.error("Group name is required");
             }
-            if (req.getCustomLink() == null || req.getCustomLink().trim().isEmpty()) {
-                return GroupCreateResponse.error("Group URL is required");
+
+            String linkSource = req.getCustomLink();
+            if (linkSource == null || linkSource.trim().isEmpty()) {
+                linkSource = req.getGroupName();
             }
 
-            String cleanedLink = req.getCustomLink().trim().toLowerCase()
+            String cleanedLink = linkSource.trim().toLowerCase()
                     .replaceAll("[^a-z0-9-]", "-")
                     .replaceAll("-+", "-")
                     .replaceAll("^-|-$", "");
+
+            if (cleanedLink.isEmpty()) {
+                return GroupCreateResponse.error("Unable to generate group link from the group name.");
+            }
 
             if (groupDAO.isUrlTaken(cleanedLink)) {
                 return GroupCreateResponse.error("This group URL is already taken. Please choose another one.");
@@ -289,7 +295,14 @@ public class GroupService {
             String customLink = req.getCustomLink();
             if (customLink == null || customLink.trim().isEmpty()) {
                 customLink = existingGroup.getGroupUrl();
-            } else if (!customLink.equals(existingGroup.getGroupUrl()) && groupDAO.isUrlTaken(customLink)) {
+            } else {
+                customLink = customLink.trim().toLowerCase()
+                        .replaceAll("[^a-z0-9-]", "-")
+                        .replaceAll("-+", "-")
+                        .replaceAll("^-|-$", "");
+            }
+
+            if (!customLink.equals(existingGroup.getGroupUrl()) && groupDAO.isUrlTaken(customLink)) {
                 return GroupEditResponse.error("This group link is already taken. Please choose another.", null, existingGroup);
             }
 

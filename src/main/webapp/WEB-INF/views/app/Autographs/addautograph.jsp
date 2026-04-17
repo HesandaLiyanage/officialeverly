@@ -71,37 +71,10 @@
                                         <div class="preview-container" id="previewContainer"></div>
                                     </div>
                                 </div>
-
-
-
-                                <!-- Add Your Own Memory Section -->
-                                <div class="form-group">
-                                    <label class="form-label">Add Your Own Memory (Optional)</label>
-                                    <p class="form-hint">You can add your own message, photos, or voice notes to start
-                                        the book.</p>
-                                    <div class="memory-options">
-                                        <button type="button" class="memory-btn">
-                                            <span class="memory-icon"></span>
-                                            Voice Note
-                                        </button>
-                                        <button type="button" class="memory-btn">
-                                            <span class="memory-icon"></span>
-                                            Image
-                                        </button>
-                                        <button type="button" class="memory-btn">
-                                            <span class="memory-icon"></span>
-                                            Video
-                                        </button>
-                                        <button type="button" class="memory-btn">
-                                            <span class="memory-icon"></span>
-                                            Sticker
-                                        </button>
-                                    </div>
-                                </div>
-
                                 <!-- Submit Buttons -->
                                 <div class="form-actions">
-                                    <button type="button" class="cancel-btn">
+                                    <button type="button" class="cancel-btn"
+                                        onclick="window.location.href='${pageContext.request.contextPath}/autographs'">
                                         Cancel
                                     </button>
                                     <button type="submit" class="submit-btn">
@@ -204,22 +177,6 @@
                     uploadArea.classList.remove('has-files');
                     fileInput.value = '';
                 };
-
-                // Tag removal
-                const tagRemoveButtons = document.querySelectorAll('.tag-remove');
-                tagRemoveButtons.forEach(button => {
-                    button.addEventListener('click', function () {
-                        this.closest('.tag').remove();
-                    });
-                });
-
-                // Memory button interactions
-                const memoryButtons = document.querySelectorAll('.memory-btn');
-                memoryButtons.forEach(button => {
-                    button.addEventListener('click', function () {
-                        this.classList.toggle('active');
-                    });
-                });
 
                 // REMOVED the form submission listener that prevented default submission
                 // The form will now submit normally to the action="/addautographservlet" URL.
