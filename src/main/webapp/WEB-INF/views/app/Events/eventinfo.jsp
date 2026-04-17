@@ -445,6 +445,7 @@
                                                                                             <circle cx="9" cy="7" r="4">
                                                                                             </circle>
                                                                                         ${fn:escapeXml(groupNamesStr)}
+                                                                                            
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -457,6 +458,7 @@
                                                                                 <div class="mv-info-value title">
                                                                                 ${fn:escapeXml(event.title)}
                                                                             </div>
+                                                                                
                                                                             </div>
 
                                                                             <div class="mv-divider"></div>
@@ -479,8 +481,12 @@
                                                                                             y2="10"></line>
                                                                                     </svg>
                                                                                     ${fn:escapeXml(formattedDate)}
+
+                                                                                    ${fn:escapeXml(event.eventTime)}
                                                                                 </div>
                                                                             </div>
+                                                                            
+                                                                                
 
                                                                             <!-- Groups -->
                                                                             <div class="mv-info-group">

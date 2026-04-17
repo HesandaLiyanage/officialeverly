@@ -1,12 +1,14 @@
 package com.demo.web.model.Events;
 
 import java.sql.Timestamp;
+import java.time.LocalTime;
 
 public class Event {
     private int eventId;          // Maps to 'event_id' in DB
     private String title;          // Maps to 'e_title' in DB
     private String description;    // Maps to 'e_description' in DB
     private Timestamp eventDate;   // Maps to 'e_date' in DB
+    private LocalTime eventTime;
     private Timestamp createdAt;   // Maps to 'created_at' in DB
     private int groupId;           // Maps to 'group_id' in DB
     private String eventPicUrl;
@@ -18,12 +20,13 @@ public class Event {
     }
 
     // Constructor with parameters
-    public Event(int eventId, String title, String description, Timestamp eventDate,
-                 Timestamp createdAt, int groupId, String eventPicUrl) {
+    public Event(int eventId, String title, String description, Timestamp eventDate, LocalTime eventTime
+                 ,Timestamp createdAt, int groupId, String eventPicUrl) {
         this.eventId = eventId;
         this.title = title;
         this.description = description;
         this.eventDate = eventDate;
+        this.eventTime = eventTime;
         this.createdAt = createdAt;
         this.groupId = groupId;
         this.eventPicUrl = eventPicUrl;
@@ -60,6 +63,14 @@ public class Event {
 
     public void setEventDate(Timestamp eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public LocalTime getEventTime() {
+      return eventTime;
+    }
+
+    public void setEventTime( LocalTime eventTime) {
+      this.eventTime = eventTime;
     }
 
     public Timestamp getCreatedAt() {

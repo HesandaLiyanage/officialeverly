@@ -142,7 +142,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id "
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id"
                     +
                     "FROM users WHERE user_id = ?";
 
@@ -175,7 +175,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id "
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id"
                     +
                     "FROM users WHERE email = ?";
 
@@ -207,7 +207,7 @@ public class userDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id "
+            String sql = "SELECT user_id, username, email, password, salt, bio, joined_at, is_active, last_login, profile_picture_url, plan_id"
                     +
                     "FROM users WHERE username = ?";
 
@@ -291,6 +291,7 @@ public class userDAO {
             stmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
             stmt.setBytes(9, keyData.getEncryptedMasterKey()); // NEW: Encryption master key
             stmt.setBytes(10, keyData.getSalt()); // NEW: Encryption salt
+
 
             generatedKeys = stmt.executeQuery();
 

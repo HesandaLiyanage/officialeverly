@@ -19,16 +19,17 @@ public class EventDAO {
      * @return the generated event_id, or -1 on failure
      */
     public int createEvent(Event event) {
-        String sql = "INSERT INTO event (e_title, e_description, e_date, created_at, group_id, event_pic) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO event (e_title, e_description, e_date,e_time, created_at, group_id, event_pic) VALUES (?, ?, ?, ?,?, ?, ?)";
         try (
           Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, event.getTitle());
             stmt.setString(2, event.getDescription());
             stmt.setTimestamp(3, event.getEventDate());
-            stmt.setTimestamp(4, event.getCreatedAt() != null ? event.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
-            stmt.setInt(5, event.getGroupId());
-            stmt.setString(6, event.getEventPicUrl());
+            stmt.setTime(4, Time.valueOf(event.getEventTime()));
+            stmt.setTimestamp(5, event.getCreatedAt() != null ? event.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
+            stmt.setInt(6, event.getGroupId());
+            stmt.setString(7, event.getEventPicUrl());
 
             int rowsInserted = stmt.executeUpdate();
             System.out.println("[DEBUG EventDAO] createEvent affected " + rowsInserted + " rows.");
@@ -52,7 +53,7 @@ public class EventDAO {
      * Get event by ID
      */
     public Event findById(int eventId) {
-        String sql = "SELECT event_id, e_title, e_description, e_date, created_at, group_id, event_pic FROM event WHERE event_id = ?";
+        String sql = "SELECT event_id, e_title, e_description, e_date, e_time, created_at, group_id, event_pic FROM event WHERE event_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, eventId);
@@ -76,7 +77,7 @@ public class EventDAO {
      * Get all events by group ID
      */
     public List<Event> findByGroupId(int groupId) {
-        String sql = "SELECT event_id, e_title, e_description, e_date, created_at, group_id, event_pic FROM event WHERE group_id = ? ORDER BY e_date DESC";
+        String sql = "SELECT event_id, e_title, e_description, e_date, e_time, created_at, group_id, event_pic FROM event WHERE group_id = ? ORDER BY e_date DESC";
         List<Event> events = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -101,7 +102,7 @@ public class EventDAO {
      * Only group creators (admins) can see and create events
      */
     public List<Event> findByUserId(int userId) {
-        String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
+        String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date,e.e_time, e.created_at, e.group_id, e.event_pic " +
                 "FROM event e " +
                 "INNER JOIN \"group\" g ON e.group_id = g.group_id " +
                 "WHERE g.user_id = ? " +
@@ -128,7 +129,7 @@ public class EventDAO {
      * Get upcoming events for a user (only from groups they created)
      */
     public List<Event> findUpcomingEventsByUserId(int userId) {
-        String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
+        String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date,e.e_time, e.created_at, e.group_id, e.event_pic " +
                 "FROM event e " +
                 "INNER JOIN \"group\" g ON e.group_id = g.group_id " +
                 "WHERE g.user_id = ? AND e.e_date >= CURRENT_TIMESTAMP " +
@@ -258,7 +259,8 @@ public class EventDAO {
         event.setTitle(rs.getString("e_title"));
         event.setDescription(rs.getString("e_description"));
         event.setEventDate(rs.getTimestamp("e_date"));
-        event.setCreatedAt(rs.getTimestamp("created_at"));
+      event.setEventTime(rs.getTime("e_time").toLocalTime());
+      event.setCreatedAt(rs.getTimestamp("created_at"));
         event.setGroupId(rs.getInt("group_id"));
         event.setEventPicUrl(rs.getString("event_pic"));
 

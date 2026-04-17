@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -253,6 +254,7 @@ public class EventService {
             newEvent.setTitle(request.getTitle().trim());
             newEvent.setDescription(request.getDescription() != null ? request.getDescription().trim() : "");
             newEvent.setEventDate(eventDate);
+            newEvent.setEventTime(LocalTime.parse(request.getTimeStr()));
             newEvent.setGroupId(request.getSelectedGroupIds().get(0));
             newEvent.setEventPicUrl(eventPicUrl);
             newEvent.setCreatedAt(new Timestamp(System.currentTimeMillis()));
@@ -291,7 +293,7 @@ public class EventService {
                 throw new IllegalArgumentException("Event ID is required");
             }
             response.setEventIdStr(request.getEventIdStr());
-            
+
             if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
                 throw new IllegalArgumentException("Event title is required");
             }
@@ -429,7 +431,7 @@ public class EventService {
 
             Map<String, Integer> counts = voteDAO.getVoteCounts(eventId, groupId);
             String currentVote = voteDAO.getUserVote(eventId, groupId, request.getUserId());
-            
+
             response.setStatusCode(200);
             response.setJsonResponse("{\"success\": true, " +
                     "\"going\": " + counts.get("going") + ", " +
@@ -453,7 +455,7 @@ public class EventService {
         try {
             int eventId = Integer.parseInt(request.getEventIdStr());
             int groupId = Integer.parseInt(request.getGroupIdStr());
-            
+
             if ("voters".equals(request.getTypeStr())) {
                 List<Map<String, Object>> voters = voteDAO.getVoters(eventId, groupId);
                 StringBuilder sb = new StringBuilder("{\"success\": true, \"voters\": [");

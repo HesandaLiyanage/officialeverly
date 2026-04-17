@@ -78,6 +78,14 @@
                                                         value="<c:out value='${sessionScope.formData_e_date}' />" required />
                                                     <c:remove var="formData_e_date" scope="session" />
                                                 </div>
+
+                                                <div class="form-group">
+                                                    <label class="form-label">Event Title <span
+                                                            style="color: #ef4444;">*</span></label>
+                                                    <input type="Time" class="form-input" name="e_time" id="e_time"
+                                                           value="<c:out value='${sessionScope.formData_e_time}' />" required />
+                                                    <c:remove var="formData_e_time" scope="session" />
+                                                </div>
                                                 
 
                                                 <!-- Select Groups (checkboxes for multi-group) -->

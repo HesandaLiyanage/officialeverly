@@ -65,6 +65,13 @@
                         placeholder="Tell us about yourself">${fn:escapeXml(sessionScope.user.bio)}</textarea>
                 </div>
 
+
+                <div class="form-group">
+                    <label class="form-label">Joined at</label>
+                    <input type="text" name="joined_at" class="form-input" placeholder="joined"
+                           value="${fn:escapeXml(sessionScope.user.joined_at)}">
+                </div>
+
                 <div class="form-group">
                     <label class="form-label-section">Password</label>
 

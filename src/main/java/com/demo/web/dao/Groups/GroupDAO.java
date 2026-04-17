@@ -39,7 +39,7 @@ public class GroupDAO {
      * Get group by ID
      */
     public Group findById(int groupId) {
-        String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE group_id = ?";
+        String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE group_id = ? ORDER BY g_name asc ";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);
@@ -60,7 +60,7 @@ public class GroupDAO {
      * Get all groups created by a user (owned only)
      */
     public List<Group> findByUserId(int userId) {
-        String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE user_id = ?";
+        String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE user_id = ? ORDER BY g_name asc";
         List<Group> groups = new ArrayList<>();
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -80,12 +80,12 @@ public class GroupDAO {
     // ✅ NEW METHOD: Get ALL groups user is part of (owned OR joined)
     public List<Group> findGroupsByMemberId(int userId) {
         String sql = """
-            SELECT group_id, g_name, g_description, created_at, 
+            SELECT group_id, g_name, g_description, created_at,
                    user_id, group_pic, group_url
             FROM "group"
-            WHERE user_id = ? 
+            WHERE user_id = ?
             OR group_id IN (SELECT group_id FROM group_member WHERE member_id = ?)
-            ORDER BY created_at DESC
+            ORDER BY g_name asc
             """;
 
         List<Group> groups = new ArrayList<>();
