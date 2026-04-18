@@ -48,7 +48,7 @@
             overflow: hidden;
             max-width: 935px;
             width: 100%;
-            max-height: 90vh;
+            height: min(90vh, 900px);
         }
 
         .post-image-section {
@@ -66,6 +66,7 @@
             display: flex;
             flex-direction: column;
             border-left: 1px solid #efefef;
+            min-height: 0;
         }
 
         .carousel-container {
@@ -200,6 +201,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 16px;
+            min-height: 0;
         }
 
         .comment-item {
@@ -372,16 +374,9 @@
         .add-comment-section {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             padding: 12px 16px;
             border-top: 1px solid #efefef;
-        }
-
-        .emoji-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
         }
 
         #commentInput {
@@ -656,15 +651,6 @@
                 </div>
 
                 <div class="add-comment-section">
-                    <button class="emoji-btn" type="button">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                            <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                            <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                        </svg>
-                    </button>
                     <input type="text" placeholder="Add a comment..." id="commentInput">
                     <input type="hidden" id="parentCommentId" value="">
                     <button class="post-comment-btn" id="postCommentBtn" type="button"

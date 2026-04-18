@@ -664,7 +664,7 @@ body.feed-shell-page .main-header {
 .post-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 14px 16px 10px;
 }
 
