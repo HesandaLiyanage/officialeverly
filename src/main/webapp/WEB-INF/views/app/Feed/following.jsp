@@ -9,7 +9,6 @@
     <c:set var="isOwnProfile" value="${true}" />
 </c:if>
 
-<jsp:include page="/WEB-INF/views/public/header2.jsp" />
 <!DOCTYPE html>
 <html>
 
@@ -215,11 +214,10 @@
             --gradient-5: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
     </style>
-    <link rel="stylesheet" type="text/css"
-        href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
 </head>
 
 <body class="feed-shell-page">
+    <jsp:include page="/WEB-INF/views/public/header2.jsp" />
     <c:set var="currentUserHasPic" value="${not empty currentUserProfile && not empty currentUserProfile.feedProfilePictureUrl && !fn:contains(currentUserProfile.feedProfilePictureUrl, 'default')}" />
 
     <div class="feed-shell follow-shell">
@@ -235,7 +233,7 @@
                     </span>
                     <span class="feed-rail-brand-text">
                         <span class="feed-rail-brand-title">Everly Feed</span>
-                        <span class="feed-rail-brand-subtitle">${fn:escapeXml(pageTitle)}</span>
+                        <span class="feed-rail-brand-subtitle">Community moments</span>
                     </span>
                 </a>
 
@@ -248,7 +246,33 @@
                     </span>
                     <span class="feed-rail-label feed-rail-link-text">
                         <span class="feed-rail-link-title">Home</span>
-                        <span class="feed-rail-link-meta">Back to feed</span>
+                        <span class="feed-rail-link-meta">Fresh posts</span>
+                    </span>
+                </a>
+
+                <a href="${pageContext.request.contextPath}/createPost" class="feed-rail-link">
+                    <span class="feed-rail-link-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14"></path>
+                            <path d="M5 12h14"></path>
+                        </svg>
+                    </span>
+                    <span class="feed-rail-label feed-rail-link-text">
+                        <span class="feed-rail-link-title">Create</span>
+                        <span class="feed-rail-link-meta">Share a memory</span>
+                    </span>
+                </a>
+
+                <a href="${pageContext.request.contextPath}/notifications" class="feed-rail-link">
+                    <span class="feed-rail-link-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </span>
+                    <span class="feed-rail-label feed-rail-link-text">
+                        <span class="feed-rail-link-title">Notifications</span>
+                        <span class="feed-rail-link-meta">Comments and likes</span>
                     </span>
                 </a>
 
@@ -271,16 +295,23 @@
                     <span class="feed-rail-link-icon">
                         <c:choose>
                             <c:when test="${currentUserHasPic}">
-                                <img src="${fn:escapeXml(currentUserProfile.feedProfilePictureUrl)}"
-                                     alt="@${fn:escapeXml(currentUserProfile.feedUsername)}" class="feed-rail-avatar">
+                                <span class="feed-rail-avatar avatar-shell">
+                                    <img src="${fn:escapeXml(currentUserProfile.feedProfilePictureUrl)}"
+                                         alt="@${fn:escapeXml(currentUserProfile.feedUsername)}"
+                                         class="feed-rail-avatar avatar-image"
+                                         onerror="this.closest('.avatar-shell').classList.add('is-fallback');">
+                                    <span class="feed-rail-avatar-fallback avatar-fallback">${fn:escapeXml(currentUserProfile.initials)}</span>
+                                </span>
                             </c:when>
                             <c:otherwise>
-                                <span class="feed-rail-avatar-fallback">${fn:escapeXml(currentUserProfile.initials)}</span>
+                                <span class="feed-rail-avatar avatar-shell is-fallback">
+                                    <span class="feed-rail-avatar-fallback avatar-fallback">${fn:escapeXml(currentUserProfile.initials)}</span>
+                                </span>
                             </c:otherwise>
                         </c:choose>
                     </span>
                     <span class="feed-rail-label feed-rail-link-text">
-                        <span class="feed-rail-link-title">You</span>
+                        <span class="feed-rail-link-title">Profile</span>
                         <span class="feed-rail-link-meta">@${fn:escapeXml(currentUserProfile.feedUsername)}</span>
                     </span>
                 </a>
@@ -326,13 +357,17 @@
                             <div class="follower-avatar">
                                 <c:choose>
                                     <c:when test="${hasPic}">
-                                        <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
-                                            alt="@${fn:escapeXml(user.feedUsername)}">
+                                        <div class="follower-avatar avatar-shell">
+                                            <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
+                                                alt="@${fn:escapeXml(user.feedUsername)}"
+                                                class="avatar-image"
+                                                onerror="this.closest('.avatar-shell').classList.add('is-fallback');">
+                                            <span class="follower-avatar-initials avatar-fallback">${fn:escapeXml(user.initials)}</span>
+                                        </div>
                                     </c:when>
                                     <c:otherwise>
-                                        <div class="follower-avatar-initials"
-                                            style="background: var(--gradient-${gradientIndex});">
-                                            ${fn:escapeXml(user.initials)}
+                                        <div class="follower-avatar avatar-shell is-fallback">
+                                            <span class="follower-avatar-initials avatar-fallback">${fn:escapeXml(user.initials)}</span>
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
