@@ -143,13 +143,13 @@
                             <div class="expandable-content">
                                 <div class="storage-info">
                                     <div class="storage-text">
-                                        <span>75% used</span>
+                                        <span>${empty storagePercentage ? 0 : storagePercentage}% used</span>
                                     </div>
                                     <div class="storage-bar">
-                                        <div class="storage-fill" style="width: 75%"></div>
+                                        <div class="storage-fill" style="width: ${empty storagePercentage ? 0 : storagePercentage}%"></div>
                                     </div>
                                     <div class="storage-text" style="margin-top: 8px;">
-                                        <span>150 GB of 200 GB</span>
+                                        <span>${empty storageUsedFormatted ? '0 B' : storageUsedFormatted} of ${empty storageTotalFormatted ? '0 B' : storageTotalFormatted}</span>
                                     </div>
                                 </div>
                             </div>

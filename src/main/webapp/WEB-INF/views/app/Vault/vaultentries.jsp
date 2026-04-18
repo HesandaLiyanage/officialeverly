@@ -29,7 +29,7 @@
       <p>Enter your password to access protected content</p>
 
       <!-- Password Entry Section -->
-      <div id="passwordSection" class="password-section" <c:if test="${not empty vaultUnlocked}">style="display: none;"</c:if>>
+      <div id="passwordSection" class="password-section">
         <c:if test="${not empty errorMessage}">
           <div class="error" style="display: block;">
             ${errorMessage}
@@ -63,52 +63,6 @@
 
                   <button type="submit" class="btn btn-primary">Unlock Vault</button>
                 </form>
-      </div>
-
-      <!-- Navigation Section (Shown after successful password verification) -->
-      <div id="navigationSection" class="navigation-section" <c:if test="${empty vaultUnlocked}">style="display: none;"</c:if>>
-          <div class="success-message">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <p>Vault Unlocked Successfully!</p>
-          </div>
-
-          <div class="vault-options">
-            <form action="${pageContext.request.contextPath}/vaultmemories" method="POST" style="display: inline;">
-              <input type="hidden" name="vaultPassword" value="${param.vaultPassword}">
-              <button type="submit" class="vault-option-card"
-                style="border: none; background: none; cursor: pointer; text-align: left;">
-                <div class="option-icon">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                    <polyline points="21 15 16 10 5 21"></polyline>
-                  </svg>
-                </div>
-                <h3>Memories</h3>
-                <p>View your protected photos and videos</p>
-              </button>
-            </form>
-
-            <form action="${pageContext.request.contextPath}/vaultjournals" method="POST" style="display: inline;">
-              <input type="hidden" name="vaultPassword" value="${param.vaultPassword}">
-              <button type="submit" class="vault-option-card"
-                style="border: none; background: none; cursor: pointer; text-align: left;">
-                <div class="option-icon">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                  </svg>
-                </div>
-                <h3>Journals</h3>
-                <p>Read your private journal entries</p>
-              </button>
-            </form>
-          </div>
       </div>
     </main>
 

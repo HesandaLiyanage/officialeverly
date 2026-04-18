@@ -20,8 +20,8 @@
 
             <!-- Back -->
             <div class="back-option" style="margin-bottom: 20px;">
-                <a href="${pageContext.request.contextPath}/managesubscription" class="back-link">← Back to
-                    Subscription</a>
+                <a href="${pageContext.request.contextPath}/settingsaccount" class="back-link">← Back to
+                    Settings</a>
             </div>
 
             <div class="subscription-header" style="text-align: left; margin-bottom: 36px;">

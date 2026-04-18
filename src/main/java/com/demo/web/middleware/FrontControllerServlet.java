@@ -105,7 +105,6 @@ public class FrontControllerServlet extends HttpServlet {
         routeToJsp.put("/followerprofile", "/WEB-INF/views/app/Feed/followerprofile.jsp");
         routeToJsp.put("/followingprofile", "/WEB-INF/views/app/Feed/followingprofile.jsp");
         routeToJsp.put("/vaultpassword", "/WEB-INF/views/app/Vault/vaultpassword.jsp");
-        routeToJsp.put("/notifications", "/WEB-INF/views/app/Notifications/notifications.jsp");
 
         // --- Groups ---
         routeToJsp.put("/groups", "/groupdashboard"); // Let Groups servlet handle this

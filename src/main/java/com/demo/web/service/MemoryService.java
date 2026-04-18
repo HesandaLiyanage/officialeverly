@@ -598,8 +598,10 @@ public class MemoryService {
                 } catch (Exception ignored) {}
             }
 
-            // Cascade delete the memory
-            memoryDAO.deleteMemory(memoryId);
+            boolean deleted = memoryDAO.deleteMemoryToRecycleBin(memoryId, userId);
+            if (!deleted) {
+                return MemoryDeleteResponse.error("Failed to move memory to Recycle Bin", 500);
+            }
 
             return MemoryDeleteResponse.success(groupId);
 

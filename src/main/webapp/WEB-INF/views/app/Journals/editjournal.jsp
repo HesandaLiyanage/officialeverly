@@ -212,6 +212,7 @@
                 this.journalForm = document.getElementById('journalForm');
                 this.contentField = document.getElementById('contentField');
                 this.decorationsField = document.getElementById('decorationsField');
+                this.currentBackgroundTheme = existingBackground || '';
 
                 this.initializeFormatting();
                 this.initializeEmojis();
@@ -243,6 +244,7 @@
 
                 // Load existing background theme
                 if (existingBackground) {
+                    this.currentBackgroundTheme = existingBackground;
                     this.writingArea.style.backgroundImage = "url('" + existingBackground + "')";
                     this.writingArea.style.backgroundSize = 'cover';
                     this.writingArea.style.backgroundPosition = 'center';
@@ -250,12 +252,17 @@
 
                     // Mark the matching theme button as active
                     var buttons = document.querySelectorAll('.paper-theme-btn');
+                    var matchedThemeButton = false;
                     buttons.forEach(function (btn) {
                         btn.classList.remove('active');
-                        if (btn.dataset.bg && existingBackground.indexOf(btn.dataset.bg.replace(/.*\/resources/, '/resources')) !== -1) {
+                        if (btn.dataset.bg && JournalEditor.normalizeThemePath(btn.dataset.bg) === JournalEditor.normalizeThemePath(existingBackground)) {
                             btn.classList.add('active');
+                            matchedThemeButton = true;
                         }
                     });
+                    if (!matchedThemeButton && buttons.length > 0) {
+                        buttons[0].classList.remove('active');
+                    }
                 } else {
                     // Default to first theme
                     var firstBtn = document.querySelector('.paper-theme-btn');
@@ -263,6 +270,7 @@
                         firstBtn.classList.add('active');
                         var bgImage = firstBtn.dataset.bg;
                         if (bgImage) {
+                            this.currentBackgroundTheme = bgImage;
                             this.writingArea.style.backgroundImage = "url('" + bgImage + "')";
                             this.writingArea.style.backgroundSize = 'cover';
                             this.writingArea.style.backgroundPosition = 'center';
@@ -313,11 +321,13 @@
                         btn.classList.add('active');
                         var bgImage = btn.dataset.bg;
                         if (bgImage) {
+                            this.currentBackgroundTheme = bgImage;
                             writingArea.style.backgroundImage = "url('" + bgImage + "')";
                             writingArea.style.backgroundSize = 'cover';
                             writingArea.style.backgroundPosition = 'center';
                             writingArea.style.backgroundRepeat = 'no-repeat';
                         } else {
+                            this.currentBackgroundTheme = '';
                             writingArea.style.backgroundImage = 'none';
                             writingArea.style.backgroundColor = 'transparent';
                         }
@@ -420,13 +430,26 @@
 
                 // Get selected background theme
                 var activeThemeBtn = document.querySelector('.paper-theme-btn.active');
-                var backgroundTheme = activeThemeBtn ? (activeThemeBtn.dataset.bg || '') : '';
+                var backgroundTheme = activeThemeBtn ? (activeThemeBtn.dataset.bg || '') : this.currentBackgroundTheme;
 
                 this.contentField.value = message;
                 this.decorationsField.value = JSON.stringify(decorations);
                 document.getElementById('backgroundThemeField').value = backgroundTheme;
 
                 this.journalForm.submit();
+            }
+
+            static normalizeThemePath(themePath) {
+                if (!themePath) {
+                    return '';
+                }
+
+                try {
+                    var parsedUrl = new URL(themePath, window.location.origin);
+                    return parsedUrl.pathname;
+                } catch (e) {
+                    return themePath;
+                }
             }
         }
 

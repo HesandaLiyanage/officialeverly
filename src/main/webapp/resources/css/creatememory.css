@@ -73,24 +73,9 @@
     color: #9ca3af;
 }
 
-/* Date Input with Icon */
-.input-with-icon {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
+/* Date Input */
 .date-input {
-    padding-right: 48px;
-}
-
-.input-icon {
-    position: absolute;
-    right: 16px;
-    pointer-events: none;
-    color: #6c757d;
-    display: flex;
-    align-items: center;
+    padding-right: 16px;
 }
 
 /* Upload Area */

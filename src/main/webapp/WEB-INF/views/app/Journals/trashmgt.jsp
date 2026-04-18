@@ -287,7 +287,7 @@
                     <div class="trash-empty">
                         <div class="trash-empty-icon">&#x1F5D1;&#xFE0F;</div>
                         <h3>Trash is empty</h3>
-                        <p>Deleted journals and autographs will appear here for recovery</p>
+                        <p>Deleted journals, autographs, and memories will appear here for recovery</p>
                     </div>
                 </div>
             </c:when>
