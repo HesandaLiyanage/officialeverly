@@ -650,7 +650,7 @@ public class GroupService {
         user memberUser = new user();
         memberUser.setId(req.getUserId());
         newMember.setUser(memberUser);
-        newMember.setRole("member");
+        newMember.setRole("viewer");
         newMember.setJoinedAt(new Timestamp(System.currentTimeMillis()));
         newMember.setStatus("active");
 

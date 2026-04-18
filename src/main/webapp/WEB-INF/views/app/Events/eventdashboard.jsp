@@ -194,7 +194,14 @@
                                                     <h3 class="sidebar-title">Event Dashboard</h3>
                                                     <ul class="stats-list">
                                                         <li class="stat-item">
-                                                            <div class="stat-icon upcoming">📅</div>
+                                                            <div class="stat-icon upcoming" aria-hidden="true">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                                                    <rect x="3" y="4" width="18" height="17" rx="3"></rect>
+                                                                    <line x1="8" y1="2.5" x2="8" y2="6"></line>
+                                                                    <line x1="16" y1="2.5" x2="16" y2="6"></line>
+                                                                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                                                                </svg>
+                                                            </div>
                                                             <div class="stat-info">
                                                                 <span class="stat-label">Upcoming</span>
                                                                 <span class="stat-value">
@@ -203,7 +210,15 @@
                                                             </div>
                                                         </li>
                                                         <li class="stat-item">
-                                                            <div class="stat-icon past">📋</div>
+                                                            <div class="stat-icon past" aria-hidden="true">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                                                    <path d="M9 3h6"></path>
+                                                                    <path d="M10 5h4"></path>
+                                                                    <rect x="5" y="4" width="14" height="17" rx="3"></rect>
+                                                                    <line x1="8" y1="10" x2="16" y2="10"></line>
+                                                                    <line x1="8" y1="14" x2="16" y2="14"></line>
+                                                                </svg>
+                                                            </div>
                                                             <div class="stat-info">
                                                                 <span class="stat-label">Past</span>
                                                                 <span class="stat-value">
@@ -212,7 +227,14 @@
                                                             </div>
                                                         </li>
                                                         <li class="stat-item">
-                                                            <div class="stat-icon total">📊</div>
+                                                            <div class="stat-icon total" aria-hidden="true">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                                                    <line x1="5" y1="20" x2="19" y2="20"></line>
+                                                                    <rect x="6" y="11" width="2.8" height="7" rx="1"></rect>
+                                                                    <rect x="10.6" y="8" width="2.8" height="10" rx="1"></rect>
+                                                                    <rect x="15.2" y="5" width="2.8" height="13" rx="1"></rect>
+                                                                </svg>
+                                                            </div>
                                                             <div class="stat-info">
                                                                 <span class="stat-label">Total</span>
                                                                 <span class="stat-value">

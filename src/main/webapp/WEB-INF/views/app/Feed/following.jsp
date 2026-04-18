@@ -15,7 +15,7 @@
 
 <head>
     <link rel="stylesheet" type="text/css"
-        href="${pageContext.request.contextPath}/resources/css/follow.css">
+        href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
     <style>
         .followers-wrapper {
             max-width: 450px;
@@ -215,26 +215,104 @@
             --gradient-5: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
     </style>
+    <link rel="stylesheet" type="text/css"
+        href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
 </head>
 
-<body>
-    <div class="followers-wrapper">
-        <div class="followers-header">
-            <button class="back-btn" onclick="history.back()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12" />
-                    <polyline points="12 19 5 12 12 5" />
-                </svg>
-            </button>
-            <div>
-                <h1 class="followers-title">${fn:escapeXml(pageTitle)}</h1>
-                <c:if test="${!isOwnProfile}">
-                    <p class="followers-subtitle">@${fn:escapeXml(profileUsername)}</p>
-                </c:if>
+<body class="feed-shell-page">
+    <c:set var="currentUserHasPic" value="${not empty currentUserProfile && not empty currentUserProfile.feedProfilePictureUrl && !fn:contains(currentUserProfile.feedProfilePictureUrl, 'default')}" />
+
+    <div class="feed-shell follow-shell">
+        <aside class="feed-rail">
+            <div class="feed-rail-top">
+                <a href="${pageContext.request.contextPath}/feed" class="feed-rail-brand">
+                    <span class="feed-rail-brand-mark">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="6"></rect>
+                            <circle cx="12" cy="12" r="3.2"></circle>
+                            <circle cx="17.5" cy="6.5" r="1"></circle>
+                        </svg>
+                    </span>
+                    <span class="feed-rail-brand-text">
+                        <span class="feed-rail-brand-title">Everly Feed</span>
+                        <span class="feed-rail-brand-subtitle">${fn:escapeXml(pageTitle)}</span>
+                    </span>
+                </a>
+
+                <a href="${pageContext.request.contextPath}/feed" class="feed-rail-link">
+                    <span class="feed-rail-link-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 11.5 12 4l9 7.5"></path>
+                            <path d="M5 10.5V20h14v-9.5"></path>
+                        </svg>
+                    </span>
+                    <span class="feed-rail-label feed-rail-link-text">
+                        <span class="feed-rail-link-title">Home</span>
+                        <span class="feed-rail-link-meta">Back to feed</span>
+                    </span>
+                </a>
+
+                <a href="${pageContext.request.contextPath}/publicprofile?username=${fn:escapeXml(profileUsername)}" class="feed-rail-link active">
+                    <span class="feed-rail-link-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                    <span class="feed-rail-label feed-rail-link-text">
+                        <span class="feed-rail-link-title">Profile</span>
+                        <span class="feed-rail-link-meta">@${fn:escapeXml(profileUsername)}</span>
+                    </span>
+                </a>
             </div>
-        </div>
-        <div class="followers-list">
+
+            <div class="feed-rail-bottom">
+                <a href="${pageContext.request.contextPath}/publicprofile" class="feed-rail-link">
+                    <span class="feed-rail-link-icon">
+                        <c:choose>
+                            <c:when test="${currentUserHasPic}">
+                                <img src="${fn:escapeXml(currentUserProfile.feedProfilePictureUrl)}"
+                                     alt="@${fn:escapeXml(currentUserProfile.feedUsername)}" class="feed-rail-avatar">
+                            </c:when>
+                            <c:otherwise>
+                                <span class="feed-rail-avatar-fallback">${fn:escapeXml(currentUserProfile.initials)}</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
+                    <span class="feed-rail-label feed-rail-link-text">
+                        <span class="feed-rail-link-title">You</span>
+                        <span class="feed-rail-link-meta">@${fn:escapeXml(currentUserProfile.feedUsername)}</span>
+                    </span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content follow-page-main">
+            <div class="follow-card">
+                <div class="followers-header">
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <button class="back-btn" onclick="history.back()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="19" y1="12" x2="5" y2="12" />
+                                <polyline points="12 19 5 12 12 5" />
+                            </svg>
+                        </button>
+                        <div class="followers-heading">
+                            <h1 class="followers-title">${fn:escapeXml(pageTitle)}</h1>
+                            <c:if test="${!isOwnProfile}">
+                                <p class="followers-subtitle">@${fn:escapeXml(profileUsername)}</p>
+                            </c:if>
+                        </div>
+                    </div>
+                    <a href="${pageContext.request.contextPath}/followers?profileId=${profileToView.feedProfileId}" class="sidebar-link">Followers</a>
+                </div>
+
+                <div class="follow-search">
+                    <input type="text" id="followSearchInput" placeholder="Search following by username">
+                </div>
+
+                <div class="followers-list">
             <c:choose>
                 <c:when test="${not empty userList}">
                     <c:forEach items="${userList}" var="user" varStatus="status">
@@ -311,9 +389,11 @@
                     </div>
                 </c:otherwise>
             </c:choose>
-        </div>
+                </div>
+            </div>
+        </main>
+        <div></div>
     </div>
-    <jsp:include page="/WEB-INF/views/public/footer.jsp" />
     <script>
         function handleFollow(btn) {
             const profileId = btn.dataset.profileId;
@@ -338,6 +418,20 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('followSearchInput');
+            if (!searchInput) return;
+
+            searchInput.addEventListener('input', function () {
+                const query = this.value.trim().toLowerCase();
+                document.querySelectorAll('.follower-item').forEach(function (item) {
+                    const username = item.querySelector('.follower-name')?.textContent?.toLowerCase() || '';
+                    const status = item.querySelector('.follower-status')?.textContent?.toLowerCase() || '';
+                    item.style.display = (username.includes(query) || status.includes(query)) ? 'flex' : 'none';
+                });
+            });
+        });
     </script>
 </body>
 

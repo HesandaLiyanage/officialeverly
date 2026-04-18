@@ -97,33 +97,6 @@
                 </div>
             </div>
 
-            <!-- Link Input -->
-            <div class="form-group">
-                <label class="form-label">Link</label>
-                <div class="link-input-wrapper">
-                    <span class="link-prefix">everly.com/</span>
-                    <input
-                            type="text"
-                            class="form-input link-input"
-                            name="customLink"
-                            id="customLink"
-                            placeholder="yourname"
-
-                            value="${autograph.title}"
-
-                            required
-                    />
-                    <button type="button" class="copy-btn" id="copyBtn" title="Copy link">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    </button>
-                </div>
-
-                <p class="form-hint" id="fullLinkDisplay">Full link: everly.com/<span id="linkDisplayValue">${autograph.title}</span></p>
-            </div>
-
             <!-- Add Your Own Memory Section -->
             <div class="form-group">
                 <label class="form-label">Add Your Own Memory (Optional)</label>
@@ -176,14 +149,6 @@
         const previewContainer = document.getElementById('previewContainer');
 
         const autographForm = document.getElementById('autographForm');
-
-        const customLinkInput = document.getElementById('customLink');
-        const linkDisplayValue = document.getElementById('linkDisplayValue');
-
-        // Update link display when customLink input changes
-        customLinkInput.addEventListener('input', function() {
-            linkDisplayValue.textContent = this.value;
-        });
 
 
         // Browse button click

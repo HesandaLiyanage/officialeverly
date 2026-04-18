@@ -433,7 +433,7 @@
             btn.querySelector('.vault-btn-loading').style.display = 'inline';
             btn.disabled = true;
 
-            var formData = new FormData();
+            var formData = new URLSearchParams();
             formData.append('type', 'journal');
             formData.append('id', '${journal.journalId}');
             formData.append('action', 'add');
@@ -441,7 +441,10 @@
 
             fetch('${pageContext.request.contextPath}/moveToVault', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: formData.toString()
             })
             .then(function(response) { return response.json(); })
             .then(function(data) {
@@ -466,14 +469,17 @@
 
         function restoreFromVault() {
             if (!confirm('Are you sure you want to restore this journal from the vault?')) return;
-            var formData = new FormData();
+            var formData = new URLSearchParams();
             formData.append('type', 'journal');
             formData.append('id', '${journal.journalId}');
             formData.append('action', 'remove');
 
             fetch('${pageContext.request.contextPath}/moveToVault', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: formData.toString()
             })
             .then(function(response) { return response.json(); })
             .then(function(data) {

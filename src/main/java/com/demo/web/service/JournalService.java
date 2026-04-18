@@ -3,6 +3,7 @@ package com.demo.web.service;
 import com.demo.web.dao.Journals.JournalDAO;
 import com.demo.web.dao.Journals.JournalStreakDAO;
 import com.demo.web.dao.Journals.RecycleBinDAO;
+import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Autographs.autographDAO;
 import com.demo.web.model.Journals.Journal;
 import com.demo.web.model.Journals.JournalStreak;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.sql.SQLException;
 
 public class JournalService {
 
@@ -22,12 +24,14 @@ public class JournalService {
     private final JournalStreakDAO streakDAO;
     private final RecycleBinDAO rbDao;
     private final autographDAO autographDAO;
+    private final memoryDAO memoryDAO;
 
     public JournalService() {
         this.journalDAO = new JournalDAO();
         this.streakDAO = new JournalStreakDAO();
         this.rbDao = new RecycleBinDAO();
         this.autographDAO = new autographDAO();
+        this.memoryDAO = new memoryDAO();
     }
 
     public List<Journal> getJournalsByUserId(int userId) {
@@ -172,10 +176,12 @@ public class JournalService {
         
         List<RecycleBinItem> journalItems = rbDao.findByUserId(request.getUserId());
         List<RecycleBinItem> autographItems = rbDao.findAutographsByUserId(request.getUserId());
+        List<RecycleBinItem> memoryItems = rbDao.findMemoriesByUserId(request.getUserId());
         
         List<RecycleBinItem> trashItems = new ArrayList<>();
         trashItems.addAll(journalItems);
         trashItems.addAll(autographItems);
+        trashItems.addAll(memoryItems);
         
         trashItems.sort((a, b) -> {
             if (a.getDeletedAt() == null && b.getDeletedAt() == null) return 0;
@@ -216,6 +222,12 @@ public class JournalService {
                     success = journalDAO.restoreJournalFromRecycleBin(recycleBinId, request.getUserId());
                 } else if ("autograph".equals(item.getItemType())) {
                     success = autographDAO.restoreAutographFromRecycleBin(recycleBinId, request.getUserId());
+                } else if ("memory".equals(item.getItemType())) {
+                    try {
+                        success = memoryDAO.restoreMemoryFromRecycleBin(recycleBinId, request.getUserId());
+                    } catch (SQLException e) {
+                        success = false;
+                    }
                 }
                 
                 if (success) {

@@ -351,52 +351,186 @@
             --gradient-4: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
         }
     </style>
+    <link rel="stylesheet" type="text/css"
+        href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
 </head>
 
-<body>
-    <div class="page-wrapper">
-        <main class="main-content">
-            <div class="fixed-top-section">
-                <div class="tab-nav">
+<body class="feed-shell-page">
+    <c:set var="currentHasPic" value="${not empty feedProfile && not empty feedProfile.feedProfilePictureUrl && !fn:contains(feedProfile.feedProfilePictureUrl, 'default')}" />
+    <c:set var="currentBio" value="${empty feedProfile.feedBio ? 'Your next story starts here.' : feedProfile.feedBio}" />
 
-                    <a href="${pageContext.request.contextPath}/publicprofile"
-                        class="profile-link" title="@${fn:escapeXml(feedUsername)}">
-                        <c:choose>
-                            <c:when test="${hasDefaultPic}">
-                                <div class="profile-pic profile-pic-initials"
-                                    style="background: linear-gradient(135deg, #9A74D8 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">
-                                    ${fn:escapeXml(feedInitials)}
-                                </div>
-                            </c:when>
-                            <c:otherwise>
-                                <img src="${fn:escapeXml(feedProfilePic)}"
-                                    alt="@${fn:escapeXml(feedUsername)}"
-                                    class="profile-pic">
-                            </c:otherwise>
-                        </c:choose>
-                    </a>
-                </div>
-                <div class="search-filters"
-                    style="margin-top: 10px; margin-bottom: 15px;">
-                    <div class="memories-search-container">
-                        <button class="memories-search-btn"
-                            id="memoriesSearchBtn">
-                            <svg viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <path d="m21 21-4.35-4.35"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+    <div class="feed-shell">
+        <aside class="feed-rail">
+            <div class="feed-rail-top">
+                <a href="${pageContext.request.contextPath}/feed" class="feed-rail-brand">
+                    <span class="feed-rail-brand-mark">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="6"></rect>
+                            <circle cx="12" cy="12" r="3.2"></circle>
+                            <circle cx="17.5" cy="6.5" r="1"></circle>
+                        </svg>
+                    </span>
+                    <span class="feed-rail-brand-text">
+                        <span class="feed-rail-brand-title">Everly Feed</span>
+                        <span class="feed-rail-brand-subtitle">Community moments</span>
+                    </span>
+                </a>
+
+                <a href="${pageContext.request.contextPath}/feed" class="feed-rail-link active">
+                    <span class="feed-rail-link-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 11.5 12 4l9 7.5"></path>
+                            <path d="M5 10.5V20h14v-9.5"></path>
+                        </svg>
+                    </span>
+                    <span class="feed-rail-label feed-rail-link-text">
+                        <span class="feed-rail-link-title">Home</span>
+                        <span class="feed-rail-link-meta">Fresh posts</span>
+                    </span>
+                </a>
+
+                <a href="${pageContext.request.contextPath}/createPost" class="feed-rail-link">
+                    <span class="feed-rail-link-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14"></path>
+                            <path d="M5 12h14"></path>
+                        </svg>
+                    </span>
+                    <span class="feed-rail-label feed-rail-link-text">
+                        <span class="feed-rail-link-title">Create</span>
+                        <span class="feed-rail-link-meta">Share a memory</span>
+                    </span>
+                </a>
+
+                <a href="${pageContext.request.contextPath}/notifications" class="feed-rail-link">
+                    <span class="feed-rail-link-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </span>
+                    <span class="feed-rail-label feed-rail-link-text">
+                        <span class="feed-rail-link-title">Notifications</span>
+                        <span class="feed-rail-link-meta">Comments and likes</span>
+                    </span>
+                </a>
             </div>
 
-            <div class="scrollable-feed" id="feedContainer">
+            <div class="feed-rail-bottom">
+                <a href="${pageContext.request.contextPath}/publicprofile" class="feed-rail-link">
+                    <span class="feed-rail-link-icon">
+                        <c:choose>
+                            <c:when test="${currentHasPic}">
+                                <img src="${fn:escapeXml(feedProfile.feedProfilePictureUrl)}" alt="@${fn:escapeXml(feedUsername)}"
+                                     class="feed-rail-avatar">
+                            </c:when>
+                            <c:otherwise>
+                                <span class="feed-rail-avatar-fallback">${fn:escapeXml(feedInitials)}</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
+                    <span class="feed-rail-label feed-rail-link-text">
+                        <span class="feed-rail-link-title">Profile</span>
+                        <span class="feed-rail-link-meta">@${fn:escapeXml(feedUsername)}</span>
+                    </span>
+                </a>
+            </div>
+        </aside>
+
+        <div class="page-wrapper">
+            <main class="main-content feed-main-column">
+                <div class="fixed-top-section">
+                    <div class="feed-panel feed-topbar">
+                        <div class="feed-heading">
+                            <span class="feed-eyebrow">Feed</span>
+                            <h1>Discover memories from your circle</h1>
+                            <p>Scroll through shared moments, jump into conversations, and keep your own profile close by while the main Everly header stays on top.</p>
+                        </div>
+
+                        <a href="${pageContext.request.contextPath}/publicprofile" class="profile-link compact"
+                           title="@${fn:escapeXml(feedUsername)}">
+                            <div class="feed-identity-chip">
+                                <c:choose>
+                                    <c:when test="${hasDefaultPic}">
+                                        <div class="profile-pic profile-pic-initials">${fn:escapeXml(feedInitials)}</div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="${fn:escapeXml(feedProfilePic)}" alt="@${fn:escapeXml(feedUsername)}"
+                                             class="profile-pic">
+                                    </c:otherwise>
+                                </c:choose>
+                                <div class="feed-identity-copy">
+                                    <strong>@${fn:escapeXml(feedUsername)}</strong>
+                                    <span>Open your profile</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="feed-panel stories-bar">
+                        <div class="stories-track">
+                            <a href="${pageContext.request.contextPath}/publicprofile" class="story-card">
+                                <div class="story-ring story-ring-self">
+                                    <div class="story-inner">
+                                        <c:choose>
+                                            <c:when test="${currentHasPic}">
+                                                <img src="${fn:escapeXml(feedProfile.feedProfilePictureUrl)}"
+                                                     alt="@${fn:escapeXml(feedUsername)}">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="story-initials">${fn:escapeXml(feedInitials)}</div>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                </div>
+                                <span class="story-name">You</span>
+                            </a>
+
+                            <c:forEach items="${recommendedUsers}" var="user" varStatus="status">
+                                <c:if test="${status.index lt 6}">
+                                    <c:set var="storyHasPic" value="${not empty user.feedProfilePictureUrl && !fn:contains(user.feedProfilePictureUrl, 'default')}" />
+                                    <a href="${pageContext.request.contextPath}/publicprofile?username=${fn:escapeXml(user.feedUsername)}"
+                                       class="story-card">
+                                        <div class="story-ring">
+                                            <div class="story-inner">
+                                                <c:choose>
+                                                    <c:when test="${storyHasPic}">
+                                                        <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
+                                                             alt="@${fn:escapeXml(user.feedUsername)}">
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <div class="story-initials">${fn:escapeXml(user.initials)}</div>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                        </div>
+                                        <span class="story-name">${fn:escapeXml(user.feedUsername)}</span>
+                                    </a>
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                    </div>
+
+                    <div class="search-filters">
+                        <div class="memories-search-container">
+                            <button class="memories-search-btn" id="memoriesSearchBtn">
+                                <svg viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="m21 21-4.35-4.35"></path>
+                                </svg>
+                                <span>Search posts, captions, and people</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scrollable-feed" id="feedContainer">
                 <c:choose>
                     <c:when test="${empty posts}">
-                        <div class="empty-feed">
+                        <div class="feed-panel empty-feed">
                             <div class="empty-feed-icon">
                                 <svg viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="1.5">
@@ -423,6 +557,7 @@
                         </div>
                     </c:when>
                     <c:otherwise>
+                        <div class="feed-container">
                         <c:forEach items="${posts}" var="post">
                             <c:set var="poster" value="${post.feedProfile}" />
                             <c:set var="posterUsername" value="${not empty poster ? poster.feedUsername : 'unknown'}" />
@@ -443,12 +578,10 @@
                                             <c:when test="${hasPosterPic}">
                                                 <img src="${fn:escapeXml(posterPic)}"
                                                     alt="@${fn:escapeXml(posterUsername)}"
-                                                    class="user-avatar"
-                                                    style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;">
+                                                    class="user-avatar">
                                             </c:when>
                                             <c:otherwise>
-                                                <div class="user-avatar"
-                                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">
+                                                <div class="user-avatar">
                                                     <span>${fn:escapeXml(posterInitials)}</span>
                                                 </div>
                                             </c:otherwise>
@@ -645,67 +778,77 @@
                                 </div>
                             </div>
                         </c:forEach>
+                        </div>
                     </c:otherwise>
                 </c:choose>
-            </div>
-        </main>
+                </div>
+            </main>
 
-        <aside class="sidebar"
-            style="width: 280px; flex-shrink: 0; display: none;">
-            <div class="sidebar-section"
-                style="background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                <h3
-                    style="font-size: 14px; font-weight: 600; color: #8e8e8e; margin: 0 0 16px 0; font-family: 'Plus Jakarta Sans', sans-serif;">
-                    Suggested for you</h3>
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    <c:choose>
-                        <c:when test="${not empty recommendedUsers}">
-                            <c:forEach items="${recommendedUsers}" var="user" varStatus="status">
-                                <c:set var="gradientIdx" value="${status.index mod 5}" />
-                                <c:set var="hasUserPic" value="${not empty user.feedProfilePictureUrl && !fn:contains(user.feedProfilePictureUrl, 'default')}" />
-                                <li style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
-                                    <c:choose>
-                                        <c:when test="${hasUserPic}">
-                                            <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
-                                                alt="@${fn:escapeXml(user.feedUsername)}"
-                                                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                                        </c:when>
-                                        <c:otherwise>
-                                            <div
-                                                style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--gradient-${gradientIdx}); color: white; font-weight: 600; font-size: 14px; flex-shrink: 0;">
-                                                ${fn:escapeXml(user.initials)}
-                                            </div>
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <div style="flex: 1; min-width: 0;">
-                                        <a href="${pageContext.request.contextPath}/publicprofile?username=${fn:escapeXml(user.feedUsername)}"
-                                            style="text-decoration: none; display: block;">
-                                            <span
-                                                style="font-weight: 600; font-size: 14px; color: #262626; font-family: 'Plus Jakarta Sans', sans-serif;">
-                                                ${fn:escapeXml(user.feedUsername)}
-                                            </span>
-                                        </a>
-                                        <span
-                                            style="font-size: 12px; color: #8e8e8e;">Suggested
-                                            for you</span>
-                                    </div>
-                                    <button class="follow-btn-small"
-                                        style="background: transparent; color: #0095f6; border: none; font-weight: 600; font-size: 12px; cursor: pointer; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif;"
-                                        data-profile-id="${user.feedProfileId}"
-                                        onclick="handleFollowSidebar(this, ${user.feedProfileId})">Follow</button>
-                                </li>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <li
-                                style="text-align: center; color: #8e8e8e; padding: 20px 0; font-size: 14px;">
-                                No suggestions available
-                            </li>
-                        </c:otherwise>
-                    </c:choose>
-                </ul>
-            </div>
-        </aside>
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-profile-card">
+                        <c:choose>
+                            <c:when test="${currentHasPic}">
+                                <img src="${fn:escapeXml(feedProfile.feedProfilePictureUrl)}" alt="@${fn:escapeXml(feedUsername)}"
+                                     class="favorite-icon">
+                            </c:when>
+                            <c:otherwise>
+                                <div class="favorite-icon" style="background: var(--avatar-fallback);">${fn:escapeXml(feedInitials)}</div>
+                            </c:otherwise>
+                        </c:choose>
+                        <div class="sidebar-profile-copy">
+                            <strong>@${fn:escapeXml(feedUsername)}</strong>
+                            <span>${fn:escapeXml(currentBio)}</span>
+                        </div>
+                        <a href="${pageContext.request.contextPath}/publicprofile" class="sidebar-link">Profile</a>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title-row">
+                        <h3 class="sidebar-title">Suggested for you</h3>
+                        <a href="${pageContext.request.contextPath}/following?profileId=${currentProfileId}" class="sidebar-link">Following</a>
+                    </div>
+
+                    <ul class="favorites-list">
+                        <c:choose>
+                            <c:when test="${not empty recommendedUsers}">
+                                <c:forEach items="${recommendedUsers}" var="user" varStatus="status">
+                                    <c:set var="gradientIdx" value="${status.index mod 5}" />
+                                    <c:set var="hasUserPic" value="${not empty user.feedProfilePictureUrl && !fn:contains(user.feedProfilePictureUrl, 'default')}" />
+                                    <li class="favorite-item">
+                                        <c:choose>
+                                            <c:when test="${hasUserPic}">
+                                                <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
+                                                     alt="@${fn:escapeXml(user.feedUsername)}">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="favorite-icon" style="background: var(--gradient-${gradientIdx});">
+                                                    ${fn:escapeXml(user.initials)}
+                                                </div>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <div class="favorite-content">
+                                            <a href="${pageContext.request.contextPath}/publicprofile?username=${fn:escapeXml(user.feedUsername)}"
+                                               style="text-decoration: none;">
+                                                <span class="favorite-name">${fn:escapeXml(user.feedUsername)}</span>
+                                            </a>
+                                            <span class="follower-info">${empty user.feedBio ? 'Suggested for you' : fn:escapeXml(user.feedBio)}</span>
+                                        </div>
+                                        <button class="follow-btn-small"
+                                                data-profile-id="${user.feedProfileId}"
+                                                onclick="handleFollowSidebar(this, ${user.feedProfileId})">Follow</button>
+                                    </li>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <li class="sidebar-note">No suggestions available right now. Start following a few people and this panel will fill in automatically.</li>
+                            </c:otherwise>
+                        </c:choose>
+                    </ul>
+                </div>
+            </aside>
+        </div>
     </div>
 
     <a href="${pageContext.request.contextPath}/createPost"
@@ -716,8 +859,6 @@
             <line x1="5" y1="12" x2="19" y2="12" />
         </svg>
     </a>
-
-    <jsp:include page="/WEB-INF/views/public/footer.jsp" />
 
     <script>
         var contextPath = '${pageContext.request.contextPath}';

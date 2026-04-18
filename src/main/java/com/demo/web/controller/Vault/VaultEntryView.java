@@ -2,13 +2,13 @@ package com.demo.web.controller.Vault;
 
 import com.demo.web.service.VaultService;
 import com.demo.web.dto.Vault.*;
+import com.demo.web.util.ControllerSessionUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet("/vaultentries")
@@ -24,14 +24,18 @@ public class VaultEntryView extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        Integer userId = ControllerSessionUtil.requireUserId(request, response);
+        if (userId == null) {
             return;
         }
 
-        VaultSetupGetRequest req = new VaultSetupGetRequest((Integer) session.getAttribute("user_id"));
+        Boolean vaultUnlocked = (Boolean) request.getSession().getAttribute("vault_unlocked");
+        if (Boolean.TRUE.equals(vaultUnlocked)) {
+            response.sendRedirect(request.getContextPath() + "/vaultmemories");
+            return;
+        }
+
+        VaultSetupGetRequest req = new VaultSetupGetRequest(userId);
         VaultSetupGetResponse res = vaultService.getSetupState(req);
 
         if (!res.isHasSetup()) {
@@ -45,23 +49,22 @@ public class VaultEntryView extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        Integer userId = ControllerSessionUtil.requireUserId(request, response);
+        if (userId == null) {
             return;
         }
 
         VaultEntryPostRequest req = new VaultEntryPostRequest(
-            (Integer) session.getAttribute("user_id"), 
+            userId,
             request.getParameter("vaultPassword")
         );
 
         VaultEntryPostResponse res = vaultService.verifyEntry(req);
 
         if (res.isValid()) {
-            session.setAttribute("vault_unlocked", true);
-            request.setAttribute("vaultUnlocked", true);
+            request.getSession().setAttribute("vault_unlocked", true);
+            response.sendRedirect(request.getContextPath() + "/vaultmemories");
+            return;
         } else {
             request.setAttribute("errorMessage", res.getErrorMessage());
         }

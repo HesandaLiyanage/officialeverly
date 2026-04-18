@@ -73,6 +73,9 @@
                                 <button class="emoji-btn" data-emoji="🦋">🦋</button>
                                 <button class="emoji-btn" data-emoji="🎵">🎵</button>
                             </div>
+                            <p style="margin: 10px 0 0; font-size: 12px; color: #6b7280; line-height: 1.5;">
+                                Tip: Double-click a placed emoji or sticker to remove it.
+                            </p>
                         </div>
 
                         <div class="toolbar-section">

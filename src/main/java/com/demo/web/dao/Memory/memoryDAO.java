@@ -1,5 +1,7 @@
 package com.demo.web.dao.Memory;
 
+import com.demo.web.dao.Journals.RecycleBinDAO;
+import com.demo.web.model.Journals.RecycleBinItem;
 import com.demo.web.model.Memory.Memory;
 import com.demo.web.util.DatabaseUtil;
 
@@ -252,6 +254,51 @@ public class memoryDAO {
         }
     }
 
+    public boolean deleteMemoryToRecycleBin(int memoryId, int userId) throws SQLException {
+        Memory memory = getMemoryById(memoryId);
+        if (memory == null) {
+            return false;
+        }
+
+        RecycleBinItem item = new RecycleBinItem();
+        item.setOriginalId(memory.getMemoryId());
+        item.setUserId(userId);
+        item.setTitle(memory.getTitle());
+        item.setContent(memory.getDescription());
+        item.setMetadata(buildRecycleMetadata(memory));
+
+        RecycleBinDAO recycleBinDAO = new RecycleBinDAO();
+        int recycleId = recycleBinDAO.saveMemoryToRecycleBin(item);
+        if (recycleId <= 0) {
+            return false;
+        }
+
+        return deleteMemory(memoryId);
+    }
+
+    public boolean restoreMemoryFromRecycleBin(int recycleBinId, int userId) throws SQLException {
+        RecycleBinDAO recycleBinDAO = new RecycleBinDAO();
+        RecycleBinItem item = recycleBinDAO.findById(recycleBinId);
+        if (item == null || !"memory".equals(item.getItemType()) || item.getUserId() != userId) {
+            return false;
+        }
+
+        Memory memory = new Memory();
+        memory.setTitle(item.getTitle());
+        memory.setDescription(item.getContent());
+        memory.setUserId(userId);
+        memory.setPublic(parseBooleanMetadata(item.getMetadata(), "isPublic"));
+        memory.setGroupId(parseIntegerMetadata(item.getMetadata(), "groupId"));
+
+        boolean restored = createMemory(memory) > 0;
+        if (restored) {
+            recycleBinDAO.deleteFromRecycleBin(recycleBinId);
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Set cover media for memory
      */
@@ -367,6 +414,58 @@ public class memoryDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private String buildRecycleMetadata(Memory memory) {
+        StringBuilder metadata = new StringBuilder("{");
+        metadata.append("\"groupId\":");
+        if (memory.getGroupId() != null) {
+            metadata.append(memory.getGroupId());
+        } else {
+            metadata.append("null");
+        }
+        metadata.append(",\"isPublic\":").append(memory.isPublic()).append("}");
+        return metadata.toString();
+    }
+
+    private Integer parseIntegerMetadata(String metadata, String key) {
+        String rawValue = extractMetadataValue(metadata, key);
+        if (rawValue == null || "null".equals(rawValue)) {
+            return null;
+        }
+
+        try {
+            return Integer.parseInt(rawValue);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private boolean parseBooleanMetadata(String metadata, String key) {
+        return Boolean.parseBoolean(extractMetadataValue(metadata, key));
+    }
+
+    private String extractMetadataValue(String metadata, String key) {
+        if (metadata == null) {
+            return null;
+        }
+
+        String marker = "\"" + key + "\":";
+        int start = metadata.indexOf(marker);
+        if (start == -1) {
+            return null;
+        }
+
+        start += marker.length();
+        int end = metadata.indexOf(",", start);
+        if (end == -1) {
+            end = metadata.indexOf("}", start);
+        }
+        if (end == -1) {
+            return null;
+        }
+
+        return metadata.substring(start, end).trim().replace("\"", "");
     }
 
     // ============================================

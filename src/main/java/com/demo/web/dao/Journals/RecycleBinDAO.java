@@ -64,6 +64,33 @@ public class RecycleBinDAO {
         return items;
     }
 
+    public List<RecycleBinItem> findMemoriesByUserId(int userId) {
+        String sql = "SELECT * FROM recycle_bin WHERE user_id = ? AND item_type = 'memory' ORDER BY deleted_at DESC";
+        List<RecycleBinItem> items = new ArrayList<>();
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                RecycleBinItem item = new RecycleBinItem();
+                item.setId(rs.getInt("id"));
+                item.setOriginalId(rs.getInt("original_id"));
+                item.setItemType(rs.getString("item_type"));
+                item.setUserId(rs.getInt("user_id"));
+                item.setTitle(rs.getString("title"));
+                item.setContent(rs.getString("content"));
+                item.setMetadata(rs.getString("metadata"));
+                item.setDeletedAt(rs.getTimestamp("deleted_at"));
+                items.add(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
     public RecycleBinItem findById(int id) {
         String sql = "SELECT * FROM recycle_bin WHERE id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -132,6 +159,32 @@ public class RecycleBinDAO {
         String sql = """
             INSERT INTO recycle_bin (original_id, item_type, user_id, title, content, metadata)
             VALUES (?, 'autograph', ?, ?, ?, ?::JSONB) RETURNING id
+            """;
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, item.getOriginalId());
+            stmt.setInt(2, item.getUserId());
+            stmt.setString(3, item.getTitle());
+            stmt.setString(4, item.getContent());
+            stmt.setString(5, item.getMetadata());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public int saveMemoryToRecycleBin(RecycleBinItem item) {
+        String sql = """
+            INSERT INTO recycle_bin (original_id, item_type, user_id, title, content, metadata)
+            VALUES (?, 'memory', ?, ?, ?, ?::JSONB) RETURNING id
             """;
 
         try (Connection conn = DatabaseUtil.getConnection();

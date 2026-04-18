@@ -4,10 +4,12 @@ import com.demo.web.dao.Vault.VaultDAO;
 import com.demo.web.dao.Journals.JournalDAO;
 import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.dao.Memory.MediaDAO;
+import com.demo.web.dao.Settings.SubscriptionDAO;
 import com.demo.web.dto.Vault.*;
 import com.demo.web.model.Journals.Journal;
 import com.demo.web.model.Memory.Memory;
 import com.demo.web.model.Memory.MediaItem;
+import com.demo.web.model.Settings.Plan;
 import com.demo.web.util.VaultUtil;
 
 import java.sql.SQLException;
@@ -19,12 +21,14 @@ public class VaultService {
     private memoryDAO memoryDao;
     private JournalDAO journalDAO;
     private MediaDAO mediaDAO;
+    private SubscriptionDAO subscriptionDAO;
 
     public VaultService() {
         this.vaultDAO = new VaultDAO();
         this.memoryDao = new memoryDAO();
         this.journalDAO = new JournalDAO();
         this.mediaDAO = new MediaDAO();
+        this.subscriptionDAO = new SubscriptionDAO();
     }
 
     public VaultSetupGetResponse getSetupState(VaultSetupGetRequest request) {
@@ -123,78 +127,36 @@ public class VaultService {
 
     public VaultMemoriesResponse getVaultMemories(VaultMemoriesRequest request, String contextPath) {
         VaultMemoriesResponse response = new VaultMemoriesResponse();
-        
-        if (!vaultDAO.hasVaultSetup(request.getUserId())) {
-            response.setHasSetup(false);
+        if (!populateVaultAccess(response, request.getUserId(), request.getVaultPassword(), request.getVaultUnlockedSession())) {
             return response;
         }
-        response.setHasSetup(true);
-
-        boolean isUnlocked = false;
-        
-        // If password provided (POST), verify it
-        if (request.getVaultPassword() != null) {
-            if (vaultDAO.verifyVaultPassword(request.getUserId(), request.getVaultPassword())) {
-                isUnlocked = true;
-            } else {
-                response.setErrorMessage("Invalid vault password");
-            }
-        } 
-        // If no password provided (GET), check session
-        else if (request.getVaultUnlockedSession() != null && request.getVaultUnlockedSession()) {
-            isUnlocked = true;
+        if (!response.isAccessGranted()) {
+            return response;
         }
-        
-        response.setAccessGranted(isUnlocked);
 
-        if (isUnlocked) {
-            try {
-                List<Memory> vaultMemories = memoryDao.getVaultMemoriesByUserId(request.getUserId());
-                for (Memory memory : vaultMemories) {
-                    if (memory.getCoverMediaId() != null) {
-                        try {
-                            MediaItem coverMedia = mediaDAO.getMediaById(memory.getCoverMediaId());
-                            if (coverMedia != null) {
-                                memory.setCoverUrl(contextPath + "/viewmedia?id=" + coverMedia.getMediaId());
-                            }
-                        } catch (SQLException ignore) {}
-                    }
-                }
-                response.setMemories(vaultMemories);
-            } catch (SQLException e) {
-                response.setErrorMessage("Error loading vault memories");
-            }
+        try {
+            List<Memory> vaultMemories = memoryDao.getVaultMemoriesByUserId(request.getUserId());
+            attachCoverUrls(vaultMemories, contextPath);
+            response.setMemories(vaultMemories);
+            populateStorageSummary(response, request.getUserId());
+        } catch (SQLException e) {
+            response.setErrorMessage("Error loading vault memories");
         }
         return response;
     }
 
     public VaultJournalsResponse getVaultJournals(VaultJournalsRequest request) {
         VaultJournalsResponse response = new VaultJournalsResponse();
-        
-        if (!vaultDAO.hasVaultSetup(request.getUserId())) {
-            response.setHasSetup(false);
+        if (!populateVaultAccess(response, request.getUserId(), request.getVaultPassword(), request.getVaultUnlockedSession())) {
             return response;
         }
-        response.setHasSetup(true);
-
-        boolean isUnlocked = false;
-        
-        if (request.getVaultPassword() != null) {
-            if (vaultDAO.verifyVaultPassword(request.getUserId(), request.getVaultPassword())) {
-                isUnlocked = true;
-            } else {
-                response.setErrorMessage("Invalid vault password");
-            }
-        } else if (request.getVaultUnlockedSession() != null && request.getVaultUnlockedSession()) {
-            isUnlocked = true;
+        if (!response.isAccessGranted()) {
+            return response;
         }
-        
-        response.setAccessGranted(isUnlocked);
 
-        if (isUnlocked) {
-            List<Journal> vaultJournals = journalDAO.getVaultJournalsByUserId(request.getUserId());
-            response.setJournals(vaultJournals);
-        }
+        List<Journal> vaultJournals = journalDAO.getVaultJournalsByUserId(request.getUserId());
+        response.setJournals(vaultJournals);
+        populateStorageSummary(response, request.getUserId());
         return response;
     }
 
@@ -269,5 +231,95 @@ public class VaultService {
         }
         
         return response;
+    }
+
+    private boolean populateVaultAccess(VaultMemoriesResponse response, int userId, String vaultPassword, Boolean vaultUnlockedSession) {
+        if (!vaultDAO.hasVaultSetup(userId)) {
+            response.setHasSetup(false);
+            return false;
+        }
+
+        response.setHasSetup(true);
+        boolean accessGranted = resolveVaultAccess(userId, vaultPassword, vaultUnlockedSession);
+        response.setAccessGranted(accessGranted);
+
+        if (!accessGranted && hasText(vaultPassword)) {
+            response.setErrorMessage("Invalid vault password");
+        }
+
+        return true;
+    }
+
+    private boolean populateVaultAccess(VaultJournalsResponse response, int userId, String vaultPassword, Boolean vaultUnlockedSession) {
+        if (!vaultDAO.hasVaultSetup(userId)) {
+            response.setHasSetup(false);
+            return false;
+        }
+
+        response.setHasSetup(true);
+        boolean accessGranted = resolveVaultAccess(userId, vaultPassword, vaultUnlockedSession);
+        response.setAccessGranted(accessGranted);
+
+        if (!accessGranted && hasText(vaultPassword)) {
+            response.setErrorMessage("Invalid vault password");
+        }
+
+        return true;
+    }
+
+    private boolean resolveVaultAccess(int userId, String vaultPassword, Boolean vaultUnlockedSession) {
+        if (hasText(vaultPassword)) {
+            return vaultDAO.verifyVaultPassword(userId, vaultPassword);
+        }
+
+        return vaultUnlockedSession != null && vaultUnlockedSession;
+    }
+
+    private void attachCoverUrls(List<Memory> vaultMemories, String contextPath) {
+        for (Memory memory : vaultMemories) {
+            if (memory.getCoverMediaId() == null) {
+                continue;
+            }
+
+            try {
+                MediaItem coverMedia = mediaDAO.getMediaById(memory.getCoverMediaId());
+                if (coverMedia != null) {
+                    memory.setCoverUrl(contextPath + "/viewmedia?id=" + coverMedia.getMediaId());
+                }
+            } catch (SQLException ignore) {
+            }
+        }
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
+    private void populateStorageSummary(VaultMemoriesResponse response, int userId) {
+        long usedStorageBytes = subscriptionDAO.getUsedStorage(userId);
+        Plan plan = subscriptionDAO.getPlanByUserId(userId);
+        long storageLimitBytes = plan != null ? plan.getStorageLimitBytes() : 0L;
+
+        response.setStoragePercentage(storageLimitBytes > 0 ? (int) (usedStorageBytes * 100 / storageLimitBytes) : 0);
+        response.setStorageUsedFormatted(formatSize(usedStorageBytes));
+        response.setStorageTotalFormatted(formatSize(storageLimitBytes));
+    }
+
+    private void populateStorageSummary(VaultJournalsResponse response, int userId) {
+        long usedStorageBytes = subscriptionDAO.getUsedStorage(userId);
+        Plan plan = subscriptionDAO.getPlanByUserId(userId);
+        long storageLimitBytes = plan != null ? plan.getStorageLimitBytes() : 0L;
+
+        response.setStoragePercentage(storageLimitBytes > 0 ? (int) (usedStorageBytes * 100 / storageLimitBytes) : 0);
+        response.setStorageUsedFormatted(formatSize(usedStorageBytes));
+        response.setStorageTotalFormatted(formatSize(storageLimitBytes));
+    }
+
+    private String formatSize(long bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return String.format("%.2f KB", bytes / 1024.0);
+        if (bytes < 1024L * 1024 * 1024) return String.format("%.2f MB", bytes / (1024.0 * 1024));
+        if (bytes < 1024L * 1024 * 1024 * 1024) return String.format("%.2f GB", bytes / (1024.0 * 1024 * 1024));
+        return String.format("%.2f TB", bytes / (1024.0 * 1024 * 1024 * 1024));
     }
 }
