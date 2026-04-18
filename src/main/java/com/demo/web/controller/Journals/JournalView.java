@@ -64,6 +64,9 @@ public class JournalView extends HttpServlet {
         request.setAttribute("journal", res.getJournal());
         request.setAttribute("isInVault", res.getJournal().isInVault());
         preComputeJournalAttributes(request, res.getJournal());
+        request.setAttribute("journalWordCount", journalService.getWordCount(res.getJournal()));
+        request.setAttribute("journalPlainText", journalService.getPlainText(res.getJournal()));
+        request.setAttribute("journalPlainTextJson", new com.google.gson.Gson().toJson(journalService.getPlainText(res.getJournal())));
         request.getRequestDispatcher("/WEB-INF/views/app/Journals/journalview.jsp").forward(request, response);
     }
 

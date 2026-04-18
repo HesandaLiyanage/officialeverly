@@ -296,6 +296,20 @@ public class JournalService {
         return response;
     }
 
+    public int getWordCount(Journal journal) {
+        if (journal == null) {
+            return 0;
+        }
+        return countWordsFromRawContent(journal.getContent());
+    }
+
+    public String getPlainText(Journal journal) {
+        if (journal == null) {
+            return "";
+        }
+        return extractPlainText(journal.getContent());
+    }
+
     public JournalEditFormResponse getJournalEditFormData(JournalEditFormRequest request) {
         JournalEditFormResponse response = new JournalEditFormResponse();
         response.setSuccess(false);
@@ -329,23 +343,43 @@ public class JournalService {
         Map<Integer, Integer> wordCounts = new HashMap<>();
 
         for (Journal journal : journals) {
-            int wordCount = 0;
-            String rawContent = journal.getContent();
-            if (rawContent != null && !rawContent.isEmpty()) {
-                try {
-                    com.google.gson.JsonObject cObj = new com.google.gson.Gson().fromJson(rawContent, com.google.gson.JsonObject.class);
-                    String htmlText = cObj.get("htmlContent").getAsString();
-                    String plainText = htmlText.replaceAll("<[^>]*>", "").trim();
-                    if (!plainText.isEmpty()) {
-                        wordCount = plainText.split("\\s+").length;
-                    }
-                } catch (Exception e) {
-                }
-            }
-            wordCounts.put(journal.getJournalId(), wordCount);
+            wordCounts.put(journal.getJournalId(), countWordsFromRawContent(journal.getContent()));
         }
 
         return wordCounts;
+    }
+
+    private int countWordsFromRawContent(String rawContent) {
+        String plainText = extractPlainText(rawContent);
+        if (plainText.isEmpty()) {
+            return 0;
+        }
+        return plainText.split("\\s+").length;
+    }
+
+    private String extractPlainText(String rawContent) {
+        if (rawContent == null || rawContent.isEmpty()) {
+            return "";
+        }
+
+        try {
+            com.google.gson.JsonObject contentObj = new com.google.gson.Gson().fromJson(rawContent, com.google.gson.JsonObject.class);
+            com.google.gson.JsonElement htmlEl = contentObj.get("htmlContent");
+            if (htmlEl == null || htmlEl.isJsonNull()) {
+                return "";
+            }
+
+            String htmlText = htmlEl.getAsString();
+            return htmlText
+                    .replaceAll("<br\\s*/?>", " ")
+                    .replaceAll("</p>", " ")
+                    .replaceAll("<[^>]*>", " ")
+                    .replace("&nbsp;", " ")
+                    .replaceAll("\\s+", " ")
+                    .trim();
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     private String buildCompleteJournalContent(String htmlContent, String decorationsJson, String backgroundTheme) {

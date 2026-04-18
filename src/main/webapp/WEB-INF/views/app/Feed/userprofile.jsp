@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<jsp:include page="/WEB-INF/views/public/header2.jsp" />
 <!DOCTYPE html>
 <html lang="en">
 
@@ -194,11 +193,10 @@
             --gradient-4: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
         }
     </style>
-    <link rel="stylesheet" type="text/css"
-        href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
 </head>
 
 <body class="feed-shell-page">
+    <jsp:include page="/WEB-INF/views/public/header2.jsp" />
     <c:set var="currentUserHasPic" value="${not empty currentUserProfile && not empty currentUserProfile.feedProfilePictureUrl && !fn:contains(currentUserProfile.feedProfilePictureUrl, 'default')}" />
 
     <div class="feed-shell">
@@ -214,7 +212,7 @@
                     </span>
                     <span class="feed-rail-brand-text">
                         <span class="feed-rail-brand-title">Everly Feed</span>
-                        <span class="feed-rail-brand-subtitle">Profile view</span>
+                        <span class="feed-rail-brand-subtitle">Community moments</span>
                     </span>
                 </a>
 
@@ -227,7 +225,7 @@
                     </span>
                     <span class="feed-rail-label feed-rail-link-text">
                         <span class="feed-rail-link-title">Home</span>
-                        <span class="feed-rail-link-meta">Back to feed</span>
+                        <span class="feed-rail-link-meta">Fresh posts</span>
                     </span>
                 </a>
 
@@ -240,7 +238,7 @@
                     </span>
                     <span class="feed-rail-label feed-rail-link-text">
                         <span class="feed-rail-link-title">Create</span>
-                        <span class="feed-rail-link-meta">New post</span>
+                        <span class="feed-rail-link-meta">Share a memory</span>
                     </span>
                 </a>
 
@@ -253,7 +251,7 @@
                     </span>
                     <span class="feed-rail-label feed-rail-link-text">
                         <span class="feed-rail-link-title">Notifications</span>
-                        <span class="feed-rail-link-meta">Stay updated</span>
+                        <span class="feed-rail-link-meta">Comments and likes</span>
                     </span>
                 </a>
             </div>
@@ -263,11 +261,18 @@
                     <span class="feed-rail-link-icon">
                         <c:choose>
                             <c:when test="${currentUserHasPic}">
-                                <img src="${fn:escapeXml(currentUserProfile.feedProfilePictureUrl)}"
-                                     alt="@${fn:escapeXml(currentUserProfile.feedUsername)}" class="feed-rail-avatar">
+                                <span class="feed-rail-avatar avatar-shell">
+                                    <img src="${fn:escapeXml(currentUserProfile.feedProfilePictureUrl)}"
+                                         alt="@${fn:escapeXml(currentUserProfile.feedUsername)}"
+                                         class="feed-rail-avatar avatar-image"
+                                         onerror="this.closest('.avatar-shell').classList.add('is-fallback');">
+                                    <span class="feed-rail-avatar-fallback avatar-fallback">${fn:escapeXml(currentUserProfile.initials)}</span>
+                                </span>
                             </c:when>
                             <c:otherwise>
-                                <span class="feed-rail-avatar-fallback">${fn:escapeXml(currentUserProfile.initials)}</span>
+                                <span class="feed-rail-avatar avatar-shell is-fallback">
+                                    <span class="feed-rail-avatar-fallback avatar-fallback">${fn:escapeXml(currentUserProfile.initials)}</span>
+                                </span>
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -281,31 +286,22 @@
 
         <div class="page-wrapper">
             <main class="main-content profile-main-column">
-                <div class="fixed-top-section">
-                    <div class="feed-panel feed-topbar">
-                        <div class="feed-heading">
-                            <span class="feed-eyebrow">Profile</span>
-                            <h1>@${fn:escapeXml(profileUsername)}</h1>
-                            <p>View posts, saved memories, and follow activity in the same immersive feed layout.</p>
-                        </div>
-
-                        <a href="${pageContext.request.contextPath}/feed" class="sidebar-link">&larr; Back to feed</a>
-                    </div>
-                </div>
-
                 <div class="scrollable-feed" id="feedContainer">
                     <div class="feed-panel">
                         <div class="profile-header">
                     <div class="profile-avatar">
                         <c:choose>
                             <c:when test="${hasProfilePic}">
-                                <div class="profile-avatar-large">
-                                    <img src="${fn:escapeXml(profilePic)}" alt="@${fn:escapeXml(profileUsername)}">
+                                <div class="profile-avatar-large avatar-shell">
+                                    <img src="${fn:escapeXml(profilePic)}" alt="@${fn:escapeXml(profileUsername)}"
+                                         class="avatar-image"
+                                         onerror="this.closest('.avatar-shell').classList.add('is-fallback');">
+                                    <span class="avatar-fallback">${fn:escapeXml(profileInitials)}</span>
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <div class="profile-avatar-large">
-                                    ${fn:escapeXml(profileInitials)}
+                                <div class="profile-avatar-large avatar-shell is-fallback">
+                                    <span class="avatar-fallback">${fn:escapeXml(profileInitials)}</span>
                                 </div>
                             </c:otherwise>
                         </c:choose>
@@ -371,9 +367,6 @@
 
                         <div class="profile-tabs">
                             <button class="active" data-tab="posts" onclick="showTab('posts')">Posts</button>
-                            <c:if test="${isOwnProfile}">
-                                <button data-tab="saved" onclick="showTab('saved')">Saved</button>
-                            </c:if>
                         </div>
 
                         <div id="postsSection" class="posts-container">
@@ -441,65 +434,11 @@
                             </c:choose>
                         </div>
 
-                        <c:if test="${isOwnProfile}">
-                            <div id="savedSection" class="posts-container hidden">
-                                <c:choose>
-                                    <c:when test="${empty savedPosts}">
-                                        <div class="empty-posts">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                                    </svg>
-                                    <h3>No saved posts yet</h3>
-                                    <p>Save posts to view them later. Only you can see what you've saved.</p>
-                                        </div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div class="profile-posts-grid">
-                                    <c:forEach items="${savedPosts}" var="post">
-                                        <div class="profile-post-item"
-                                            onclick="window.location.href='${pageContext.request.contextPath}/comments?postId=${post.postId}'">
-                                            <c:choose>
-                                                <c:when test="${not empty post.coverMediaUrl}">
-                                                    <img src="${fn:escapeXml(post.coverMediaUrl)}" alt="Saved Post">
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <div
-                                                        style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%); display: flex; align-items: center; justify-content: center;">
-                                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
-                                                            stroke="#94a3b8" stroke-width="1.5">
-                                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                                                            <circle cx="8.5" cy="8.5" r="1.5" />
-                                                            <polyline points="21 15 16 10 5 21" />
-                                                        </svg>
-                                                    </div>
-                                                </c:otherwise>
-                                            </c:choose>
-                                            <div class="profile-post-overlay">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2">
-                                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </c:forEach>
-                                        </div>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
-                        </c:if>
                     </div>
                 </div>
             </main>
 
             <aside class="sidebar">
-                <div class="sidebar-section">
-                    <div class="sidebar-title-row">
-                        <h3 class="sidebar-title">Network</h3>
-                        <a href="${pageContext.request.contextPath}/followers?profileId=${profileId}" class="sidebar-link">Followers</a>
-                    </div>
-                    <p class="sidebar-note">Tap into the same quick jump points from the profile page and keep followers, following, and suggestions in reach.</p>
-                </div>
-
                 <div class="sidebar-section">
                     <div class="sidebar-title-row">
                         <h3 class="sidebar-title">Suggested for you</h3>
@@ -514,13 +453,16 @@
                                     <li class="favorite-item">
                                         <c:choose>
                                             <c:when test="${hasUserPic}">
-                                                <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
-                                                     alt="@${fn:escapeXml(user.feedUsername)}">
+                                                <div class="favorite-icon avatar-shell">
+                                                    <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
+                                                         alt="@${fn:escapeXml(user.feedUsername)}"
+                                                         class="avatar-image"
+                                                         onerror="this.closest('.avatar-shell').classList.add('is-fallback');">
+                                                    <span class="avatar-fallback">${fn:escapeXml(user.initials)}</span>
+                                                </div>
                                             </c:when>
                                             <c:otherwise>
-                                                <div class="favorite-icon" style="background: var(--gradient-${gradientIdx});">
-                                                    ${fn:escapeXml(user.initials)}
-                                                </div>
+                                                <div class="favorite-icon avatar-shell is-fallback"><span class="avatar-fallback">${fn:escapeXml(user.initials)}</span></div>
                                             </c:otherwise>
                                         </c:choose>
                                         <div class="favorite-content">
@@ -551,17 +493,12 @@
         function showTab(tab) {
             const tabs = document.querySelectorAll('.profile-tabs button');
             const postsSection = document.getElementById('postsSection');
-            const savedSection = document.getElementById('savedSection');
 
             tabs.forEach(t => t.classList.remove('active'));
             document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
 
             if (tab === 'posts') {
                 postsSection.classList.remove('hidden');
-                if (savedSection) savedSection.classList.add('hidden');
-            } else if (tab === 'saved') {
-                postsSection.classList.add('hidden');
-                if (savedSection) savedSection.classList.remove('hidden');
             }
         }
 

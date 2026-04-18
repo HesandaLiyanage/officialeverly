@@ -371,12 +371,11 @@
 
         // Word count and preview
         (function () {
-            var pageContent = document.getElementById('pageContent');
-            var textContent = pageContent ? pageContent.textContent.trim() : '';
-            var words = textContent.split(/\s+/).filter(function (w) { return w.length > 0; });
+            var textContent = ${journalPlainTextJson};
             var wordCountEl = document.getElementById('wordCount');
             if (wordCountEl) {
-                wordCountEl.textContent = words.length + ' word' + (words.length !== 1 ? 's' : '');
+                var wordCount = ${journalWordCount != null ? journalWordCount : 0};
+                wordCountEl.textContent = wordCount + ' word' + (wordCount !== 1 ? 's' : '');
             }
             var previewEl = document.getElementById('textPreview');
             if (previewEl) {

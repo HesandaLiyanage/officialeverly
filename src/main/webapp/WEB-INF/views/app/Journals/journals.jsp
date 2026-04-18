@@ -88,7 +88,7 @@
                                 <div class="journal-content">
                                     <h3 class="journal-title">${fn:escapeXml(journal.title)}</h3>
                                     <div class="journal-meta">
-                                        <span class="journal-date">${fn:escapeXml(journal.title)}</span>
+                                        <span class="journal-date">Journal entry</span>
                                     </div>
                                     <c:choose>
                                         <c:when test="${wc > 0}">

@@ -2,10 +2,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<jsp:include page="/WEB-INF/views/public/header2.jsp" />
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed - Everly</title>
     <link rel="stylesheet" type="text/css"
         href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
     <style>
@@ -351,11 +354,10 @@
             --gradient-4: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
         }
     </style>
-    <link rel="stylesheet" type="text/css"
-        href="${pageContext.request.contextPath}/resources/css/publicfeed.css">
 </head>
 
 <body class="feed-shell-page">
+    <jsp:include page="/WEB-INF/views/public/header2.jsp" />
     <c:set var="currentHasPic" value="${not empty feedProfile && not empty feedProfile.feedProfilePictureUrl && !fn:contains(feedProfile.feedProfilePictureUrl, 'default')}" />
     <c:set var="currentBio" value="${empty feedProfile.feedBio ? 'Your next story starts here.' : feedProfile.feedBio}" />
 
@@ -421,11 +423,17 @@
                     <span class="feed-rail-link-icon">
                         <c:choose>
                             <c:when test="${currentHasPic}">
-                                <img src="${fn:escapeXml(feedProfile.feedProfilePictureUrl)}" alt="@${fn:escapeXml(feedUsername)}"
-                                     class="feed-rail-avatar">
+                                <span class="feed-rail-avatar avatar-shell">
+                                    <img src="${fn:escapeXml(feedProfile.feedProfilePictureUrl)}" alt="@${fn:escapeXml(feedUsername)}"
+                                         class="feed-rail-avatar avatar-image"
+                                         onerror="this.closest('.avatar-shell').classList.add('is-fallback');">
+                                    <span class="feed-rail-avatar-fallback avatar-fallback">${fn:escapeXml(feedInitials)}</span>
+                                </span>
                             </c:when>
                             <c:otherwise>
-                                <span class="feed-rail-avatar-fallback">${fn:escapeXml(feedInitials)}</span>
+                                <span class="feed-rail-avatar avatar-shell is-fallback">
+                                    <span class="feed-rail-avatar-fallback avatar-fallback">${fn:escapeXml(feedInitials)}</span>
+                                </span>
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -439,91 +447,18 @@
 
         <div class="page-wrapper">
             <main class="main-content feed-main-column">
-                <div class="fixed-top-section">
-                    <div class="feed-panel feed-topbar">
-                        <div class="feed-heading">
-                            <span class="feed-eyebrow">Feed</span>
-                            <h1>Discover memories from your circle</h1>
-                            <p>Scroll through shared moments, jump into conversations, and keep your own profile close by while the main Everly header stays on top.</p>
-                        </div>
-
-                        <a href="${pageContext.request.contextPath}/publicprofile" class="profile-link compact"
-                           title="@${fn:escapeXml(feedUsername)}">
-                            <div class="feed-identity-chip">
-                                <c:choose>
-                                    <c:when test="${hasDefaultPic}">
-                                        <div class="profile-pic profile-pic-initials">${fn:escapeXml(feedInitials)}</div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <img src="${fn:escapeXml(feedProfilePic)}" alt="@${fn:escapeXml(feedUsername)}"
-                                             class="profile-pic">
-                                    </c:otherwise>
-                                </c:choose>
-                                <div class="feed-identity-copy">
-                                    <strong>@${fn:escapeXml(feedUsername)}</strong>
-                                    <span>Open your profile</span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-
-                    <div class="feed-panel stories-bar">
-                        <div class="stories-track">
-                            <a href="${pageContext.request.contextPath}/publicprofile" class="story-card">
-                                <div class="story-ring story-ring-self">
-                                    <div class="story-inner">
-                                        <c:choose>
-                                            <c:when test="${currentHasPic}">
-                                                <img src="${fn:escapeXml(feedProfile.feedProfilePictureUrl)}"
-                                                     alt="@${fn:escapeXml(feedUsername)}">
-                                            </c:when>
-                                            <c:otherwise>
-                                                <div class="story-initials">${fn:escapeXml(feedInitials)}</div>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                </div>
-                                <span class="story-name">You</span>
-                            </a>
-
-                            <c:forEach items="${recommendedUsers}" var="user" varStatus="status">
-                                <c:if test="${status.index lt 6}">
-                                    <c:set var="storyHasPic" value="${not empty user.feedProfilePictureUrl && !fn:contains(user.feedProfilePictureUrl, 'default')}" />
-                                    <a href="${pageContext.request.contextPath}/publicprofile?username=${fn:escapeXml(user.feedUsername)}"
-                                       class="story-card">
-                                        <div class="story-ring">
-                                            <div class="story-inner">
-                                                <c:choose>
-                                                    <c:when test="${storyHasPic}">
-                                                        <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
-                                                             alt="@${fn:escapeXml(user.feedUsername)}">
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <div class="story-initials">${fn:escapeXml(user.initials)}</div>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </div>
-                                        </div>
-                                        <span class="story-name">${fn:escapeXml(user.feedUsername)}</span>
-                                    </a>
-                                </c:if>
-                            </c:forEach>
-                        </div>
-                    </div>
-
-                    <div class="search-filters">
-                        <div class="memories-search-container">
-                            <button class="memories-search-btn" id="memoriesSearchBtn">
-                                <svg viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2"
-                                     stroke-linecap="round"
-                                     stroke-linejoin="round">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <path d="m21 21-4.35-4.35"></path>
-                                </svg>
-                                <span>Search posts, captions, and people</span>
-                            </button>
-                        </div>
+                <div class="search-filters">
+                    <div class="memories-search-container">
+                        <button class="memories-search-btn" id="memoriesSearchBtn">
+                            <svg viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <span>Search posts, captions, and people</span>
+                        </button>
                     </div>
                 </div>
 
@@ -576,13 +511,17 @@
                                     <div class="user-info">
                                         <c:choose>
                                             <c:when test="${hasPosterPic}">
-                                                <img src="${fn:escapeXml(posterPic)}"
-                                                    alt="@${fn:escapeXml(posterUsername)}"
-                                                    class="user-avatar">
+                                                <div class="user-avatar avatar-shell">
+                                                    <img src="${fn:escapeXml(posterPic)}"
+                                                        alt="@${fn:escapeXml(posterUsername)}"
+                                                        class="user-avatar avatar-image"
+                                                        onerror="this.closest('.avatar-shell').classList.add('is-fallback');">
+                                                    <span class="avatar-fallback">${fn:escapeXml(posterInitials)}</span>
+                                                </div>
                                             </c:when>
                                             <c:otherwise>
-                                                <div class="user-avatar">
-                                                    <span>${fn:escapeXml(posterInitials)}</span>
+                                                <div class="user-avatar avatar-shell is-fallback">
+                                                    <span class="avatar-fallback">${fn:escapeXml(posterInitials)}</span>
                                                 </div>
                                             </c:otherwise>
                                         </c:choose>
@@ -789,11 +728,15 @@
                     <div class="sidebar-profile-card">
                         <c:choose>
                             <c:when test="${currentHasPic}">
-                                <img src="${fn:escapeXml(feedProfile.feedProfilePictureUrl)}" alt="@${fn:escapeXml(feedUsername)}"
-                                     class="favorite-icon">
+                                <div class="favorite-icon avatar-shell">
+                                    <img src="${fn:escapeXml(feedProfile.feedProfilePictureUrl)}" alt="@${fn:escapeXml(feedUsername)}"
+                                         class="favorite-icon avatar-image"
+                                         onerror="this.closest('.avatar-shell').classList.add('is-fallback');">
+                                    <span class="avatar-fallback">${fn:escapeXml(feedInitials)}</span>
+                                </div>
                             </c:when>
                             <c:otherwise>
-                                <div class="favorite-icon" style="background: var(--avatar-fallback);">${fn:escapeXml(feedInitials)}</div>
+                                <div class="favorite-icon avatar-shell is-fallback"><span class="avatar-fallback">${fn:escapeXml(feedInitials)}</span></div>
                             </c:otherwise>
                         </c:choose>
                         <div class="sidebar-profile-copy">
@@ -819,13 +762,16 @@
                                     <li class="favorite-item">
                                         <c:choose>
                                             <c:when test="${hasUserPic}">
-                                                <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
-                                                     alt="@${fn:escapeXml(user.feedUsername)}">
+                                                <div class="favorite-icon avatar-shell">
+                                                    <img src="${fn:escapeXml(user.feedProfilePictureUrl)}"
+                                                         alt="@${fn:escapeXml(user.feedUsername)}"
+                                                         class="avatar-image"
+                                                         onerror="this.closest('.avatar-shell').classList.add('is-fallback');">
+                                                    <span class="avatar-fallback">${fn:escapeXml(user.initials)}</span>
+                                                </div>
                                             </c:when>
                                             <c:otherwise>
-                                                <div class="favorite-icon" style="background: var(--gradient-${gradientIdx});">
-                                                    ${fn:escapeXml(user.initials)}
-                                                </div>
+                                                <div class="favorite-icon avatar-shell is-fallback"><span class="avatar-fallback">${fn:escapeXml(user.initials)}</span></div>
                                             </c:otherwise>
                                         </c:choose>
                                         <div class="favorite-content">
