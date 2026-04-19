@@ -5,13 +5,13 @@
   <div class="footer-inner">
     <nav class="footer-links">
       <div class="footer-link-wrapper left">
-        <a href="#" class="footer-link">Terms of Service</a>
+        <a href="${pageContext.request.contextPath}/privacy" class="footer-link">Terms of Service</a>
       </div>
       <div class="footer-link-wrapper center">
-        <a href="#" class="footer-link">Privacy Policy</a>
+        <a href="${pageContext.request.contextPath}/privacy" class="footer-link">Privacy Policy</a>
       </div>
       <div class="footer-link-wrapper right">
-        <a href="#" class="footer-link">Contact Us</a>
+        <a href="${pageContext.request.contextPath}/aboutus#contact-us" class="footer-link">Contact Us</a>
       </div>
     </nav>
   </div>

@@ -73,7 +73,7 @@ public class JournalDAO {
     // File: src/main/java/com/demo/web/dao/JournalDAO.java
 
     public int getJournalCount(int userId) {
-        String sql = "SELECT COUNT(*) as count FROM journal WHERE user_id = ?";
+        String sql = "SELECT COUNT(*) as count FROM journal WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL)";
 
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -87,6 +87,27 @@ public class JournalDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getJournalCountThisMonth(int userId) {
+        String sql = "SELECT COUNT(*) as count FROM journal WHERE user_id = ? " +
+                "AND (is_in_vault = FALSE OR is_in_vault IS NULL) " +
+                "AND created_at >= date_trunc('month', CURRENT_DATE) " +
+                "AND created_at < (date_trunc('month', CURRENT_DATE) + interval '1 month')";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("count");
+                }
+            }
+        } catch (SQLException e) {
+            // Fall back gracefully if created_at is unavailable.
+            return 0;
         }
         return 0;
     }

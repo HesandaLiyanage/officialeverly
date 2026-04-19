@@ -98,6 +98,7 @@ public class JournalView extends HttpServlet {
 
         request.setAttribute("journals", res.getJournals());
         request.setAttribute("totalCount", res.getTotalCount());
+        request.setAttribute("thisMonthCount", res.getThisMonthCount());
         request.setAttribute("streakDays", res.getStreakDays());
         request.setAttribute("longestStreak", res.getLongestStreak());
         request.setAttribute("wordCounts", res.getWordCounts());

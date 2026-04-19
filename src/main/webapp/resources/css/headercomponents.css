@@ -14,7 +14,8 @@
 }
 
 .hero-img {
-    width: 80%;
+    width: 100%;
+    display: block;
     border-radius: 10px;
 }
 
@@ -22,11 +23,12 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-15%, -5%);
+    transform: translate(-50%, -50%);
     color: white;
     background: rgba(0, 0, 0, 0.0);
     padding: 20px 30px;
     border-radius: 10px;
+    width: min(88%, 760px);
 }
 
 .hero-text h1 {

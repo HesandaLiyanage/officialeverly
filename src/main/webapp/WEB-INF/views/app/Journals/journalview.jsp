@@ -146,7 +146,7 @@
 <body>
     <div class="mv-page">
         <!-- Close button -->
-        <a href="${pageContext.request.contextPath}/journals" class="mv-close-btn">
+        <a href="${pageContext.request.contextPath}${isInVault ? '/vaultjournals' : '/journals'}" class="mv-close-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -403,18 +403,40 @@
                     closeVaultModal();
                     return;
                 }
-                window.location.href = '${pageContext.request.contextPath}/journals';
+                window.location.href = '${pageContext.request.contextPath}${isInVault ? '/vaultjournals' : '/journals'}';
             }
         });
 
         // Vault functions
         function openVaultModal() {
-            document.getElementById('vaultModal').classList.add('active');
-            document.getElementById('vaultPasswordInput').value = '';
-            document.getElementById('vaultError').style.display = 'none';
-            setTimeout(function() {
-                document.getElementById('vaultPasswordInput').focus();
-            }, 100);
+            var precheckData = new URLSearchParams();
+            precheckData.append('type', 'journal');
+            precheckData.append('id', '${journal.journalId}');
+            precheckData.append('action', 'add');
+
+            fetch('${pageContext.request.contextPath}/moveToVault', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: precheckData.toString()
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.redirectToSetup) {
+                    window.location.href = '${pageContext.request.contextPath}/vaultSetup';
+                    return;
+                }
+                document.getElementById('vaultModal').classList.add('active');
+                document.getElementById('vaultPasswordInput').value = '';
+                document.getElementById('vaultError').style.display = 'none';
+                setTimeout(function() {
+                    document.getElementById('vaultPasswordInput').focus();
+                }, 100);
+            })
+            .catch(function() {
+                showVaultError('Unable to verify vault setup. Please try again.');
+            });
         }
 
         function closeVaultModal() {
@@ -448,7 +470,7 @@
             .then(function(response) { return response.json(); })
             .then(function(data) {
                 if (data.success) {
-                    window.location.href = '${pageContext.request.contextPath}/journals';
+                    window.location.href = '${pageContext.request.contextPath}/vaultjournals';
                 } else if (data.redirectToSetup) {
                     window.location.href = '${pageContext.request.contextPath}/vaultSetup';
                 } else {

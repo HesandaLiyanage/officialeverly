@@ -97,30 +97,6 @@
                 </div>
             </div>
 
-            <!-- Add Your Own Memory Section -->
-            <div class="form-group">
-                <label class="form-label">Add Your Own Memory (Optional)</label>
-                <p class="form-hint">You can add your own message, photos, or voice notes to start the book.</p>
-                <div class="memory-options">
-                    <button type="button" class="memory-btn">
-                        <span class="memory-icon"></span>
-                        Voice Note
-                    </button>
-                    <button type="button" class="memory-btn">
-                        <span class="memory-icon"></span>
-                        Image
-                    </button>
-                    <button type="button" class="memory-btn">
-                        <span class="memory-icon"></span>
-                        Video
-                    </button>
-                    <button type="button" class="memory-btn">
-                        <span class="memory-icon"></span>
-                        Sticker
-                    </button>
-                </div>
-            </div>
-
             <!-- Submit Buttons -->
             <div class="form-actions">
                 <button type="button" class="cancel-btn" onclick="window.location.href='${pageContext.request.contextPath}/autographs'">
@@ -147,9 +123,6 @@
         const fileInput = document.getElementById('fileInput');
         const browseBtn = document.getElementById('browseBtn');
         const previewContainer = document.getElementById('previewContainer');
-
-        const autographForm = document.getElementById('autographForm');
-
 
         // Browse button click
         browseBtn.addEventListener('click', function(e) {
@@ -225,22 +198,6 @@
             fileInput.value = '';
         };
 
-
-        // Tag removal
-        const tagRemoveButtons = document.querySelectorAll('.tag-remove');
-        tagRemoveButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                this.closest('.tag').remove();
-            });
-        });
-
-        // Memory button interactions
-        const memoryButtons = document.querySelectorAll('.memory-btn');
-        memoryButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                this.classList.toggle('active');
-            });
-        });
 
     });
 </script>

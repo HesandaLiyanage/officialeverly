@@ -28,6 +28,8 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class GroupService {
 
@@ -637,7 +639,8 @@ public class GroupService {
 
         int groupId = invite.getGroupId();
         if (groupMemberDAO.isUserMember(groupId, req.getUserId())) {
-            return new GroupInviteJoinResponse(true, "/groupmembers?groupId=" + groupId + "&msg=You are already a member of this group", null);
+            String message = URLEncoder.encode("You are already a member of this group", StandardCharsets.UTF_8);
+            return new GroupInviteJoinResponse(true, "/groupmemories?groupId=" + groupId + "&msg=" + message, null);
         }
 
         Group group = groupDAO.findById(groupId);
@@ -656,7 +659,8 @@ public class GroupService {
 
         boolean success = groupMemberDAO.addGroupMember(newMember);
         if (success) {
-            return new GroupInviteJoinResponse(true, "/groupmembers?groupId=" + groupId + "&msg=Successfully joined " + group.getName(), null);
+            String message = URLEncoder.encode("Successfully joined " + group.getName(), StandardCharsets.UTF_8);
+            return new GroupInviteJoinResponse(true, "/groupmemories?groupId=" + groupId + "&msg=" + message, null);
         } else {
             return new GroupInviteJoinResponse(false, "/groups?error=Failed to join group", null);
         }

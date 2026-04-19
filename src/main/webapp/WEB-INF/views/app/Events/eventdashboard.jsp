@@ -96,7 +96,7 @@
                                                                         <%-- Upcoming Events --%>
                                                                             <c:if test="${not empty requestScope.upcomingEvents}">
                                                                                 <c:forEach var="event" items="${requestScope.upcomingEvents}">
-                                                                                    <c:set var="imageUrl" value="${not empty event.eventPicUrl ? pageContext.request.contextPath += '/' += event.eventPicUrl : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800'}" />
+                                                                                    <c:set var="imageUrl" value="${not empty event.eventPicUrl ? pageContext.request.contextPath.concat('/').concat(event.eventPicUrl) : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800'}" />
                                                                                     <div class="event-card upcoming"
                                                                                         data-title="<c:out value='${event.title}' />"
                                                                                         data-tab="upcoming"
@@ -126,7 +126,7 @@
                                                                         <%-- Past Events --%>
                                                                             <c:if test="${not empty requestScope.pastEvents}">
                                                                                 <c:forEach var="event" items="${requestScope.pastEvents}">
-                                                                                    <c:set var="imageUrl" value="${not empty event.eventPicUrl ? pageContext.request.contextPath += '/' += event.eventPicUrl : 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800'}" />
+                                                                                    <c:set var="imageUrl" value="${not empty event.eventPicUrl ? pageContext.request.contextPath.concat('/').concat(event.eventPicUrl) : 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800'}" />
                                                                                     <div class="event-card past"
                                                                                         data-title="<c:out value='${event.title}' />"
                                                                                         data-tab="past"

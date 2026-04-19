@@ -85,12 +85,12 @@
                                     </div>
                                     <c:choose>
                                         <c:when test="${wc > 0}">
-                                            <p style="font-size: 0.8rem; color: #9A74D8; margin-top: 8px; font-weight: 600;">
+                                            <p class="journal-summary">
                                                 ${wc} word${wc != 1 ? 's' : ''} &middot; Tap to read
                                             </p>
                                         </c:when>
                                         <c:otherwise>
-                                            <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 8px; font-style: italic;">
+                                            <p class="journal-summary empty">
                                                 Empty entry &middot; Tap to view
                                             </p>
                                         </c:otherwise>
@@ -131,7 +131,7 @@
                         <div class="favourite-icon">&#x1F4C5;</div>
                         <div class="favourite-info">
                             <span class="favourite-name">This Month</span>
-                            <span class="favourite-days">-</span>
+                            <span class="favourite-days">${thisMonthCount}</span>
                         </div>
                     </li>
                 </ul>

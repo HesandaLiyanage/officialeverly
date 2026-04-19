@@ -511,7 +511,7 @@ public class userDAO {
         user.setBio(rs.getString("bio"));
         user.setProfilePictureUrl(rs.getString("profile_picture_url"));
         user.set_active(rs.getBoolean("is_active"));
-        user.setCreatedAt(rs.getTimestamp("joined_at"));
+        user.setJoined_at(rs.getTimestamp("joined_at"));
         user.setLastLogin(rs.getTimestamp("last_login"));
         user.setPlanId(rs.getInt("plan_id"));
         return user;

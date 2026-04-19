@@ -252,6 +252,7 @@ public class JournalService {
             int longestStreak = getLongestStreakDays(request.getUserId());
             List<Journal> journals = getJournalsByUserId(request.getUserId());
             int totalCount = getJournalCount(request.getUserId());
+            int thisMonthCount = journalDAO.getJournalCountThisMonth(request.getUserId());
 
             Map<Integer, Integer> wordCounts = buildWordCounts(journals);
 
@@ -259,6 +260,7 @@ public class JournalService {
             response.setLongestStreak(longestStreak);
             response.setJournals(journals);
             response.setTotalCount(totalCount);
+            response.setThisMonthCount(thisMonthCount);
             response.setWordCounts(wordCounts);
         } catch (Exception e) {
             response.setError("An error occurred: " + e.getMessage());

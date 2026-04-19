@@ -9,6 +9,7 @@ public class JournalDashboardResponse {
     private String error;
     private List<Journal> journals;
     private int totalCount;
+    private int thisMonthCount;
     private int streakDays;
     private int longestStreak;
     private Map<Integer, Integer> wordCounts;
@@ -43,6 +44,14 @@ public class JournalDashboardResponse {
 
     public void setStreakDays(int streakDays) {
         this.streakDays = streakDays;
+    }
+
+    public int getThisMonthCount() {
+        return thisMonthCount;
+    }
+
+    public void setThisMonthCount(int thisMonthCount) {
+        this.thisMonthCount = thisMonthCount;
     }
 
     public int getLongestStreak() {
