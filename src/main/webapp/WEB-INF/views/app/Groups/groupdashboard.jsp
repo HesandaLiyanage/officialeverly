@@ -33,8 +33,7 @@
             </svg>
           </button>
         </div>
-        <button class="filter-btn" id="memberFilter">Members</button>
-        <button class="filter-btn" id="activityFilter">Activity</button>
+
       </div>
 
       <!-- Groups List with Scrolling -->
@@ -221,21 +220,7 @@
         });
       }
 
-      // Filter button handlers
-      const memberFilter = document.getElementById('memberFilter');
-      const activityFilter = document.getElementById('activityFilter');
 
-      if (memberFilter) {
-        memberFilter.addEventListener('click', function () {
-          console.log('Filter by members clicked');
-        });
-      }
-
-      if (activityFilter) {
-        activityFilter.addEventListener('click', function () {
-          console.log('Filter by activity clicked');
-        });
-      }
 
       // Announcement item interactions
       const announcementItems = document.querySelectorAll('.announcement-item');

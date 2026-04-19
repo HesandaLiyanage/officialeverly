@@ -1,20 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html lang="en">
 
-  <jsp:include page="/WEB-INF/views/public/header.jsp" />
-  <html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Everly</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/base.css">
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/header.css">
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/content-page.css">
+</head>
 
-  <head>
-    <title>Privacy Policy - Everly</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/content-page.css">
-  </head>
-
-  <body>
+  <body class="content-page-body">
+    <jsp:include page="/WEB-INF/views/public/header.jsp" />
 
     <div class="content-page">
 
       <!-- Hero Banner -->
       <section class="content-hero">
         <div class="content-hero-inner">
+          <span class="hero-kicker fade-in">Privacy & Trust</span>
           <h1 class="fade-in">Privacy Policy</h1>
           <p class="fade-in">We are committed to protecting your privacy and ensuring the security of your personal
             information. Your trust matters to us.</p>

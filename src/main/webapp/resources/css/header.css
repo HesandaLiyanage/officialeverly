@@ -159,6 +159,7 @@
 .search-box-expanded {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     background: var(--white);
     border: 2px solid var(--primary);
     border-radius: var(--radius-xl);
@@ -208,6 +209,107 @@
 
 .search-box-expanded input::placeholder {
     color: var(--gray-400);
+}
+
+.header-search-results {
+    flex: 0 0 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-height: 320px;
+    overflow-y: auto;
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--gray-200);
+}
+
+.header-search-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-2) 0;
+    color: var(--gray-500);
+    font-size: var(--text-sm);
+}
+
+.header-search-empty strong {
+    color: var(--gray-700);
+    font-weight: var(--font-semibold);
+}
+
+.header-search-result {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    background: var(--gray-50);
+    border: 1px solid transparent;
+    transition: all var(--transition-fast);
+}
+
+.header-search-result:hover,
+.header-search-result:focus {
+    background: var(--primary-light);
+    border-color: rgba(154, 116, 216, 0.2);
+    outline: none;
+}
+
+.header-search-result-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.header-search-result-title {
+    color: var(--gray-800);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+}
+
+.header-search-result-desc {
+    color: var(--gray-500);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.header-search-result-type {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.header-search-result-type.type-autograph {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.header-search-result-type.type-memory {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.header-search-result-type.type-journal {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.header-search-result-type.type-event {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.header-search-result-type.type-group {
+    background: #fee2e2;
+    color: #b91c1c;
 }
 
 .search-close {
@@ -436,6 +538,12 @@
     .search-box-expanded {
         min-width: 280px;
     }
+
+    .header-search-result-top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
 }
 
 @media (max-width: 768px) {
@@ -474,6 +582,10 @@
     .search-box-expanded {
         min-width: 220px;
         max-width: 280px;
+    }
+
+    .header-search-results {
+        max-height: 260px;
     }
 
     .nav-toggle {
@@ -517,6 +629,10 @@
         min-width: 180px;
         max-width: 220px;
         padding: var(--space-2) var(--space-3);
+    }
+
+    .header-search-results {
+        max-height: 220px;
     }
 
     .notification-icon,
