@@ -265,7 +265,7 @@
                     </div>
 
                     <!-- Contact Us -->
-                    <div class="contact-card fade-in">
+                    <div class="contact-card fade-in" id="contact-us">
                         <h2>Get in Touch</h2>
                         <p class="contact-subtitle">Have a question or feedback? We'd love to hear from you.</p>
                         <form class="contact-form">

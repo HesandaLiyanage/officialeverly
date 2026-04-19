@@ -52,6 +52,9 @@ public class SettingsStorageSenseView extends HttpServlet {
         request.setAttribute("duplicateSizeFormatted", res.getDuplicateSizeFormatted());
         request.setAttribute("trashCount", res.getTrashCount());
         request.setAttribute("memoryCount", res.getMemoryCount());
+        request.setAttribute("journalCount", res.getJournalCount());
+        request.setAttribute("autographCount", res.getAutographCount());
+        request.setAttribute("otherContentCount", res.getOtherContentCount());
 
         request.getRequestDispatcher(res.getRedirectUrl()).forward(request, response);
     }

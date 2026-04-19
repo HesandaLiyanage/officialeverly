@@ -446,9 +446,9 @@
 
                 try {
                     var parsedUrl = new URL(themePath, window.location.origin);
-                    return parsedUrl.pathname;
+                    return decodeURIComponent(parsedUrl.pathname).replace(/\/+/g, '/');
                 } catch (e) {
-                    return themePath;
+                    return decodeURIComponent(themePath).replace(/\/+/g, '/');
                 }
             }
         }

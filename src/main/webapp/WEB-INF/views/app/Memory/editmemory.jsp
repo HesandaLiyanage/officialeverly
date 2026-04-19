@@ -213,35 +213,33 @@
                   reader.onload = function (e) {
                     const preview = document.createElement('div');
                     preview.className = 'file-preview';
-                    preview.innerHTML = `
-              <img src="${e.target.result}" alt="Preview">
-              <button type="button" class="remove-file" onclick="removeNewFile(this)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            `;
+                    preview.innerHTML =
+                      '<img src="' + e.target.result + '" alt="Preview">' +
+                      '<button type="button" class="remove-file" onclick="removeNewFile(this)">' +
+                      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                      '<line x1="18" y1="6" x2="6" y2="18"></line>' +
+                      '<line x1="6" y1="6" x2="18" y2="18"></line>' +
+                      '</svg>' +
+                      '</button>';
                     previewContainer.appendChild(preview);
                   };
                   reader.readAsDataURL(file);
                 } else if (file.type.startsWith('video/')) {
                   const preview = document.createElement('div');
                   preview.className = 'file-preview video-preview';
-                  preview.innerHTML = `
-            <div class="video-placeholder">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-            </div>
-            <span class="file-name">${file.name}</span>
-            <button type="button" class="remove-file" onclick="removeNewFile(this)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          `;
+                  preview.innerHTML =
+                    '<div class="video-placeholder">' +
+                    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                    '<polygon points="5 3 19 12 5 21 5 3"></polygon>' +
+                    '</svg>' +
+                    '</div>' +
+                    '<span class="file-name">' + file.name + '</span>' +
+                    '<button type="button" class="remove-file" onclick="removeNewFile(this)">' +
+                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                    '<line x1="18" y1="6" x2="6" y2="18"></line>' +
+                    '<line x1="6" y1="6" x2="18" y2="18"></line>' +
+                    '</svg>' +
+                    '</button>';
                   previewContainer.appendChild(preview);
                 }
               });

@@ -209,7 +209,8 @@
 }
 
 .memory-card {
-    height: 190px;
+    min-height: 210px;
+    height: auto;
     background: var(--white);
     border-radius: 10px;
     overflow: hidden;
@@ -240,6 +241,9 @@
 
 .memory-content {
     padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .memory-title {
@@ -257,6 +261,16 @@
     font-size: 11px;
     color: var(--gray-500);
     font-weight: 500;
+    line-height: 1.35;
+}
+
+.memory-description {
+    margin: 0;
+    color: #888;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* ============================================ */

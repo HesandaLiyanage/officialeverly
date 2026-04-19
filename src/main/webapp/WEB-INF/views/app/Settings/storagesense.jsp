@@ -208,12 +208,16 @@
                         <div style="font-size: 12px; color: #9ca3af;">Memories</div>
                     </div>
                     <div style="padding: 16px; background: #fdfbff; border-radius: 10px;">
-                        <div style="font-size: 24px; font-weight: 800; color: #9A74D8;">${duplicateCount}</div>
-                        <div style="font-size: 12px; color: #9ca3af;">Duplicates</div>
+                        <div style="font-size: 24px; font-weight: 800; color: #9A74D8;">${journalCount}</div>
+                        <div style="font-size: 12px; color: #9ca3af;">Journals</div>
                     </div>
                     <div style="padding: 16px; background: #fdfbff; border-radius: 10px;">
-                        <div style="font-size: 24px; font-weight: 800; color: #9A74D8;">${trashCount}</div>
-                        <div style="font-size: 12px; color: #9ca3af;">Trash Items</div>
+                        <div style="font-size: 24px; font-weight: 800; color: #9A74D8;">${autographCount}</div>
+                        <div style="font-size: 12px; color: #9ca3af;">Autographs</div>
+                    </div>
+                    <div style="padding: 16px; background: #fdfbff; border-radius: 10px;">
+                        <div style="font-size: 24px; font-weight: 800; color: #9A74D8;">${otherContentCount}</div>
+                        <div style="font-size: 12px; color: #9ca3af;">Other Content</div>
                     </div>
                 </div>
             </div>

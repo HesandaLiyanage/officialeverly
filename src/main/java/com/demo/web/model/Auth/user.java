@@ -11,7 +11,16 @@ public class user {
     private String bio;
     private String profile_picture_url;
     private boolean is_active;
-    private Timestamp joined_at;
+
+  public Timestamp getJoined_at() {
+    return joined_at;
+  }
+
+  public void setJoined_at(Timestamp joined_at) {
+    this.joined_at = joined_at;
+  }
+
+  private Timestamp joined_at;
     private Timestamp last_login;
 
     // Default constructor
@@ -83,13 +92,13 @@ public class user {
         is_active = active;
     }
 
-    public Timestamp getCreatedAt() {
-        return joined_at;
-    }
+//    public Timestamp getCreatedAt() {
+//        return joined_at;
+//    }
 
-    public void setCreatedAt(Timestamp joined_at) {
-        this.joined_at = joined_at;
-    }
+//    public void setCreatedAt(Timestamp joined_at) {
+//        this.joined_at = joined_at;
+//    }
 
     public Timestamp getLastLogin() {
         return last_login;

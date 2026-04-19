@@ -33,7 +33,7 @@
                                 </a>
                             </c:when>
                             <c:otherwise>
-                                <a href="${pageContext.request.contextPath}/memories" class="mv-close-btn">
+                                <a href="${pageContext.request.contextPath}${isInVault ? '/vaultmemories' : '/memories'}" class="mv-close-btn">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -230,7 +230,7 @@
                                             Edit
                                         </a>
                                     </c:if>
-                                    <c:if test="${not isGroupMemory}">
+                                    <c:if test="${not isGroupMemory and not isInVault}">
                                         <button class="mv-action-btn secondary" onclick="shareMemory()">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2.5">
@@ -334,7 +334,14 @@
                                         window.location.href = '${pageContext.request.contextPath}/groupmemories?groupId=${group.groupId}';
                                     </c:when>
                                     <c:otherwise>
-                                        window.location.href = '${pageContext.request.contextPath}/memories';
+                                        <c:choose>
+                                            <c:when test="${isInVault}">
+                                                window.location.href = '${pageContext.request.contextPath}/vaultmemories';
+                                            </c:when>
+                                            <c:otherwise>
+                                                window.location.href = '${pageContext.request.contextPath}/memories';
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:otherwise>
                                 </c:choose>
                             }
@@ -352,12 +359,34 @@
 
                         // Vault functions
                         function openVaultModal() {
-                            document.getElementById('vaultModal').classList.add('active');
-                            document.getElementById('vaultPasswordInput').value = '';
-                            document.getElementById('vaultError').style.display = 'none';
-                            setTimeout(function() {
-                                document.getElementById('vaultPasswordInput').focus();
-                            }, 100);
+                            var precheckData = new URLSearchParams();
+                            precheckData.append('type', 'memory');
+                            precheckData.append('id', '${memory.memoryId}');
+                            precheckData.append('action', 'add');
+
+                            fetch('${pageContext.request.contextPath}/moveToVault', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                                },
+                                body: precheckData.toString()
+                            })
+                            .then(function(response) { return response.json(); })
+                            .then(function(data) {
+                                if (data.redirectToSetup) {
+                                    window.location.href = '${pageContext.request.contextPath}/vaultSetup';
+                                    return;
+                                }
+                                document.getElementById('vaultModal').classList.add('active');
+                                document.getElementById('vaultPasswordInput').value = '';
+                                document.getElementById('vaultError').style.display = 'none';
+                                setTimeout(function() {
+                                    document.getElementById('vaultPasswordInput').focus();
+                                }, 100);
+                            })
+                            .catch(function() {
+                                showVaultError('Unable to verify vault setup. Please try again.');
+                            });
                         }
 
                         function closeVaultModal() {
@@ -391,7 +420,7 @@
                             .then(function(response) { return response.json(); })
                             .then(function(data) {
                                 if (data.success) {
-                                    window.location.href = '${pageContext.request.contextPath}/memories';
+                                    window.location.href = '${pageContext.request.contextPath}/vaultmemories';
                                 } else if (data.redirectToSetup) {
                                     window.location.href = '${pageContext.request.contextPath}/vaultSetup';
                                 } else {

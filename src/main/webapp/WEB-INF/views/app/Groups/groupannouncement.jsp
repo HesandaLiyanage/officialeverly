@@ -8,6 +8,8 @@
 <head>
   <link rel="stylesheet" type="text/css"
     href="${pageContext.request.contextPath}/resources/css/groupcontent.css">
+  <link rel="stylesheet" type="text/css"
+    href="${pageContext.request.contextPath}/resources/css/memories.css">
 </head>
 
 <body>
@@ -36,7 +38,8 @@
       </div>
 
       <!-- Announcements Grid -->
-      <div class="announcements-grid">
+      <div class="announcements-grid"
+        style="max-height: calc(100vh - 300px); overflow-y: auto; padding-right: 10px;">
         <c:choose>
           <c:when test="${not empty announcementDisplayData}">
             <c:forEach var="ann" items="${announcementDisplayData}">
@@ -63,9 +66,34 @@
           </c:otherwise>
         </c:choose>
       </div>
+    </main>
 
-      <!-- Floating Create Announcement Button -->
-      <div class="floating-buttons" id="floatingButtons">
+    <aside class="sidebar">
+      <!-- Group Info -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Group Info</h3>
+        <ul class="favorites-list">
+          <li class="favorite-item">
+            <div class="favorite-icon"
+              style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+              📢</div>
+            <span class="favorite-name">Announcements:
+              <c:out value="${fn:length(announcementDisplayData)}" default="0" />
+            </span>
+          </li>
+          <li class="favorite-item">
+            <div class="favorite-icon"
+              style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+              👥</div>
+            <span class="favorite-name">
+              Group: <strong><c:out value="${groupName}" default="Group" /></strong>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="floating-buttons" id="floatingButtons"
+        style="position: static; margin-top: 20px;">
         <a href="${pageContext.request.contextPath}/createannouncement?groupId=${groupId}"
           class="floating-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -75,45 +103,22 @@
           </svg>
           New Post
         </a>
+        <a href="${pageContext.request.contextPath}/groupmemories?groupId=${groupId}"
+          class="floating-btn" style="background: #6366f1;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+            </path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          Memories
+        </a>
       </div>
-    </main>
+    </aside>
   </div>
 
   <jsp:include page="/WEB-INF/views/public/footer.jsp" />
-
-  <script src="${pageContext.request.contextPath}/resources/js/groupfloating.js"></script>
-
-  <script>
-    // Handle floating buttons position on scroll
-    document.addEventListener('DOMContentLoaded', function () {
-      function handleFloatingButtons() {
-        const footer = document.querySelector('footer');
-        const floatingButtons = document.getElementById('floatingButtons');
-
-        if (!footer || !floatingButtons) return;
-
-        const footerRect = footer.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const buttonHeight = floatingButtons.offsetHeight;
-
-        if (footerRect.top < windowHeight - buttonHeight - 40) {
-          const stopPosition = footer.offsetTop - buttonHeight - 40;
-          floatingButtons.style.position = 'absolute';
-          floatingButtons.style.bottom = 'auto';
-          floatingButtons.style.top = stopPosition + 'px';
-        } else {
-          floatingButtons.style.position = 'fixed';
-          floatingButtons.style.bottom = '40px';
-          floatingButtons.style.top = 'auto';
-          floatingButtons.style.right = '40px';
-        }
-      }
-
-      window.addEventListener('scroll', handleFloatingButtons);
-      window.addEventListener('resize', handleFloatingButtons);
-      handleFloatingButtons();
-    });
-  </script>
 
 </body>
 

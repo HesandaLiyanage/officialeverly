@@ -210,8 +210,6 @@
             <div class="story-nav story-nav-prev" onclick="previousStory()"></div>
             <div class="story-nav story-nav-next" onclick="nextStory()"></div>
 
-            <!-- Reaction Button -->
-            <button class="story-reaction-btn" onclick="addReaction()">❤️</button>
         </div>
     </div>
 
@@ -395,12 +393,6 @@
                 currentIndex--;
                 loadStory();
             }
-        }
-
-        function addReaction() {
-            const btn = document.querySelector('.story-reaction-btn');
-            btn.style.transform = 'scale(1.3)';
-            setTimeout(() => btn.style.transform = 'scale(1)', 300);
         }
 
         // Keyboard navigation

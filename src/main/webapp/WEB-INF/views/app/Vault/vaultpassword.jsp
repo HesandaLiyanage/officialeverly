@@ -87,10 +87,6 @@
         <button type="submit" class="btn btn-primary">Update Vault Password</button>
     </form>
 
-    <div class="extra-links">
-        <a href="${pageContext.request.contextPath}/dashboard">Back to Dashboard</a>
-        <a href="${pageContext.request.contextPath}/settings">Account Settings</a>
-    </div>
 </main>
 
 <jsp:include page="/WEB-INF/views/public/footer.jsp" />

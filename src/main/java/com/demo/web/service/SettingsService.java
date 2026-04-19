@@ -313,6 +313,9 @@ public class SettingsService {
 
         response.setTrashCount(subscriptionDAO.getTrashItemCount(request.getUserId()));
         response.setMemoryCount(subscriptionDAO.getMemoryCount(request.getUserId()));
+        response.setJournalCount(subscriptionDAO.getJournalCount(request.getUserId()));
+        response.setAutographCount(subscriptionDAO.getAutographCount(request.getUserId()));
+        response.setOtherContentCount(response.getJournalCount() + response.getAutographCount());
 
         response.setRedirectUrl("/WEB-INF/views/app/Settings/storagesense.jsp");
         return response;

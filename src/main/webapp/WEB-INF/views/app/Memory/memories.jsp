@@ -107,8 +107,7 @@
 
                                                 <!-- Optional: Show description if available -->
                                                 <c:if test="${not empty memory.description}">
-                                                    <p class="memory-description"
-                                                        style="margin: 8px 0 0 0; color: #888; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                    <p class="memory-description">
                                                         ${memory.description}
                                                     </p>
                                                 </c:if>

@@ -43,24 +43,6 @@
                                     </svg>
                                 </button>
                             </div>
-                            <button class="filter-btn" id="dateFilter">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <polyline points="19 12 12 19 5 12"></polyline>
-                                </svg>
-                                Date
-                            </button>
-                            <button class="filter-btn" id="moodFilter">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                                </svg>
-                                Mood
-                            </button>
                         </div>
 
                         <!-- Journals Grid -->
@@ -91,8 +73,7 @@
                                             <div class="journal-content">
                                                 <h3 class="journal-title">${journal.title}</h3>
                                                 <p class="journal-date">Private Journal</p>
-                                                <p class="journal-excerpt">${fn:length(journal.content) > 100 ?
-                                                    fn:substring(journal.content, 0, 100) : journal.content}...</p>
+                                                <p class="journal-excerpt">${journalExcerpts[journal.journalId]}</p>
                                             </div>
                                         </div>
                                     </c:forEach>
@@ -130,57 +111,7 @@
                                         <span>Change Password</span>
                                     </a>
                                 </li>
-                                <li class="setting-item">
-                                    <a href="#" class="setting-link">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                            <path
-                                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-                                            </path>
-                                        </svg>
-                                        <span>Security Settings</span>
-                                    </a>
-                                </li>
                             </ul>
-                        </div>
-
-                        <!-- Storage Section -->
-                        <div class="sidebar-section expandable-section" data-section="storage">
-                            <div class="section-header">
-                                <h3 class="sidebar-title">Storage</h3>
-                                <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </div>
-                            <div class="expandable-content">
-                                <div class="storage-info">
-                                    <div class="storage-text">
-                                        <span>${empty storagePercentage ? 0 : storagePercentage}% used</span>
-                                    </div>
-                                    <div class="storage-bar">
-                                        <div class="storage-fill" style="width: ${empty storagePercentage ? 0 : storagePercentage}%"></div>
-                                    </div>
-                                    <div class="storage-text" style="margin-top: 8px;">
-                                        <span>${empty storageUsedFormatted ? '0 B' : storageUsedFormatted} of ${empty storageTotalFormatted ? '0 B' : storageTotalFormatted}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Recycle Bin Section -->
-                        <div class="sidebar-section expandable-section" data-section="recycle">
-                            <div class="section-header">
-                                <h3 class="sidebar-title">Recycle Bin</h3>
-                                <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </div>
-                            <div class="expandable-content">
-                                <p class="empty-text">No items in recycle bin</p>
-                            </div>
                         </div>
                     </aside>
                 </div>

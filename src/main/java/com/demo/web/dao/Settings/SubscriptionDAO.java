@@ -122,6 +122,38 @@ public class SubscriptionDAO {
         return 0;
     }
 
+    public int getJournalCount(int userId) {
+        String sql = "SELECT COUNT(*) FROM journal WHERE user_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getAutographCount(int userId) {
+        String sql = "SELECT COUNT(*) FROM autograph WHERE user_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     /**
      * Get storage used per memory (top N largest memories)
      */
@@ -246,7 +278,6 @@ public class SubscriptionDAO {
         Map<String, Long> result = new java.util.LinkedHashMap<>();
         result.put("image", 0L);
         result.put("video", 0L);
-        result.put("audio", 0L);
         result.put("other", 0L);
         String sql = """
                 SELECT media_type, COALESCE(SUM(file_size), 0) AS total_size
@@ -268,11 +299,36 @@ public class SubscriptionDAO {
                         result.put("image", result.get("image") + size);
                     } else if (type.contains("video")) {
                         result.put("video", result.get("video") + size);
-                    } else if (type.contains("audio") || type.contains("voice")) {
-                        result.put("audio", result.get("audio") + size);
                     } else {
                         result.put("other", result.get("other") + size);
                     }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Include non-media text content in "other" so journals/autographs are reflected.
+        String textContentSql = """
+                SELECT
+                    COALESCE((SELECT SUM(OCTET_LENGTH(COALESCE(j_title, '')) + OCTET_LENGTH(COALESCE(j_content, '')))
+                              FROM journal WHERE user_id = ?), 0)
+                    +
+                    COALESCE((SELECT SUM(OCTET_LENGTH(COALESCE(a_title, '')) + OCTET_LENGTH(COALESCE(a_description, '')))
+                              FROM autograph WHERE user_id = ?), 0)
+                    +
+                    COALESCE((SELECT SUM(OCTET_LENGTH(COALESCE(content, '')) + OCTET_LENGTH(COALESCE(content_plain, '')))
+                              FROM autograph_entry WHERE user_id = ?), 0)
+                    AS total_text_size
+                """;
+        try (Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(textContentSql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, userId);
+            stmt.setInt(3, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    result.put("other", result.get("other") + rs.getLong("total_text_size"));
                 }
             }
         } catch (SQLException e) {

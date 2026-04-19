@@ -51,6 +51,8 @@
                         value="${fn:escapeXml(sessionScope.user.username)}">
                 </div>
 
+                
+
                 <div class="form-group">
                     <label class="form-label">Email</label>
                     <input type="email" name="email" class="form-input" placeholder="Enter your email"
@@ -63,6 +65,8 @@
                     <label class="form-label">Bio</label>
                     <textarea name="bio" class="form-textarea"
                         placeholder="Tell us about yourself">${fn:escapeXml(sessionScope.user.bio)}</textarea>
+                    <input type="text" name="username" class="form-input" placeholder="Enter your username"
+                           value="${fn:escapeXml(sessionScope.user.joined_at)}">
                 </div>
 
                 <div class="form-group">
