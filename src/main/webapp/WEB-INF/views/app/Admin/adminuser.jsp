@@ -141,40 +141,33 @@
 </head>
 <body>
     <div class="header">
-        <div class="logo" onclick="navigateTo('overview')">Everly</div>
+        <div class="logo" onclick="navigateTo('analytics')"><img src="${pageContext.request.contextPath}/resources/assets/everlylogo.png" alt="Everly"></div>
         <div class="header-right">
-            <div class="search-box">
-                <input type="text" placeholder="Search..." id="searchInput">
-                <span class="search-icon">⌕</span>
-            </div>
             <button class="logout-btn" onclick="handleLogout()">Logout</button>
         </div>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <div class="sidebar-title">Dashboard</div>
-            <div class="nav-item" onclick="navigateTo('overview')">
-                <span>○</span> Overview
-            </div>
+            <div class="sidebar-title">ADMIN DASHBOARD</div>
+            
             <div class="nav-item" onclick="navigateTo('analytics')">
-                <span>▢</span> Analytics & Reports
+                Analytics & Reports
             </div>
             <div class="nav-item active" onclick="navigateTo('users')">
-                <span>▢</span> User Management
+                User Management
             </div>
             <div class="nav-item" onclick="navigateTo('content')">
-                <span>▢</span> Content Management
+                Content Management
             </div>
             <div class="nav-item" onclick="navigateTo('settings')">
-                <span>▢</span> Settings
+                Settings
             </div>
         </div>
 
         <div class="main-content">
             <div class="page-header">
                 <h1 class="page-title">User Management</h1>
-                <p class="page-subtitle">ADMIN DASHBOARD</p>
             </div>
 
             <!-- Flash message -->

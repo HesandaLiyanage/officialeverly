@@ -32,35 +32,7 @@
                         </svg>
                     </button>
                 </div>
-                <div class="recap-filter-pills">
-                    <button class="recap-pill active" data-filter="all">All</button>
-                    <button class="recap-pill" data-filter="time">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        By Time
-                    </button>
-                    <button class="recap-pill" data-filter="event">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        By Event
-                    </button>
-                    <button class="recap-pill" data-filter="group">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        By Group
-                    </button>
-                </div>
+
             </div>
 
             <!-- Recap Cards Grid -->
@@ -288,8 +260,7 @@
                         cards.forEach(card => card.style.display = 'block');
                         if (recapGrid) recapGrid.style.display = 'grid';
                         if (emptyStateContainer) emptyStateContainer.style.display = 'none';
-                        document.querySelectorAll('.recap-pill').forEach(p => p.classList.remove('active'));
-                        document.querySelector('.recap-pill[data-filter="all"]').classList.add('active');
+
                     };
 
                     searchBox.querySelector('.memories-search-close').addEventListener('click', closeSearch);
@@ -320,35 +291,7 @@
                 });
             }
 
-            // ── Filter Pills ──
-            const filterPills = document.querySelectorAll('.recap-pill');
-            filterPills.forEach(pill => {
-                pill.addEventListener('click', function () {
-                    filterPills.forEach(p => p.classList.remove('active'));
-                    this.classList.add('active');
 
-                    const filter = this.getAttribute('data-filter');
-                    const recapCards = document.querySelectorAll('.recap-card-item');
-                    let visibleCount = 0;
-
-                    recapCards.forEach(card => {
-                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
-                            card.style.display = 'block';
-                            visibleCount++;
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-
-                    if (visibleCount === 0) {
-                        if (recapGrid) recapGrid.style.display = 'none';
-                        if (emptyStateContainer) emptyStateContainer.style.display = 'block';
-                    } else {
-                        if (recapGrid) recapGrid.style.display = 'grid';
-                        if (emptyStateContainer) emptyStateContainer.style.display = 'none';
-                    }
-                });
-            });
 
             // ── Card entrance animations ──
             const cards = document.querySelectorAll('.recap-card-item');

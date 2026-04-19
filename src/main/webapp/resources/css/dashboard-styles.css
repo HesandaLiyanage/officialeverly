@@ -25,11 +25,17 @@ body {
 }
 
 .logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #5b4cdb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: all 0.3s;
+}
+
+.logo img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
 }
 
 .logo:hover {
@@ -72,20 +78,28 @@ body {
 
 /* ==================== BUTTONS ==================== */
 .logout-btn {
-    padding: 0.6rem 1.5rem;
-    background: #5b4cdb;
-    color: white;
-    border: none;
-    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
     cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s;
+    border: none;
+    background: #9A74D8;
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(154, 116, 216, 0.35);
 }
 
 .logout-btn:hover {
-    background: #4a3cc0;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(91, 76, 219, 0.3);
+    background: #8a64c8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(154, 116, 216, 0.45);
 }
 
 .action-btn {

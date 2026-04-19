@@ -71,7 +71,7 @@ public class AuthService {
             response.setSuccess(true);
             
             if ("admin".equals(user.getUsername())) {
-                response.setRedirectUrl("/admin");
+                response.setRedirectUrl("/adminanalytics");
             }
 
         } else {

@@ -21,13 +21,18 @@ public class MemoryMemberDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "INSERT INTO memory_members (memory_id, user_id, role) VALUES (?, ?, ?) " +
-                    "ON CONFLICT (memory_id, user_id) DO NOTHING";
+            String sql = "INSERT INTO memory_members (memory_id, user_id, role) " +
+                    "SELECT ?, ?, ? " +
+                    "WHERE NOT EXISTS (" +
+                    "    SELECT 1 FROM memory_members WHERE memory_id = ? AND user_id = ?" +
+                    ")";
 
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, memoryId);
             stmt.setInt(2, userId);
             stmt.setString(3, role);
+            stmt.setInt(4, memoryId);
+            stmt.setInt(5, userId);
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;

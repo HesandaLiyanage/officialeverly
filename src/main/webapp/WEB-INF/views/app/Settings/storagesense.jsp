@@ -10,23 +10,47 @@
     <title>Storage Sense | Everly</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/settings.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/subscription.css">
+    <style>
+        .storage-sense-wrapper {
+            margin-top: 20px;
+        }
+
+        .storage-sense-header {
+            text-align: left;
+            margin-bottom: 36px;
+        }
+
+        .storage-sense-header h3 {
+            margin: 0 0 8px 0;
+            font-size: 28px;
+            color: #1a1a2e;
+        }
+
+        .storage-sense-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body>
     <jsp:include page="/WEB-INF/views/public/header2.jsp" />
 
-    <div class="subscription-page">
-        <div class="subscription-container">
+    <div class="settings-container">
+        <h2>Settings</h2>
+        <div class="settings-tabs">
+            <a href="${pageContext.request.contextPath}/settingsaccount" class="tab">Account</a>
+            <a href="${pageContext.request.contextPath}/settingssubscription" class="tab">Subscription</a>
+            <a href="${pageContext.request.contextPath}/settingsprivacy" class="tab">Privacy &amp; Security</a>
+            <a href="${pageContext.request.contextPath}/storagesense" class="tab active">Storage Sense</a>
+            <a href="${pageContext.request.contextPath}/settingsnotifications" class="tab">Notifications</a>
+        </div>
 
-            <!-- Back -->
-            <div class="back-option" style="margin-bottom: 20px;">
-                <a href="${pageContext.request.contextPath}/settingsaccount" class="back-link">← Back to
-                    Settings</a>
-            </div>
-
-            <div class="subscription-header" style="text-align: left; margin-bottom: 36px;">
-                <h1 style="font-size: 32px;">📊 Storage Sense</h1>
-                <p style="margin: 0;">Understand and manage your storage usage.</p>
+        <div class="storage-sense-wrapper">
+            <div class="storage-sense-header">
+                <h3>📊 Storage Sense</h3>
+                <p>Understand and manage your storage usage.</p>
             </div>
 
             <!-- Overall usage card -->
@@ -193,7 +217,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
