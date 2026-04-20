@@ -478,12 +478,8 @@
                     <h3 class="member-name">
                       ${fn:escapeXml(m.username)}
                     </h3>
-                    <span class="member-role <c:choose><c:when test='${m.isAdminMember}'>admin</c:when><c:when test='${m.isEditorMember}'>editor</c:when><c:otherwise>viewer</c:otherwise></c:choose>">
-                      <c:choose>
-                        <c:when test="${m.isAdminMember}">Admin</c:when>
-                        <c:when test="${m.isEditorMember}">Editor</c:when>
-                        <c:otherwise>Viewer</c:otherwise>
-                      </c:choose>
+                    <span class="member-role ${m.roleKey}">
+                      ${m.roleLabel}
                     </span>
                   </div>
                 </a>
@@ -493,8 +489,11 @@
                     <select class="role-select"
                       onchange="updateMemberRole(${groupId}, ${m.memberId}, this.value)">
                       <option value="" disabled selected>Change Role</option>
-                      <option value="editor" <c:if test="${m.isEditorMember}">disabled</c:if>>Editor</option>
-                      <option value="viewer" <c:if test="${m.isViewerMember}">disabled</c:if>>Viewer</option>
+                      <c:forEach var="roleOption" items="${editableRoleOptions}">
+                        <option value="${roleOption.value}" <c:if test="${m.roleKey eq roleOption.value}">disabled</c:if>>
+                          ${roleOption.label}
+                        </option>
+                      </c:forEach>
                     </select>
                     <button class="remove-member-btn"
                       onclick="event.preventDefault(); removeMember(${groupId}, ${m.memberId}, '${fn:escapeXml(m.username)}')">

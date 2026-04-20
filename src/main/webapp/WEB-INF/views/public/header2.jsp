@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/base.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/header.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="${pageContext.request.contextPath}/resources/js/ui-alerts.js"></script>
 <style>
   /* Notification bell badge */
   .notification-icon {

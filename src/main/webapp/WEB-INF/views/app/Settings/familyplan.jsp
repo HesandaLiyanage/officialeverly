@@ -70,7 +70,17 @@
 
                         <!-- Shared Storage -->
                         <div class="shared-storage-card">
-                            <h3>👨‍👩‍👧‍👦 Shared Family Storage</h3>
+                            <h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                                    <circle cx="7" cy="8" r="3"></circle>
+                                    <circle cx="17" cy="8" r="3"></circle>
+                                    <circle cx="12" cy="6" r="3"></circle>
+                                    <path d="M3 21v-2a4 4 0 0 1 4-4"></path>
+                                    <path d="M13 21v-2a5 5 0 0 0-10 0v2"></path>
+                                    <path d="M21 21v-2a4 4 0 0 0-4-4"></path>
+                                </svg>
+                                Shared Family Storage
+                            </h3>
                             <div class="shared-storage-bar-bg">
                                 <div class="shared-storage-bar-fill" style="width: 35%;"></div>
                             </div>
@@ -156,14 +166,27 @@
                         <!-- Family plan benefits -->
                         <div class="sub-card">
                             <h3>
-                                <span class="card-icon purple">🎁</span>
+                                <span class="card-icon purple">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="8" width="18" height="4"></rect>
+                                        <rect x="4" y="12" width="16" height="9"></rect>
+                                        <path d="M12 8v13"></path>
+                                        <path d="M9.5 8a2.5 2.5 0 1 1 0-5c1.5 0 2.5 1.8 2.5 3"></path>
+                                        <path d="M14.5 8a2.5 2.5 0 1 0 0-5C13 3 12 4.8 12 6"></path>
+                                    </svg>
+                                </span>
                                 What each member gets
                             </h3>
                             <div
                                 style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 8px;">
                                 <div
                                     style="display: flex; align-items: center; gap: 10px; padding: 14px; background: #fdfbff; border-radius: 10px;">
-                                    <span style="font-size: 20px;">🔒</span>
+                                    <span style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A74D8" stroke-width="2">
+                                            <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                                            <path d="M7 11V8a5 5 0 0 1 10 0v3"></path>
+                                        </svg>
+                                    </span>
                                     <div>
                                         <div style="font-size: 14px; font-weight: 600; color: #1a1a2e;">Private Space
                                         </div>
@@ -172,7 +195,12 @@
                                 </div>
                                 <div
                                     style="display: flex; align-items: center; gap: 10px; padding: 14px; background: #fdfbff; border-radius: 10px;">
-                                    <span style="font-size: 20px;">📝</span>
+                                    <span style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A74D8" stroke-width="2">
+                                            <path d="M3 21h6"></path>
+                                            <path d="M14 3l7 7L8 23H1v-7z"></path>
+                                        </svg>
+                                    </span>
                                     <div>
                                         <div style="font-size: 14px; font-weight: 600; color: #1a1a2e;">Family Journal
                                         </div>
@@ -181,7 +209,14 @@
                                 </div>
                                 <div
                                     style="display: flex; align-items: center; gap: 10px; padding: 14px; background: #fdfbff; border-radius: 10px;">
-                                    <span style="font-size: 20px;">🤖</span>
+                                    <span style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A74D8" stroke-width="2">
+                                            <rect x="6" y="8" width="12" height="10" rx="2"></rect>
+                                            <path d="M12 4v4"></path>
+                                            <circle cx="10" cy="12" r="1"></circle>
+                                            <circle cx="14" cy="12" r="1"></circle>
+                                        </svg>
+                                    </span>
                                     <div>
                                         <div style="font-size: 14px; font-weight: 600; color: #1a1a2e;">AI Features
                                         </div>
@@ -190,7 +225,14 @@
                                 </div>
                                 <div
                                     style="display: flex; align-items: center; gap: 10px; padding: 14px; background: #fdfbff; border-radius: 10px;">
-                                    <span style="font-size: 20px;">🎨</span>
+                                    <span style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A74D8" stroke-width="2">
+                                            <circle cx="12" cy="12" r="8"></circle>
+                                            <circle cx="9" cy="10" r="1"></circle>
+                                            <circle cx="12" cy="8" r="1"></circle>
+                                            <circle cx="15" cy="10" r="1"></circle>
+                                        </svg>
+                                    </span>
                                     <div>
                                         <div style="font-size: 14px; font-weight: 600; color: #1a1a2e;">All Themes</div>
                                         <div style="font-size: 12px; color: #9ca3af;">Unlock every theme</div>
@@ -203,7 +245,16 @@
                         <c:otherwise>
                             <!-- Not on Family Plan — Show Upsell -->
                             <div class="sub-card" style="text-align: center; padding: 48px;">
-                                <div style="font-size: 64px; margin-bottom: 16px;">👨‍👩‍👧‍👦</div>
+                                <div style="margin-bottom: 16px;">
+                                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9A74D8" stroke-width="1.6">
+                                        <circle cx="7" cy="9" r="2.5"></circle>
+                                        <circle cx="17" cy="9" r="2.5"></circle>
+                                        <circle cx="12" cy="7" r="2.5"></circle>
+                                        <path d="M3 21v-1.5a3.5 3.5 0 0 1 3.5-3.5"></path>
+                                        <path d="M17.5 16A3.5 3.5 0 0 1 21 19.5V21"></path>
+                                        <path d="M8 21v-2a4 4 0 0 1 8 0v2"></path>
+                                    </svg>
+                                </div>
                                 <h3 style="font-size: 22px; font-weight: 800; color: #1a1a2e; margin-bottom: 8px;">Bring
                                     your family together</h3>
                                 <p

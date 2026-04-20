@@ -76,7 +76,12 @@
           <li class="favorite-item">
             <div class="favorite-icon"
               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
-              📢</div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"></path>
+                <path d="M16 9a4 4 0 0 1 0 6"></path>
+                <path d="M19 7a7 7 0 0 1 0 10"></path>
+              </svg>
+            </div>
             <span class="favorite-name">Announcements:
               <c:out value="${fn:length(announcementDisplayData)}" default="0" />
             </span>
@@ -84,7 +89,12 @@
           <li class="favorite-item">
             <div class="favorite-icon"
               style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
-              👥</div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-8 0v2"></path>
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              </svg>
+            </div>
             <span class="favorite-name">
               Group: <strong><c:out value="${groupName}" default="Group" /></strong>
             </span>

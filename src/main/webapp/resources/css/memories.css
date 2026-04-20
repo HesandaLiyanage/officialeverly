@@ -334,6 +334,12 @@
     flex-shrink: 0;
 }
 
+.favorite-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+}
+
 .favorite-icon.graduation {
     background: #e3f2fd;
 }

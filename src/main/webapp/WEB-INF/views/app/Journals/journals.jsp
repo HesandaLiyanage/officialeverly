@@ -105,9 +105,13 @@
         <aside class="sidebar">
             <!-- Streak Section -->
             <div class="sidebar-section streak-section">
-                <h3 class="sidebar-title">Streak &#x1F525;</h3>
+                <h3 class="sidebar-title">Streak</h3>
                 <div class="streak-container">
-                    <div class="streak-icon">&#x1F525;</div>
+                    <div class="streak-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 3s4 4 4 8a4 4 0 1 1-8 0c0-3 4-8 4-8z"></path>
+                        </svg>
+                    </div>
                     <div class="streak-info">
                         <p class="streak-label">Journal</p>
                         <p class="streak-days">
@@ -121,14 +125,25 @@
                 <h3 class="sidebar-title">Statistics</h3>
                 <ul class="favourites-list">
                     <li class="favourite-item">
-                        <div class="favourite-icon">&#x1F4DD;</div>
+                        <div class="favourite-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 21h6"></path>
+                                <path d="M14 3l7 7L8 23H1v-7z"></path>
+                            </svg>
+                        </div>
                         <div class="favourite-info">
                             <span class="favourite-name">Total Entries</span>
                             <span class="favourite-days">${totalCount}</span>
                         </div>
                     </li>
                     <li class="favourite-item">
-                        <div class="favourite-icon">&#x1F4C5;</div>
+                        <div class="favourite-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                            </svg>
+                        </div>
                         <div class="favourite-info">
                             <span class="favourite-name">This Month</span>
                             <span class="favourite-days">${thisMonthCount}</span>

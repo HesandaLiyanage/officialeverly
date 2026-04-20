@@ -245,6 +245,12 @@
     font-size: 14px;
 }
 
+.favorite-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+}
+
 /* ============================================ */
 /* WHATSAPP STATUS-STYLE STORY VIEWER MODAL     */
 /* ============================================ */

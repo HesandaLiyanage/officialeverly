@@ -48,8 +48,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            line-height: 0;
+            color: #6b7280;
             flex-shrink: 0;
+        }
+
+        .notif-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
         }
 
         .notif-icon.uploads {
@@ -180,7 +187,12 @@
             <div class="notif-section-title">Push Notifications</div>
             <div class="notif-list">
                 <div class="notif-row">
-                    <div class="notif-icon uploads">&#128248;</div>
+                    <div class="notif-icon uploads">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                    </div>
                     <div class="notif-info">
                         <div class="notif-title">New Memory Uploads</div>
                         <div class="notif-desc">Get notified when friends upload new memories to shared
@@ -193,7 +205,11 @@
                 </div>
 
                 <div class="notif-row">
-                    <div class="notif-icon comments">&#128172;</div>
+                    <div class="notif-icon comments">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                            <path d="M21 15a3 3 0 0 1-3 3H8l-5 3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3z"></path>
+                        </svg>
+                    </div>
                     <div class="notif-info">
                         <div class="notif-title">Comments &amp; Reactions</div>
                         <div class="notif-desc">Get notified when someone comments or reacts to your
@@ -206,7 +222,13 @@
                 </div>
 
                 <div class="notif-row">
-                    <div class="notif-icon announcements">&#128227;</div>
+                    <div class="notif-icon announcements">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                            <path d="M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"></path>
+                            <path d="M16 9a4 4 0 0 1 0 6"></path>
+                            <path d="M19 7a7 7 0 0 1 0 10"></path>
+                        </svg>
+                    </div>
                     <div class="notif-info">
                         <div class="notif-title">Group Announcements</div>
                         <div class="notif-desc">Receive notifications for new announcements in your
@@ -219,7 +241,14 @@
                 </div>
 
                 <div class="notif-row">
-                    <div class="notif-icon events">&#128197;</div>
+                    <div class="notif-icon events">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
                     <div class="notif-info">
                         <div class="notif-title">Event Updates</div>
                         <div class="notif-desc">Stay updated on event details, voting, and schedule
@@ -232,7 +261,14 @@
                 </div>
 
                 <div class="notif-row">
-                    <div class="notif-icon invites">&#128101;</div>
+                    <div class="notif-icon invites">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                            <circle cx="9" cy="8" r="3"></circle>
+                            <circle cx="17" cy="9" r="2.5"></circle>
+                            <path d="M3 20v-1a6 6 0 0 1 12 0v1"></path>
+                            <path d="M14 20v-1a4.5 4.5 0 0 1 7-3.7"></path>
+                        </svg>
+                    </div>
                     <div class="notif-info">
                         <div class="notif-title">Group Invites</div>
                         <div class="notif-desc">Get notified when you're invited to join a group.</div>
@@ -244,7 +280,12 @@
                 </div>
 
                 <div class="notif-row">
-                    <div class="notif-icon recaps">&#128247;</div>
+                    <div class="notif-icon recaps">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                    </div>
                     <div class="notif-info">
                         <div class="notif-title">Memory Recaps</div>
                         <div class="notif-desc">Reminders about past memories — "Remember this day?"

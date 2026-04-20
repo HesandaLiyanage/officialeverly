@@ -154,21 +154,36 @@
                     <li class="favorite-item">
                         <div class="favorite-icon"
                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                            📸</div>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                        </div>
                         <span class="favorite-name">Total Memories:
                             ${totalMemories != null ? totalMemories : 0}</span>
                     </li>
                     <li class="favorite-item">
                         <div class="favorite-icon"
                             style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                            🎉</div>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 12h16"></path>
+                                <path d="M12 4v16"></path>
+                                <path d="M7 7l10 10"></path>
+                                <path d="M17 7 7 17"></path>
+                            </svg>
+                        </div>
                         <span class="favorite-name">Events:
                             ${totalEvents != null ? totalEvents : 0}</span>
                     </li>
                     <li class="favorite-item">
                         <div class="favorite-icon"
                             style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                            👥</div>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-8 0v2"></path>
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            </svg>
+                        </div>
                         <span class="favorite-name">Groups:
                             ${totalGroups != null ? totalGroups : 0}</span>
                     </li>
@@ -188,7 +203,12 @@
             <!-- Header -->
             <div class="story-header">
                 <div class="story-info">
-                    <div class="story-avatar" id="storyAvatar">📸</div>
+                    <div class="story-avatar" id="storyAvatar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                    </div>
                     <div class="story-details">
                         <div class="story-name" id="storyName">My Memories</div>
                         <div class="story-time" id="storyTime">Just now</div>
