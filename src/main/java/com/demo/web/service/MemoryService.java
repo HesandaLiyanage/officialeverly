@@ -147,9 +147,9 @@ public class MemoryService {
                     return MemoryCreateResponse.error("Group not found", 400);
                 }
                 boolean isGroupAdmin = (group.getUserId() == userId);
-                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
+                GroupRole memberRole = GroupRole.fromValue(groupMemberDAO.getMemberRole(groupId, userId));
                 boolean isGroupMember = isGroupAdmin || memberRole != null;
-                boolean canCreate = isGroupAdmin || "editor".equals(memberRole);
+                boolean canCreate = isGroupAdmin || (memberRole != null && memberRole.canCreateMemories());
                 
                 if (!isGroupMember) {
                     return MemoryCreateResponse.error("You are not a member of this group", 403);
@@ -401,7 +401,7 @@ public class MemoryService {
             boolean hasAccess = isOwner;
             boolean isAdmin = false;
             boolean canEdit = isOwner;
-            String userRole = isOwner ? "admin" : null;
+            String userRole = isOwner ? GroupRole.ADMIN.getValue() : null;
             Group group = null;
 
             if (isGroupMemory) {
@@ -409,11 +409,13 @@ public class MemoryService {
                 group = groupDAO.findById(groupId);
                 isAdmin = (group != null && group.getUserId() == userId);
                 boolean isMember = groupMemberDAO.isUserMember(groupId, userId);
-                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
+                GroupRole memberRole = GroupRole.fromValue(groupMemberDAO.getMemberRole(groupId, userId));
 
                 hasAccess = isAdmin || isMember;
-                userRole = isAdmin ? "admin" : memberRole;
-                canEdit = isAdmin || "editor".equals(memberRole);
+                userRole = isAdmin
+                        ? GroupRole.ADMIN.getValue()
+                        : (memberRole != null ? memberRole.getValue() : null);
+                canEdit = isAdmin || (memberRole != null && memberRole.canEditMemories());
             }
 
             if (!hasAccess) {
@@ -605,8 +607,8 @@ public class MemoryService {
             if (isGroupMemory) {
                 Group group = groupDAO.findById(groupId);
                 boolean isAdmin = (group != null && group.getUserId() == userId);
-                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
-                canDelete = isAdmin || "editor".equals(memberRole);
+                GroupRole memberRole = GroupRole.fromValue(groupMemberDAO.getMemberRole(groupId, userId));
+                canDelete = isAdmin || (memberRole != null && memberRole.canDeleteMemories());
             } else {
                 canDelete = (memory.getUserId() == userId);
             }
@@ -782,8 +784,8 @@ public class MemoryService {
                 int groupId = memory.getGroupId();
                 com.demo.web.model.Groups.Group group = groupDAO.findById(groupId);
                 boolean isAdmin = (group != null && group.getUserId() == userId);
-                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
-                canEdit = isAdmin || "editor".equals(memberRole);
+                GroupRole memberRole = GroupRole.fromValue(groupMemberDAO.getMemberRole(groupId, userId));
+                canEdit = isAdmin || (memberRole != null && memberRole.canEditMemories());
 
                 if (canEdit) {
                     response.setGroup(group);

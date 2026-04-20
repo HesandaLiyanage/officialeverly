@@ -1,6 +1,7 @@
 package com.demo.web.dao.Groups;
 
 import com.demo.web.model.Groups.GroupMember;
+import com.demo.web.model.Groups.GroupRole;
 import com.demo.web.model.Auth.user;
 import com.demo.web.util.DatabaseUtil;
 
@@ -85,7 +86,7 @@ public class GroupMemberDAO {
                 "FROM group_member gm " +
                 "JOIN users u ON gm.member_id = u.user_id " +
                 "WHERE gm.group_id = ? " +
-                "ORDER BY CASE WHEN gm.role = 'admin' THEN 0 ELSE 1 END, gm.joined_at";
+                "ORDER BY CASE WHEN gm.role = '" + GroupRole.ADMIN.getValue() + "' THEN 0 ELSE 1 END, gm.joined_at";
         try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, groupId);

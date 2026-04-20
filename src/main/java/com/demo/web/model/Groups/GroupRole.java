@@ -6,6 +6,7 @@ import java.util.Locale;
 
 public enum GroupRole {
     ADMIN("admin", "Admin", false, true),
+    MEMBER("member", "Member", true, true),
     EDITOR("editor", "Editor", true, true),
     VIEWER("viewer", "Viewer", true, false);
 
@@ -34,6 +35,14 @@ public enum GroupRole {
     }
 
     public boolean canCreateMemories() {
+        return canCreateMemories;
+    }
+
+    public boolean canEditMemories() {
+        return canCreateMemories;
+    }
+
+    public boolean canDeleteMemories() {
         return canCreateMemories;
     }
 

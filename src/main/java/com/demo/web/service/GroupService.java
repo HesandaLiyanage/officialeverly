@@ -373,7 +373,10 @@ public class GroupService {
             boolean isAdmin = (group.getUserId() == req.getCurrentUserId());
             String memberName = (targetMember.getUser() != null) ? targetMember.getUser().getUsername() : "User";
             String memberEmail = (targetMember.getUser() != null) ? targetMember.getUser().getEmail() : "";
-            String memberRole = targetMember.getRole() != null ? targetMember.getRole() : "Member";
+            GroupRole memberRole = targetMember.getRoleEnum();
+            if (memberRole == null) {
+                memberRole = GroupRole.VIEWER;
+            }
 
             String initials = "";
             if (memberName != null && memberName.length() > 0) {
@@ -401,14 +404,14 @@ public class GroupService {
             res.setCreatorText(isAdmin ? "Created by You" : "");
             res.setMemberName(memberName);
             res.setMemberEmail(memberEmail);
-            res.setMemberRole(memberRole);
+            res.setMemberRole(memberRole.getLabel());
             res.setInitials(initials);
             res.setJoinedDate(joinedDate);
             res.setCanRemove(isAdmin && targetMember.getUser().getId() != req.getCurrentUserId());
             res.setMemberId(memberId);
-            res.setRoleViewer("viewer".equalsIgnoreCase(memberRole));
-            res.setRoleMember("member".equalsIgnoreCase(memberRole));
-            res.setRoleAdmin("admin".equalsIgnoreCase(memberRole));
+            res.setRoleViewer(memberRole == GroupRole.VIEWER);
+            res.setRoleMember(memberRole == GroupRole.MEMBER);
+            res.setRoleAdmin(memberRole == GroupRole.ADMIN);
 
             return res;
         } catch (Exception e) {
