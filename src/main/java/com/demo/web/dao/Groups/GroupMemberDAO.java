@@ -12,9 +12,11 @@ import java.util.logging.Logger;
 
 public class GroupMemberDAO {
     private static final Logger logger = Logger.getLogger(GroupMemberDAO.class.getName());
+    private static volatile boolean schemaValidated = false;
 
     // Default constructor using DatabaseUtil
     public GroupMemberDAO() {
+        ensureSchemaConstraints();
     }
 
     // Legacy constructor for backward compatibility
@@ -22,6 +24,7 @@ public class GroupMemberDAO {
 
     public GroupMemberDAO(Connection connection) {
         this.legacyConnection = connection;
+        ensureSchemaConstraints();
     }
 
     private Connection getConnection() throws SQLException {
@@ -29,6 +32,54 @@ public class GroupMemberDAO {
             return legacyConnection;
         }
         return DatabaseUtil.getConnection();
+    }
+
+    private void ensureSchemaConstraints() {
+        if (schemaValidated) {
+            return;
+        }
+
+        synchronized (GroupMemberDAO.class) {
+            if (schemaValidated) {
+                return;
+            }
+
+            String inspectSql = """
+                    SELECT c.confrelid::regclass::text AS referenced_table
+                    FROM pg_constraint c
+                    JOIN pg_class t ON c.conrelid = t.oid
+                    WHERE t.relname = 'group_member'
+                      AND c.conname = 'group_member_member_id_fkey'
+                    """;
+
+            try (Connection conn = getConnection();
+                 PreparedStatement inspectStmt = conn.prepareStatement(inspectSql);
+                 ResultSet rs = inspectStmt.executeQuery()) {
+
+                boolean needsFix = false;
+                if (rs.next()) {
+                    String referencedTable = rs.getString("referenced_table");
+                    // Legacy/broken setups reference member(member_id) instead of users(user_id).
+                    needsFix = referencedTable != null && referencedTable.toLowerCase().contains("member");
+                }
+
+                if (needsFix) {
+                    try (Statement stmt = conn.createStatement()) {
+                        stmt.execute("ALTER TABLE group_member DROP CONSTRAINT IF EXISTS group_member_member_id_fkey");
+                        stmt.execute("""
+                                ALTER TABLE group_member
+                                ADD CONSTRAINT group_member_member_id_fkey
+                                FOREIGN KEY (member_id) REFERENCES users(user_id) ON DELETE CASCADE
+                                """);
+                        logger.info("[GroupMemberDAO] Repaired group_member_member_id_fkey to reference users(user_id).");
+                    }
+                }
+
+                schemaValidated = true;
+            } catch (SQLException e) {
+                logger.warning("[GroupMemberDAO] Failed to validate/repair group_member FK: " + e.getMessage());
+            }
+        }
     }
 
     // Create (Add a member to a group)
