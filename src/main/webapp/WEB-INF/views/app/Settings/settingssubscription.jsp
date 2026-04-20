@@ -191,7 +191,13 @@
                 <div style="margin-top: 25px; margin-bottom: 10px; font-weight: 600; font-size: 15px;">Billing
                     History</div>
                 <div class="billing-empty-state">
-                    <div style="font-size: 24px; margin-bottom: 10px;">🧾</div>
+                    <div style="margin-bottom: 10px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
+                            <path d="M6 3h12v18l-2-1-2 1-2-1-2 1-2-1-2 1V3z"></path>
+                            <line x1="8" y1="8" x2="16" y2="8"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                    </div>
                     <p style="margin: 0;">No invoices available for Free Tier.</p>
                 </div>
             </div>

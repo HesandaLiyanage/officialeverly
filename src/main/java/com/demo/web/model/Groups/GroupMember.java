@@ -48,6 +48,14 @@ public class GroupMember {
         this.role = role;
     }
 
+    public GroupRole getRoleEnum() {
+        return GroupRole.fromValue(role);
+    }
+
+    public void setRole(GroupRole role) {
+        this.role = role != null ? role.getValue() : null;
+    }
+
     public Timestamp getJoinedAt() {
         return joinedAt;
     }

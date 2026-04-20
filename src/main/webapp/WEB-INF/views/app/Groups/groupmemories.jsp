@@ -146,7 +146,12 @@
                     <c:when test="${empty memories}">
                         <div
                             style="grid-column: 1/-1; text-align: center; padding: 60px; color: #888;">
-                            <div style="font-size: 64px; margin-bottom: 20px;">📸</div>
+                            <div style="margin-bottom: 20px;">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                            </div>
                             <h3 style="margin-bottom: 10px;">No group memories yet</h3>
                             <c:choose>
                                 <c:when test="${canCreate}">
@@ -213,7 +218,11 @@
                     <li class="favorite-item">
                         <div class="favorite-icon"
                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
-                            📷</div>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                        </div>
                         <span class="favorite-name">Memories:
                             <c:out value="${fn:length(memories)}" default="0" />
                         </span>
@@ -221,7 +230,11 @@
                     <li class="favorite-item">
                         <div class="favorite-icon"
                             style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
-                            👤</div>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M4 21a8 8 0 0 1 16 0"></path>
+                            </svg>
+                        </div>
                         <span class="favorite-name">Your Role:
                             <strong style="text-transform: capitalize;">
                                 <c:out value="${currentUserRole}" default="member" />

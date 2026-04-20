@@ -61,6 +61,7 @@ public class GroupMembersList extends HttpServlet {
         request.setAttribute("groupName", res.getGroupName());
         request.setAttribute("groupId", res.getGroupId());
         request.setAttribute("memberDisplayData", res.getMemberDisplayData());
+        request.setAttribute("editableRoleOptions", res.getEditableRoleOptions());
 
         if (res.getSuccessMessage() != null) {
             request.setAttribute("successMessage", res.getSuccessMessage());

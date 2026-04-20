@@ -34,7 +34,11 @@
                         <!-- Current Plan Card -->
                         <div class="sub-card" style="grid-column: 1 / -1;">
                             <h3>
-                                <span class="card-icon purple">💎</span>
+                                <span class="card-icon purple">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 3 3 9l9 12 9-12-9-6z"></path>
+                                    </svg>
+                                </span>
                                 Your Current Plan
                             </h3>
                             <div class="current-plan-header">
@@ -81,7 +85,13 @@
                         <!-- Storage Usage Card -->
                         <div class="sub-card">
                             <h3>
-                                <span class="card-icon blue">📊</span>
+                                <span class="card-icon blue">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="6" y1="18" x2="6" y2="10"></line>
+                                        <line x1="12" y1="18" x2="12" y2="6"></line>
+                                        <line x1="18" y1="18" x2="18" y2="13"></line>
+                                    </svg>
+                                </span>
                                 Storage Usage
                             </h3>
                             <div class="storage-bar-container">
@@ -132,7 +142,12 @@
                         <!-- Comparison Card (Static Promo) -->
                         <div class="sub-card">
                             <h3>
-                                <span class="card-icon green">🚀</span>
+                                <span class="card-icon green">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 14c4-7 9-10 16-10-1 7-4 12-11 16l-5-6z"></path>
+                                        <path d="M8 16l-1 4 4-1"></path>
+                                    </svg>
+                                </span>
                                 Upgrade Benefits
                             </h3>
                             <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">Unlock more with a
@@ -141,7 +156,12 @@
                             <div style="display: flex; flex-direction: column; gap: 14px;">
                                 <div
                                     style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #fdfbff; border-radius: 10px; border: 1px solid #f0e6ff;">
-                                    <span style="font-size: 20px;">📦</span>
+                                    <span style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A74D8" stroke-width="2">
+                                            <path d="M3 7 12 3l9 4-9 4-9-4z"></path>
+                                            <path d="M3 7v10l9 4 9-4V7"></path>
+                                        </svg>
+                                    </span>
                                     <div>
                                         <div style="font-size: 14px; font-weight: 600; color: #1a1a2e;">250 GB Storage
                                         </div>
@@ -151,7 +171,14 @@
                                 </div>
                                 <div
                                     style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #fdfbff; border-radius: 10px; border: 1px solid #f0e6ff;">
-                                    <span style="font-size: 20px;">🎨</span>
+                                    <span style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A74D8" stroke-width="2">
+                                            <circle cx="12" cy="12" r="8"></circle>
+                                            <circle cx="9" cy="10" r="1"></circle>
+                                            <circle cx="12" cy="8" r="1"></circle>
+                                            <circle cx="15" cy="10" r="1"></circle>
+                                        </svg>
+                                    </span>
                                     <div>
                                         <div style="font-size: 14px; font-weight: 600; color: #1a1a2e;">All Themes</div>
                                         <div style="font-size: 12px; color: #9ca3af;">Personalize your experience</div>
@@ -172,14 +199,24 @@
                     <!-- Billing History -->
                     <div class="sub-card" style="margin-bottom: 40px;">
                         <h3>
-                            <span class="card-icon orange">📄</span>
+                            <span class="card-icon orange">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                    <path d="M14 3v6h6"></path>
+                                </svg>
+                            </span>
                             Billing History
                         </h3>
 
                         <c:choose>
                             <c:when test="${isBasicPlan}">
                                 <div style="text-align: center; padding: 40px 20px; color: #9ca3af;">
-                                    <div style="font-size: 36px; margin-bottom: 12px;">📋</div>
+                                    <div style="margin-bottom: 12px;">
+                                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.8">
+                                            <rect x="8" y="3" width="8" height="4" rx="1"></rect>
+                                            <path d="M7 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1"></path>
+                                        </svg>
+                                    </div>
                                     <p style="font-size: 15px; font-weight: 500; margin-bottom: 4px;">No billing history yet
                                     </p>
                                     <p style="font-size: 13px;">Upgrade to a paid plan to start seeing your invoices here.

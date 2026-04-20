@@ -17,6 +17,7 @@ public class GroupMembersListResponse {
     private String groupName;
     private Integer groupId;
     private List<Map<String, Object>> memberDisplayData;
+    private List<Map<String, String>> editableRoleOptions;
     private String successMessage;
     private String errorMessage;
 
@@ -41,6 +42,8 @@ public class GroupMembersListResponse {
     public void setGroupId(Integer groupId) { this.groupId = groupId; }
     public List<Map<String, Object>> getMemberDisplayData() { return memberDisplayData; }
     public void setMemberDisplayData(List<Map<String, Object>> memberDisplayData) { this.memberDisplayData = memberDisplayData; }
+    public List<Map<String, String>> getEditableRoleOptions() { return editableRoleOptions; }
+    public void setEditableRoleOptions(List<Map<String, String>> editableRoleOptions) { this.editableRoleOptions = editableRoleOptions; }
     public String getSuccessMessage() { return successMessage; }
     public void setSuccessMessage(String successMessage) { this.successMessage = successMessage; }
     public String getErrorMessage() { return errorMessage; }

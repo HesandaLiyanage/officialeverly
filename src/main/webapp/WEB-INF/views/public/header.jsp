@@ -3,6 +3,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playwrite+US+Trad&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/base.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/header2.css">
+<script src="${pageContext.request.contextPath}/resources/js/ui-alerts.js"></script>
 
 <header class="main-header">
   <div class="logo">

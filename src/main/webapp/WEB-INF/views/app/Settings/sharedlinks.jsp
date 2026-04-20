@@ -247,7 +247,11 @@
           <!-- Autographs Section -->
           <div class="section-header">
             <div class="section-title">
-              ✍️ Autograph Links
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 21h6"></path>
+                <path d="M14 3l7 7L8 23H1v-7z"></path>
+              </svg>
+              Autograph Links
             </div>
             <c:if test="${not empty sharedAutographs}">
               <span class="section-badge">${sharedAutographs.size()} Active</span>
@@ -265,7 +269,10 @@
                         <div class="link-meta">Created ${ag.createdAt}</div>
                       </div>
                       <div class="link-icon-wrapper bg-purple">
-                        🔖
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"></path>
+                        </svg>
                       </div>
                     </div>
                     <div class="link-url-container">
@@ -304,7 +311,12 @@
           <!-- Collaborative Memories Section -->
           <div class="section-header">
             <div class="section-title">
-              🤝 Collaborations
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 12h10"></path>
+                <path d="M5 9a3 3 0 1 0 0 6"></path>
+                <path d="M19 9a3 3 0 1 1 0 6"></path>
+              </svg>
+              Collaborations
             </div>
             <c:if test="${not empty sharedMemories}">
               <span class="section-badge">${sharedMemories.size()} Active</span>
@@ -322,7 +334,12 @@
                         <div class="link-meta">Updated ${mem.updatedAt}</div>
                       </div>
                       <div class="link-icon-wrapper bg-blue">
-                        🖼️
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                          <circle cx="9" cy="10" r="1.5"></circle>
+                          <path d="M21 16l-5-5-4 4-2-2-5 5"></path>
+                        </svg>
                       </div>
                     </div>
                     <div class="link-url-container">
@@ -350,7 +367,13 @@
           <!-- Group Invites Section -->
           <div class="section-header">
             <div class="section-title">
-              🎟️ Group Invites
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 7h16v10H4z"></path>
+                <path d="M9 7v10"></path>
+                <path d="M14.5 10.5h.01"></path>
+                <path d="M14.5 13.5h.01"></path>
+              </svg>
+              Group Invites
             </div>
             <c:if test="${not empty sharedInvites}">
               <span class="section-badge">${sharedInvites.size()} Active</span>
@@ -368,7 +391,12 @@
                         <div class="link-meta">Created ${inv.createdAt}</div>
                       </div>
                       <div class="link-icon-wrapper bg-orange">
-                        👥
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M16 21v-2a4 4 0 0 0-8 0v2"></path>
+                          <circle cx="12" cy="8" r="4"></circle>
+                          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        </svg>
                       </div>
                     </div>
                     <div class="link-url-container">

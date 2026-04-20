@@ -33,7 +33,12 @@
             <h3>Account</h3>
 
             <div class="setting-item">
-                <div class="icon">👤</div>
+                <div class="icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21a8 8 0 0 0-16 0"></path>
+                        <circle cx="12" cy="8" r="4"></circle>
+                    </svg>
+                </div>
                 <div>
                     <a href="${pageContext.request.contextPath}/editprofile">
                         <p class="title">Profile</p>
@@ -43,7 +48,14 @@
             </div>
 
             <div class="setting-item">
-                <div class="icon">📰</div>
+                <div class="icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19a2 2 0 0 0 2 2h14"></path>
+                        <path d="M6 3h14v16H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+                        <line x1="10" y1="7" x2="16" y2="7"></line>
+                        <line x1="10" y1="11" x2="16" y2="11"></line>
+                    </svg>
+                </div>
                 <div>
                     <a href="${pageContext.request.contextPath}/feededitprofile">
                         <p class="title">Feed Profile</p>
@@ -53,7 +65,11 @@
             </div>
 
             <div class="setting-item">
-                <div class="icon">💎</div>
+                <div class="icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 3 3 9l9 12 9-12-9-6z"></path>
+                    </svg>
+                </div>
                 <div>
                     <a href="${pageContext.request.contextPath}/settingssubscription"
                         style="text-decoration: none;">
@@ -64,7 +80,12 @@
             </div>
 
             <div class="setting-item">
-                <div class="icon">📱</div>
+                <div class="icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+                        <line x1="11" y1="18" x2="13" y2="18"></line>
+                    </svg>
+                </div>
                 <div>
                     <a href="${pageContext.request.contextPath}/linkeddevices"
                         style="text-decoration: none;">
@@ -81,7 +102,13 @@
     <!-- Deactivate Account Confirmation Modal -->
     <div class="deactivate-modal-overlay" id="deactivateModal">
         <div class="deactivate-modal">
-            <div class="deactivate-modal-icon">⚠️</div>
+            <div class="deactivate-modal-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.3 3.9 1.8 18.2a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
             <h3>Deactivate Your Account?</h3>
             <p class="deactivate-modal-desc">
                 Your account will be temporarily deactivated. This means:

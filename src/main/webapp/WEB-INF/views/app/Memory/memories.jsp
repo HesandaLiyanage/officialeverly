@@ -60,7 +60,12 @@
                                 <c:when test="${empty memories}">
                                     <!-- No memories - show empty state -->
                                     <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #888;">
-                                        <div style="font-size: 64px; margin-bottom: 20px;">📸</div>
+                                        <div style="margin-bottom: 20px;">
+                                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5">
+                                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                                <circle cx="12" cy="13" r="4"></circle>
+                                            </svg>
+                                        </div>
                                         <h3 style="margin-bottom: 10px;">No memories yet</h3>
                                         <p style="margin-bottom: 30px;">Start creating your first memory!</p>
                                         <c:choose>
@@ -132,7 +137,12 @@
                             <ul class="favorites-list">
                                 <li class="favorite-item">
                                     <div class="favorite-icon"
-                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📷</div>
+                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                            <circle cx="12" cy="13" r="4"></circle>
+                                        </svg>
+                                    </div>
                                     <span class="favorite-name">Total Memories:
                                         <c:out value="${memories.size()}" default="0" />
                                     </span>

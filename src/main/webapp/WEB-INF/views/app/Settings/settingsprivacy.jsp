@@ -25,7 +25,12 @@
                 <h3>Privacy & Security</h3>
 
                 <div class="setting-item" onclick="openVaultSettings()">
-                    <div class="icon">🔒</div>
+                    <div class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                            <path d="M7 11V8a5 5 0 0 1 10 0v3"></path>
+                        </svg>
+                    </div>
                     <div>
                         <p class="title">Vault Settings</p>
                         <p class="desc">Set or change your vault password and manage vault-protected memories</p>
@@ -33,7 +38,12 @@
                 </div>
 
                 <div class="setting-item" onclick="openSharedLinks()">
-                    <div class="icon">🔗</div>
+                    <div class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 0 1 0-7l1.5-1.5a5 5 0 0 1 7 7L17 13"></path>
+                            <path d="M14 11a5 5 0 0 1 0 7L12.5 19.5a5 5 0 0 1-7-7L7 11"></path>
+                        </svg>
+                    </div>
                     <div>
                         <p class="title">Shared Links</p>
                         <p class="desc">View and revoke active share links</p>
@@ -41,7 +51,12 @@
                 </div>
 
                 <div class="setting-item" onclick="openBlockedUsers()">
-                    <div class="icon">🙅‍♀️</div>
+                    <div class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <line x1="8" y1="16" x2="16" y2="8"></line>
+                        </svg>
+                    </div>
                     <div>
                         <p class="title">Blocked Users</p>
                         <p class="desc">Manage your list of blocked users</p>

@@ -7,6 +7,7 @@ import com.demo.web.dao.Memory.memoryDAO;
 import com.demo.web.model.Auth.user;
 import com.demo.web.model.Groups.Group;
 import com.demo.web.model.Groups.GroupMember;
+import com.demo.web.model.Groups.GroupRole;
 import com.demo.web.model.Memory.MediaItem;
 import com.demo.web.model.Memory.Memory;
 import com.demo.web.dao.Groups.GroupAnnouncementDAO;
@@ -129,7 +130,7 @@ public class GroupService {
                     user creatorUser = new user();
                     creatorUser.setId(req.getUserId());
                     adminMember.setUser(creatorUser);
-                    adminMember.setRole("admin");
+                    adminMember.setRole(GroupRole.ADMIN);
                     adminMember.setJoinedAt(new Timestamp(System.currentTimeMillis()));
                     adminMember.setStatus("active");
                     groupMemberDAO.addGroupMember(adminMember);
@@ -221,7 +222,9 @@ public class GroupService {
                 return res;
             }
 
-            String userRole = isAdmin ? "admin" : groupMemberDAO.getMemberRole(groupId, req.getUserId());
+            String userRole = isAdmin
+                    ? GroupRole.ADMIN.getValue()
+                    : GroupRole.normalize(groupMemberDAO.getMemberRole(groupId, req.getUserId()));
             List<Memory> memories = memoryDao.getMemoriesByGroupId(groupId);
             Map<Integer, String> coverImageUrls = new HashMap<>();
 
@@ -232,7 +235,8 @@ public class GroupService {
                 }
             }
 
-            boolean canCreate = isAdmin || "editor".equals(userRole);
+            GroupRole memberRole = GroupRole.fromValue(userRole);
+            boolean canCreate = isAdmin || (memberRole != null && memberRole.canCreateMemories());
 
             res.setGroup(groupDetail);
             res.setGroupId(groupId);
@@ -653,7 +657,7 @@ public class GroupService {
         user memberUser = new user();
         memberUser.setId(req.getUserId());
         newMember.setUser(memberUser);
-        newMember.setRole("viewer");
+        newMember.setRole(GroupRole.VIEWER);
         newMember.setJoinedAt(new Timestamp(System.currentTimeMillis()));
         newMember.setStatus("active");
 
@@ -739,7 +743,9 @@ public class GroupService {
             List<GroupMember> members = groupMemberDAO.getMembersByGroupId(groupId);
             boolean isAdmin = (group.getUserId() == req.getUserId());
             boolean isMember = groupMemberDAO.isUserMember(groupId, req.getUserId());
-            String currentUserRole = isAdmin ? "admin" : groupMemberDAO.getMemberRole(groupId, req.getUserId());
+            String currentUserRole = isAdmin
+                    ? GroupRole.ADMIN.getValue()
+                    : GroupRole.normalize(groupMemberDAO.getMemberRole(groupId, req.getUserId()));
 
             if (!isAdmin && !isMember) {
                 response.setRedirectUrl("/groups?error=Access denied");
@@ -773,10 +779,15 @@ public class GroupService {
                     }
                     data.put("username", username);
                     data.put("initials", initials);
-                    data.put("role", member.getRole());
-                    data.put("isAdminMember", "admin".equalsIgnoreCase(member.getRole()));
-                    data.put("isEditorMember", "editor".equalsIgnoreCase(member.getRole()));
-                    data.put("isViewerMember", "viewer".equalsIgnoreCase(member.getRole()));
+                    GroupRole role = member.getRoleEnum();
+                    String roleValue = role != null ? role.getValue() : GroupRole.VIEWER.getValue();
+                    String roleLabel = role != null ? role.getLabel() : "Viewer";
+                    data.put("role", roleValue);
+                    data.put("roleKey", roleValue);
+                    data.put("roleLabel", roleLabel);
+                    data.put("isAdminMember", role == GroupRole.ADMIN);
+                    data.put("isEditorMember", role == GroupRole.EDITOR);
+                    data.put("isViewerMember", role == GroupRole.VIEWER);
                     data.put("avatarColor", avatarColors[colorIndex % avatarColors.length]);
                     data.put("memberId", member.getUser().getId());
                     colorIndex++;
@@ -784,6 +795,15 @@ public class GroupService {
                 }
             }
             response.setMemberDisplayData(memberDisplayData);
+
+            List<Map<String, String>> editableRoleOptions = new ArrayList<>();
+            for (GroupRole role : GroupRole.assignableByAdmin()) {
+                Map<String, String> option = new HashMap<>();
+                option.put("value", role.getValue());
+                option.put("label", role.getLabel());
+                editableRoleOptions.add(option);
+            }
+            response.setEditableRoleOptions(editableRoleOptions);
 
             if (req.getMsg() != null) response.setSuccessMessage(req.getMsg());
             if (req.getError() != null) response.setErrorMessage(req.getError());
@@ -830,18 +850,19 @@ public class GroupService {
                 if (req.getMemberIdStr() == null || req.getNewRole() == null) {
                     return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Missing parameters");
                 }
-                if (!"editor".equals(req.getNewRole()) && !"viewer".equals(req.getNewRole())) {
-                    return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Invalid role. Must be editor or viewer");
+                GroupRole requestedRole = GroupRole.fromValue(req.getNewRole());
+                if (requestedRole == null || !requestedRole.isAssignableByAdmin()) {
+                    return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Invalid role. Must be " + GroupRole.assignableRoleSummary());
                 }
                 int memberId = Integer.parseInt(req.getMemberIdStr());
                 if (memberId == req.getUserId()) {
                     return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Cannot change your own role");
                 }
-                String currentRole = groupMemberDAO.getMemberRole(groupId, memberId);
-                if ("admin".equals(currentRole)) {
+                GroupRole currentRole = GroupRole.fromValue(groupMemberDAO.getMemberRole(groupId, memberId));
+                if (currentRole == GroupRole.ADMIN) {
                     return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Cannot change admin role");
                 }
-                boolean updated = groupMemberDAO.updateMemberRole(groupId, memberId, req.getNewRole());
+                boolean updated = groupMemberDAO.updateMemberRole(groupId, memberId, requestedRole.getValue());
                 if (updated) {
                     return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&msg=Role updated successfully");
                 } else {

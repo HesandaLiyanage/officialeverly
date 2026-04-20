@@ -315,6 +315,7 @@
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Groups/GroupAnnouncement.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Groups/GroupInvite.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Groups/GroupMember.java
+/Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Groups/GroupRole.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Journals/Journal.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Journals/JournalStreak.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Journals/RecycleBinItem.java
