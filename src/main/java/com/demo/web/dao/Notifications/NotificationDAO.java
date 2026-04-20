@@ -79,6 +79,8 @@ public class NotificationDAO {
         prefs.put("event_updates", true);
         prefs.put("group_invites", true);
         prefs.put("memory_recaps", true);
+        prefs.put("group_member_joined", true);
+        prefs.put("group_memory_edited", true);
 
         String sql = "SELECT notif_type, enabled FROM notification_preferences WHERE user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -226,6 +228,60 @@ public class NotificationDAO {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public String getUsernameByUserId(int userId) {
+        String sql = "SELECT username FROM users WHERE user_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("username");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Integer getGroupOwnerUserId(int groupId) {
+        String sql = "SELECT user_id FROM \"group\" WHERE group_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, groupId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("user_id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Integer> getGroupNotificationRecipients(int groupId) {
+        List<Integer> recipients = new ArrayList<>();
+        String sql = """
+                SELECT user_id FROM "group" WHERE group_id = ?
+                UNION
+                SELECT member_id AS user_id FROM group_member WHERE group_id = ?
+                """;
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, groupId);
+            stmt.setInt(2, groupId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    recipients.add(rs.getInt("user_id"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return recipients;
     }
 
     /**

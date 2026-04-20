@@ -99,8 +99,8 @@
                     class="tab-link">Members</a>
             </div>
 
-            <!-- Viewer Notice -->
-            <c:if test="${currentUserRole eq 'viewer'}">
+            <!-- Limited Permission Notice -->
+            <c:if test="${not canCreate}">
                 <div class="viewer-notice">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -108,8 +108,8 @@
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    You have viewer access. You can view memories but cannot add or edit them.
-                    Contact the group admin to request editor access.
+                    You have limited access. You can view memories but cannot add or edit them.
+                    Contact the group admin if you need elevated access.
                 </div>
             </c:if>
 

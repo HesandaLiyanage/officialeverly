@@ -182,6 +182,8 @@ public class NotificationService {
         if ("event_updates".equals(type)) return "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)";
         if ("group_invites".equals(type)) return "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)";
         if ("memory_recaps".equals(type)) return "linear-gradient(135deg, #fa709a 0%, #fee140 100%)";
+        if ("group_member_joined".equals(type)) return "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)";
+        if ("group_memory_edited".equals(type)) return "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)";
         return "linear-gradient(135deg, #9A74D8 0%, #c4a7e7 100%)";
     }
 
@@ -192,6 +194,8 @@ public class NotificationService {
         if ("event_updates".equals(type)) return "&#128197;";
         if ("group_invites".equals(type)) return "&#128101;";
         if ("memory_recaps".equals(type)) return "&#128247;";
+        if ("group_member_joined".equals(type)) return "&#128100;";
+        if ("group_memory_edited".equals(type)) return "&#9998;";
         return "&#128276;";
     }
 
@@ -202,6 +206,8 @@ public class NotificationService {
         if ("event_updates".equals(type)) return "Event";
         if ("group_invites".equals(type)) return "Invite";
         if ("memory_recaps".equals(type)) return "Recap";
+        if ("group_member_joined".equals(type)) return "Member";
+        if ("group_memory_edited".equals(type)) return "Memory";
         return "Notification";
     }
 }
