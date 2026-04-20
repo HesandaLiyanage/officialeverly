@@ -14,6 +14,7 @@ import com.demo.web.dao.Notifications.NotificationDAO;
 import com.demo.web.model.Memory.Memory;
 import com.demo.web.model.Memory.MediaItem;
 import com.demo.web.model.Groups.Group;
+import com.demo.web.model.Groups.GroupRole;
 import com.demo.web.model.Settings.Plan;
 import com.demo.web.util.EncryptionService;
 import com.demo.web.dto.Memory.MemoryCreateRequest;
@@ -459,13 +460,20 @@ public class MemoryService {
             // Check edit permissions
             boolean canEdit = false;
             boolean isGroupMemory = (memory.getGroupId() != null);
+            Group group = null;
+            boolean isGroupAdmin = false;
+            String memberRole = null;
 
             if (isGroupMemory) {
                 int groupId = memory.getGroupId();
-                Group group = groupDAO.findById(groupId);
-                boolean isAdmin = (group != null && group.getUserId() == userId);
-                String memberRole = groupMemberDAO.getMemberRole(groupId, userId);
-                canEdit = isAdmin || "editor".equals(memberRole);
+                group = groupDAO.findById(groupId);
+                isGroupAdmin = (group != null && group.getUserId() == userId);
+                memberRole = groupMemberDAO.getMemberRole(groupId, userId);
+                canEdit = isGroupAdmin || GroupRole.EDITOR.getValue().equalsIgnoreCase(memberRole);
+            } else if (memory.isCollaborative()) {
+                boolean isOwner = (memory.getUserId() == userId);
+                boolean isCollaborator = memberDAO.isMember(memoryId, userId);
+                canEdit = isOwner || isCollaborator;
             } else {
                 canEdit = (memory.getUserId() == userId);
             }
@@ -541,11 +549,37 @@ public class MemoryService {
                 }
             }
 
+            if (isGroupMemory && group != null && !isGroupAdmin
+                    && GroupRole.EDITOR.getValue().equalsIgnoreCase(memberRole)) {
+                sendGroupMemoryEditedNotification(group, memory, userId);
+            }
+
             return MemoryUpdateResponse.success();
 
         } catch (Exception e) {
             e.printStackTrace();
             return MemoryUpdateResponse.error("Error updating memory: " + e.getMessage(), 500);
+        }
+    }
+
+    private void sendGroupMemoryEditedNotification(Group group, Memory memory, int actorUserId) {
+        try {
+            int adminUserId = group.getUserId();
+            String actorUsername = notificationDAO.getUsernameByUserId(actorUserId);
+            String actorDisplay = (actorUsername != null && !actorUsername.trim().isEmpty()) ? actorUsername : "Someone";
+            String title = "Group Memory Edited";
+            String message = actorDisplay + " edited \"" + memory.getTitle() + "\" in " + group.getName() + ".";
+            String link = "/memoryview?id=" + memory.getMemoryId();
+            notificationDAO.createNotification(
+                    adminUserId,
+                    "group_memory_edited",
+                    title,
+                    message,
+                    link,
+                    actorUserId
+            );
+        } catch (Exception e) {
+            System.err.println("[WARN MemoryService] Failed to send group memory edit notification: " + e.getMessage());
         }
     }
 
@@ -756,6 +790,10 @@ public class MemoryService {
                     response.setGroupMemory(true);
                 }
                 response.setRedirectGroupId(groupId); // For redirection on error
+            } else if (memory.isCollaborative()) {
+                boolean isOwner = (memory.getUserId() == userId);
+                boolean isCollaborator = memberDAO.isMember(memoryId, userId);
+                canEdit = isOwner || isCollaborator;
             } else {
                 canEdit = (memory.getUserId() == userId);
             }

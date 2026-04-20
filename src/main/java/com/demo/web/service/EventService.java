@@ -4,6 +4,7 @@ import com.demo.web.dao.Events.EventDAO;
 import com.demo.web.dao.Events.EventVoteDAO;
 import com.demo.web.dao.Groups.GroupAnnouncementDAO;
 import com.demo.web.dao.Groups.GroupDAO;
+import com.demo.web.dao.Notifications.NotificationDAO;
 import com.demo.web.dto.Events.*;
 import com.demo.web.model.Events.Event;
 import com.demo.web.model.Groups.Group;
@@ -28,12 +29,14 @@ public class EventService {
     private GroupDAO groupDAO;
     private GroupAnnouncementDAO announcementDAO;
     private EventVoteDAO voteDAO;
+    private NotificationDAO notificationDAO;
 
     public EventService() {
         this.eventDAO = new EventDAO();
         this.groupDAO = new GroupDAO();
         this.announcementDAO = new GroupAnnouncementDAO();
         this.voteDAO = new EventVoteDAO();
+        this.notificationDAO = new NotificationDAO();
     }
 
     // Existing helpers (used internally or elsewhere)
@@ -266,7 +269,9 @@ public class EventService {
                     GroupAnnouncement announcement = new GroupAnnouncement(groupId, request.getUserId(), "New Event: " + newEvent.getTitle(), announcementContent);
                     announcement.setEventId(eventId);
                     announcementDAO.createAnnouncement(announcement);
+                    sendGroupAnnouncementNotification(groupId, request.getUserId(), announcement.getTitle());
                 }
+                sendEventCreatedNotifications(eventId, request.getSelectedGroupIds(), request.getUserId(), newEvent.getTitle(), request.getDateStr());
                 response.setSuccess(true);
             } else {
                 throw new RuntimeException("Failed to create event");
@@ -280,6 +285,58 @@ public class EventService {
             response.setErrorMessage("An error occurred while creating the event: " + e.getMessage());
         }
         return response;
+    }
+
+    private void sendEventCreatedNotifications(int eventId, List<Integer> groupIds, int actorUserId, String eventTitle, String dateStr) {
+        try {
+            String actorUsername = notificationDAO.getUsernameByUserId(actorUserId);
+            String actorDisplay = (actorUsername != null && !actorUsername.trim().isEmpty()) ? actorUsername : "Someone";
+            String title = "Upcoming Event";
+            String message = actorDisplay + " created \"" + eventTitle + "\" for " + dateStr + ".";
+            String link = "/eventinfo?event_id=" + eventId;
+
+            java.util.Set<Integer> recipients = new java.util.HashSet<>();
+            for (Integer groupId : groupIds) {
+                recipients.addAll(notificationDAO.getGroupNotificationRecipients(groupId));
+            }
+
+            for (Integer recipientId : recipients) {
+                notificationDAO.createNotification(
+                        recipientId,
+                        "event_updates",
+                        title,
+                        message,
+                        link,
+                        actorUserId
+                );
+            }
+        } catch (Exception e) {
+            System.err.println("[WARN EventService] Failed to send event notifications: " + e.getMessage());
+        }
+    }
+
+    private void sendGroupAnnouncementNotification(int groupId, int actorUserId, String announcementTitle) {
+        try {
+            String actorUsername = notificationDAO.getUsernameByUserId(actorUserId);
+            String actorDisplay = (actorUsername != null && !actorUsername.trim().isEmpty()) ? actorUsername : "Someone";
+            String title = "New Group Announcement";
+            String message = actorDisplay + " posted a new announcement: " + announcementTitle;
+            String link = "/groupannouncement?groupId=" + groupId;
+
+            List<Integer> recipients = notificationDAO.getGroupNotificationRecipients(groupId);
+            for (Integer recipientId : recipients) {
+                notificationDAO.createNotification(
+                        recipientId,
+                        "group_announcements",
+                        title,
+                        message,
+                        link,
+                        actorUserId
+                );
+            }
+        } catch (Exception e) {
+            System.err.println("[WARN EventService] Failed to send group announcement notifications: " + e.getMessage());
+        }
     }
 
     public EventUpdateResponse updateEvent(EventUpdateRequest request) {
@@ -354,6 +411,7 @@ public class EventService {
                     GroupAnnouncement announcement = new GroupAnnouncement(groupId, request.getUserId(), "New Event: " + existingEvent.getTitle(), "A new event '" + existingEvent.getTitle() + "' has been scheduled for " + request.getDateStr() + ".");
                     announcement.setEventId(eventId);
                     announcementDAO.createAnnouncement(announcement);
+                    sendGroupAnnouncementNotification(groupId, request.getUserId(), announcement.getTitle());
                 }
                 response.setSuccess(true);
             } else {

@@ -12,6 +12,7 @@ import com.demo.web.model.Memory.MediaItem;
 import com.demo.web.model.Memory.Memory;
 import com.demo.web.dao.Groups.GroupAnnouncementDAO;
 import com.demo.web.dao.Groups.GroupInviteDAO;
+import com.demo.web.dao.Notifications.NotificationDAO;
 import com.demo.web.dao.Events.EventDAO;
 import com.demo.web.dao.Events.EventVoteDAO;
 import com.demo.web.model.Groups.GroupAnnouncement;
@@ -40,6 +41,7 @@ public class GroupService {
     private MediaDAO mediaDAO;
     private GroupAnnouncementDAO announcementDAO;
     private GroupInviteDAO groupInviteDAO;
+    private NotificationDAO notificationDAO;
     private EventDAO eventDAO;
     private EventVoteDAO eventVoteDAO;
 
@@ -52,6 +54,7 @@ public class GroupService {
         this.mediaDAO = new MediaDAO();
         this.announcementDAO = new GroupAnnouncementDAO();
         this.groupInviteDAO = new GroupInviteDAO();
+        this.notificationDAO = new NotificationDAO();
         this.eventDAO = new EventDAO();
         this.eventVoteDAO = new EventVoteDAO();
     }
@@ -480,6 +483,7 @@ public class GroupService {
 
             boolean success = announcementDAO.createAnnouncement(announcement);
             if (success) {
+                sendGroupAnnouncementNotifications(groupId, req.getUserId(), req.getTitle());
                 return new GroupAnnouncementCreateResponse(true, null, groupId, "/groupannouncementservlet?groupId=" + groupId);
             } else {
                 return new GroupAnnouncementCreateResponse(false, "Failed to create announcement. Please try again.", groupId, null);
@@ -663,6 +667,7 @@ public class GroupService {
 
         boolean success = groupMemberDAO.addGroupMember(newMember);
         if (success) {
+            sendGroupJoinNotificationToAdmin(groupId, req.getUserId());
             String message = URLEncoder.encode("Successfully joined " + group.getName(), StandardCharsets.UTF_8);
             return new GroupInviteJoinResponse(true, "/groupmemories?groupId=" + groupId + "&msg=" + message, null);
         } else {
@@ -887,6 +892,53 @@ public class GroupService {
             return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId);
         } catch (NumberFormatException e) {
             return new GroupMemberActionResponse("/groups?error=Invalid parameters");
+        }
+    }
+
+    private void sendGroupJoinNotificationToAdmin(int groupId, int joinedUserId) {
+        try {
+            Integer adminUserId = notificationDAO.getGroupOwnerUserId(groupId);
+            if (adminUserId == null) {
+                return;
+            }
+            String joinedUsername = notificationDAO.getUsernameByUserId(joinedUserId);
+            String displayName = (joinedUsername != null && !joinedUsername.trim().isEmpty()) ? joinedUsername : "A user";
+            notificationDAO.createNotification(
+                    adminUserId,
+                    "group_member_joined",
+                    "New Group Member",
+                    displayName + " joined your group.",
+                    "/groupmembers?groupId=" + groupId,
+                    joinedUserId
+            );
+        } catch (Exception e) {
+            System.err.println("[WARN GroupService] Failed to send group join notification: " + e.getMessage());
+        }
+    }
+
+    private void sendGroupAnnouncementNotifications(int groupId, int actorUserId, String announcementTitle) {
+        try {
+            List<Integer> recipients = notificationDAO.getGroupNotificationRecipients(groupId);
+            if (recipients == null || recipients.isEmpty()) {
+                return;
+            }
+            String actorUsername = notificationDAO.getUsernameByUserId(actorUserId);
+            String displayName = (actorUsername != null && !actorUsername.trim().isEmpty()) ? actorUsername : "Someone";
+            String title = "New Group Announcement";
+            String message = displayName + " posted a new announcement: " + announcementTitle;
+            String link = "/groupannouncement?groupId=" + groupId;
+            for (Integer recipientId : recipients) {
+                notificationDAO.createNotification(
+                        recipientId,
+                        "group_announcements",
+                        title,
+                        message,
+                        link,
+                        actorUserId
+                );
+            }
+        } catch (Exception e) {
+            System.err.println("[WARN GroupService] Failed to send announcement notifications: " + e.getMessage());
         }
     }
 }
