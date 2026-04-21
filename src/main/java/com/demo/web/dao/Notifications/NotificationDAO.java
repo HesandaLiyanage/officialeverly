@@ -1,5 +1,6 @@
 package com.demo.web.dao.Notifications;
 
+import com.demo.web.model.Autographs.AutographActivity;
 import com.demo.web.util.DatabaseUtil;
 
 import java.sql.*;
@@ -322,6 +323,46 @@ public class NotificationDAO {
             e.printStackTrace();
         }
         return notifications;
+    }
+
+    public List<AutographActivity> getAutographRecentActivities(int userId, int limit) {
+        List<AutographActivity> activities = new ArrayList<>();
+        String sql = "SELECT n.notification_id, n.title, n.created_at, n.actor_id, u.username AS actor_username " +
+                "FROM notifications n " +
+                "LEFT JOIN users u ON n.actor_id = u.user_id " +
+                "WHERE n.user_id = ? " +
+                "AND n.actor_id IS NOT NULL " +
+                "AND n.notif_type = 'comments_reactions' " +
+                "AND COALESCE(n.link, '') = '/autographs' " +
+                "ORDER BY n.created_at DESC LIMIT ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    AutographActivity activity = new AutographActivity();
+                    activity.setActivityId(rs.getInt("notification_id"));
+                    activity.setActivityType("autograph_notification");
+                    activity.setCreatedAt(rs.getTimestamp("created_at"));
+                    activity.setInviteeUserId(rs.getInt("actor_id"));
+                    activity.setInviteeUsername(rs.getString("actor_username"));
+
+                    String title = rs.getString("title");
+                    if (title == null || title.trim().isEmpty() || "New Autograph Entry".equalsIgnoreCase(title.trim())) {
+                        activity.setBookTitle("your autograph book");
+                    } else {
+                        activity.setBookTitle(title.trim());
+                    }
+
+                    activities.add(activity);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return activities;
     }
 
     public int getUnreadCount(int userId) {

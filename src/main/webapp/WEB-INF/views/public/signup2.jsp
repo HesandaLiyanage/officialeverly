@@ -32,7 +32,7 @@
                             <input type="hidden" name="step" value="2">
 
                             <div class="form-group">
-                                <label for="name" class="profile-label">Name(This will be your username)</label>
+                                <label for="name" class="profile-label">Name</label>
                                 <input type="text" id="name" name="name" class="profile-input"
                                     placeholder="Enter your full name" required>
                             </div>

@@ -74,7 +74,7 @@
                     <div class="password-field">
                         <label class="form-sublabel">Current Password</label>
                         <div class="input-wrapper">
-                            <input type="password" name="currentPassword" class="form-input-password"
+                            <input type="password" name="currentPassword" id="currentPassword" class="form-input-password"
                                 placeholder="Enter current password">
                             <button type="button" class="toggle-password" data-target="currentPassword">
                                 <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
