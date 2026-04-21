@@ -148,6 +148,9 @@
                 const lengthCheck = document.getElementById('lengthCheck');
                 const uppercaseCheck = document.getElementById('uppercaseCheck');
                 const numberCheck = document.getElementById('numberCheck');
+                const signupForm = document.getElementById('signupForm');
+                const email = document.getElementById('email');
+                const terms = document.getElementById('terms');
 
                 password.addEventListener('input', function () {
                     const value = password.value;
@@ -171,6 +174,41 @@
                         numberCheck.classList.add('valid');
                     } else {
                         numberCheck.classList.remove('valid');
+                    }
+                });
+
+                signupForm.addEventListener('submit', function (e) {
+                    const emailValue = (email.value || '').trim();
+                    const passwordValue = password.value || '';
+                    const confirmPasswordValue = confirmPassword.value || '';
+
+                    email.value = emailValue;
+
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+                        e.preventDefault();
+                        alert('Please enter a valid email address.');
+                        email.focus();
+                        return;
+                    }
+
+                    if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/.test(passwordValue)) {
+                        e.preventDefault();
+                        alert('Password must be at least 8 characters and include uppercase, lowercase, and a number.');
+                        password.focus();
+                        return;
+                    }
+
+                    if (passwordValue !== confirmPasswordValue) {
+                        e.preventDefault();
+                        alert('Password and confirm password do not match.');
+                        confirmPassword.focus();
+                        return;
+                    }
+
+                    if (!terms.checked) {
+                        e.preventDefault();
+                        alert('Please agree to the Terms of Service and Privacy Policy.');
+                        terms.focus();
                     }
                 });
             });

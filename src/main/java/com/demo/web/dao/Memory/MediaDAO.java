@@ -12,9 +12,6 @@ import java.util.List;
 
 public class MediaDAO {
 
-    /**
-     * Save media metadata to database with encryption info
-     */
     public int createMediaItem(MediaItem mediaItem, byte[] encryptionIv) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -59,9 +56,6 @@ public class MediaDAO {
         }
     }
 
-    /**
-     * Store encrypted media encryption key in encryption_keys table
-     */
     public boolean storeMediaEncryptionKey(String keyId, int userId, byte[] encryptedKey, byte[] iv)
             throws SQLException {
         Connection conn = null;
@@ -85,9 +79,6 @@ public class MediaDAO {
         }
     }
 
-    /**
-     * Get media item by ID
-     */
     public MediaItem getMediaById(int mediaId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -116,10 +107,6 @@ public class MediaDAO {
         }
     }
 
-    /**
-     * Get encrypted media key for decryption.
-     * Looks up by key_id only - access control is handled by the caller.
-     */
     public EncryptionKeyData getMediaEncryptionKey(String keyId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -147,9 +134,6 @@ public class MediaDAO {
         }
     }
 
-    /**
-     * Get all media for a memory
-     */
     public List<MediaItem> getMediaByMemoryId(int memoryId) throws SQLException {
         List<MediaItem> mediaItems = new ArrayList<>();
         Connection conn = null;
@@ -182,9 +166,6 @@ public class MediaDAO {
         }
     }
 
-    /**
-     * Get all media for a user
-     */
     public List<MediaItem> getMediaByUserId(int userId) throws SQLException {
         List<MediaItem> mediaItems = new ArrayList<>();
         Connection conn = null;
@@ -215,9 +196,6 @@ public class MediaDAO {
         }
     }
 
-    /**
-     * Delete media item
-     */
     public boolean deleteMediaItem(int mediaId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -237,9 +215,6 @@ public class MediaDAO {
         }
     }
 
-    /**
-     * Map ResultSet to MediaItem object
-     */
     private MediaItem mapResultSetToMediaItem(ResultSet rs) throws SQLException {
         MediaItem item = new MediaItem();
         item.setMediaId(rs.getInt("media_id"));
@@ -256,7 +231,6 @@ public class MediaDAO {
         item.setEncrypted(rs.getBoolean("is_encrypted"));
         item.setEncryptionKeyId(rs.getString("encryption_key_id"));
 
-        // NEW: Get encryption_iv
         byte[] encryptionIv = rs.getBytes("encryption_iv");
         if (encryptionIv != null) {
             item.setEncryptionIv(encryptionIv);
@@ -269,9 +243,6 @@ public class MediaDAO {
         return item;
     }
 
-    /**
-     * Close database resources
-     */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
             if (rs != null)
@@ -285,9 +256,6 @@ public class MediaDAO {
         }
     }
 
-    /**
-     * Helper class to hold encryption key data
-     */
     public static class EncryptionKeyData {
         private final byte[] encryptedKey;
         private final byte[] iv;
@@ -306,9 +274,6 @@ public class MediaDAO {
         }
     }
 
-    /**
-     * Get the memory ID that a media item belongs to
-     */
     public int getMemoryIdForMedia(int mediaId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;

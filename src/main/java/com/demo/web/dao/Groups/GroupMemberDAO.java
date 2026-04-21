@@ -14,12 +14,10 @@ public class GroupMemberDAO {
     private static final Logger logger = Logger.getLogger(GroupMemberDAO.class.getName());
     private static volatile boolean schemaValidated = false;
 
-    // Default constructor using DatabaseUtil
     public GroupMemberDAO() {
         ensureSchemaConstraints();
     }
 
-    // Legacy constructor for backward compatibility
     private Connection legacyConnection;
 
     public GroupMemberDAO(Connection connection) {
@@ -59,7 +57,6 @@ public class GroupMemberDAO {
                 boolean needsFix = false;
                 if (rs.next()) {
                     String referencedTable = rs.getString("referenced_table");
-                    // Legacy/broken setups reference member(member_id) instead of users(user_id).
                     needsFix = referencedTable != null && referencedTable.toLowerCase().contains("member");
                 }
 
@@ -82,7 +79,6 @@ public class GroupMemberDAO {
         }
     }
 
-    // Create (Add a member to a group)
     public boolean addGroupMember(GroupMember gm) {
         String sql = "INSERT INTO group_member (group_id, member_id, role, joined_at, status) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
@@ -106,7 +102,6 @@ public class GroupMemberDAO {
         }
     }
 
-    // Check if user is already a member of the group
     public boolean isUserMember(int groupId, int userId) {
         String sql = "SELECT COUNT(*) as cnt FROM group_member WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
@@ -129,7 +124,6 @@ public class GroupMemberDAO {
         return false;
     }
 
-    // Read (Get all members of a group)
     public List<GroupMember> getMembersByGroupId(int groupId) {
         List<GroupMember> members = new ArrayList<>();
         String sql = "SELECT gm.group_id, gm.role, gm.joined_at, gm.status, u.user_id, u.username, u.email, u.profile_picture_url "
@@ -169,7 +163,6 @@ public class GroupMemberDAO {
         return members;
     }
 
-    // Update membership details (role, status)
     public boolean updateGroupMember(GroupMember gm) {
         String sql = "UPDATE group_member SET role = ?, joined_at = ?, status = ? WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
@@ -189,7 +182,6 @@ public class GroupMemberDAO {
         }
     }
 
-    // Delete (remove member from group)
     public boolean deleteGroupMember(int groupId, int userId) {
         String sql = "DELETE FROM group_member WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
@@ -206,7 +198,6 @@ public class GroupMemberDAO {
         }
     }
 
-    // Update member role (editor, viewer)
     public boolean updateMemberRole(int groupId, int userId, String newRole) {
         String sql = "UPDATE group_member SET role = ? WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();
@@ -225,7 +216,6 @@ public class GroupMemberDAO {
         }
     }
 
-    // Get a single member's role in a group
     public String getMemberRole(int groupId, int userId) {
         String sql = "SELECT role FROM group_member WHERE group_id = ? AND member_id = ?";
         try (Connection conn = getConnection();

@@ -66,10 +66,6 @@
   </nav>
 
   <div class="header-right">
-    <button class="search-btn" id="searchBtn">
-      <img src="${pageContext.request.contextPath}/resources/assets/search.png" alt="Search">
-    </button>
-
     <div class="notification-icon" id="notificationIcon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -83,13 +79,6 @@
         <div class="profile-initials"><%= headerInitials %></div>
       </div>
       <div class="profile-dropdown" id="profileDropdown">
-        <a href="${pageContext.request.contextPath}/editprofile">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          Profile
-        </a>
         <a href="${pageContext.request.contextPath}/settingsaccount">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3"></circle>
@@ -130,56 +119,6 @@
         if (!profileDropdown.contains(event.target) && event.target !== profilePhoto) {
           profileDropdown.classList.remove('active');
         }
-      });
-    }
-
-    // Search
-    var searchBtn = document.getElementById('searchBtn');
-    if (searchBtn) {
-      searchBtn.addEventListener('click', function (event) {
-        event.stopPropagation();
-        var searchBtnElement = this;
-        var searchBox = document.createElement('div');
-        searchBox.className = 'search-box-expanded';
-        searchBox.innerHTML =
-          '<div class="search-icon-expanded">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
-              '<circle cx="11" cy="11" r="8"></circle>' +
-              '<path d="m21 21-4.35-4.35"></path>' +
-            '</svg>' +
-          '</div>' +
-          '<input type="text" placeholder="Search anything..." autofocus>' +
-          '<button class="search-close">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
-              '<line x1="18" y1="6" x2="6" y2="18"></line>' +
-              '<line x1="6" y1="6" x2="18" y2="18"></line>' +
-            '</svg>' +
-          '</button>';
-        searchBtnElement.parentNode.replaceChild(searchBox, searchBtnElement);
-        var input = searchBox.querySelector('input');
-        input.focus();
-
-        var closeSearch = function() {
-          var newSearchBtn = document.createElement('button');
-          newSearchBtn.className = 'search-btn';
-          newSearchBtn.id = 'searchBtn';
-          newSearchBtn.innerHTML = '<img src="${pageContext.request.contextPath}/resources/assets/search.png" alt="Search">';
-          searchBox.parentNode.replaceChild(newSearchBtn, searchBox);
-          newSearchBtn.addEventListener('click', arguments.callee);
-        };
-
-        searchBox.querySelector('.search-close').addEventListener('click', closeSearch);
-        input.addEventListener('blur', function () {
-          setTimeout(function() {
-            if (!document.activeElement.closest('.search-box-expanded')) {
-              closeSearch();
-            }
-          }, 150);
-        });
-        searchBox.addEventListener('mousedown', function (e) {
-          e.preventDefault();
-          input.focus();
-        });
       });
     }
 

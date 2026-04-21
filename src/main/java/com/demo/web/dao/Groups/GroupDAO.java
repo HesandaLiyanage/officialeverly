@@ -11,11 +11,7 @@ public class GroupDAO {
     public GroupDAO() {
     }
 
-    /**
-     * Create a new group
-     */
     public boolean createGroup(Group group) {
-        // ✅ Use unquoted table name (unless you explicitly created it with quotes)
         String sql = "INSERT INTO \"group\" (g_name, g_description, created_at, user_id, group_pic, group_url) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -35,9 +31,6 @@ public class GroupDAO {
         }
     }
 
-    /**
-     * Get group by ID
-     */
     public Group findById(int groupId) {
         String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE group_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -56,9 +49,6 @@ public class GroupDAO {
         return null;
     }
 
-    /**
-     * Get all groups created by a user (owned only)
-     */
     public List<Group> findByUserId(int userId) {
         String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE user_id = ?";
         List<Group> groups = new ArrayList<>();
@@ -77,7 +67,6 @@ public class GroupDAO {
         return groups;
     }
 
-    // ✅ NEW METHOD: Get ALL groups user is part of (owned OR joined)
     public List<Group> findGroupsByMemberId(int userId) {
         String sql = """
             SELECT group_id, g_name, g_description, created_at, 
@@ -105,9 +94,6 @@ public class GroupDAO {
         return groups;
     }
 
-    /**
-     * Get group by URL
-     */
     public Group findByUrl(String groupUrl) {
         String sql = "SELECT group_id, g_name, g_description, created_at, user_id, group_pic, group_url FROM \"group\" WHERE group_url = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -124,9 +110,6 @@ public class GroupDAO {
         return null;
     }
 
-    /**
-     * Check if group URL already exists
-     */
     public boolean isUrlTaken(String groupUrl) {
         String sql = "SELECT COUNT(*) as url_count FROM \"group\" WHERE group_url = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -143,9 +126,6 @@ public class GroupDAO {
         return false;
     }
 
-    /**
-     * Get member count for a specific group
-     */
     public int getMemberCount(int groupId) {
         String sql = "SELECT COUNT(*) as member_count FROM group_member WHERE group_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -162,9 +142,6 @@ public class GroupDAO {
         return 0;
     }
 
-    /**
-     * Update an existing group
-     */
     public boolean updateGroup(Group group) {
         String sql = "UPDATE \"group\" SET g_name = ?, g_description = ?, group_pic = ?, group_url = ? WHERE group_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -184,20 +161,15 @@ public class GroupDAO {
         }
     }
 
-    /**
-     * Delete group by ID
-     */
     public boolean deleteGroup(int groupId) {
         try (Connection conn = DatabaseUtil.getConnection()) {
             conn.setAutoCommit(false);
 
-            // Delete members first
             try (PreparedStatement stmt1 = conn.prepareStatement("DELETE FROM group_member WHERE group_id = ?")) {
                 stmt1.setInt(1, groupId);
                 stmt1.executeUpdate();
             }
 
-            // Delete group
             try (PreparedStatement stmt2 = conn.prepareStatement("DELETE FROM \"group\" WHERE group_id = ?")) {
                 stmt2.setInt(1, groupId);
                 int rows = stmt2.executeUpdate();
@@ -214,9 +186,6 @@ public class GroupDAO {
         }
     }
 
-    /**
-     * Map ResultSet to Group object
-     */
     private Group mapResultSetToGroup(ResultSet rs) throws SQLException {
         Group group = new Group();
         group.setGroupId(rs.getInt("group_id"));

@@ -6,18 +6,10 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * Data Access Object for Post Report operations.
- * Handles creating reports from the feed and retrieving them for admin panel.
- */
 public class PostReportDAO {
 
     private static final Logger logger = Logger.getLogger(PostReportDAO.class.getName());
 
-    /**
-     * Create a new post report.
-     * Returns true if report was created, false if already reported by this user.
-     */
     public boolean createReport(int postId, int reporterProfileId, String reason) {
         String sql = "INSERT INTO post_reports (post_id, reporter_profile_id, reason) " +
                      "VALUES (?, ?, ?) ON CONFLICT (post_id, reporter_profile_id) DO NOTHING";
@@ -39,9 +31,6 @@ public class PostReportDAO {
         return false;
     }
 
-    /**
-     * Check if a user has already reported a post.
-     */
     public boolean hasUserReported(int postId, int reporterProfileId) {
         String sql = "SELECT COUNT(*) FROM post_reports WHERE post_id = ? AND reporter_profile_id = ?";
 
@@ -62,10 +51,6 @@ public class PostReportDAO {
         return false;
     }
 
-    /**
-     * Get all reported posts with details for admin content management.
-     * Only returns posts that have been reported (not all posts).
-     */
     public List<Map<String, Object>> getReportedPosts() {
         List<Map<String, Object>> reports = new ArrayList<>();
 
@@ -109,9 +94,6 @@ public class PostReportDAO {
         return reports;
     }
 
-    /**
-     * Get reported posts filtered by status.
-     */
     public List<Map<String, Object>> getReportedPostsByStatus(String status) {
         List<Map<String, Object>> reports = new ArrayList<>();
 
@@ -157,9 +139,6 @@ public class PostReportDAO {
         return reports;
     }
 
-    /**
-     * Update report status (admin action).
-     */
     public boolean updateReportStatus(int reportId, String status, String adminNotes, int reviewedBy) {
         String sql = "UPDATE post_reports SET status = ?, admin_notes = ?, reviewed_at = CURRENT_TIMESTAMP, " +
                      "reviewed_by = ? WHERE report_id = ?";
@@ -182,16 +161,12 @@ public class PostReportDAO {
         return false;
     }
 
-    /**
-     * Delete a reported post and mark all its reports as action_taken.
-     */
     public boolean deleteReportedPost(int postId, int reviewedBy) {
         Connection conn = null;
         try {
             conn = DatabaseUtil.getConnection();
             conn.setAutoCommit(false);
 
-            // Mark all reports for this post as action_taken
             String updateSql = "UPDATE post_reports SET status = 'action_taken', " +
                               "admin_notes = COALESCE(admin_notes, '') || ' Post deleted by admin.', " +
                               "reviewed_at = CURRENT_TIMESTAMP, reviewed_by = ? WHERE post_id = ?";
@@ -201,7 +176,6 @@ public class PostReportDAO {
                 stmt.executeUpdate();
             }
 
-            // Delete related data
             String[] deletionQueries = {
                 "DELETE FROM feed_post_likes WHERE post_id = ?",
                 "DELETE FROM feed_post_comments WHERE post_id = ?",
@@ -236,9 +210,6 @@ public class PostReportDAO {
         return false;
     }
 
-    /**
-     * Get report statistics for admin overview dashboard.
-     */
     public Map<String, Integer> getReportStats() {
         Map<String, Integer> stats = new HashMap<>();
 
@@ -263,9 +234,6 @@ public class PostReportDAO {
         return stats;
     }
 
-    /**
-     * Get total pending reports count.
-     */
     public int getPendingReportCount() {
         String sql = "SELECT COUNT(*) FROM post_reports WHERE status = 'pending'";
 

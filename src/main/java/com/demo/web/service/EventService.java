@@ -12,7 +12,6 @@ import com.demo.web.model.Groups.GroupAnnouncement;
 
 import javax.servlet.http.Part;
 import java.io.File;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +23,13 @@ import java.util.Map;
 import java.util.UUID;
 
 public class EventService {
+
+  private boolean isNicCorrect(String nic) {
+    if (nic == null) {
+      return false;
+    }
+    return nic.trim().matches("^(?:\\d{9}[VvXx]|\\d{12})$");
+  }
 
     private EventDAO eventDAO;
     private GroupDAO groupDAO;
@@ -228,6 +234,9 @@ public class EventService {
             if (request.getSelectedGroupIds() == null || request.getSelectedGroupIds().isEmpty()) {
                 throw new IllegalArgumentException("Please select at least one group");
             }
+            if (!isNicCorrect(request.getNic())) {
+              throw new IllegalArgumentException("Invalid NIC format. Use 9 digits + V/X or 12 digits.");
+            }
 
             for (int gid : request.getSelectedGroupIds()) {
                 Group g = groupDAO.findById(gid);
@@ -348,7 +357,7 @@ public class EventService {
                 throw new IllegalArgumentException("Event ID is required");
             }
             response.setEventIdStr(request.getEventIdStr());
-            
+
             if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
                 throw new IllegalArgumentException("Event title is required");
             }
@@ -480,14 +489,24 @@ public class EventService {
 
             String existingVote = voteDAO.getUserVote(eventId, groupId, request.getUserId());
             if (existingVote != null && existingVote.equals(vote)) {
-                voteDAO.removeVote(eventId, groupId, request.getUserId());
+                boolean removed = voteDAO.removeVote(eventId, groupId, request.getUserId());
+                if (!removed) {
+                    response.setStatusCode(500);
+                    response.setJsonResponse("{\"success\": false, \"error\": \"Failed to remove vote\"}");
+                    return response;
+                }
             } else {
-                voteDAO.castVote(eventId, groupId, request.getUserId(), vote);
+                boolean saved = voteDAO.castVote(eventId, groupId, request.getUserId(), vote);
+                if (!saved) {
+                    response.setStatusCode(500);
+                    response.setJsonResponse("{\"success\": false, \"error\": \"Failed to save vote\"}");
+                    return response;
+                }
             }
 
             Map<String, Integer> counts = voteDAO.getVoteCounts(eventId, groupId);
             String currentVote = voteDAO.getUserVote(eventId, groupId, request.getUserId());
-            
+
             response.setStatusCode(200);
             response.setJsonResponse("{\"success\": true, " +
                     "\"going\": " + counts.get("going") + ", " +
@@ -511,7 +530,7 @@ public class EventService {
         try {
             int eventId = Integer.parseInt(request.getEventIdStr());
             int groupId = Integer.parseInt(request.getGroupIdStr());
-            
+
             if ("voters".equals(request.getTypeStr())) {
                 List<Map<String, Object>> voters = voteDAO.getVoters(eventId, groupId);
                 StringBuilder sb = new StringBuilder("{\"success\": true, \"voters\": [");

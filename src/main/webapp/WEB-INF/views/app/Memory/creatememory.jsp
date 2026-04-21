@@ -342,8 +342,21 @@
 
                         // Validate
                         const memoryName = formData.get('memoryName');
-                        if (!memoryName || memoryName.trim() === '') {
+                        const memoryDate = formData.get('memoryDate');
+                        const trimmedName = (memoryName || '').trim();
+                        if (!trimmedName) {
                             alert('Please enter a memory name');
+                            return;
+                        }
+                        formData.set('memoryName', trimmedName);
+
+                        if (trimmedName.length < 2 || trimmedName.length > 120) {
+                            alert('Memory name must be between 2 and 120 characters.');
+                            return;
+                        }
+
+                        if (!memoryDate) {
+                            alert('Please select a memory date');
                             return;
                         }
 

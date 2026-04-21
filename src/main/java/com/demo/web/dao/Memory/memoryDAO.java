@@ -11,9 +11,6 @@ import java.util.List;
 
 public class memoryDAO {
 
-    /**
-     * Create a new memory
-     */
     public int createMemory(Memory memory) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -51,9 +48,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Link media to memory
-     */
     public boolean linkMediaToMemory(int memoryId, int mediaId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -74,9 +68,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Unlink media from memory (remove association)
-     */
     public boolean unlinkMediaFromMemory(int memoryId, int mediaId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -97,9 +88,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Get memory by ID
-     */
     public Memory getMemoryById(int memoryId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -108,7 +96,7 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, nic " +
                     "is_collaborative, collab_share_key, group_id, is_in_vault " +
                     "FROM memory WHERE memory_id = ?";
 
@@ -128,9 +116,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Get all memories for a user (excluding vault items)
-     */
     public List<Memory> getMemoriesByUserId(int userId) throws SQLException {
         List<Memory> memories = new ArrayList<>();
         Connection conn = null;
@@ -163,9 +148,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Get all memories for a specific group
-     */
     public List<Memory> getMemoriesByGroupId(int groupId) throws SQLException {
         List<Memory> memories = new ArrayList<>();
         Connection conn = null;
@@ -196,9 +178,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Update memory
-     */
     public boolean updateMemory(Memory memory) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -230,9 +209,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Delete memory
-     */
     public boolean deleteMemory(int memoryId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -240,7 +216,6 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
 
-            // Note: This will also delete related entries in memory_media due to CASCADE
             String sql = "DELETE FROM memory WHERE memory_id = ?";
 
             stmt = conn.prepareStatement(sql);
@@ -299,9 +274,6 @@ public class memoryDAO {
         return false;
     }
 
-    /**
-     * Set cover media for memory
-     */
     public boolean setCoverMedia(int memoryId, int mediaId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -322,9 +294,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Get media count for a memory
-     */
     public int getMediaCount(int memoryId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -350,9 +319,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Map ResultSet to Memory object
-     */
     private Memory mapResultSetToMemory(ResultSet rs) throws SQLException {
         Memory memory = new Memory();
         memory.setMemoryId(rs.getInt("memory_id"));
@@ -372,37 +338,28 @@ public class memoryDAO {
         memory.setExpiresAt(rs.getTimestamp("expires_at"));
         memory.setLinkShared(rs.getBoolean("is_link_shared"));
 
-        // Collaborative fields
         try {
             memory.setCollaborative(rs.getBoolean("is_collaborative"));
             memory.setCollabShareKey(rs.getString("collab_share_key"));
         } catch (SQLException e) {
-            // Columns may not exist in older queries
         }
 
-        // Group field
         try {
             int gid = rs.getInt("group_id");
             if (!rs.wasNull()) {
                 memory.setGroupId(gid);
             }
         } catch (SQLException e) {
-            // Column may not exist in older queries
         }
 
-        // Vault field
         try {
             memory.setInVault(rs.getBoolean("is_in_vault"));
         } catch (SQLException e) {
-            // Column may not exist in older queries
         }
 
         return memory;
     }
 
-    /**
-     * Close database resources
-     */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
             if (rs != null)
@@ -468,13 +425,7 @@ public class memoryDAO {
         return metadata.substring(start, end).trim().replace("\"", "");
     }
 
-    // ============================================
-    // VAULT METHODS
-    // ============================================
 
-    /**
-     * Get all vault memories for a user
-     */
     public List<Memory> getVaultMemoriesByUserId(int userId) throws SQLException {
         List<Memory> memories = new ArrayList<>();
         Connection conn = null;
@@ -504,9 +455,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Move a memory to the vault
-     */
     public boolean moveToVault(int memoryId, int userId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -527,9 +475,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Remove a memory from the vault (restore to regular view)
-     */
     public boolean removeFromVault(int memoryId, int userId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -550,9 +495,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Check if a memory is in the vault
-     */
     public boolean isMemoryInVault(int memoryId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -578,13 +520,7 @@ public class memoryDAO {
         }
     }
 
-    // ============================================
-    // COLLABORATIVE MEMORY METHODS
-    // ============================================
 
-    /**
-     * Get all collaborative memories where user is owner or member
-     */
     public List<Memory> getCollabMemoriesByUserId(int userId) throws SQLException {
         List<Memory> memories = new ArrayList<>();
         Connection conn = null;
@@ -618,9 +554,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Get memory by collab share key
-     */
     public Memory getMemoryByShareKey(String shareKey) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -649,9 +582,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Set or update collab share key
-     */
     public boolean setCollabShareKey(int memoryId, String shareKey) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -672,9 +602,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Create collaborative memory
-     */
     public int createCollabMemory(Memory memory) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -707,9 +634,6 @@ public class memoryDAO {
         }
     }
 
-    /**
-     * Get memories owned by user that have a collab share link active
-     */
     public List<Memory> getSharedMemoriesByOwner(int userId) {
         List<Memory> memories = new ArrayList<>();
         String sql = "SELECT * FROM memory WHERE user_id = ? AND collab_share_key IS NOT NULL AND (is_in_vault = FALSE OR is_in_vault IS NULL)";

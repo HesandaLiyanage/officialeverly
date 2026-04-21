@@ -154,9 +154,6 @@ public class SubscriptionDAO {
         return 0;
     }
 
-    /**
-     * Get storage used per memory (top N largest memories)
-     */
     public List<Map<String, Object>> getStorageByMemory(int userId, int limit) {
         List<Map<String, Object>> result = new ArrayList<>();
         String sql = """
@@ -190,9 +187,6 @@ public class SubscriptionDAO {
         return result;
     }
 
-    /**
-     * Get storage used per group (aggregated from group memories)
-     */
     public List<Map<String, Object>> getStorageByGroup(int userId, int limit) {
         List<Map<String, Object>> result = new ArrayList<>();
         String sql = """
@@ -228,9 +222,6 @@ public class SubscriptionDAO {
         return result;
     }
 
-    /**
-     * Get potential duplicate files (same file_size + mime_type, multiple uploads)
-     */
     public List<Map<String, Object>> getDuplicateFiles(int userId) {
         List<Map<String, Object>> result = new ArrayList<>();
         String sql = """
@@ -271,9 +262,6 @@ public class SubscriptionDAO {
         return result;
     }
 
-    /**
-     * Get storage breakdown by content type (image, video, audio, etc.)
-     */
     public Map<String, Long> getStorageByContentType(int userId) {
         Map<String, Long> result = new java.util.LinkedHashMap<>();
         result.put("image", 0L);
@@ -308,7 +296,6 @@ public class SubscriptionDAO {
             e.printStackTrace();
         }
 
-        // Include non-media text content in "other" so journals/autographs are reflected.
         String textContentSql = """
                 SELECT
                     COALESCE((SELECT SUM(OCTET_LENGTH(COALESCE(j_title, '')) + OCTET_LENGTH(COALESCE(j_content, '')))
@@ -337,9 +324,6 @@ public class SubscriptionDAO {
         return result;
     }
 
-    /**
-     * Get count of items in trash for this user
-     */
     public int getTrashItemCount(int userId) {
         String sql = "SELECT COUNT(*) FROM recycle_bin WHERE user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -360,7 +344,6 @@ public class SubscriptionDAO {
         try {
             memoryLimit = rs.getInt("memory_limit");
         } catch (SQLException e) {
-            // column might not exist if migration failed or driver issue
         }
 
         return new Plan(

@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * Admin settings DAO focused on subscription/storage cap management.
- */
 public class AdminSettingsDAO {
 
     private static final Logger logger = Logger.getLogger(AdminSettingsDAO.class.getName());

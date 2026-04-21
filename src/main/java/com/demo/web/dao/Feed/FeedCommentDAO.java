@@ -9,16 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * Data Access Object for FeedComment operations.
- */
 public class FeedCommentDAO {
 
     private static final Logger logger = Logger.getLogger(FeedCommentDAO.class.getName());
 
-    /**
-     * Create a new comment
-     */
     public FeedComment createComment(FeedComment comment) {
         String sql = "INSERT INTO feed_post_comments (post_id, feed_profile_id, parent_comment_id, comment_text) " +
                 "VALUES (?, ?, ?, ?) RETURNING comment_id, created_at";
@@ -54,9 +48,6 @@ public class FeedCommentDAO {
         }
     }
 
-    /**
-     * Get all comments for a post with commenter info and like counts
-     */
     public List<FeedComment> getCommentsForPost(int postId, int currentProfileId) {
         List<FeedComment> comments = new ArrayList<>();
 
@@ -98,9 +89,6 @@ public class FeedCommentDAO {
         return comments;
     }
 
-    /**
-     * Get comment by ID
-     */
     public FeedComment getCommentById(int commentId) {
         String sql = "SELECT c.comment_id, c.post_id, c.feed_profile_id, c.parent_comment_id, " +
                 "c.comment_text, c.created_at, c.updated_at, " +
@@ -127,9 +115,6 @@ public class FeedCommentDAO {
         return null;
     }
 
-    /**
-     * Delete a comment
-     */
     public boolean deleteComment(int commentId) {
         String sql = "DELETE FROM feed_post_comments WHERE comment_id = ?";
 
@@ -149,9 +134,6 @@ public class FeedCommentDAO {
         }
     }
 
-    /**
-     * Get comment count for a post
-     */
     public int getCommentCount(int postId) {
         String sql = "SELECT COUNT(*) FROM feed_post_comments WHERE post_id = ?";
 
@@ -173,9 +155,6 @@ public class FeedCommentDAO {
         return 0;
     }
 
-    /**
-     * Like a comment
-     */
     public boolean likeComment(int commentId, int feedProfileId) {
         String sql = "INSERT INTO feed_comment_likes (comment_id, feed_profile_id) VALUES (?, ?) " +
                 "ON CONFLICT (comment_id, feed_profile_id) DO NOTHING";
@@ -197,9 +176,6 @@ public class FeedCommentDAO {
         }
     }
 
-    /**
-     * Unlike a comment
-     */
     public boolean unlikeComment(int commentId, int feedProfileId) {
         String sql = "DELETE FROM feed_comment_likes WHERE comment_id = ? AND feed_profile_id = ?";
 
@@ -220,9 +196,6 @@ public class FeedCommentDAO {
         }
     }
 
-    /**
-     * Check if user has liked a comment
-     */
     public boolean hasLikedComment(int commentId, int feedProfileId) {
         String sql = "SELECT COUNT(*) > 0 FROM feed_comment_likes WHERE comment_id = ? AND feed_profile_id = ?";
 
@@ -245,9 +218,6 @@ public class FeedCommentDAO {
         return false;
     }
 
-    /**
-     * Get like count for a comment
-     */
     public int getCommentLikeCount(int commentId) {
         String sql = "SELECT COUNT(*) FROM feed_comment_likes WHERE comment_id = ?";
 
@@ -269,9 +239,6 @@ public class FeedCommentDAO {
         return 0;
     }
 
-    /**
-     * Get replies for a specific comment
-     */
     public List<FeedComment> getRepliesForComment(int parentCommentId, int currentProfileId) {
         List<FeedComment> replies = new ArrayList<>();
 
@@ -307,9 +274,6 @@ public class FeedCommentDAO {
         return replies;
     }
 
-    /**
-     * Get reply count for a comment
-     */
     public int getReplyCount(int parentCommentId) {
         String sql = "SELECT COUNT(*) FROM feed_post_comments WHERE parent_comment_id = ?";
 
@@ -331,9 +295,6 @@ public class FeedCommentDAO {
         return 0;
     }
 
-    /**
-     * Map ResultSet to FeedComment with FeedProfile
-     */
     private FeedComment mapResultSetToComment(ResultSet rs) throws SQLException {
         FeedComment comment = new FeedComment();
         comment.setCommentId(rs.getInt("comment_id"));
@@ -347,7 +308,6 @@ public class FeedCommentDAO {
         comment.setCreatedAt(rs.getTimestamp("created_at"));
         comment.setUpdatedAt(rs.getTimestamp("updated_at"));
 
-        // Create FeedProfile from join
         FeedProfile profile = new FeedProfile();
         profile.setFeedProfileId(rs.getInt("feed_profile_id"));
         profile.setFeedUsername(rs.getString("feed_username"));
@@ -356,17 +316,14 @@ public class FeedCommentDAO {
         try {
             profile.setFeedBio(rs.getString("feed_bio"));
         } catch (SQLException e) {
-            // Column might not exist in all queries
         }
 
         comment.setFeedProfile(profile);
 
-        // Set like count and liked status if available
         try {
             comment.setLikeCount(rs.getInt("like_count"));
             comment.setLikedByCurrentUser(rs.getBoolean("liked_by_user"));
         } catch (SQLException e) {
-            // Columns might not exist in all queries
         }
 
         return comment;

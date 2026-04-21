@@ -5,16 +5,10 @@ import com.demo.web.util.DatabaseUtil;
 import java.sql.*;
 import java.util.logging.Logger;
 
-/**
- * Data Access Object for Feed Post Like operations.
- */
 public class FeedPostLikeDAO {
 
     private static final Logger logger = Logger.getLogger(FeedPostLikeDAO.class.getName());
 
-    /**
-     * Like a post
-     */
     public boolean likePost(int postId, int feedProfileId) {
         String sql = "INSERT INTO feed_post_likes (post_id, feed_profile_id) VALUES (?, ?) " +
                 "ON CONFLICT (post_id, feed_profile_id) DO NOTHING";
@@ -36,9 +30,6 @@ public class FeedPostLikeDAO {
         }
     }
 
-    /**
-     * Unlike a post
-     */
     public boolean unlikePost(int postId, int feedProfileId) {
         String sql = "DELETE FROM feed_post_likes WHERE post_id = ? AND feed_profile_id = ?";
 
@@ -59,9 +50,6 @@ public class FeedPostLikeDAO {
         }
     }
 
-    /**
-     * Check if user has liked a post
-     */
     public boolean hasLikedPost(int postId, int feedProfileId) {
         String sql = "SELECT COUNT(*) > 0 FROM feed_post_likes WHERE post_id = ? AND feed_profile_id = ?";
 
@@ -84,9 +72,6 @@ public class FeedPostLikeDAO {
         return false;
     }
 
-    /**
-     * Get like count for a post
-     */
     public int getLikeCount(int postId) {
         String sql = "SELECT COUNT(*) FROM feed_post_likes WHERE post_id = ?";
 
@@ -108,11 +93,6 @@ public class FeedPostLikeDAO {
         return 0;
     }
 
-    /**
-     * Toggle like on a post (like if not liked, unlike if already liked)
-     * 
-     * @return true if post is now liked, false if now unliked
-     */
     public boolean toggleLike(int postId, int feedProfileId) {
         if (hasLikedPost(postId, feedProfileId)) {
             unlikePost(postId, feedProfileId);

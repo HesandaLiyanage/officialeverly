@@ -407,9 +407,6 @@
                                         </div>
                                     </c:if>
 
-                                    <a href="${ctxPath}/settingsnotifications" class="notif-settings-link">
-                                        &#9881; Manage notification preferences
-                                    </a>
                                 </div>
 
                                 <div class="notif-toast" id="notifToast"></div>

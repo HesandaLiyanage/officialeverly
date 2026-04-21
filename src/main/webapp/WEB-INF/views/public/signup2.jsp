@@ -32,7 +32,7 @@
                             <input type="hidden" name="step" value="2">
 
                             <div class="form-group">
-                                <label for="name" class="profile-label">Name(This will be your username)</label>
+                                <label for="name" class="profile-label">Name</label>
                                 <input type="text" id="name" name="name" class="profile-input"
                                     placeholder="Enter your full name" required>
                             </div>
@@ -53,6 +53,37 @@
         </main>
 
         <jsp:include page="/WEB-INF/views/public/footer.jsp" />
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const profileForm = document.getElementById('profileForm');
+                if (!profileForm) return;
+
+                const nameInput = document.getElementById('name');
+                const bioInput = document.getElementById('bio');
+
+                profileForm.addEventListener('submit', function (e) {
+                    const name = (nameInput.value || '').trim();
+                    const bio = (bioInput.value || '').trim();
+
+                    nameInput.value = name;
+                    bioInput.value = bio;
+
+                    if (name.length < 2 || name.length > 60) {
+                        e.preventDefault();
+                        alert('Name must be between 2 and 60 characters.');
+                        nameInput.focus();
+                        return;
+                    }
+
+                    if (bio.length > 500) {
+                        e.preventDefault();
+                        alert('Bio must be 500 characters or less.');
+                        bioInput.focus();
+                    }
+                });
+            });
+        </script>
 
     </body>
 

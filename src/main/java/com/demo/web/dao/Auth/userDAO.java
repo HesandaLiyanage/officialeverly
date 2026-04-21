@@ -16,10 +16,6 @@ import java.sql.Timestamp;
 
 public class userDAO {
 
-    /**
-     * Authenticate user by username and password
-     * THIS METHOD UNCHANGED - Your existing authentication works as-is
-     */
     public user authenticateUser(String username, String password) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -40,7 +36,6 @@ public class userDAO {
                 String storedHash = rs.getString("password");
                 String salt = rs.getString("salt");
 
-                // Verify password using your existing PasswordUtil
                 if (PasswordUtil.verifyPassword(password, salt, storedHash)) {
                     return mapResultSetToUser(rs);
                 }
@@ -56,14 +51,6 @@ public class userDAO {
         return null;
     }
 
-    /**
-     * NEW METHOD: Unlock user's master encryption key after authentication
-     * Call this AFTER authenticateUser succeeds
-     *
-     * @param userId   The authenticated user's ID
-     * @param password The user's password (plain text)
-     * @return The unlocked master key (store in session, NOT database)
-     */
     public SecretKey unlockUserMasterKey(int userId, String password) throws Exception {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -86,12 +73,10 @@ public class userDAO {
                 byte[] salt = rs.getBytes("key_derivation_salt");
                 byte[] iv = rs.getBytes("iv");
 
-                // Check if user has encryption keys set up
                 if (encryptedMasterKey == null || salt == null || iv == null) {
                     throw new Exception("User encryption keys not initialized. This might be an old account.");
                 }
 
-                // Unlock the master key
                 return EncryptionService.unlockUserMasterKey(password, salt, encryptedMasterKey, iv);
             }
 
@@ -105,36 +90,22 @@ public class userDAO {
         }
     }
 
-    /**
-     * NEW METHOD: Complete login with encryption key unlocking
-     * This combines authentication + key unlocking
-     *
-     * @return Array: [0] = user object, [1] = master key (cast to SecretKey)
-     */
     public Object[] loginUserWithEncryption(String username, String password) {
-        // Step 1: Authenticate user (existing method)
         user authenticatedUser = authenticateUser(username, password);
 
         if (authenticatedUser == null) {
             return null; // Authentication failed
         }
 
-        // Step 2: Unlock encryption keys
         try {
             SecretKey masterKey = unlockUserMasterKey(authenticatedUser.getId(), password);
             return new Object[] { authenticatedUser, masterKey };
         } catch (Exception e) {
-            // Authentication succeeded but encryption keys failed
-            // This might happen for old accounts created before encryption was added
             System.err.println("Warning: User authenticated but encryption keys unavailable: " + e.getMessage());
-            // Return user without master key - handle this in your servlet
             return new Object[] { authenticatedUser, null };
         }
     }
 
-    /**
-     * Find user by ID - UNCHANGED
-     */
     public user findById(int userId) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -165,9 +136,6 @@ public class userDAO {
         return null;
     }
 
-    /**
-     * Find user by email - UNCHANGED
-     */
     public user findByemail(String email) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -197,9 +165,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * Find user by username - UNCHANGED
-     */
     public user findByUsername(String username) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -230,9 +195,6 @@ public class userDAO {
         return null;
     }
 
-    /**
-     * Update user's last login timestamp - UNCHANGED
-     */
     public boolean updateLastLogin(int userId) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -256,9 +218,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * UPDATED: Create a new user WITH encryption setup
-     */
     public boolean createUser(user user) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -268,14 +227,11 @@ public class userDAO {
             conn = DatabaseUtil.getConnection();
             conn.setAutoCommit(false); // Start transaction
 
-            // STEP 1: Generate authentication credentials (EXISTING)
             String authSalt = PasswordUtil.generateSalt();
             String passwordHash = PasswordUtil.hashPassword(user.getPassword(), authSalt);
 
-            // STEP 2: Generate encryption keys (NEW)
             UserMasterKeyData keyData = EncryptionService.setupUserMasterKey(user.getPassword());
 
-            // STEP 3: Insert user with both auth and encryption data
             String sql = "INSERT INTO users (username, email, password, salt, bio, profile_picture_url, " +
                     "is_active, joined_at, master_key_encrypted, key_derivation_salt) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING user_id";
@@ -298,7 +254,6 @@ public class userDAO {
                 int newUserId = generatedKeys.getInt("user_id");
                 user.setId(newUserId);
 
-                // STEP 4: Store IV for master key in encryption_metadata
                 storeUserMasterKeyIV(conn, newUserId, keyData.getIv());
 
                 conn.commit(); // Commit transaction
@@ -328,9 +283,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * NEW HELPER METHOD: Store IV for user's master key
-     */
     private void storeUserMasterKeyIV(Connection conn, int userId, byte[] iv) throws SQLException {
         String sql = "INSERT INTO encryption_metadata (entity_type, entity_id, iv) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -341,10 +293,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * NEW METHOD: Check if user has encryption keys set up
-     * Useful for migrating old accounts
-     */
     public boolean hasEncryptionKeys(int userId) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -368,11 +316,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * NEW METHOD: Setup encryption for existing user (migration)
-     * Use this to add encryption to accounts created before encryption was
-     * implemented
-     */
     public boolean setupEncryptionForExistingUser(int userId, String password) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -381,10 +324,8 @@ public class userDAO {
             conn = DatabaseUtil.getConnection();
             conn.setAutoCommit(false);
 
-            // Generate encryption keys
             UserMasterKeyData keyData = EncryptionService.setupUserMasterKey(password);
 
-            // Update user record
             String sql = "UPDATE users SET master_key_encrypted = ?, key_derivation_salt = ? WHERE user_id = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setBytes(1, keyData.getEncryptedMasterKey());
@@ -394,7 +335,6 @@ public class userDAO {
             int updated = stmt.executeUpdate();
 
             if (updated > 0) {
-                // Store IV
                 storeUserMasterKeyIV(conn, userId, keyData.getIv());
                 conn.commit();
                 return true;
@@ -423,9 +363,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * Check if username exists - UNCHANGED
-     */
     public boolean usernameExists(String username) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -449,9 +386,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * Update profile pic - UNCHANGED
-     */
     public boolean updateProfilePicture(int userId, String profilePictureUrl) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -472,9 +406,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * Check if email exists - UNCHANGED
-     */
     public boolean emailExists(String email) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -498,9 +429,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * Map ResultSet to User object - UNCHANGED
-     */
     private user mapResultSetToUser(ResultSet rs) throws SQLException {
         user user = new user();
         user.setId(rs.getInt("user_id"));
@@ -517,13 +445,6 @@ public class userDAO {
         return user;
     }
 
-    /**
-     * Deactivate a user account (set is_active = false).
-     * Does NOT delete any data — the account can be reactivated later.
-     *
-     * @param userId The user ID to deactivate
-     * @return true if deactivation was successful
-     */
     public boolean deactivateAccount(int userId) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -547,13 +468,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * Reactivate a user account (set is_active = true).
-     * Used when a deactivated user logs back in.
-     *
-     * @param userId The user ID to reactivate
-     * @return true if reactivation was successful
-     */
     public boolean reactivateAccount(int userId) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -577,9 +491,6 @@ public class userDAO {
         }
     }
 
-    /**
-     * Close database resources - UNCHANGED
-     */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
             if (rs != null)

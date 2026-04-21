@@ -82,17 +82,14 @@ public class GroupAnnouncementDAO {
         ga.setContent(rs.getString("content"));
         ga.setCreatedAt(rs.getTimestamp("created_at"));
 
-        // Read event_id (nullable)
         try {
             int eid = rs.getInt("event_id");
             if (!rs.wasNull()) {
                 ga.setEventId(eid);
             }
         } catch (SQLException e) {
-            // Column may not exist yet
         }
 
-        // Map user data
         user u = new user();
         u.setId(rs.getInt("user_id"));
         u.setUsername(rs.getString("username"));

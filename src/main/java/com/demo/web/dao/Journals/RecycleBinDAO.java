@@ -1,4 +1,3 @@
-// File: src/main/java/com/demo/web/dao/RecycleBinDAO.java
 package com.demo.web.dao.Journals;
 
 import com.demo.web.model.Journals.RecycleBinItem;
@@ -154,7 +153,6 @@ public class RecycleBinDAO {
         return -1;
     }
 
-    // ✅ ADDED: Save autograph to recycle bin
     public int saveAutographToRecycleBin(RecycleBinItem item) {
         String sql = """
             INSERT INTO recycle_bin (original_id, item_type, user_id, title, content, metadata)

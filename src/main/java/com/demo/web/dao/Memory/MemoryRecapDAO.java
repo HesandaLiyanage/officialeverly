@@ -11,33 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * DAO for Memory Recap feature.
- * Provides random memories grouped by time, event, and group.
- */
 public class MemoryRecapDAO {
 
-    // ============================================
-    // BY TIME - Random memories from different time periods
-    // ============================================
 
-    /**
-     * Get random memories from the past week for a user
-     */
     public List<Memory> getLastWeekMemories(int userId, int limit) {
         return getMemoriesByTimeRange(userId, "NOW() - INTERVAL '7 days'", "NOW()", limit);
     }
 
-    /**
-     * Get random memories from the past month for a user
-     */
     public List<Memory> getLastMonthMemories(int userId, int limit) {
         return getMemoriesByTimeRange(userId, "NOW() - INTERVAL '1 month'", "NOW()", limit);
     }
 
-    /**
-     * Get random memories from exactly 1 year ago (within a 2-week window)
-     */
     public List<Memory> getOneYearAgoMemories(int userId, int limit) {
         return getMemoriesByTimeRange(userId,
                 "NOW() - INTERVAL '1 year' - INTERVAL '7 days'",
@@ -45,9 +29,6 @@ public class MemoryRecapDAO {
                 limit);
     }
 
-    /**
-     * Get random memories from a specific month (any year)
-     */
     public List<Memory> getMemoriesFromMonth(int userId, int month, int limit) {
         List<Memory> memories = new ArrayList<>();
         String sql = "SELECT m.memory_id, m.title, m.description, m.updated_at, m.user_id, " +
@@ -75,9 +56,6 @@ public class MemoryRecapDAO {
         return memories;
     }
 
-    /**
-     * Generic time range query with random ordering
-     */
     private List<Memory> getMemoriesByTimeRange(int userId, String fromExpr, String toExpr, int limit) {
         List<Memory> memories = new ArrayList<>();
         String sql = "SELECT m.memory_id, m.title, m.description, m.updated_at, m.user_id, " +
@@ -105,14 +83,9 @@ public class MemoryRecapDAO {
         return memories;
     }
 
-    /**
-     * Get all time-based recap bundles as a list of maps.
-     * Each map has: label, subtitle, emoji, memories list, media count
-     */
     public List<Map<String, Object>> getTimeRecaps(int userId, int memoriesPerBundle) {
         List<Map<String, Object>> recaps = new ArrayList<>();
 
-        // Last Week
         List<Memory> lastWeek = getLastWeekMemories(userId, memoriesPerBundle);
         if (!lastWeek.isEmpty()) {
             Map<String, Object> recap = new HashMap<>();
@@ -124,7 +97,6 @@ public class MemoryRecapDAO {
             recaps.add(recap);
         }
 
-        // Last Month
         List<Memory> lastMonth = getLastMonthMemories(userId, memoriesPerBundle);
         if (!lastMonth.isEmpty()) {
             Map<String, Object> recap = new HashMap<>();
@@ -136,7 +108,6 @@ public class MemoryRecapDAO {
             recaps.add(recap);
         }
 
-        // 1 Year Ago
         List<Memory> yearAgo = getOneYearAgoMemories(userId, memoriesPerBundle);
         if (!yearAgo.isEmpty()) {
             Map<String, Object> recap = new HashMap<>();
@@ -151,19 +122,10 @@ public class MemoryRecapDAO {
         return recaps;
     }
 
-    // ============================================
-    // BY EVENT - Random memories linked to events
-    // ============================================
 
-    /**
-     * Get events the user has been part of (through groups they own or are members
-     * of),
-     * along with random memories from those event's groups.
-     */
     public List<Map<String, Object>> getEventRecaps(int userId, int maxEvents, int memoriesPerEvent) {
         List<Map<String, Object>> recaps = new ArrayList<>();
 
-        // Get random events from groups the user is part of
         String sql = "SELECT DISTINCT e.event_id, e.e_title, e.e_description, e.e_date, " +
                 "e.created_at, e.group_id, e.event_pic " +
                 "FROM event e " +
@@ -189,7 +151,6 @@ public class MemoryRecapDAO {
                 event.setGroupId(rs.getInt("group_id"));
                 event.setEventPicUrl(rs.getString("event_pic"));
 
-                // Get random memories from this event's group
                 List<Memory> eventMemories = getMemoriesByGroupId(event.getGroupId(), userId, memoriesPerEvent);
 
                 Map<String, Object> recap = new HashMap<>();
@@ -209,17 +170,10 @@ public class MemoryRecapDAO {
         return recaps;
     }
 
-    // ============================================
-    // BY GROUP - Random memories from groups user is in
-    // ============================================
 
-    /**
-     * Get group-based recaps: random groups + random memories from each group
-     */
     public List<Map<String, Object>> getGroupRecaps(int userId, int maxGroups, int memoriesPerGroup) {
         List<Map<String, Object>> recaps = new ArrayList<>();
 
-        // Get random groups the user is part of (owned or joined)
         String sql = "SELECT g.group_id, g.g_name, g.g_description, g.created_at, " +
                 "g.user_id, g.group_pic, g.group_url " +
                 "FROM \"group\" g " +
@@ -245,13 +199,9 @@ public class MemoryRecapDAO {
                 group.setGroupPicUrl(rs.getString("group_pic"));
                 group.setGroupUrl(rs.getString("group_url"));
 
-                // Get random memories from this group
                 List<Memory> groupMemories = getMemoriesByGroupId(group.getGroupId(), userId, memoriesPerGroup);
 
-                // Also include user's own memories that aren't in any group
-                // (for the owner's personal memories perspective)
                 if (groupMemories.isEmpty()) {
-                    // If no memories exist in the group yet, skip this group recap
                     continue;
                 }
 
@@ -273,9 +223,6 @@ public class MemoryRecapDAO {
         return recaps;
     }
 
-    // ============================================
-    // HELPER: Get memories by group ID (random)
-    // ============================================
 
     private List<Memory> getMemoriesByGroupId(int groupId, int userId, int limit) {
         List<Memory> memories = new ArrayList<>();
@@ -302,13 +249,7 @@ public class MemoryRecapDAO {
         return memories;
     }
 
-    // ============================================
-    // STATS - Quick stats for the sidebar
-    // ============================================
 
-    /**
-     * Get total memory count for a user
-     */
     public int getTotalMemoryCount(int userId) {
         String sql = "SELECT COUNT(*) as cnt FROM memory WHERE user_id = ? " +
                 "AND (is_in_vault = FALSE OR is_in_vault IS NULL)";
@@ -324,9 +265,6 @@ public class MemoryRecapDAO {
         return 0;
     }
 
-    /**
-     * Get total event count for user's groups
-     */
     public int getTotalEventCount(int userId) {
         String sql = "SELECT COUNT(DISTINCT e.event_id) as cnt FROM event e " +
                 "INNER JOIN \"group\" g ON e.group_id = g.group_id " +
@@ -345,9 +283,6 @@ public class MemoryRecapDAO {
         return 0;
     }
 
-    /**
-     * Get total group count for a user
-     */
     public int getTotalGroupCount(int userId) {
         String sql = "SELECT COUNT(DISTINCT g.group_id) as cnt FROM \"group\" g " +
                 "LEFT JOIN group_member gm ON g.group_id = gm.group_id " +
@@ -365,9 +300,6 @@ public class MemoryRecapDAO {
         return 0;
     }
 
-    /**
-     * Get the cover media URL for a memory (first media item)
-     */
     public Integer getFirstMediaIdForMemory(int memoryId) {
         String sql = "SELECT media_id FROM memory_media WHERE memory_id = ? LIMIT 1";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -382,9 +314,6 @@ public class MemoryRecapDAO {
         return null;
     }
 
-    // ============================================
-    // Memory ResultSet Mapper (matches memoryDAO pattern)
-    // ============================================
 
     private Memory mapResultSetToMemory(ResultSet rs) throws SQLException {
         Memory memory = new Memory();
@@ -409,7 +338,6 @@ public class MemoryRecapDAO {
             memory.setCollaborative(rs.getBoolean("is_collaborative"));
             memory.setCollabShareKey(rs.getString("collab_share_key"));
         } catch (SQLException e) {
-            // Columns may not exist
         }
 
         try {
@@ -418,7 +346,6 @@ public class MemoryRecapDAO {
                 memory.setGroupId(gid);
             }
         } catch (SQLException e) {
-            // Column may not exist
         }
 
         return memory;

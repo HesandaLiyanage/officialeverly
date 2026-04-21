@@ -1,4 +1,3 @@
-// File: src/main/java/com/demo/web/dao/JournalDAO.java
 package com.demo.web.dao.Journals;
 
 import com.demo.web.model.Journals.Journal;
@@ -11,9 +10,6 @@ import java.util.List;
 
 public class JournalDAO {
 
-    /**
-     * Get all journals for a user (excluding vault items)
-     */
     public List<Journal> findByUserId(int userId) {
         String sql = "SELECT * FROM journal WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL) ORDER BY journal_id DESC";
         List<Journal> journals = new ArrayList<>();
@@ -70,7 +66,6 @@ public class JournalDAO {
         return false;
     }
 
-    // File: src/main/java/com/demo/web/dao/JournalDAO.java
 
     public int getJournalCount(int userId) {
         String sql = "SELECT COUNT(*) as count FROM journal WHERE user_id = ? AND (is_in_vault = FALSE OR is_in_vault IS NULL)";
@@ -106,17 +101,12 @@ public class JournalDAO {
                 }
             }
         } catch (SQLException e) {
-            // Fall back gracefully if created_at is unavailable.
             return 0;
         }
         return 0;
     }
 
-    // File: src/main/java/com/demo/web/dao/JournalDAO.java
 
-    /**
-     * Update an existing journal entry
-     */
     public boolean updateJournal(Journal journal) {
         String sql = "UPDATE journal SET j_title = ?, j_content = ?, journal_pic = ? " +
                 "WHERE journal_id = ?";
@@ -216,18 +206,11 @@ public class JournalDAO {
         try {
             journal.setInVault(rs.getBoolean("is_in_vault"));
         } catch (SQLException e) {
-            // Column may not exist in older queries
         }
         return journal;
     }
 
-    // ============================================
-    // VAULT METHODS
-    // ============================================
 
-    /**
-     * Get all vault journals for a user
-     */
     public List<Journal> getVaultJournalsByUserId(int userId) {
         String sql = "SELECT * FROM journal WHERE user_id = ? AND is_in_vault = TRUE ORDER BY journal_id DESC";
         List<Journal> journals = new ArrayList<>();
@@ -245,9 +228,6 @@ public class JournalDAO {
         return journals;
     }
 
-    /**
-     * Move a journal to the vault
-     */
     public boolean moveToVault(int journalId, int userId) {
         String sql = "UPDATE journal SET is_in_vault = TRUE WHERE journal_id = ? AND user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -262,9 +242,6 @@ public class JournalDAO {
         }
     }
 
-    /**
-     * Remove a journal from the vault (restore to regular view)
-     */
     public boolean removeFromVault(int journalId, int userId) {
         String sql = "UPDATE journal SET is_in_vault = FALSE WHERE journal_id = ? AND user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -279,9 +256,6 @@ public class JournalDAO {
         }
     }
 
-    /**
-     * Check if a journal is in the vault
-     */
     public boolean isJournalInVault(int journalId) {
         String sql = "SELECT is_in_vault FROM journal WHERE journal_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();

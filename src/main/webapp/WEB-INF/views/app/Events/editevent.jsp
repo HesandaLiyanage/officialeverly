@@ -188,6 +188,12 @@
             const previewContainer = document.getElementById('previewContainer');
             const eventForm = document.getElementById('eventForm');
             const submitBtn = document.getElementById('submitBtn');
+            const dateInput = document.getElementById('e_date');
+
+            if (dateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.setAttribute('min', today);
+            }
 
             browseBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
@@ -266,12 +272,23 @@
 
             // Form validation
             eventForm.addEventListener('submit', function (e) {
-                const title = document.getElementById('e_title').value.trim();
-                const date = document.getElementById('e_date').value;
+                const titleInput = document.getElementById('e_title');
+                const dateInput = document.getElementById('e_date');
+                const descInput = document.getElementById('e_description');
+                const title = (titleInput.value || '').trim();
+                const date = dateInput.value;
+                const description = (descInput.value || '').trim();
                 const checkedGroups = document.querySelectorAll('input[name="group_ids"]:checked');
+                const today = new Date().toISOString().split('T')[0];
+
+                titleInput.value = title;
+                descInput.value = description;
 
                 if (!title) { e.preventDefault(); alert('Please enter an event title'); return false; }
+                if (title.length < 2 || title.length > 120) { e.preventDefault(); alert('Event title must be between 2 and 120 characters.'); titleInput.focus(); return false; }
                 if (!date) { e.preventDefault(); alert('Please select an event date'); return false; }
+                if (date < today) { e.preventDefault(); alert('Event date must be today or a future date.'); dateInput.focus(); return false; }
+                if (description.length > 1000) { e.preventDefault(); alert('Description must be 1000 characters or less.'); descInput.focus(); return false; }
                 if (checkedGroups.length === 0) { e.preventDefault(); alert('Please select at least one group'); return false; }
 
                 submitBtn.disabled = true;

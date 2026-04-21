@@ -9,18 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-/**
- * Data Access Object for Feed Profiles.
- * Handles all database operations related to feed profiles.
- */
 public class FeedProfileDAO {
 
-    /**
-     * Find a feed profile by user ID
-     * 
-     * @param userId The user's ID
-     * @return FeedProfile if exists, null otherwise
-     */
     public FeedProfile findByUserId(int userId) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -50,12 +40,6 @@ public class FeedProfileDAO {
         return null;
     }
 
-    /**
-     * Find a feed profile by feed username
-     * 
-     * @param feedUsername The feed username
-     * @return FeedProfile if exists, null otherwise
-     */
     public FeedProfile findByUsername(String feedUsername) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -85,12 +69,6 @@ public class FeedProfileDAO {
         return null;
     }
 
-    /**
-     * Find a feed profile by feed profile ID
-     * 
-     * @param feedProfileId The feed profile ID
-     * @return FeedProfile if exists, null otherwise
-     */
     public FeedProfile findByFeedProfileId(int feedProfileId) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -120,12 +98,6 @@ public class FeedProfileDAO {
         return null;
     }
 
-    /**
-     * Check if a feed username is already taken
-     * 
-     * @param feedUsername The username to check
-     * @return true if username exists, false otherwise
-     */
     public boolean usernameExists(String feedUsername) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -149,12 +121,6 @@ public class FeedProfileDAO {
         }
     }
 
-    /**
-     * Create a new feed profile
-     * 
-     * @param profile The FeedProfile to create
-     * @return true if created successfully, false otherwise
-     */
     public boolean createProfile(FeedProfile profile) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -194,12 +160,6 @@ public class FeedProfileDAO {
         }
     }
 
-    /**
-     * Update an existing feed profile
-     * 
-     * @param profile The FeedProfile with updated data
-     * @return true if updated successfully, false otherwise
-     */
     public boolean updateProfile(FeedProfile profile) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -229,13 +189,6 @@ public class FeedProfileDAO {
         }
     }
 
-    /**
-     * Update profile picture URL
-     * 
-     * @param profileId  The feed profile ID
-     * @param pictureUrl The new picture URL
-     * @return true if updated successfully
-     */
     public boolean updateProfilePicture(int profileId, String pictureUrl) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -261,12 +214,6 @@ public class FeedProfileDAO {
         }
     }
 
-    /**
-     * Delete a feed profile by user ID
-     * 
-     * @param userId The user ID
-     * @return true if deleted successfully
-     */
     public boolean deleteByUserId(int userId) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -289,9 +236,6 @@ public class FeedProfileDAO {
         }
     }
 
-    /**
-     * Map ResultSet to FeedProfile object
-     */
     private FeedProfile mapResultSetToFeedProfile(ResultSet rs) throws SQLException {
         FeedProfile profile = new FeedProfile();
         profile.setFeedProfileId(rs.getInt("feed_profile_id"));
@@ -304,14 +248,6 @@ public class FeedProfileDAO {
         return profile;
     }
 
-    /**
-     * Get random profiles excluding a specific profile ID
-     * Used for "Suggested for you" section as a fallback
-     * 
-     * @param excludeProfileId Profile ID to exclude (current user)
-     * @param limit            Maximum number of profiles to return
-     * @return List of random FeedProfile objects
-     */
     public java.util.List<FeedProfile> findRandomProfiles(int excludeProfileId, int limit) {
         java.util.List<FeedProfile> profiles = new java.util.ArrayList<>();
         Connection conn = null;
@@ -337,7 +273,6 @@ public class FeedProfileDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            // Return empty list instead of throwing
         } finally {
             closeResources(rs, stmt, conn);
         }
@@ -345,9 +280,6 @@ public class FeedProfileDAO {
         return profiles;
     }
 
-    /**
-     * Close database resources
-     */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
             if (rs != null)

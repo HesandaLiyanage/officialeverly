@@ -2,7 +2,6 @@ package com.demo.web.service;
 
 import com.demo.web.dao.Autographs.AutographEntryDAO;
 import com.demo.web.dao.Autographs.autographDAO;
-import com.demo.web.dao.Autographs.AutographActivityDAO;
 import com.demo.web.dao.Notifications.NotificationDAO;
 import com.demo.web.model.Autographs.AutographActivity;
 import com.demo.web.model.Autographs.AutographEntry;
@@ -19,13 +18,11 @@ public class AutographService {
 
     private final autographDAO autographDAO;
     private final AutographEntryDAO entryDAO;
-    private final AutographActivityDAO activityDAO;
     private final NotificationDAO notifDAO;
 
     public AutographService() {
         this.autographDAO = new autographDAO();
         this.entryDAO = new AutographEntryDAO();
-        this.activityDAO = new AutographActivityDAO();
         this.notifDAO = new NotificationDAO();
     }
 
@@ -211,11 +208,14 @@ public class AutographService {
                 response.setMessage("Autograph submitted successfully!");
                 try {
                     int ownerUserId = ag.getUserId();
+                    String bookTitle = ag.getTitle() != null && !ag.getTitle().trim().isEmpty()
+                            ? ag.getTitle().trim()
+                            : "your autograph book";
                     notifDAO.createNotification(
                             ownerUserId,
                             "comments_reactions",
-                            "New Autograph Entry",
-                            "wrote in your autograph book",
+                            bookTitle,
+                            "wrote in " + bookTitle,
                             "/autographs",
                             request.getUserId());
                 } catch (Exception ex) {}
@@ -279,7 +279,7 @@ public class AutographService {
                 response.setAutographs(getAutographsByUserId(request.getUserId()));
                 
                 try {
-                    List<AutographActivity> recentActivities = activityDAO.findByAutographOwner(request.getUserId(), 5);
+                    List<AutographActivity> recentActivities = notifDAO.getAutographRecentActivities(request.getUserId(), 5);
                     response.setRecentActivities(recentActivities);
                 } catch (Exception e) {
                     response.setRecentActivities(Collections.emptyList());

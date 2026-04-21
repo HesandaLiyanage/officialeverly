@@ -1,7 +1,5 @@
 package com.demo.web.controller.Notifications;
 
-import com.demo.web.dto.Notifications.NotificationPrefsGetRequest;
-import com.demo.web.dto.Notifications.NotificationPrefsGetResponse;
 import com.demo.web.dto.Notifications.NotificationPrefsPostRequest;
 import com.demo.web.dto.Notifications.NotificationPrefsPostResponse;
 import com.demo.web.service.NotificationService;
@@ -26,19 +24,7 @@ public class NotificationPrefs extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        Integer userId = (Integer) request.getSession().getAttribute("user_id");
-        NotificationPrefsGetRequest req = new NotificationPrefsGetRequest(userId);
-        
-        NotificationPrefsGetResponse res = notificationService.getPreferences(req);
-
-        if (res.getRedirectUrl() != null) {
-            response.sendRedirect(request.getContextPath() + res.getRedirectUrl());
-            return;
-        }
-
-        request.setAttribute("notifPrefs", res.getPrefs());
-        request.getRequestDispatcher("/WEB-INF/views/app/Settings/settingsnotifications.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/settingsaccount");
     }
 
     @Override

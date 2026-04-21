@@ -69,10 +69,10 @@
                               </div>
                             </div>
 
-                            <label for="rememberme">
+                            <%-- <label for="rememberme">
                               <input type="checkbox" id="rememberme" name="rememberme">
                               Remember me
-                            </label>
+                            </label> --%>
                             <button type="submit" class="btn btn-primary">Log In</button>
                     </form>
 
@@ -103,8 +103,8 @@
         // Password visibility toggle
         function setupPasswordToggle(toggleBtn, passwordField) {
           toggleBtn.addEventListener('click', function () {
-            const eyeOffIcon = toggleBtn.querySelector('.eye-icon');
-            const eyeIcon = toggleBtn.querySelector('.eye-off-icon');
+            const eyeIcon = toggleBtn.querySelector('.eye-icon');
+            const eyeOffIcon = toggleBtn.querySelector('.eye-off-icon');
 
 
             if (passwordField.type === 'password') {

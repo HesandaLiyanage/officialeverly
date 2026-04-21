@@ -149,7 +149,9 @@ public class JournalView extends HttpServlet {
 
         com.google.gson.Gson gson = new com.google.gson.Gson();
         request.setAttribute("htmlContentJson", gson.toJson(htmlContent));
-        request.setAttribute("decorationsJsonEscaped", gson.toJson(decorationsJson));
+        // decorationsJson is already a JSON array string (e.g., [] or [{...}]).
+        // Do not JSON-encode it again, otherwise edit page receives a string instead of an array.
+        request.setAttribute("decorationsJsonEscaped", decorationsJson);
         request.setAttribute("backgroundThemeJson", gson.toJson(backgroundTheme));
     }
 }

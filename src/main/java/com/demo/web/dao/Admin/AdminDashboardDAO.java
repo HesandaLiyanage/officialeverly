@@ -6,98 +6,56 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * Data Access Object for Admin Dashboard statistics.
- * Provides overview and analytics data for the admin panel.
- */
 public class AdminDashboardDAO {
 
     private static final Logger logger = Logger.getLogger(AdminDashboardDAO.class.getName());
 
-    // ===== OVERVIEW STATS =====
 
-    /**
-     * Get total user count.
-     */
     public int getTotalUsers() {
         return getCount("SELECT COUNT(*) FROM users");
     }
 
-    /**
-     * Get active user count.
-     */
     public int getActiveUsers() {
         return getCount("SELECT COUNT(*) FROM users WHERE is_active = true");
     }
 
-    /**
-     * Get new users in the last 7 days.
-     */
     public int getNewUsersThisWeek() {
         return getCount("SELECT COUNT(*) FROM users WHERE joined_at >= CURRENT_DATE - INTERVAL '7 days'");
     }
 
-    /**
-     * Get new users in the last 30 days.
-     */
     public int getNewUsersThisMonth() {
         return getCount("SELECT COUNT(*) FROM users WHERE joined_at >= CURRENT_DATE - INTERVAL '30 days'");
     }
 
-    /**
-     * Get total feed posts count.
-     */
     public int getTotalPosts() {
         return getCount("SELECT COUNT(*) FROM feed_posts");
     }
 
-    /**
-     * Get total memories count.
-     */
     public int getTotalMemories() {
         return getCount("SELECT COUNT(*) FROM memory");
     }
 
-    /**
-     * Get total journals count.
-     */
     public int getTotalJournals() {
         return getCount("SELECT COUNT(*) FROM journal");
     }
 
-    /**
-     * Get total groups count.
-     */
     public int getTotalGroups() {
         return getCount("SELECT COUNT(*) FROM \"group\"");
     }
 
-    /**
-     * Get total events count.
-     */
     public int getTotalEvents() {
         return getCount("SELECT COUNT(*) FROM event");
     }
 
-    /**
-     * Get pending reports count.
-     */
     public int getPendingReports() {
         return getCount("SELECT COUNT(*) FROM post_reports WHERE status = 'pending'");
     }
 
-    /**
-     * Get total content count (posts + memories + journals).
-     */
     public int getTotalContent() {
         return getTotalPosts() + getTotalMemories() + getTotalJournals();
     }
 
-    // ===== ANALYTICS STATS =====
 
-    /**
-     * Get user registrations per day for the last N days.
-     */
     public List<Map<String, Object>> getUserRegistrationTrend(int days) {
         List<Map<String, Object>> trend = new ArrayList<>();
 
@@ -121,9 +79,6 @@ public class AdminDashboardDAO {
         return trend;
     }
 
-    /**
-     * Get posts created per day for the last N days.
-     */
     public List<Map<String, Object>> getPostTrend(int days) {
         List<Map<String, Object>> trend = new ArrayList<>();
 
@@ -147,9 +102,6 @@ public class AdminDashboardDAO {
         return trend;
     }
 
-    /**
-     * Get top posters (users with most posts).
-     */
     public List<Map<String, Object>> getTopPosters(int limit) {
         List<Map<String, Object>> posters = new ArrayList<>();
 
@@ -177,9 +129,6 @@ public class AdminDashboardDAO {
         return posters;
     }
 
-    /**
-     * Get most liked posts.
-     */
     public List<Map<String, Object>> getMostLikedPosts(int limit) {
         List<Map<String, Object>> posts = new ArrayList<>();
 
@@ -211,9 +160,6 @@ public class AdminDashboardDAO {
         return posts;
     }
 
-    /**
-     * Get recent user sign-ups (last 5).
-     */
     public List<Map<String, Object>> getRecentSignups(int limit) {
         List<Map<String, Object>> users = new ArrayList<>();
 
@@ -239,16 +185,12 @@ public class AdminDashboardDAO {
         return users;
     }
 
-    /**
-     * Get content breakdown (posts, memories, journals, groups, events).
-     */
     public Map<String, Integer> getContentBreakdown() {
         Map<String, Integer> breakdown = new HashMap<>();
         breakdown.put("posts", getTotalPosts());
         breakdown.put("memories", getTotalMemories());
         breakdown.put("journals", getTotalJournals());
 
-        // Safely get groups and events count
         try {
             breakdown.put("groups", getTotalGroups());
         } catch (Exception e) {
@@ -263,7 +205,6 @@ public class AdminDashboardDAO {
         return breakdown;
     }
 
-    // ===== HELPER =====
 
     private int getCount(String sql) {
         try (Connection conn = DatabaseUtil.getConnection();
