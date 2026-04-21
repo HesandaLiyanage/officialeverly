@@ -96,7 +96,7 @@ public class memoryDAO {
         try {
             conn = DatabaseUtil.getConnection();
             String sql = "SELECT memory_id, title, description, updated_at, user_id, " +
-                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, nic " +
+                    "cover_media_id, created_timestamp, is_public, share_key, expires_at, is_link_shared, " +
                     "is_collaborative, collab_share_key, group_id, is_in_vault " +
                     "FROM memory WHERE memory_id = ?";
 
