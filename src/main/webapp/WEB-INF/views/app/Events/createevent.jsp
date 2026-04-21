@@ -77,12 +77,6 @@
                                                     <input type="date" class="form-input" name="e_date" id="e_date"
                                                         value="<c:out value='${sessionScope.formData_e_date}' />" required />
                                                     <c:remove var="formData_e_date" scope="session" />
-                                                    <br/>
-                                                    <label class="form-label">NIC <span
-                                                            style="color: #ef4444;">*</span></label>
-                                                    <input type="text" class="form-input" name="e_nic" id="e_nic"
-                                                            required />
-                                                    <c:remove var="formData_e_date" scope="session" />
                                                 </div>
                                                 
 
@@ -283,17 +277,14 @@
                                 eventForm.addEventListener('submit', function (e) {
                                     const titleInput = document.getElementById('e_title');
                                     const dateInput = document.getElementById('e_date');
-                                    const nicInput = document.getElementById('e_nic');
                                     const descInput = document.getElementById('e_description');
 
                                     const title = (titleInput.value || '').trim();
                                     const date = dateInput.value;
-                                    const nic = (nicInput.value || '').trim();
                                     const description = (descInput.value || '').trim();
                                     const checkedGroups = document.querySelectorAll('input[name="group_ids"]:checked');
 
                                     titleInput.value = title;
-                                    nicInput.value = nic;
                                     descInput.value = description;
 
                                     if (!title) {
@@ -319,13 +310,6 @@
                                         e.preventDefault();
                                         alert('Event date must be today or a future date.');
                                         dateInput.focus();
-                                        return false;
-                                    }
-
-                                    if (!/^(?:\d{9}[VvXx]|\d{12})$/.test(nic)) {
-                                        e.preventDefault();
-                                        alert('NIC must be 9 digits + V/X or 12 digits.');
-                                        nicInput.focus();
                                         return false;
                                     }
 

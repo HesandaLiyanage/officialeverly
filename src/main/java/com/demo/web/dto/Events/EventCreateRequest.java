@@ -1,17 +1,71 @@
 package com.demo.web.dto.Events;
 
-import javax.servlet.http.Part; import java.util.List; public class EventCreateRequest {
+import javax.servlet.http.Part;
+import java.util.List;
+
+public class EventCreateRequest {
   private int userId;
   private int time;
   private String title;
+  private String description;
+  private String dateStr;
+  private List<Integer> selectedGroupIds;
+  private Part filePart;
+  private String uploadPath;
 
-  public String getNic() {
-    return nic;
+  public int getUserId() {
+    return userId;
   }
 
-  public void setNic(String nic) {
-    this.nic = nic;
+  public void setUserId(int userId) {
+    this.userId = userId;
   }
 
-  private String nic;
-  private String description; private String dateStr; private List<Integer> selectedGroupIds; private Part filePart; private String uploadPath; public int getUserId() { return userId; } public void setUserId(int userId) { this.userId = userId; } public String getTitle() { return title; } public void setTitle(String title) { this.title = title; } public String getDescription() { return description; } public void setDescription(String description) { this.description = description; } public String getDateStr() { return dateStr; } public void setDateStr(String dateStr) { this.dateStr = dateStr; } public List<Integer> getSelectedGroupIds() { return selectedGroupIds; } public void setSelectedGroupIds(List<Integer> selectedGroupIds) { this.selectedGroupIds = selectedGroupIds; } public Part getFilePart() { return filePart; } public void setFilePart(Part filePart) { this.filePart = filePart; } public String getUploadPath() { return uploadPath; } public void setUploadPath(String uploadPath) { this.uploadPath = uploadPath; } }
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getDateStr() {
+    return dateStr;
+  }
+
+  public void setDateStr(String dateStr) {
+    this.dateStr = dateStr;
+  }
+
+  public List<Integer> getSelectedGroupIds() {
+    return selectedGroupIds;
+  }
+
+  public void setSelectedGroupIds(List<Integer> selectedGroupIds) {
+    this.selectedGroupIds = selectedGroupIds;
+  }
+
+  public Part getFilePart() {
+    return filePart;
+  }
+
+  public void setFilePart(Part filePart) {
+    this.filePart = filePart;
+  }
+
+  public String getUploadPath() {
+    return uploadPath;
+  }
+
+  public void setUploadPath(String uploadPath) {
+    this.uploadPath = uploadPath;
+  }
+}

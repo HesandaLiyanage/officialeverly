@@ -45,7 +45,6 @@ public class EventCreate extends HttpServlet {
       eventCreateRequest.setDescription(request.getParameter("e_description"));
       eventCreateRequest.setDateStr(request.getParameter("e_date"));
       //eventCreateRequest.setTimeStr(request.getParameter("e_time"));
-      eventCreateRequest.setNic(request.getParameter("e_nic"));
 
 
       // 3. Handling Arrays/Multiple values (Replaced the manual Part loop)
