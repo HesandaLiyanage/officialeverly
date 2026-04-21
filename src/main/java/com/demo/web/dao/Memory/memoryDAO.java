@@ -240,7 +240,7 @@ public class memoryDAO {
         item.setUserId(userId);
         item.setTitle(memory.getTitle());
         item.setContent(memory.getDescription());
-        item.setMetadata(buildRecycleMetadata(memory));
+        item.setMetadata(buildRecycleMetadata(memoryId, memory));
 
         RecycleBinDAO recycleBinDAO = new RecycleBinDAO();
         int recycleId = recycleBinDAO.saveMemoryToRecycleBin(item);
@@ -264,9 +264,37 @@ public class memoryDAO {
         memory.setUserId(userId);
         memory.setPublic(parseBooleanMetadata(item.getMetadata(), "isPublic"));
         memory.setGroupId(parseIntegerMetadata(item.getMetadata(), "groupId"));
+        boolean isCollaborative = parseBooleanMetadata(item.getMetadata(), "isCollaborative");
+        memory.setCollaborative(isCollaborative);
 
-        boolean restored = createMemory(memory) > 0;
+        int newMemoryId;
+        if (isCollaborative) {
+            newMemoryId = createCollabMemory(memory);
+            if (newMemoryId > 0) {
+                new MemoryMemberDAO().addMember(newMemoryId, userId, "owner");
+            }
+        } else {
+            newMemoryId = createMemory(memory);
+        }
+
+        boolean restored = newMemoryId > 0;
         if (restored) {
+            List<Integer> mediaIds = parseIntegerListMetadata(item.getMetadata(), "mediaIds");
+            for (Integer mediaId : mediaIds) {
+                try {
+                    linkMediaToMemory(newMemoryId, mediaId);
+                } catch (SQLException ignored) {
+                }
+            }
+
+            Integer coverMediaId = parseIntegerMetadata(item.getMetadata(), "coverMediaId");
+            if (coverMediaId != null) {
+                try {
+                    setCoverMedia(newMemoryId, coverMediaId);
+                } catch (SQLException ignored) {
+                }
+            }
+
             recycleBinDAO.deleteFromRecycleBin(recycleBinId);
             return true;
         }
@@ -373,7 +401,9 @@ public class memoryDAO {
         }
     }
 
-    private String buildRecycleMetadata(Memory memory) {
+    private String buildRecycleMetadata(int memoryId, Memory memory) throws SQLException {
+        List<Integer> mediaIds = getMediaIdsByMemoryId(memoryId);
+
         StringBuilder metadata = new StringBuilder("{");
         metadata.append("\"groupId\":");
         if (memory.getGroupId() != null) {
@@ -381,8 +411,46 @@ public class memoryDAO {
         } else {
             metadata.append("null");
         }
-        metadata.append(",\"isPublic\":").append(memory.isPublic()).append("}");
+        metadata.append(",\"isPublic\":").append(memory.isPublic());
+        metadata.append(",\"isCollaborative\":").append(memory.isCollaborative());
+        metadata.append(",\"coverMediaId\":");
+        if (memory.getCoverMediaId() != null) {
+            metadata.append(memory.getCoverMediaId());
+        } else {
+            metadata.append("null");
+        }
+        metadata.append(",\"mediaIds\":[");
+        for (int i = 0; i < mediaIds.size(); i++) {
+            if (i > 0) {
+                metadata.append(",");
+            }
+            metadata.append(mediaIds.get(i));
+        }
+        metadata.append("]}");
         return metadata.toString();
+    }
+
+    private List<Integer> getMediaIdsByMemoryId(int memoryId) throws SQLException {
+        List<Integer> mediaIds = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "SELECT media_id FROM memory_media WHERE memory_id = ? ORDER BY media_id ASC";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, memoryId);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                mediaIds.add(rs.getInt("media_id"));
+            }
+
+            return mediaIds;
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
     }
 
     private Integer parseIntegerMetadata(String metadata, String key) {
@@ -400,6 +468,40 @@ public class memoryDAO {
 
     private boolean parseBooleanMetadata(String metadata, String key) {
         return Boolean.parseBoolean(extractMetadataValue(metadata, key));
+    }
+
+    private List<Integer> parseIntegerListMetadata(String metadata, String key) {
+        List<Integer> values = new ArrayList<>();
+        if (metadata == null) {
+            return values;
+        }
+
+        String marker = "\"" + key + "\":[";
+        int start = metadata.indexOf(marker);
+        if (start == -1) {
+            return values;
+        }
+
+        start += marker.length();
+        int end = metadata.indexOf("]", start);
+        if (end == -1) {
+            return values;
+        }
+
+        String listRaw = metadata.substring(start, end).trim();
+        if (listRaw.isEmpty()) {
+            return values;
+        }
+
+        String[] tokens = listRaw.split(",");
+        for (String token : tokens) {
+            try {
+                values.add(Integer.parseInt(token.trim()));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        return values;
     }
 
     private String extractMetadataValue(String metadata, String key) {

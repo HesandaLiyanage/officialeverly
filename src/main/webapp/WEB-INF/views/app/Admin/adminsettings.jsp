@@ -27,7 +27,7 @@
         }
         .settings-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr;
             gap: 1.5rem;
             align-items: start;
         }
@@ -115,32 +115,6 @@
             padding: 0.7rem 1rem;
             font-weight: 600;
             cursor: pointer;
-        }
-        .summary-list {
-            display: grid;
-            gap: 0.8rem;
-        }
-        .summary-item {
-            background: #f7fafc;
-            border-radius: 10px;
-            padding: 0.9rem 1rem;
-        }
-        .summary-name {
-            font-weight: 700;
-            color: #1a202c;
-        }
-        .summary-value {
-            color: #4a5568;
-            margin-top: 0.2rem;
-            font-size: 0.9rem;
-        }
-        .callout {
-            border-left: 4px solid #5b4cdb;
-            padding: 0.9rem 1rem;
-            background: #f8f7ff;
-            color: #4a5568;
-            border-radius: 8px;
-            margin-top: 1rem;
         }
         @media (max-width: 980px) {
             .settings-grid,
@@ -231,28 +205,6 @@
                     </c:forEach>
                 </div>
 
-                <div class="settings-card">
-                    <h2>What Is Real vs Placeholder</h2>
-                    <div class="summary-list">
-                        <div class="summary-item">
-                            <div class="summary-name">Implemented now</div>
-                            <div class="summary-value">Free/basic storage cap and memory cap management through the existing <code>plans</code> table.</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-name">Still placeholder before</div>
-                            <div class="summary-value">Default language, app name, and fake storage labels in the old settings mockup.</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-name">Why this matters</div>
-                            <div class="summary-value">The Memory module already checks these DB values during create/list flows, so plan changes here now have real effect.</div>
-                        </div>
-                    </div>
-
-                    <div class="callout">
-                        If you want more admin controls later, the next useful ones would be toggling registrations on/off,
-                        changing default moderation behavior, and giving real admin roles instead of the current single-admin assumption.
-                    </div>
-                </div>
             </div>
         </div>
     </div>
