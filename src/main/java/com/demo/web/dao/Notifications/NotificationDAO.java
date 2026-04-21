@@ -64,14 +64,8 @@ public class NotificationDAO {
         }
     }
 
-    // =========== NOTIFICATION PREFERENCES ===========
 
-    /**
-     * Get all notification preferences for a user.
-     * If a preference doesn't exist yet, it defaults to enabled (true).
-     */
     public Map<String, Boolean> getPreferences(int userId) {
-        // Default all to true
         Map<String, Boolean> prefs = new LinkedHashMap<>();
         prefs.put("memory_uploads", true);
         prefs.put("comments_reactions", true);
@@ -101,9 +95,6 @@ public class NotificationDAO {
         return prefs;
     }
 
-    /**
-     * Update a single notification preference (upsert).
-     */
     public boolean updatePreference(int userId, String notifType, boolean enabled) {
         String sql = "INSERT INTO notification_preferences (user_id, notif_type, enabled, updated_at) " +
                 "VALUES (?, ?, ?, CURRENT_TIMESTAMP) " +
@@ -121,9 +112,6 @@ public class NotificationDAO {
         return false;
     }
 
-    /**
-     * Check if a specific notification type is enabled for a user.
-     */
     public boolean isNotificationEnabled(int userId, String notifType) {
         String sql = "SELECT enabled FROM notification_preferences WHERE user_id = ? AND notif_type = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -141,15 +129,9 @@ public class NotificationDAO {
         return true; // default enabled
     }
 
-    // =========== NOTIFICATIONS ===========
 
-    /**
-     * Create a notification for a user.
-     * Checks preferences first — won't create if user disabled that type.
-     */
     public boolean createNotification(int userId, String notifType, String title, String message, String link,
             Integer actorId) {
-        // Don't notify yourself
         if (actorId != null && actorId == userId) {
             return false;
         }
@@ -176,9 +158,6 @@ public class NotificationDAO {
         return false;
     }
 
-    /**
-     * Get user_id from feed_profile_id.
-     */
     public int getUserIdFromFeedProfile(int feedProfileId) {
         String sql = "SELECT user_id FROM feed_profiles WHERE feed_profile_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -194,9 +173,6 @@ public class NotificationDAO {
         return -1;
     }
 
-    /**
-     * Get the post owner's user_id from a post_id.
-     */
     public int getPostOwnerUserId(int postId) {
         String sql = "SELECT fp.user_id FROM feed_posts p JOIN feed_profiles fp ON p.feed_profile_id = fp.feed_profile_id WHERE p.post_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -212,9 +188,6 @@ public class NotificationDAO {
         return -1;
     }
 
-    /**
-     * Get the autograph owner's user_id from an autograph_id.
-     */
     public int getAutographOwnerUserId(int autographId) {
         String sql = "SELECT user_id FROM autographs WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -284,9 +257,6 @@ public class NotificationDAO {
         return recipients;
     }
 
-    /**
-     * Get all member user_ids of a collab memory (excluding a specific user).
-     */
     public List<Integer> getCollabMemoryMembers(int memoryId, int excludeUserId) {
         List<Integer> members = new ArrayList<>();
         String sql = "SELECT user_id FROM memory_members WHERE memory_id = ? AND user_id != ?";
@@ -302,7 +272,6 @@ public class NotificationDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        // Also add the memory owner
         String ownerSql = "SELECT user_id FROM memories WHERE memory_id = ? AND user_id != ?";
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(ownerSql)) {
@@ -322,9 +291,6 @@ public class NotificationDAO {
         return members;
     }
 
-    /**
-     * Get all notifications for a user (most recent first), with actor info.
-     */
     public List<Map<String, Object>> getNotifications(int userId, int limit) {
         List<Map<String, Object>> notifications = new ArrayList<>();
         String sql = "SELECT n.*, " +
@@ -358,9 +324,6 @@ public class NotificationDAO {
         return notifications;
     }
 
-    /**
-     * Get count of unread notifications.
-     */
     public int getUnreadCount(int userId) {
         String sql = "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = FALSE";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -376,9 +339,6 @@ public class NotificationDAO {
         return 0;
     }
 
-    /**
-     * Mark a single notification as read.
-     */
     public boolean markAsRead(int notificationId, int userId) {
         String sql = "UPDATE notifications SET is_read = TRUE WHERE notification_id = ? AND user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -392,9 +352,6 @@ public class NotificationDAO {
         return false;
     }
 
-    /**
-     * Mark all notifications as read for a user.
-     */
     public boolean markAllAsRead(int userId) {
         String sql = "UPDATE notifications SET is_read = TRUE WHERE user_id = ? AND is_read = FALSE";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -407,9 +364,6 @@ public class NotificationDAO {
         return false;
     }
 
-    /**
-     * Delete a notification.
-     */
     public boolean deleteNotification(int notificationId, int userId) {
         String sql = "DELETE FROM notifications WHERE notification_id = ? AND user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();

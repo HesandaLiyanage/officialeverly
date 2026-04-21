@@ -195,7 +195,15 @@
                     existingHtml = JSON.parse(elHtml.textContent);
                 }
                 if (elDec && elDec.textContent.trim().length > 0) {
-                    existingDecorations = JSON.parse(elDec.textContent);
+                    var parsedDecorations = JSON.parse(elDec.textContent);
+                    if (typeof parsedDecorations === 'string') {
+                        try {
+                            parsedDecorations = JSON.parse(parsedDecorations);
+                        } catch (ignored) {
+                            parsedDecorations = [];
+                        }
+                    }
+                    existingDecorations = Array.isArray(parsedDecorations) ? parsedDecorations : [];
                 }
                 if (elBg && elBg.textContent.trim().length > 0) {
                     existingBackground = JSON.parse(elBg.textContent);
@@ -229,7 +237,7 @@
                 }
 
                 // Load existing decorations
-                if (existingDecorations && existingDecorations.length > 0) {
+                if (Array.isArray(existingDecorations) && existingDecorations.length > 0) {
                     existingDecorations.forEach(dec => {
                         var decoration = document.createElement('div');
                         decoration.className = dec.className || 'decoration';

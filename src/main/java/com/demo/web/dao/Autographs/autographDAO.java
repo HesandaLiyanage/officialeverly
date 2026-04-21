@@ -1,4 +1,3 @@
-// File: com/demo/web/dao/autographDAO.java (With Debugging Output)
 package com.demo.web.dao.Autographs;
 
 import com.demo.web.model.Autographs.autograph;
@@ -15,9 +14,6 @@ public class autographDAO {
 
     private static final Logger logger = Logger.getLogger(autographDAO.class.getName());
 
-    /**
-     * Create a new autograph
-     */
     public boolean createAutograph(autograph autograph) {
         String sql = "INSERT INTO autograph (a_title, a_description, created_at, user_id, autograph_pic_url) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -38,7 +34,6 @@ public class autographDAO {
     }
 
     public String getOrCreateShareToken(int autographId) throws SQLException {
-        // ... existing implementation ...
         String selectSql = "SELECT share_token FROM autograph WHERE autograph_id = ?";
         String updateSql = "UPDATE autograph SET share_token = ? WHERE autograph_id = ?";
         String newToken = generateToken();
@@ -56,7 +51,6 @@ public class autographDAO {
                 }
             }
 
-            // Generate new token
             try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
                 updateStmt.setString(1, newToken);
                 updateStmt.setInt(2, autographId);
@@ -67,9 +61,6 @@ public class autographDAO {
         }
     }
 
-    /**
-     * Revoke share token (set to NULL)
-     */
     public boolean revokeShareToken(int autographId) {
         String sql = "UPDATE autograph SET share_token = NULL WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -84,9 +75,6 @@ public class autographDAO {
         }
     }
 
-    /**
-     * Get autograph by share token
-     */
     public autograph getAutographByShareToken(String shareToken) throws SQLException {
         String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url, share_token "
                 +
@@ -114,9 +102,6 @@ public class autographDAO {
         return null;
     }
 
-    /**
-     * Get autograph by ID
-     */
     public autograph findById(int autographId) {
         String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url FROM autograph WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -140,42 +125,7 @@ public class autographDAO {
         return null;
     }
 
-    /**
-     * Get autograph by share token
-     */
-    // public autograph getAutographByShareToken(String shareToken) {
-    // String sql = "SELECT autograph_id, a_title, a_description, created_at,
-    // user_id, autograph_pic_url, share_token FROM autograph WHERE share_token =
-    // ?";
-    // try (Connection conn = DatabaseUtil.getConnection();
-    // PreparedStatement stmt = conn.prepareStatement(sql)) {
-    // stmt.setString(1, shareToken);
-    // ResultSet rs = stmt.executeQuery();
-    // if (rs.next()) {
-    // autograph result = mapResultSetToAutograph(rs);
-    // System.out.println(
-    // "[DEBUG autographDAO] getAutographByShareToken(" + shareToken + ") returned:
-    // " + result);
-    // return result;
-    // } else {
-    // System.out.println("[DEBUG autographDAO] getAutographByShareToken(" +
-    // shareToken
-    // + ") returned null (record not found).");
-    // }
-    // } catch (SQLException e) {
-    // System.out.println("[DEBUG autographDAO] Error while fetching autograph by
-    // share token " + shareToken + ": "
-    // + e.getMessage());
-    // e.printStackTrace();
-    // throw new RuntimeException("Error while fetching autograph by share token",
-    // e);
-    // }
-    // return null;
-    // }
 
-    /**
-     * Get all autographs by a specific user
-     */
     public List<autograph> findByUserId(int userId) {
         String sql = "SELECT autograph_id, a_title, a_description, created_at, user_id, autograph_pic_url, share_token FROM autograph WHERE user_id = ?";
         List<autograph> autographs = new ArrayList<>();
@@ -197,12 +147,7 @@ public class autographDAO {
         return autographs;
     }
 
-    /**
-     * Update an existing autograph
-     */
     public boolean updateAutograph(autograph autograph) {
-        // Include autograph_pic_url in the UPDATE statement
-        // Ensure the WHERE clause uses autograph_id
         String sql = "UPDATE autograph SET a_title = ?, a_description = ?, autograph_pic_url = ? WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -229,9 +174,6 @@ public class autographDAO {
         }
     }
 
-    /**
-     * Delete autograph by ID
-     */
     public boolean deleteAutograph(int autographId) {
         String sql = "DELETE FROM autograph WHERE autograph_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -249,9 +191,6 @@ public class autographDAO {
         }
     }
 
-    /**
-     * Map ResultSet to autograph object
-     */
     private autograph mapResultSetToAutograph(ResultSet rs) throws SQLException {
         autograph autograph = new autograph();
         autograph.setAutographId(rs.getInt("autograph_id"));
@@ -260,18 +199,13 @@ public class autographDAO {
         autograph.setCreatedAt(rs.getTimestamp("created_at"));
         autograph.setUserId(rs.getInt("user_id"));
         autograph.setAutographPicUrl(rs.getString("autograph_pic_url"));
-        // Try to get share_token if it exists in the result set
         try {
             autograph.setShareToken(rs.getString("share_token"));
         } catch (SQLException e) {
-            // Column doesn't exist in this query, ignore
         }
         return autograph;
     }
 
-    /**
-     * Move autograph to recycle bin (soft delete)
-     */
     public boolean deleteAutographToRecycleBin(int autographId, int userId) {
         autograph autograph = findById(autographId);
         if (autograph == null || autograph.getUserId() != userId) {
@@ -304,9 +238,6 @@ public class autographDAO {
         }
     }
 
-    /**
-     * Restore autograph from recycle bin
-     */
     public boolean restoreAutographFromRecycleBin(int recycleBinId, int userId) {
         RecycleBinDAO rbDao = new RecycleBinDAO();
         RecycleBinItem item = rbDao.findById(recycleBinId);

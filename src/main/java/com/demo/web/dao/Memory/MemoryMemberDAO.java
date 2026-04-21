@@ -7,14 +7,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO for memory collaboration membership operations
- */
 public class MemoryMemberDAO {
 
-    /**
-     * Add a member to a collaborative memory
-     */
     public boolean addMember(int memoryId, int userId, String role) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -42,9 +36,6 @@ public class MemoryMemberDAO {
         }
     }
 
-    /**
-     * Remove a member from a collaborative memory
-     */
     public boolean removeMember(int memoryId, int userId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -65,16 +56,10 @@ public class MemoryMemberDAO {
         }
     }
 
-    /**
-     * Member leaves a collaborative memory (cannot be owner)
-     */
     public boolean leaveMembership(int memoryId, int userId) throws SQLException {
         return removeMember(memoryId, userId);
     }
 
-    /**
-     * Get all members of a collaborative memory with user details
-     */
     public List<MemoryMember> getMembers(int memoryId) throws SQLException {
         List<MemoryMember> members = new ArrayList<>();
         Connection conn = null;
@@ -114,10 +99,6 @@ public class MemoryMemberDAO {
         }
     }
 
-    /**
-     * Get member role for a user in a memory
-     * Returns null if user is not a member
-     */
     public String getMemberRole(int memoryId, int userId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -144,24 +125,15 @@ public class MemoryMemberDAO {
         }
     }
 
-    /**
-     * Check if user is a member (or owner) of a memory
-     */
     public boolean isMember(int memoryId, int userId) throws SQLException {
         return getMemberRole(memoryId, userId) != null;
     }
 
-    /**
-     * Check if user is the owner of a memory
-     */
     public boolean isOwner(int memoryId, int userId) throws SQLException {
         String role = getMemberRole(memoryId, userId);
         return "owner".equalsIgnoreCase(role);
     }
 
-    /**
-     * Get member count for a memory
-     */
     public int getMemberCount(int memoryId) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -187,9 +159,6 @@ public class MemoryMemberDAO {
         }
     }
 
-    /**
-     * Close database resources
-     */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
             if (rs != null)

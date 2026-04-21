@@ -6,19 +6,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Data Access Object for autograph activity tracking.
- * Handles CRUD operations for the autograph_activity table.
- */
 public class AutographActivityDAO {
 
-    /**
-     * Create a new activity record when someone writes in an autograph book.
-     * 
-     * @param activity The activity to create
-     * @return true if successfully created
-     * @throws SQLException if database error occurs
-     */
     public boolean createActivity(AutographActivity activity) throws SQLException {
         String sql = "INSERT INTO autograph_activity (activity_type, autograph_id, entry_id, invitee_user_id, book_title, created_at) "
                 +
@@ -55,16 +44,6 @@ public class AutographActivityDAO {
         return false;
     }
 
-    /**
-     * Find all activities for autographs owned by a specific user.
-     * This joins with the autograph table to filter by owner, and users table to
-     * get invitee username.
-     * 
-     * @param ownerUserId The user ID of the autograph book owner
-     * @param limit       Maximum number of activities to return
-     * @return List of activities sorted by most recent first
-     * @throws SQLException if database error occurs
-     */
     public List<AutographActivity> findByAutographOwner(int ownerUserId, int limit) throws SQLException {
         String sql = "SELECT aa.activity_id, aa.activity_type, aa.autograph_id, aa.entry_id, " +
                 "aa.invitee_user_id, aa.book_title, aa.created_at, u.username as invitee_username " +
@@ -109,14 +88,6 @@ public class AutographActivityDAO {
         return activities;
     }
 
-    /**
-     * Find recent activities for a specific autograph book.
-     * 
-     * @param autographId The autograph book ID
-     * @param limit       Maximum number of activities to return
-     * @return List of activities sorted by most recent first
-     * @throws SQLException if database error occurs
-     */
     public List<AutographActivity> findByAutographId(int autographId, int limit) throws SQLException {
         String sql = "SELECT aa.activity_id, aa.activity_type, aa.autograph_id, aa.entry_id, " +
                 "aa.invitee_user_id, aa.book_title, aa.created_at, u.username as invitee_username " +

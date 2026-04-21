@@ -13,11 +13,6 @@ public class EventDAO {
     public EventDAO() {
     }
 
-    /**
-     * Create a new event
-     *
-     * @return the generated event_id, or -1 on failure
-     */
     public int createEvent(Event event) {
         String sql = "INSERT INTO event (e_title, e_description, e_date, created_at, group_id, event_pic) VALUES (?, ?, ?, ?, ?, ?)";
         try (
@@ -48,9 +43,6 @@ public class EventDAO {
         }
     }
 
-    /**
-     * Get event by ID
-     */
     public Event findById(int eventId) {
         String sql = "SELECT event_id, e_title, e_description, e_date, created_at, group_id, event_pic FROM event WHERE event_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -72,9 +64,6 @@ public class EventDAO {
         return null;
     }
 
-    /**
-     * Get all events by group ID
-     */
     public List<Event> findByGroupId(int groupId) {
         String sql = "SELECT event_id, e_title, e_description, e_date, created_at, group_id, event_pic FROM event WHERE group_id = ? ORDER BY e_date DESC";
         List<Event> events = new ArrayList<>();
@@ -96,10 +85,6 @@ public class EventDAO {
         return events;
     }
 
-    /**
-     * Get all events for a specific user (based on groups they created/own)
-     * Only group creators (admins) can see and create events
-     */
     public List<Event> findByUserId(int userId) {
         String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
                 "FROM event e " +
@@ -124,9 +109,6 @@ public class EventDAO {
         return events;
     }
 
-    /**
-     * Get upcoming events for a user (only from groups they created)
-     */
     public List<Event> findUpcomingEventsByUserId(int userId) {
         String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
                 "FROM event e " +
@@ -152,9 +134,6 @@ public class EventDAO {
         return events;
     }
 
-    /**
-     * Get past events for a user (only from groups they created)
-     */
     public List<Event> findPastEventsByUserId(int userId) {
         String sql = "SELECT e.event_id, e.e_title, e.e_description, e.e_date, e.created_at, e.group_id, e.event_pic " +
                 "FROM event e " +
@@ -180,9 +159,6 @@ public class EventDAO {
         return events;
     }
 
-    /**
-     * Check if user is a group admin (has at least one group they created)
-     */
     public boolean isUserGroupAdmin(int userId) {
         String sql = "SELECT COUNT(*) as group_count FROM \"group\" WHERE user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -204,9 +180,6 @@ public class EventDAO {
         return false;
     }
 
-    /**
-     * Update an existing event
-     */
     public boolean updateEvent(Event event) {
         String sql = "UPDATE event SET e_title = ?, e_description = ?, e_date = ?, event_pic = ? WHERE event_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -231,9 +204,6 @@ public class EventDAO {
         }
     }
 
-    /**
-     * Delete event by ID
-     */
     public boolean deleteEvent(int eventId) {
         String sql = "DELETE FROM event WHERE event_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -249,9 +219,6 @@ public class EventDAO {
         }
     }
 
-    /**
-     * Map ResultSet to Event object
-     */
     private Event mapResultSetToEvent(ResultSet rs) throws SQLException {
         Event event = new Event();
         event.setEventId(rs.getInt("event_id"));
@@ -265,13 +232,7 @@ public class EventDAO {
         return event;
     }
 
-    // =============================================
-    // Multi-Group Event Support (event_group table)
-    // =============================================
 
-    /**
-     * Add a group to an event (event_group junction).
-     */
     public boolean addEventGroup(int eventId, int groupId) {
         String sql = "INSERT INTO event_group (event_id, group_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -289,9 +250,6 @@ public class EventDAO {
         }
     }
 
-    /**
-     * Remove a group from an event.
-     */
     public boolean removeEventGroup(int eventId, int groupId) {
         String sql = "DELETE FROM event_group WHERE event_id = ? AND group_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -306,9 +264,6 @@ public class EventDAO {
         }
     }
 
-    /**
-     * Get all group IDs for an event from event_group junction table.
-     */
     public List<Integer> getGroupIdsForEvent(int eventId) {
         List<Integer> groupIds = new ArrayList<>();
         String sql = "SELECT group_id FROM event_group WHERE event_id = ?";
@@ -326,22 +281,14 @@ public class EventDAO {
         return groupIds;
     }
 
-    /**
-     * Sync groups for an event: remove old ones, add new ones.
-     * Also keeps event.group_id in sync with the first group for backward
-     * compatibility.
-     */
     public void setEventGroups(int eventId, List<Integer> groupIds) {
-        // First, remove all existing group mappings
         String deleteSql = "DELETE FROM event_group WHERE event_id = ?";
         String insertSql = "INSERT INTO event_group (event_id, group_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
         try (Connection conn = DatabaseUtil.getConnection()) {
-            // Delete existing
             try (PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
                 stmt.setInt(1, eventId);
                 stmt.executeUpdate();
             }
-            // Insert new ones
             try (PreparedStatement stmt = conn.prepareStatement(insertSql)) {
                 for (int groupId : groupIds) {
                     stmt.setInt(1, eventId);
@@ -350,7 +297,6 @@ public class EventDAO {
                 }
                 stmt.executeBatch();
             }
-            // Keep event.group_id in sync (use first group)
             if (!groupIds.isEmpty()) {
                 try (PreparedStatement stmt = conn
                         .prepareStatement("UPDATE event SET group_id = ? WHERE event_id = ?")) {

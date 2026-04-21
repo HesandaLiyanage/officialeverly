@@ -6,19 +6,10 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * Data Access Object for Admin User Management operations.
- * Handles all database operations related to listing, searching,
- * toggling status, and deleting users from the admin panel.
- */
 public class AdminUserDAO {
 
     private static final Logger logger = Logger.getLogger(AdminUserDAO.class.getName());
 
-    /**
-     * Get all users with basic info for the admin user table.
-     * Returns a list of maps, each containing user details.
-     */
     public List<Map<String, Object>> getAllUsers() {
         List<Map<String, Object>> users = new ArrayList<>();
 
@@ -49,9 +40,6 @@ public class AdminUserDAO {
         return users;
     }
 
-    /**
-     * Get total user count.
-     */
     public int getTotalUserCount() {
         String sql = "SELECT COUNT(*) FROM users";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -67,9 +55,6 @@ public class AdminUserDAO {
         return 0;
     }
 
-    /**
-     * Get active user count.
-     */
     public int getActiveUserCount() {
         String sql = "SELECT COUNT(*) FROM users WHERE is_active = true";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -85,9 +70,6 @@ public class AdminUserDAO {
         return 0;
     }
 
-    /**
-     * Get inactive user count.
-     */
     public int getInactiveUserCount() {
         String sql = "SELECT COUNT(*) FROM users WHERE is_active = false";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -103,9 +85,6 @@ public class AdminUserDAO {
         return 0;
     }
 
-    /**
-     * Get new users count (joined in the last 30 days).
-     */
     public int getNewUsersCount() {
         String sql = "SELECT COUNT(*) FROM users WHERE joined_at >= CURRENT_DATE - INTERVAL '30 days'";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -121,13 +100,6 @@ public class AdminUserDAO {
         return 0;
     }
 
-    /**
-     * Toggle user active status (activate/deactivate).
-     *
-     * @param userId the user ID
-     * @param active  the new active status
-     * @return true if updated successfully
-     */
     public boolean setUserActiveStatus(int userId, boolean active) {
         String sql = "UPDATE users SET is_active = ? WHERE user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -144,19 +116,12 @@ public class AdminUserDAO {
         return false;
     }
 
-    /**
-     * Delete a user and all their related data.
-     *
-     * @param userId the user ID to delete
-     * @return true if deleted successfully
-     */
     public boolean deleteUser(int userId) {
         Connection conn = null;
         try {
             conn = DatabaseUtil.getConnection();
             conn.setAutoCommit(false);
 
-            // Delete related data in order (respecting foreign key constraints)
             String[] deletionQueries = {
                 "DELETE FROM feed_comment_likes WHERE feed_profile_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?)",
                 "DELETE FROM feed_post_likes WHERE feed_profile_id IN (SELECT feed_profile_id FROM feed_profiles WHERE user_id = ?)",
@@ -181,14 +146,12 @@ public class AdminUserDAO {
 
             for (String query : deletionQueries) {
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    // Count how many ? parameters this query has
                     int paramCount = query.length() - query.replace("?", "").length();
                     for (int i = 1; i <= paramCount; i++) {
                         stmt.setInt(i, userId);
                     }
                     stmt.executeUpdate();
                 } catch (SQLException e) {
-                    // Log but continue - some tables may not exist
                     logger.warning("[AdminUserDAO] Non-critical delete error for user " + userId + ": " + e.getMessage());
                 }
             }
@@ -219,9 +182,6 @@ public class AdminUserDAO {
         return false;
     }
 
-    /**
-     * Get a single user by ID.
-     */
     public Map<String, Object> getUserById(int userId) {
         String sql = "SELECT u.user_id, u.username, u.email, u.is_active, u.joined_at, u.last_login, " +
                      "u.profile_picture_url, u.bio " +
@@ -251,9 +211,6 @@ public class AdminUserDAO {
         return null;
     }
 
-    /**
-     * Get most active users based on content creation (posts, memories, journals).
-     */
     public List<Map<String, Object>> getMostActiveUsers(int limit) {
         List<Map<String, Object>> users = new ArrayList<>();
 
@@ -287,9 +244,6 @@ public class AdminUserDAO {
         return users;
     }
 
-    /**
-     * Get least active users.
-     */
     public List<Map<String, Object>> getLeastActiveUsers(int limit) {
         List<Map<String, Object>> users = new ArrayList<>();
 

@@ -95,6 +95,9 @@
                 const fileInput = document.getElementById('fileInput');
                 const browseBtn = document.getElementById('browseBtn');
                 const previewContainer = document.getElementById('previewContainer');
+                const groupForm = document.getElementById('groupForm');
+                const groupNameInput = document.getElementById('g_name');
+                const groupDescriptionInput = document.getElementById('g_description');
 
                 // File upload functionality
                 browseBtn.addEventListener('click', function (e) {
@@ -164,6 +167,26 @@
                     uploadArea.classList.remove('has-files');
                     fileInput.value = '';
                 };
+
+                groupForm.addEventListener('submit', function (e) {
+                    const name = (groupNameInput.value || '').trim();
+                    const description = (groupDescriptionInput.value || '').trim();
+                    groupNameInput.value = name;
+                    groupDescriptionInput.value = description;
+
+                    if (name.length < 2 || name.length > 120) {
+                        e.preventDefault();
+                        alert('Group name must be between 2 and 120 characters.');
+                        groupNameInput.focus();
+                        return;
+                    }
+
+                    if (description.length > 1000) {
+                        e.preventDefault();
+                        alert('Group description must be 1000 characters or less.');
+                        groupDescriptionInput.focus();
+                    }
+                });
             });
         </script>
 

@@ -8,18 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * Data Access Object for Blocked User operations.
- * Handles all database operations related to blocking/unblocking users in the
- * feed.
- */
 public class BlockedUserDAO {
 
     private static final Logger logger = Logger.getLogger(BlockedUserDAO.class.getName());
 
-    /**
-     * Ensure the blocked_users table exists
-     */
     public void ensureTableExists() {
         String sql = "CREATE TABLE IF NOT EXISTS blocked_users (" +
                 "id SERIAL PRIMARY KEY, " +
@@ -39,13 +31,6 @@ public class BlockedUserDAO {
         }
     }
 
-    /**
-     * Block a user
-     *
-     * @param blockerProfileId The feed profile ID of the user performing the block
-     * @param blockedProfileId The feed profile ID of the user being blocked
-     * @return true if blocked successfully, false otherwise
-     */
     public boolean blockUser(int blockerProfileId, int blockedProfileId) {
         if (blockerProfileId == blockedProfileId) {
             logger.warning("[BlockedUserDAO] Cannot block yourself");
@@ -71,13 +56,6 @@ public class BlockedUserDAO {
         return false;
     }
 
-    /**
-     * Unblock a user
-     *
-     * @param blockerProfileId The feed profile ID of the user who blocked
-     * @param blockedProfileId The feed profile ID of the user to unblock
-     * @return true if unblocked successfully, false otherwise
-     */
     public boolean unblockUser(int blockerProfileId, int blockedProfileId) {
         String sql = "DELETE FROM blocked_users WHERE blocker_profile_id = ? AND blocked_profile_id = ?";
 
@@ -98,13 +76,6 @@ public class BlockedUserDAO {
         return false;
     }
 
-    /**
-     * Check if a user is blocked by another user
-     *
-     * @param blockerProfileId The feed profile ID of the potential blocker
-     * @param blockedProfileId The feed profile ID of the potentially blocked user
-     * @return true if blocked, false otherwise
-     */
     public boolean isBlocked(int blockerProfileId, int blockedProfileId) {
         String sql = "SELECT 1 FROM blocked_users WHERE blocker_profile_id = ? AND blocked_profile_id = ?";
 
@@ -123,12 +94,6 @@ public class BlockedUserDAO {
         return false;
     }
 
-    /**
-     * Get all users blocked by a specific user
-     *
-     * @param blockerProfileId The feed profile ID of the blocker
-     * @return List of FeedProfile objects representing blocked users
-     */
     public List<FeedProfile> getBlockedUsers(int blockerProfileId) {
         List<FeedProfile> blockedUsers = new ArrayList<>();
 
@@ -157,12 +122,6 @@ public class BlockedUserDAO {
         return blockedUsers;
     }
 
-    /**
-     * Get all blocked profile IDs for a given user (used for filtering feed)
-     *
-     * @param blockerProfileId The feed profile ID of the blocker
-     * @return List of blocked feed profile IDs
-     */
     public List<Integer> getBlockedProfileIds(int blockerProfileId) {
         List<Integer> blockedIds = new ArrayList<>();
 
@@ -184,9 +143,6 @@ public class BlockedUserDAO {
         return blockedIds;
     }
 
-    /**
-     * Map ResultSet to FeedProfile object
-     */
     private FeedProfile mapResultSetToProfile(ResultSet rs) throws SQLException {
         FeedProfile profile = new FeedProfile();
         profile.setFeedProfileId(rs.getInt("feed_profile_id"));

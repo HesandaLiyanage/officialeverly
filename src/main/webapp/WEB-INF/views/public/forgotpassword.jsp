@@ -30,7 +30,7 @@
   <h1>Forgot password?</h1>
   <p>Enter the email address associated with your account and we'll send you a link to reset your password.</p>
 
-  <form action="/emailsentreset" method="POST" class="login-form">
+  <form action="/emailsentreset" method="POST" class="login-form" id="forgotPasswordForm">
     <input type="email"
            name="email"
            placeholder="Email address"
@@ -47,5 +47,22 @@
 </div>
 
 <jsp:include page="/WEB-INF/views/public/footer.jsp" />
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('forgotPasswordForm');
+    if (!form) return;
+
+    var emailInput = form.querySelector('input[name="email"]');
+    form.addEventListener('submit', function (e) {
+      var value = (emailInput.value || '').trim();
+      emailInput.value = value;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        e.preventDefault();
+        alert('Please enter a valid email address.');
+        emailInput.focus();
+      }
+    });
+  });
+</script>
 </body>
 </html>

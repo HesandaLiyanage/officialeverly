@@ -133,7 +133,71 @@
       });
     }
 
-    // Search
+    // Search (page-local: forwards query to the current page search input)
+    function isVisible(el) {
+      if (!el) return false;
+      return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+    }
+
+    function dispatchSearchInputEvents(inputEl) {
+      if (!inputEl) return;
+      inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+      inputEl.dispatchEvent(new Event('keyup', { bubbles: true }));
+      inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function getCurrentPageSearchInput() {
+      var directSelectors = [
+        '#followSearchInput',
+        '#userSearch',
+        '#searchInput',
+        '.memories-search-input'
+      ];
+
+      for (var i = 0; i < directSelectors.length; i++) {
+        var input = document.querySelector(directSelectors[i]);
+        if (input && isVisible(input)) {
+          return input;
+        }
+      }
+
+      return null;
+    }
+
+    function openCurrentPageSearchIfNeeded() {
+      var pageSearchInput = getCurrentPageSearchInput();
+      if (pageSearchInput) {
+        return pageSearchInput;
+      }
+
+      var pageSearchButtons = [
+        '#memoriesSearchBtn',
+        '#journalsSearchBtn',
+        '#eventsSearchBtn',
+        '#groupsSearchBtn',
+        '#autographsSearchBtn'
+      ];
+
+      for (var i = 0; i < pageSearchButtons.length; i++) {
+        var btn = document.querySelector(pageSearchButtons[i]);
+        if (btn && isVisible(btn)) {
+          btn.click();
+          break;
+        }
+      }
+
+      return getCurrentPageSearchInput();
+    }
+
+    function forwardToCurrentPageSearch(query) {
+      var pageSearchInput = openCurrentPageSearchIfNeeded();
+      if (!pageSearchInput) {
+        return;
+      }
+      pageSearchInput.value = query;
+      dispatchSearchInputEvents(pageSearchInput);
+    }
+
     var searchBtn = document.getElementById('searchBtn');
     if (searchBtn) {
       searchBtn.addEventListener('click', function (event) {
@@ -148,7 +212,7 @@
               '<path d="m21 21-4.35-4.35"></path>' +
             '</svg>' +
           '</div>' +
-          '<input type="text" placeholder="Search anything..." autofocus>' +
+          '<input type="text" placeholder="Search this page..." autofocus>' +
           '<button class="search-close">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
               '<line x1="18" y1="6" x2="6" y2="18"></line>' +
@@ -159,7 +223,13 @@
         var input = searchBox.querySelector('input');
         input.focus();
 
+        input.addEventListener('input', function () {
+          forwardToCurrentPageSearch(input.value || '');
+        });
+
         var closeSearch = function() {
+          // Clear current page filter when closing header search.
+          forwardToCurrentPageSearch('');
           var newSearchBtn = document.createElement('button');
           newSearchBtn.className = 'search-btn';
           newSearchBtn.id = 'searchBtn';

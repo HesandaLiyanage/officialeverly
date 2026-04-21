@@ -8,15 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * Data Access Object for Vault operations
- * Handles vault password management and vault status checks
- */
 public class VaultDAO {
 
-    /**
-     * Check if user has set up their vault password
-     */
     public boolean hasVaultSetup(int userId) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -45,13 +38,6 @@ public class VaultDAO {
         }
     }
 
-    /**
-     * Set up vault password for a user
-     * 
-     * @param userId   User ID
-     * @param password Plain text password (will be hashed)
-     * @return true if setup was successful
-     */
     public boolean setupVaultPassword(int userId, String password) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -59,7 +45,6 @@ public class VaultDAO {
         try {
             conn = DatabaseUtil.getConnection();
 
-            // Generate salt and hash password
             String salt = PasswordUtil.generateSalt();
             String passwordHash = PasswordUtil.hashPassword(password, salt);
 
@@ -82,13 +67,6 @@ public class VaultDAO {
         }
     }
 
-    /**
-     * Verify vault password for a user
-     * 
-     * @param userId   User ID
-     * @param password Plain text password to verify
-     * @return true if password is correct
-     */
     public boolean verifyVaultPassword(int userId, String password) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -124,16 +102,7 @@ public class VaultDAO {
         }
     }
 
-    /**
-     * Change vault password
-     * 
-     * @param userId          User ID
-     * @param currentPassword Current vault password
-     * @param newPassword     New vault password
-     * @return true if password was changed successfully
-     */
     public boolean changeVaultPassword(int userId, String currentPassword, String newPassword) {
-        // First verify current password
         if (!verifyVaultPassword(userId, currentPassword)) {
             return false;
         }
@@ -144,7 +113,6 @@ public class VaultDAO {
         try {
             conn = DatabaseUtil.getConnection();
 
-            // Generate new salt and hash
             String newSalt = PasswordUtil.generateSalt();
             String newPasswordHash = PasswordUtil.hashPassword(newPassword, newSalt);
 
@@ -166,9 +134,6 @@ public class VaultDAO {
         }
     }
 
-    /**
-     * Close database resources
-     */
     private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) {
         try {
             if (rs != null)

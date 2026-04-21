@@ -10,16 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * Data Access Object for FeedPost operations.
- */
 public class FeedPostDAO {
 
     private static final Logger logger = Logger.getLogger(FeedPostDAO.class.getName());
 
-    /**
-     * Create a new post
-     */
     public int createPost(FeedPost post) {
         String sql = "INSERT INTO feed_posts (memory_id, feed_profile_id, caption) VALUES (?, ?, ?) RETURNING post_id";
 
@@ -43,9 +37,6 @@ public class FeedPostDAO {
         return -1;
     }
 
-    /**
-     * Get post by ID with full details
-     */
     public FeedPost findById(int postId) {
         String sql = "SELECT p.*, m.title, m.description, m.cover_media_id, m.created_timestamp as memory_created, " +
                 "f.feed_username, f.feed_profile_picture_url, f.feed_bio, " +
@@ -72,9 +63,6 @@ public class FeedPostDAO {
         return null;
     }
 
-    /**
-     * Get all posts for FYP (random order, no algorithm)
-     */
     public List<FeedPost> findAllPosts() {
         List<FeedPost> posts = new ArrayList<>();
 
@@ -102,9 +90,6 @@ public class FeedPostDAO {
         return posts;
     }
 
-    /**
-     * Get posts by feed profile ID (user's posts)
-     */
     public List<FeedPost> findByFeedProfileId(int feedProfileId) {
         List<FeedPost> posts = new ArrayList<>();
 
@@ -135,9 +120,6 @@ public class FeedPostDAO {
         return posts;
     }
 
-    /**
-     * Check if a memory is already posted by a user
-     */
     public boolean isMemoryPosted(int memoryId, int feedProfileId) {
         String sql = "SELECT COUNT(*) FROM feed_posts WHERE memory_id = ? AND feed_profile_id = ?";
 
@@ -158,9 +140,6 @@ public class FeedPostDAO {
         return false;
     }
 
-    /**
-     * Delete a post
-     */
     public boolean deletePost(int postId) {
         String sql = "DELETE FROM feed_posts WHERE post_id = ?";
 
@@ -178,9 +157,6 @@ public class FeedPostDAO {
         return false;
     }
 
-    /**
-     * Get first media ID for a memory (for constructing viewMedia URL)
-     */
     public Integer getFirstMediaId(int memoryId) {
         String sql = "SELECT mm.media_id FROM memory_media mm " +
                 "WHERE mm.memory_id = ? " +
@@ -203,9 +179,6 @@ public class FeedPostDAO {
         return null;
     }
 
-    /**
-     * Map ResultSet to FeedPost with related objects
-     */
     private FeedPost mapResultSetToPost(ResultSet rs) throws SQLException {
         FeedPost post = new FeedPost();
         post.setPostId(rs.getInt("post_id"));
@@ -215,7 +188,6 @@ public class FeedPostDAO {
         post.setCreatedAt(rs.getTimestamp("created_at"));
         post.setUpdatedAt(rs.getTimestamp("updated_at"));
 
-        // Map memory
         Memory memory = new Memory();
         memory.setMemoryId(rs.getInt("memory_id"));
         memory.setTitle(rs.getString("title"));
@@ -228,7 +200,6 @@ public class FeedPostDAO {
 
         post.setMemory(memory);
 
-        // Map feed profile
         FeedProfile profile = new FeedProfile();
         profile.setFeedProfileId(rs.getInt("feed_profile_id"));
         profile.setFeedUsername(rs.getString("feed_username"));
@@ -236,7 +207,6 @@ public class FeedPostDAO {
         profile.setFeedBio(rs.getString("feed_bio"));
         post.setFeedProfile(profile);
 
-        // Cover URL
         String coverUrl = rs.getString("cover_url");
         if (coverUrl != null) {
             post.setCoverMediaUrl(coverUrl);
@@ -245,9 +215,6 @@ public class FeedPostDAO {
         return post;
     }
 
-    /**
-     * Check if a memory is shared in a feed post
-     */
     public boolean isMemorySharedInFeed(int memoryId) {
         String sql = "SELECT COUNT(*) FROM feed_posts WHERE memory_id = ?";
 

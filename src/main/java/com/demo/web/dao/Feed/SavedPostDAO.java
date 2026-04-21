@@ -8,16 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * SavedPostDAO - Handles saved/bookmarked posts operations.
- */
 public class SavedPostDAO {
 
     private static final Logger logger = Logger.getLogger(SavedPostDAO.class.getName());
 
-    /**
-     * Save a post (bookmark)
-     */
     public boolean savePost(int feedProfileId, int postId) {
         String sql = "INSERT INTO saved_posts (feed_profile_id, post_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
 
@@ -38,9 +32,6 @@ public class SavedPostDAO {
         }
     }
 
-    /**
-     * Unsave a post (remove bookmark)
-     */
     public boolean unsavePost(int feedProfileId, int postId) {
         String sql = "DELETE FROM saved_posts WHERE feed_profile_id = ? AND post_id = ?";
 
@@ -61,9 +52,6 @@ public class SavedPostDAO {
         }
     }
 
-    /**
-     * Check if a post is saved by user
-     */
     public boolean isPostSaved(int feedProfileId, int postId) {
         String sql = "SELECT 1 FROM saved_posts WHERE feed_profile_id = ? AND post_id = ?";
 
@@ -84,9 +72,6 @@ public class SavedPostDAO {
         }
     }
 
-    /**
-     * Get all saved posts for a user
-     */
     public List<FeedPost> getSavedPosts(int feedProfileId) {
         List<FeedPost> posts = new ArrayList<>();
 
@@ -117,9 +102,6 @@ public class SavedPostDAO {
         return posts;
     }
 
-    /**
-     * Get count of saved posts for a user
-     */
     public int getSavedPostCount(int feedProfileId) {
         String sql = "SELECT COUNT(*) FROM saved_posts WHERE feed_profile_id = ?";
 
@@ -142,9 +124,6 @@ public class SavedPostDAO {
         return 0;
     }
 
-    /**
-     * Map ResultSet to FeedPost object
-     */
     private FeedPost mapResultSetToFeedPost(ResultSet rs) throws SQLException {
         FeedPost post = new FeedPost();
         post.setPostId(rs.getInt("post_id"));
@@ -152,7 +131,6 @@ public class SavedPostDAO {
         post.setCaption(rs.getString("caption"));
         post.setCoverMediaUrl(rs.getString("cover_media_url"));
 
-        // Handle memory_id which might be null
         int memoryId = rs.getInt("memory_id");
         if (!rs.wasNull()) {
             post.setMemoryId(memoryId);

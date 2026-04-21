@@ -12,16 +12,10 @@ import java.util.logging.Logger;
 public class GroupInviteDAO {
     private static final Logger logger = Logger.getLogger(GroupInviteDAO.class.getName());
 
-    /**
-     * Generate a unique invite token
-     */
     public String generateToken() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
     }
 
-    /**
-     * Create a new invite link
-     */
     public boolean createInvite(GroupInvite invite) {
         String sql = "INSERT INTO group_invite (group_id, invite_token, created_by, created_at, is_active) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -50,9 +44,6 @@ public class GroupInviteDAO {
         return false;
     }
 
-    /**
-     * Find invite by token
-     */
     public GroupInvite findByToken(String token) {
         String sql = "SELECT invite_id, group_id, invite_token, created_by, created_at, is_active FROM group_invite WHERE invite_token = ? AND is_active = TRUE";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -73,12 +64,6 @@ public class GroupInviteDAO {
         return null;
     }
 
-    /**
-     * Find all invites for a group (for access revoking feature)
-     */
-    /**
-     * Find all invites for a group (for access revoking feature)
-     */
     public List<GroupInvite> findByGroupId(int groupId) {
         String sql = "SELECT invite_id, group_id, invite_token, created_by, created_at, is_active FROM group_invite WHERE group_id = ? ORDER BY created_at DESC";
         List<GroupInvite> invites = new ArrayList<>();
@@ -98,9 +83,6 @@ public class GroupInviteDAO {
         return invites;
     }
 
-    /**
-     * Find all active invites created by a user
-     */
     public List<GroupInvite> findInvitesByCreator(int userId) {
         String sql = "SELECT invite_id, group_id, invite_token, created_by, created_at, is_active FROM group_invite WHERE created_by = ? AND is_active = TRUE ORDER BY created_at DESC";
         List<GroupInvite> invites = new ArrayList<>();
@@ -117,9 +99,6 @@ public class GroupInviteDAO {
         return invites;
     }
 
-    /**
-     * Delete/deactivate an invite link
-     */
     public boolean deleteInvite(int inviteId) {
         String sql = "DELETE FROM group_invite WHERE invite_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
@@ -136,9 +115,6 @@ public class GroupInviteDAO {
         return false;
     }
 
-    /**
-     * Deactivate an invite instead of deleting
-     */
     public boolean deactivateInvite(int inviteId) {
         String sql = "UPDATE group_invite SET is_active = FALSE WHERE invite_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();

@@ -21,7 +21,6 @@
             <a href="${pageContext.request.contextPath}/settingssubscription" class="tab">Subscription</a>
             <a href="${pageContext.request.contextPath}/settingsprivacy" class="tab">Privacy & Security</a>
             <a href="${pageContext.request.contextPath}/storagesense" class="tab">Storage Sense</a>
-            <a href="${pageContext.request.contextPath}/settingsnotifications" class="tab">Notifications</a>
         </div>
 
         <div class="back-option">
@@ -43,7 +42,7 @@
                 </div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/editprofileservlet" method="post"
+            <form id="settingsEditProfileForm" action="${pageContext.request.contextPath}/editprofileservlet" method="post"
                 enctype="multipart/form-data">
                 <div class="form-group">
                     <label class="form-label">Username</label>
@@ -199,6 +198,9 @@
             // Password constraints validation
             const newPasswordField = document.getElementById('newPassword');
             const confirmPasswordField = document.getElementById('confirmPassword');
+            const editProfileForm = document.getElementById('settingsEditProfileForm');
+            const usernameField = document.querySelector('input[name="username"]');
+            const bioField = document.querySelector('textarea[name="bio"]');
             const passwordConstraints = document.getElementById('password-constraints');
             const lengthConstraint = document.getElementById('length');
             const uppercaseConstraint = document.getElementById('uppercase');
@@ -253,6 +255,54 @@
 
             if (newPasswordField && !newPasswordField.value) {
                 passwordConstraints.style.display = 'none';
+            }
+
+            if (editProfileForm) {
+                editProfileForm.addEventListener('submit', function (e) {
+                    const username = usernameField ? (usernameField.value || '').trim() : '';
+                    const bio = bioField ? (bioField.value || '').trim() : '';
+                    const newPassword = newPasswordField ? (newPasswordField.value || '') : '';
+                    const confirmPassword = confirmPasswordField ? (confirmPasswordField.value || '') : '';
+                    const currentPassword = document.querySelector('input[name="currentPassword"]');
+                    const currentPasswordValue = currentPassword ? (currentPassword.value || '') : '';
+
+                    if (usernameField) usernameField.value = username;
+                    if (bioField) bioField.value = bio;
+
+                    if (usernameField && username.length > 0 && (username.length < 2 || username.length > 60)) {
+                        e.preventDefault();
+                        alert('Username must be between 2 and 60 characters.');
+                        usernameField.focus();
+                        return;
+                    }
+
+                    if (bioField && bio.length > 500) {
+                        e.preventDefault();
+                        alert('Bio must be 500 characters or less.');
+                        bioField.focus();
+                        return;
+                    }
+
+                    if (newPassword.trim().length > 0) {
+                        if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/.test(newPassword)) {
+                            e.preventDefault();
+                            alert('New password must be at least 8 characters and include uppercase, lowercase, and a number.');
+                            newPasswordField.focus();
+                            return;
+                        }
+                        if (newPassword !== confirmPassword) {
+                            e.preventDefault();
+                            alert('New password and confirm password do not match.');
+                            confirmPasswordField.focus();
+                            return;
+                        }
+                        if (!currentPasswordValue.trim()) {
+                            e.preventDefault();
+                            alert('Please enter your current password to change your password.');
+                            currentPassword.focus();
+                        }
+                    }
+                });
             }
 
         });
