@@ -24,13 +24,6 @@ import java.util.UUID;
 
 public class EventService {
 
-  private boolean isNicCorrect(String nic) {
-    if (nic == null) {
-      return false;
-    }
-    return nic.trim().matches("^(?:\\d{9}[VvXx]|\\d{12})$");
-  }
-
     private EventDAO eventDAO;
     private GroupDAO groupDAO;
     private GroupAnnouncementDAO announcementDAO;
@@ -233,9 +226,6 @@ public class EventService {
             }
             if (request.getSelectedGroupIds() == null || request.getSelectedGroupIds().isEmpty()) {
                 throw new IllegalArgumentException("Please select at least one group");
-            }
-            if (!isNicCorrect(request.getNic())) {
-              throw new IllegalArgumentException("Invalid NIC format. Use 9 digits + V/X or 12 digits.");
             }
 
             for (int gid : request.getSelectedGroupIds()) {
