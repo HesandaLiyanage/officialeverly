@@ -132,6 +132,21 @@
 
 <script>
 
+    <form onsubmit="return validatePhone(document.getElementById('phone').value)">
+
+        <label for="phone">Phone Number:</label>
+        <input
+                type="text"
+                id="phone"
+                name="phone"
+                placeholder="07XXXXXXXX"
+                maxlength="10"
+                required
+        >
+
+            <button type="submit">Submit</button>
+
+    </form>
     // ---------------------------------------------------------------
     // 4A: Phone Number Validation
     // Rule: 10 digits, must start with 07

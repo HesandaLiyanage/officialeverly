@@ -617,23 +617,6 @@ public class MemoryService {
                 return MemoryDeleteResponse.error("You don't have permission to delete this memory", 403);
             }
 
-            // Get media items
-            List<MediaItem> mediaItems = mediaDAO.getMediaByMemoryId(memoryId);
-
-            // Delete physical media files
-            for (MediaItem item : mediaItems) {
-                try {
-                    String filePath = item.getFilePath();
-                    if (filePath != null && !filePath.isEmpty()) {
-                        File file = resolveMediaFile(item, request.getApplicationPath());
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                    }
-                    mediaDAO.deleteMediaItem(item.getMediaId());
-                } catch (Exception ignored) {}
-            }
-
             boolean deleted = memoryDAO.deleteMemoryToRecycleBin(memoryId, userId);
             if (!deleted) {
                 return MemoryDeleteResponse.error("Failed to move memory to Recycle Bin", 500);

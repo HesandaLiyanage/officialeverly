@@ -126,34 +126,6 @@
         .reason-hate_speech { background: #fef2f2; color: #b91c1c; }
         .reason-other { background: #e2e8f0; color: #4a5568; }
 
-        .filter-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .filter-tab {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.3s;
-            text-decoration: none;
-            color: #4a5568;
-        }
-        .filter-tab:hover {
-            border-color: #5b4cdb;
-            color: #5b4cdb;
-        }
-        .filter-tab.active {
-            background: #5b4cdb;
-            color: white;
-            border-color: #5b4cdb;
-        }
-
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -241,20 +213,6 @@
                     <div class="stat-label">Dismissed</div>
                     <div class="stat-value">${dismissedCount != null ? dismissedCount : 0}</div>
                 </div>
-            </div>
-
-            <!-- Filter tabs -->
-            <div class="filter-tabs">
-                <a href="${pageContext.request.contextPath}/admincontent"
-                   class="filter-tab ${currentFilter == 'all' || currentFilter == null ? 'active' : ''}">All</a>
-                <a href="${pageContext.request.contextPath}/admincontent?status=pending"
-                   class="filter-tab ${currentFilter == 'pending' ? 'active' : ''}">Pending</a>
-                <a href="${pageContext.request.contextPath}/admincontent?status=reviewed"
-                   class="filter-tab ${currentFilter == 'reviewed' ? 'active' : ''}">Reviewed</a>
-                <a href="${pageContext.request.contextPath}/admincontent?status=dismissed"
-                   class="filter-tab ${currentFilter == 'dismissed' ? 'active' : ''}">Dismissed</a>
-                <a href="${pageContext.request.contextPath}/admincontent?status=action_taken"
-                   class="filter-tab ${currentFilter == 'action_taken' ? 'active' : ''}">Action Taken</a>
             </div>
 
             <!-- Reported posts table -->

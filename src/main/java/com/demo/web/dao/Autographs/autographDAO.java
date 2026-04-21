@@ -1,9 +1,14 @@
 package com.demo.web.dao.Autographs;
 
 import com.demo.web.model.Autographs.autograph;
+import com.demo.web.model.Autographs.AutographEntry;
 import com.demo.web.model.Journals.RecycleBinItem;
 import com.demo.web.dao.Journals.RecycleBinDAO;
 import com.demo.web.util.DatabaseUtil;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +20,13 @@ public class autographDAO {
     private static final Logger logger = Logger.getLogger(autographDAO.class.getName());
 
     public boolean createAutograph(autograph autograph) {
+        return createAutographAndReturnId(autograph) > 0;
+    }
+
+    public int createAutographAndReturnId(autograph autograph) {
         String sql = "INSERT INTO autograph (a_title, a_description, created_at, user_id, autograph_pic_url) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, autograph.getTitle());
             stmt.setString(2, autograph.getDescription());
             stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
@@ -25,7 +34,17 @@ public class autographDAO {
             stmt.setString(5, autograph.getAutographPicUrl());
             int rowsInserted = stmt.executeUpdate();
             System.out.println("[DEBUG autographDAO] createAutograph affected " + rowsInserted + " rows.");
-            return rowsInserted > 0;
+            if (rowsInserted <= 0) {
+                return -1;
+            }
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int newId = rs.getInt(1);
+                    autograph.setAutographId(newId);
+                    return newId;
+                }
+            }
+            return -1;
         } catch (SQLException e) {
             System.out.println("[DEBUG autographDAO] Error while creating autograph: " + e.getMessage());
             e.printStackTrace();
@@ -217,10 +236,7 @@ public class autographDAO {
         item.setUserId(userId);
         item.setTitle(autograph.getTitle());
         item.setContent(autograph.getDescription());
-        String metadata = "{\"autographPicUrl\": \"" +
-                (autograph.getAutographPicUrl() != null ? autograph.getAutographPicUrl() : "") +
-                "\"}";
-        item.setMetadata(metadata);
+        item.setMetadata(buildRecycleMetadata(autographId, autograph));
 
         RecycleBinDAO rbDao = new RecycleBinDAO();
         int recycleId = rbDao.saveAutographToRecycleBin(item);
@@ -250,26 +266,123 @@ public class autographDAO {
         autograph.setDescription(item.getContent());
         autograph.setUserId(userId);
 
-        String autographPicUrl = "";
-        if (item.getMetadata() != null) {
-            String meta = item.getMetadata();
-            int start = meta.indexOf("\"autographPicUrl\": \"");
-            if (start != -1) {
-                start += 20;
-                int end = meta.indexOf("\"", start);
-                if (end != -1) {
-                    autographPicUrl = meta.substring(start, end);
-                }
-            }
-        }
+        JsonObject metadata = parseMetadata(item.getMetadata());
+        String autographPicUrl = getString(metadata, "autographPicUrl");
         autograph.setAutographPicUrl(autographPicUrl);
 
-        boolean restored = createAutograph(autograph);
+        int restoredAutographId = createAutographAndReturnId(autograph);
+        boolean restored = restoredAutographId > 0;
         if (restored) {
+            restoreEntries(metadata, restoredAutographId, userId);
             rbDao.deleteFromRecycleBin(recycleBinId);
             return true;
         }
         return false;
+    }
+
+    private String buildRecycleMetadata(int autographId, autograph autograph) {
+        JsonObject metadata = new JsonObject();
+        metadata.addProperty("autographPicUrl", autograph.getAutographPicUrl() != null ? autograph.getAutographPicUrl() : "");
+
+        JsonArray entriesArray = new JsonArray();
+        try {
+            AutographEntryDAO entryDAO = new AutographEntryDAO();
+            List<AutographEntry> entries = entryDAO.findByAutographId(autographId);
+            for (AutographEntry entry : entries) {
+                JsonObject entryJson = new JsonObject();
+                entryJson.addProperty("link", entry.getLink() != null ? entry.getLink() : "");
+                entryJson.addProperty("content", entry.getContent() != null ? entry.getContent() : "");
+                entryJson.addProperty("contentPlain", entry.getContentPlain() != null ? entry.getContentPlain() : "");
+                entryJson.addProperty("userId", entry.getUserId());
+                if (entry.getSubmittedAt() != null) {
+                    entryJson.addProperty("submittedAtEpoch", entry.getSubmittedAt().getTime());
+                }
+                entriesArray.add(entryJson);
+            }
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Failed to capture autograph entries for recycle bin metadata", e);
+        }
+
+        metadata.add("entries", entriesArray);
+        return metadata.toString();
+    }
+
+    private void restoreEntries(JsonObject metadata, int restoredAutographId, int fallbackUserId) {
+        if (metadata == null || !metadata.has("entries") || !metadata.get("entries").isJsonArray()) {
+            return;
+        }
+
+        AutographEntryDAO entryDAO = new AutographEntryDAO();
+        JsonArray entries = metadata.getAsJsonArray("entries");
+        for (JsonElement entryElement : entries) {
+            if (!entryElement.isJsonObject()) {
+                continue;
+            }
+            JsonObject entryJson = entryElement.getAsJsonObject();
+            AutographEntry entry = new AutographEntry();
+            entry.setAutographId(restoredAutographId);
+            entry.setLink(getString(entryJson, "link"));
+            entry.setContent(getString(entryJson, "content"));
+            entry.setContentPlain(getString(entryJson, "contentPlain"));
+            entry.setUserId(getInt(entryJson, "userId", fallbackUserId));
+            long submittedEpoch = getLong(entryJson, "submittedAtEpoch", -1L);
+            if (submittedEpoch > 0) {
+                entry.setSubmittedAt(new java.util.Date(submittedEpoch));
+            }
+
+            try {
+                entryDAO.createEntry(entry);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Failed to restore autograph entry for autograph " + restoredAutographId, e);
+            }
+        }
+    }
+
+    private JsonObject parseMetadata(String metadata) {
+        if (metadata == null || metadata.trim().isEmpty()) {
+            return new JsonObject();
+        }
+        try {
+            JsonElement parsed = JsonParser.parseString(metadata);
+            if (parsed.isJsonObject()) {
+                return parsed.getAsJsonObject();
+            }
+        } catch (Exception ignored) {
+        }
+        return new JsonObject();
+    }
+
+    private String getString(JsonObject obj, String key) {
+        if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
+            return "";
+        }
+        try {
+            return obj.get(key).getAsString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    private int getInt(JsonObject obj, String key, int fallback) {
+        if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
+            return fallback;
+        }
+        try {
+            return obj.get(key).getAsInt();
+        } catch (Exception e) {
+            return fallback;
+        }
+    }
+
+    private long getLong(JsonObject obj, String key, long fallback) {
+        if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
+            return fallback;
+        }
+        try {
+            return obj.get(key).getAsLong();
+        } catch (Exception e) {
+            return fallback;
+        }
     }
 
     private String generateToken() {

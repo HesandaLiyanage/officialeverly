@@ -15,7 +15,12 @@ public class AutographEntryDAO {
 
             stmt.setString(1, entry.getLink());
             stmt.setString(2, entry.getContent());
-            stmt.setDate(3, new java.sql.Date(System.currentTimeMillis())); // Schema uses DATE
+            java.util.Date submittedAt = entry.getSubmittedAt();
+            if (submittedAt != null) {
+                stmt.setDate(3, new java.sql.Date(submittedAt.getTime()));
+            } else {
+                stmt.setDate(3, new java.sql.Date(System.currentTimeMillis()));
+            }
             stmt.setInt(4, entry.getAutographId());
             stmt.setInt(5, entry.getUserId()); // user_id is NOT NULL
             stmt.setString(6, entry.getContentPlain());
