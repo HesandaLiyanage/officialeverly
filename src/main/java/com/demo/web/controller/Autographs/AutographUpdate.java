@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
 public class AutographUpdate extends HttpServlet {
@@ -46,6 +47,10 @@ public class AutographUpdate extends HttpServlet {
         if (filePart != null && filePart.getSize() > 0) {
             fileUploaded = true;
             String fileName = extractFileName(filePart);
+            if (!isAllowedImageFile(fileName, filePart.getContentType())) {
+                response.sendRedirect(request.getContextPath() + "/autographs?error=invalid_image_format");
+                return;
+            }
             String uploadPath = getServletContext().getRealPath("") + File.separator + "dbimages";
 
             File uploadDir = new File(uploadPath);
@@ -80,5 +85,23 @@ public class AutographUpdate extends HttpServlet {
             }
         }
         return "";
+    }
+
+    private boolean isAllowedImageFile(String fileName, String contentType) {
+        String normalizedFileName = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
+        String normalizedType = contentType == null ? "" : contentType.toLowerCase(Locale.ROOT);
+
+        boolean allowedByExtension = normalizedFileName.endsWith(".jpg")
+                || normalizedFileName.endsWith(".jpeg")
+                || normalizedFileName.endsWith(".png")
+                || normalizedFileName.endsWith(".gif")
+                || normalizedFileName.endsWith(".webp");
+
+        boolean allowedByContentType = "image/jpeg".equals(normalizedType)
+                || "image/png".equals(normalizedType)
+                || "image/gif".equals(normalizedType)
+                || "image/webp".equals(normalizedType);
+
+        return allowedByExtension || allowedByContentType;
     }
 }

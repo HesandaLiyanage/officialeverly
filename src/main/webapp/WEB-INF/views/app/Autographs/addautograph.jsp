@@ -62,11 +62,11 @@
                                             </div>
                                             <h3 class="upload-title">Add Cover Image</h3>
                                             <p class="upload-description">Drag and drop or click to upload</p>
-                                            <p class="upload-hint">PNG, JPG, GIF up to 10MB</p>
+                                            <p class="upload-hint">PNG, JPG, JPEG, GIF, WEBP up to 10MB</p>
                                             <button type="button" class="browse-btn" id="browseBtn">Browse
                                                 Files</button>
                                             <input type="file" class="file-input" id="fileInput" name="coverImage"
-                                                accept="image/png, image/jpeg, image/gif" hidden />
+                                                accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp" hidden />
                                         </div>
                                         <div class="preview-container" id="previewContainer"></div>
                                     </div>
@@ -145,8 +145,13 @@
 
                     const file = files[0]; // Only take first file for cover image
 
-                    if (!file.type.startsWith('image/')) {
-                        alert('Please upload an image file');
+                    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    const fileName = (file.name || '').toLowerCase();
+                    const allowedByExtension = /\.(jpg|jpeg|png|gif|webp)$/.test(fileName);
+                    const allowedByMime = allowedTypes.includes((file.type || '').toLowerCase());
+
+                    if (!allowedByExtension && !allowedByMime) {
+                        alert('Please upload JPG, JPEG, PNG, GIF, or WEBP image.');
                         return;
                     }
 
