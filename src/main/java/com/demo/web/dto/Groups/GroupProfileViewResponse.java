@@ -24,7 +24,7 @@ public class GroupProfileViewResponse {
     private boolean canRemove;
     private int memberId;
     private boolean isRoleViewer;
-    private boolean isRoleMember;
+    private boolean isRoleEditor;
     private boolean isRoleAdmin;
 
     public boolean isSuccess() { return success; }
@@ -64,8 +64,8 @@ public class GroupProfileViewResponse {
     public void setMemberId(int memberId) { this.memberId = memberId; }
     public boolean isRoleViewer() { return isRoleViewer; }
     public void setRoleViewer(boolean roleViewer) { isRoleViewer = roleViewer; }
-    public boolean isRoleMember() { return isRoleMember; }
-    public void setRoleMember(boolean roleMember) { isRoleMember = roleMember; }
+    public boolean isRoleEditor() { return isRoleEditor; }
+    public void setRoleEditor(boolean roleEditor) { isRoleEditor = roleEditor; }
     public boolean isRoleAdmin() { return isRoleAdmin; }
     public void setRoleAdmin(boolean roleAdmin) { isRoleAdmin = roleAdmin; }
 

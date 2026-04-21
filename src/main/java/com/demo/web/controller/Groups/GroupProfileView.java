@@ -64,7 +64,7 @@ public class GroupProfileView extends HttpServlet {
             request.setAttribute("canRemove", apiResponse.isCanRemove());
             request.setAttribute("memberId", apiResponse.getMemberId());
             request.setAttribute("isRoleViewer", apiResponse.isRoleViewer());
-            request.setAttribute("isRoleMember", apiResponse.isRoleMember());
+            request.setAttribute("isRoleEditor", apiResponse.isRoleEditor());
             request.setAttribute("isRoleAdmin", apiResponse.isRoleAdmin());
 
             request.getRequestDispatcher("/WEB-INF/views/app/Groups/groupprofile.jsp").forward(request, response);
@@ -74,4 +74,3 @@ public class GroupProfileView extends HttpServlet {
         }
     }
 }
-
