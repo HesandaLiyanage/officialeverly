@@ -4,6 +4,7 @@ import com.demo.web.dao.Groups.GroupDAO;
 import com.demo.web.dao.Groups.GroupMemberDAO;
 import com.demo.web.dao.Memory.MediaDAO;
 import com.demo.web.dao.Memory.memoryDAO;
+import com.demo.web.dao.Auth.userDAO;
 import com.demo.web.model.Auth.user;
 import com.demo.web.model.Groups.Group;
 import com.demo.web.model.Groups.GroupMember;
@@ -44,6 +45,7 @@ public class GroupService {
     private NotificationDAO notificationDAO;
     private EventDAO eventDAO;
     private EventVoteDAO eventVoteDAO;
+    private userDAO userDAO;
 
     private static final String UPLOAD_DIR = "resources/db images";
 
@@ -57,6 +59,7 @@ public class GroupService {
         this.notificationDAO = new NotificationDAO();
         this.eventDAO = new EventDAO();
         this.eventVoteDAO = new EventVoteDAO();
+        this.userDAO = new userDAO();
     }
 
     public List<Group> getGroupsByUserId(int userId) {
@@ -360,8 +363,11 @@ public class GroupService {
             Group group = groupDAO.findById(groupId);
             if (group == null) return GroupProfileViewResponse.error("/groups?error=Group not found");
 
+            List<GroupMember> members = groupMemberDAO.getMembersByGroupId(groupId);
+            members = ensureOwnerPresent(group, members);
+
             GroupMember targetMember = null;
-            for (GroupMember gm : groupMemberDAO.getMembersByGroupId(groupId)) {
+            for (GroupMember gm : members) {
                 if (gm.getUser().getId() == memberId) {
                     targetMember = gm;
                     break;
@@ -374,7 +380,13 @@ public class GroupService {
             String memberName = (targetMember.getUser() != null) ? targetMember.getUser().getUsername() : "User";
             String memberEmail = (targetMember.getUser() != null) ? targetMember.getUser().getEmail() : "";
             GroupRole memberRole = targetMember.getRoleEnum();
+            if (memberId == group.getUserId()) {
+                memberRole = GroupRole.ADMIN;
+            }
             if (memberRole == null) {
+                memberRole = GroupRole.VIEWER;
+            }
+            if (memberRole == GroupRole.MEMBER) {
                 memberRole = GroupRole.VIEWER;
             }
 
@@ -410,7 +422,7 @@ public class GroupService {
             res.setCanRemove(isAdmin && targetMember.getUser().getId() != req.getCurrentUserId());
             res.setMemberId(memberId);
             res.setRoleViewer(memberRole == GroupRole.VIEWER);
-            res.setRoleMember(memberRole == GroupRole.MEMBER);
+            res.setRoleEditor(memberRole == GroupRole.EDITOR);
             res.setRoleAdmin(memberRole == GroupRole.ADMIN);
 
             return res;
@@ -749,6 +761,7 @@ public class GroupService {
             }
 
             List<GroupMember> members = groupMemberDAO.getMembersByGroupId(groupId);
+            members = ensureOwnerPresent(group, members);
             boolean isAdmin = (group.getUserId() == req.getUserId());
             boolean isMember = groupMemberDAO.isUserMember(groupId, req.getUserId());
             String currentUserRole = isAdmin
@@ -788,12 +801,20 @@ public class GroupService {
                     data.put("username", username);
                     data.put("initials", initials);
                     GroupRole role = member.getRoleEnum();
+                    boolean isOwnerMember = member.getUser() != null && member.getUser().getId() == group.getUserId();
+                    if (isOwnerMember) {
+                        role = GroupRole.ADMIN;
+                    }
                     String roleValue = role != null ? role.getValue() : GroupRole.VIEWER.getValue();
                     String roleLabel = role != null ? role.getLabel() : "Viewer";
+                    if (role == GroupRole.MEMBER) {
+                        roleValue = GroupRole.VIEWER.getValue();
+                        roleLabel = GroupRole.VIEWER.getLabel();
+                    }
                     data.put("role", roleValue);
                     data.put("roleKey", roleValue);
                     data.put("roleLabel", roleLabel);
-                    data.put("isAdminMember", role == GroupRole.ADMIN);
+                    data.put("isAdminMember", isOwnerMember || role == GroupRole.ADMIN);
                     data.put("isEditorMember", role == GroupRole.EDITOR);
                     data.put("isViewerMember", role == GroupRole.VIEWER);
                     data.put("avatarColor", avatarColors[colorIndex % avatarColors.length]);
@@ -806,6 +827,9 @@ public class GroupService {
 
             List<Map<String, String>> editableRoleOptions = new ArrayList<>();
             for (GroupRole role : GroupRole.assignableByAdmin()) {
+                if (role == GroupRole.MEMBER || role == GroupRole.ADMIN) {
+                    continue;
+                }
                 Map<String, String> option = new HashMap<>();
                 option.put("value", role.getValue());
                 option.put("label", role.getLabel());
@@ -859,12 +883,15 @@ public class GroupService {
                     return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Missing parameters");
                 }
                 GroupRole requestedRole = GroupRole.fromValue(req.getNewRole());
-                if (requestedRole == null || !requestedRole.isAssignableByAdmin()) {
-                    return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Invalid role. Must be " + GroupRole.assignableRoleSummary());
+                if (requestedRole == null || (requestedRole != GroupRole.EDITOR && requestedRole != GroupRole.VIEWER)) {
+                    return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Invalid role. Must be editor or viewer");
                 }
                 int memberId = Integer.parseInt(req.getMemberIdStr());
                 if (memberId == req.getUserId()) {
                     return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Cannot change your own role");
+                }
+                if (memberId == group.getUserId()) {
+                    return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Cannot change admin role");
                 }
                 GroupRole currentRole = GroupRole.fromValue(groupMemberDAO.getMemberRole(groupId, memberId));
                 if (currentRole == GroupRole.ADMIN) {
@@ -883,6 +910,9 @@ public class GroupService {
                 int memberId = Integer.parseInt(req.getMemberIdStr());
                 if (memberId == req.getUserId()) {
                     return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Cannot remove yourself");
+                }
+                if (memberId == group.getUserId()) {
+                    return new GroupMemberActionResponse("/groupmembers?groupId=" + groupId + "&error=Cannot remove admin");
                 }
                 boolean removed = groupMemberDAO.deleteGroupMember(groupId, memberId);
                 if (removed) {
@@ -917,6 +947,35 @@ public class GroupService {
         } catch (Exception e) {
             System.err.println("[WARN GroupService] Failed to send group join notification: " + e.getMessage());
         }
+    }
+
+    private List<GroupMember> ensureOwnerPresent(Group group, List<GroupMember> members) {
+        List<GroupMember> safeMembers = members != null ? new ArrayList<>(members) : new ArrayList<>();
+        int ownerId = group.getUserId();
+
+        GroupMember ownerMember = null;
+        for (GroupMember gm : safeMembers) {
+            if (gm.getUser() != null && gm.getUser().getId() == ownerId) {
+                ownerMember = gm;
+                break;
+            }
+        }
+
+        if (ownerMember == null) {
+            user ownerUser = userDAO.findById(ownerId);
+            if (ownerUser == null) {
+                return safeMembers;
+            }
+            ownerMember = new GroupMember();
+            ownerMember.setGroupId(group.getGroupId());
+            ownerMember.setUser(ownerUser);
+            ownerMember.setJoinedAt(group.getCreatedAt());
+            ownerMember.setStatus("active");
+            safeMembers.add(0, ownerMember);
+        }
+
+        ownerMember.setRole(GroupRole.ADMIN);
+        return safeMembers;
     }
 
     private void sendGroupAnnouncementNotifications(int groupId, int actorUserId, String announcementTitle) {

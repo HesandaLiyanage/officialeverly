@@ -79,7 +79,7 @@
                         <div class="permissions-select">
                             <select class="permissions-dropdown" disabled>
                                 <option value="viewer" ${isRoleViewer ? 'selected' : ''}>Viewer</option>
-                                <option value="member" ${isRoleMember ? 'selected' : ''}>Member</option>
+                                <option value="editor" ${isRoleEditor ? 'selected' : ''}>Editor</option>
                                 <option value="admin" ${isRoleAdmin ? 'selected' : ''}>Admin</option>
                             </select>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
