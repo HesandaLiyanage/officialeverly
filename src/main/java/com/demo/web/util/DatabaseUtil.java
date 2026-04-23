@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class DatabaseUtil {
@@ -29,45 +31,19 @@ public class DatabaseUtil {
     }
 
     /**
-     * Load database properties from db.properties file
+     * Load database properties from example, local resource, env, and system overrides.
      */
     private static void loadDatabaseProperties() {
         dbProperties = new Properties();
-        InputStream input = null;
 
-        try {
-            // Try multiple locations for the properties file
-            input = DatabaseUtil.class.getClassLoader().getResourceAsStream("config/db.properties");
+        setDefaultProperties();
+        loadPropertiesFromResource("config/db.properties.example");
+        loadPropertiesFromResource("config/db.properties");
+        loadPropertiesFromResource("config/db.local.properties");
+        loadPropertiesFromEnvironment();
 
-            if (input == null) {
-                input = DatabaseUtil.class.getResourceAsStream("/config/db.properties");
-            }
-
-            if (input == null) {
-                input = DatabaseUtil.class.getClassLoader().getResourceAsStream("db.properties");
-            }
-
-            if (input == null) {
-                // Fallback to default values for development
-                System.err.println("WARNING: db.properties not found, using default values");
-                setDefaultProperties();
-                return;
-            }
-
-            dbProperties.load(input);
-            System.out.println("Database properties loaded successfully");
-
-        } catch (IOException e) {
-            System.err.println("Error loading database properties, using defaults");
-            setDefaultProperties();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        if (isPlaceholder(dbProperties.getProperty("db.password"))) {
+            System.err.println("WARNING: Database password is still using a placeholder value.");
         }
     }
 
@@ -77,9 +53,52 @@ public class DatabaseUtil {
     private static void setDefaultProperties() {
         dbProperties = new Properties();
         dbProperties.setProperty("db.driver", "org.postgresql.Driver");
-        dbProperties.setProperty("db.url", "jdbc:postgresql://localhost:5432/your_database_name");
+        dbProperties.setProperty("db.url", "jdbc:postgresql://localhost:5432/everly");
         dbProperties.setProperty("db.username", "postgres");
-        dbProperties.setProperty("db.password", "password");
+        dbProperties.setProperty("db.password", "CHANGE_ME");
+    }
+
+    private static void loadPropertiesFromResource(String resourcePath) {
+        try (InputStream input = DatabaseUtil.class.getClassLoader().getResourceAsStream(resourcePath)) {
+            if (input == null) {
+                return;
+            }
+            dbProperties.load(input);
+            System.out.println("Database properties loaded from " + resourcePath);
+        } catch (IOException e) {
+            System.err.println("Error loading " + resourcePath + ": " + e.getMessage());
+        }
+    }
+
+    private static void loadPropertiesFromEnvironment() {
+        Map<String, String> envToProperty = new LinkedHashMap<>();
+        envToProperty.put("EVERLY_DB_DRIVER", "db.driver");
+        envToProperty.put("EVERLY_DB_URL", "db.url");
+        envToProperty.put("EVERLY_DB_USERNAME", "db.username");
+        envToProperty.put("EVERLY_DB_PASSWORD", "db.password");
+
+        for (Map.Entry<String, String> entry : envToProperty.entrySet()) {
+            String value = System.getenv(entry.getKey());
+            if (value != null && !value.isBlank()) {
+                dbProperties.setProperty(entry.getValue(), value);
+            }
+        }
+
+        applySystemPropertyOverride("everly.db.driver", "db.driver");
+        applySystemPropertyOverride("everly.db.url", "db.url");
+        applySystemPropertyOverride("everly.db.username", "db.username");
+        applySystemPropertyOverride("everly.db.password", "db.password");
+    }
+
+    private static void applySystemPropertyOverride(String systemKey, String propertyKey) {
+        String value = System.getProperty(systemKey);
+        if (value != null && !value.isBlank()) {
+            dbProperties.setProperty(propertyKey, value);
+        }
+    }
+
+    private static boolean isPlaceholder(String value) {
+        return value == null || value.isBlank() || "CHANGE_ME".equalsIgnoreCase(value);
     }
 
     /**

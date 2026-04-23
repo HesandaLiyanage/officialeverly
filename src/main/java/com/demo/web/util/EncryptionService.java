@@ -293,8 +293,8 @@ public class EncryptionService {
 
     /**
      * Get the server master key, used to encrypt per-file keys.
-     * The key is derived from a secret configured in config/encryption.properties
-     * or falls back to a default for development.
+     * The key is derived from env/system overrides or local config resources,
+     * with an explicit fallback only for unsafe local development.
      */
     public static SecretKey getServerMasterKey() throws Exception {
         if (serverMasterKey != null) {
@@ -309,24 +309,56 @@ public class EncryptionService {
     }
 
     private static String loadServerSecret() {
-        // Try loading from config/encryption.properties
-        try (InputStream input = EncryptionService.class.getClassLoader()
-                .getResourceAsStream("config/encryption.properties")) {
-            if (input != null) {
-                Properties props = new Properties();
-                props.load(input);
-                String secret = props.getProperty("encryption.server.secret");
-                if (secret != null && !secret.isEmpty()) {
-                    return secret;
-                }
-            }
-        } catch (IOException e) {
-            // Fall through to default
+        String systemSecret = System.getProperty("everly.encryption.server.secret");
+        if (systemSecret != null && !systemSecret.isBlank()) {
+            return systemSecret;
         }
 
-        // Fallback for development
-        System.err.println("WARNING: Using default encryption secret. Set encryption.server.secret in config/encryption.properties for production.");
-        return "everly-dev-secret-change-in-production-2024";
+        String envSecret = System.getenv("EVERLY_ENCRYPTION_SERVER_SECRET");
+        if (envSecret != null && !envSecret.isBlank()) {
+            return envSecret;
+        }
+
+        String fileSecret = loadSecretFromResource("config/encryption.local.properties");
+        if (fileSecret != null) {
+            return fileSecret;
+        }
+
+        fileSecret = loadSecretFromResource("config/encryption.properties");
+        if (fileSecret != null) {
+            return fileSecret;
+        }
+
+        fileSecret = loadSecretFromResource("config/encryption.properties.example");
+        if (fileSecret != null) {
+            return fileSecret;
+        }
+
+        System.err.println("WARNING: Using fallback encryption secret. Configure EVERLY_ENCRYPTION_SERVER_SECRET or a local encryption properties file.");
+        return "unsafe-local-dev-secret-change-me";
+    }
+
+    private static String loadSecretFromResource(String resourcePath) {
+        try (InputStream input = EncryptionService.class.getClassLoader().getResourceAsStream(resourcePath)) {
+            if (input == null) {
+                return null;
+            }
+
+            Properties props = new Properties();
+            props.load(input);
+            String secret = props.getProperty("encryption.server.secret");
+            if (secret == null || secret.isBlank()) {
+                return null;
+            }
+
+            if ("CHANGE_ME".equalsIgnoreCase(secret)) {
+                System.err.println("WARNING: Placeholder encryption secret found in " + resourcePath);
+                return null;
+            }
+            return secret;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     // ============================================

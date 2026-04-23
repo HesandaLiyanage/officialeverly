@@ -140,7 +140,7 @@ src/main/java/com/demo/web/
   util/              # Encryption, DB utils, session utils, helpers
 
 src/main/resources/
-  config/            # db.properties, encryption.properties
+  config/            # *.example templates; local secrets stay untracked
   database/          # schema/data/migrations
 
 src/main/webapp/
@@ -159,24 +159,38 @@ src/main/webapp/
 - Apache Tomcat 9+
 
 ### 2) Database setup
-Option A (recommended for full snapshot):
-- Use root SQL exports in repo: `everly_schema.sql` or `everly_schema_pgadmin.sql`
+Use the migration scripts under `src/main/resources/database/`.
 
-Option B (resources migrations):
+Alternative:
 - Check `src/main/resources/database/` and apply schema/migrations in order.
 
 ### 3) Configure DB connection
-Edit:
+Create one of these local files from the example template:
 - `src/main/resources/config/db.properties`
+- `src/main/resources/config/db.local.properties`
 
-Default points to local PostgreSQL database `everly`.
+Start from:
+- `src/main/resources/config/db.properties.example`
+
+Environment variables are also supported:
+- `EVERLY_DB_DRIVER`
+- `EVERLY_DB_URL`
+- `EVERLY_DB_USERNAME`
+- `EVERLY_DB_PASSWORD`
 
 ### 4) Configure encryption secret
-Edit:
+Create one of these local files from the example template:
 - `src/main/resources/config/encryption.properties`
+- `src/main/resources/config/encryption.local.properties`
+
+Start from:
+- `src/main/resources/config/encryption.properties.example`
 
 Set a strong value for:
 - `encryption.server.secret`
+
+Environment variable override:
+- `EVERLY_ENCRYPTION_SERVER_SECRET`
 
 > If this secret changes unexpectedly, previously encrypted media keys will not decrypt.
 
@@ -213,4 +227,3 @@ WAR artifact will be generated under `target/`.
 ## Notes
 - This project intentionally uses manual servlet wiring and explicit route/filter orchestration to demonstrate core Java web architecture without framework autoconfiguration.
 - Some `_unused` views/controllers are preserved for experimentation/testing history.
-

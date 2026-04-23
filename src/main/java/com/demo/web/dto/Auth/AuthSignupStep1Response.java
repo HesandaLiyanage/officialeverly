@@ -1,3 +1,31 @@
 package com.demo.web.dto.Auth;
 
-public class AuthSignupStep1Response { private boolean success; private String errorMessage; private String email; private String password; public boolean isSuccess() { return success; } public void setSuccess(boolean success) { this.success = success; } public String getErrorMessage() { return errorMessage; } public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; } public String getEmail() { return email; } public void setEmail(String email) { this.email = email; } public String getPassword() { return password; } public void setPassword(String password) { this.password = password; } }
+public class AuthSignupStep1Response {
+    private boolean success;
+    private String errorMessage;
+    private String email;
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}

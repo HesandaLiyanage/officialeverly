@@ -429,6 +429,27 @@ public class userDAO {
         }
     }
 
+    public boolean upgradePasswordHash(int userId, String newHash, String newSalt) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "UPDATE users SET password = ?, salt = ? WHERE user_id = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, newHash);
+            stmt.setString(2, newSalt);
+            stmt.setInt(3, userId);
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
+
     private user mapResultSetToUser(ResultSet rs) throws SQLException {
         user user = new user();
         user.setId(rs.getInt("user_id"));

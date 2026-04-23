@@ -4,6 +4,8 @@ import com.demo.web.dao.Auth.userDAO;
 import com.demo.web.dao.Auth.userSessionDAO;
 import com.demo.web.model.Auth.user;
 import com.demo.web.dto.Auth.*;
+import com.demo.web.util.AppLogger;
+import com.demo.web.util.AdminAccessUtil;
 import com.demo.web.util.PasswordUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -20,8 +22,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.logging.Logger;
 
 public class AuthService {
+
+    private static final Logger logger = AppLogger.getLogger(AuthService.class);
 
     private userDAO userDAO;
     private userSessionDAO userSessionDAO;
@@ -37,15 +42,24 @@ public class AuthService {
     public AuthLoginResponse login(AuthLoginRequest request) {
         AuthLoginResponse response = new AuthLoginResponse();
         
-        if (request.getUsername() == null || request.getPassword() == null || 
+        if (request.getUsername() == null || request.getPassword() == null ||
             request.getUsername().isEmpty() || request.getPassword().isEmpty()) {
             response.setErrorMessage("Username and password are required");
             return response;
         }
 
-        user user = userDAO.findByemail(request.getUsername());
+        String usernameOrEmail = request.getUsername().trim();
+        user user = userDAO.findByemail(usernameOrEmail);
         
         if (user != null && PasswordUtil.verifyPassword(request.getPassword(), user.getSalt(), user.getPassword())) {
+            if (PasswordUtil.needsRehash(user.getPassword())) {
+                String upgradedSalt = PasswordUtil.generateSalt();
+                String upgradedHash = PasswordUtil.hashPassword(request.getPassword(), upgradedSalt);
+                if (userDAO.upgradePasswordHash(user.getId(), upgradedHash, upgradedSalt)) {
+                    user.setSalt(upgradedSalt);
+                    user.setPassword(upgradedHash);
+                }
+            }
             
             if (!user.is_active()) {
                 userDAO.reactivateAccount(user.getId());
@@ -58,19 +72,21 @@ public class AuthService {
                 SecretKey masterKey = userDAO.unlockUserMasterKey(user.getId(), request.getPassword());
                 response.setMasterKey(masterKey);
             } catch (Exception e) {
-                // Ignore, as per original logic
+                AppLogger.warn(logger, "Unable to unlock master key during login for user " + user.getId(), e);
             }
 
             if ("true".equals(request.getRememberMe()) || "on".equals(request.getRememberMe())) {
                 try {
                     String token = userSessionDAO.createRememberMeToken(user.getId());
                     response.setRememberMeToken(token);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    AppLogger.warn(logger, "Unable to create remember-me token for user " + user.getId(), e);
+                }
             }
 
             response.setSuccess(true);
             
-            if ("admin".equals(user.getUsername())) {
+            if (AdminAccessUtil.isAdminUser(user)) {
                 response.setRedirectUrl("/adminanalytics");
             }
 
@@ -96,7 +112,7 @@ public class AuthService {
         List<String> errors = new ArrayList<>();
 
         if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) errors.add("Invalid email.");
-        if (password.length() < 6) errors.add("Password too short.");
+        if (!PasswordUtil.isPasswordStrong(password)) errors.add(PasswordUtil.getPasswordRequirements());
         if (!password.equals(confirmPassword)) errors.add("Passwords do not match.");
         if (!"on".equals(request.getTerms())) errors.add("You must agree to Terms.");
 
@@ -109,15 +125,29 @@ public class AuthService {
 
         response.setSuccess(true);
         response.setEmail(email);
-        response.setPassword(password);
         return response;
     }
 
     public AuthSignupStep2Response signupStep2(AuthSignupStep2Request request) {
         AuthSignupStep2Response response = new AuthSignupStep2Response();
 
-        if (request.getName() == null) {
-            response.setErrorMessage("Name is required.");
+        if (request.getName() == null || request.getPassword() == null || request.getConfirmPassword() == null) {
+            response.setErrorMessage("Name and password confirmation are required.");
+            return response;
+        }
+
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            response.setErrorMessage("Passwords do not match.");
+            return response;
+        }
+
+        if (!PasswordUtil.isPasswordStrong(request.getPassword())) {
+            response.setErrorMessage(PasswordUtil.getPasswordRequirements());
+            return response;
+        }
+
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            response.setErrorMessage("Signup session expired. Please start again.");
             return response;
         }
 
@@ -150,12 +180,15 @@ public class AuthService {
                 try {
                     SecretKey masterKey = userDAO.unlockUserMasterKey(newUser.getId(), request.getPassword());
                     response.setMasterKey(masterKey);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    AppLogger.warn(logger, "Unable to unlock master key after signup for user " + newUser.getId(), e);
+                }
             } else {
                 response.setErrorMessage("Failed to create account.");
             }
 
         } catch (Exception e) {
+            AppLogger.error(logger, "Unexpected signup error", e);
             response.setErrorMessage("Unexpected error.");
         }
         
@@ -202,6 +235,7 @@ public class AuthService {
                 response.setErrorMessage("Failed to exchange code for access token.");
             }
         } catch (Exception e) {
+            AppLogger.warn(logger, "Google authentication callback failed", e);
             response.setStatusCode(500);
             response.setErrorMessage("An error occurred during authentication.");
         }
@@ -287,7 +321,7 @@ public class AuthService {
     public String getSessionId(javax.servlet.http.HttpServletRequest request) {
         javax.servlet.http.HttpSession session = request.getSession(false);
         if (session != null) {
-            return (String) session.getAttribute("sessionId");
+            return session.getId();
         }
         return null;
     }

@@ -7,6 +7,7 @@ import javax.servlet.http.*;
 import com.demo.web.dao.Auth.userSessionDAO;
 import com.demo.web.dto.Auth.*;
 import com.demo.web.service.AuthService;
+import com.demo.web.util.SessionUtil;
 
 public class AuthSignup extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -61,7 +62,6 @@ public class AuthSignup extends HttpServlet {
 
         HttpSession session = req.getSession();
         session.setAttribute("temp_email", response.getEmail());
-        session.setAttribute("temp_password", response.getPassword());
         session.setMaxInactiveInterval(30 * 60);
 
         resp.sendRedirect(req.getContextPath() + "/signup2");
@@ -78,7 +78,8 @@ public class AuthSignup extends HttpServlet {
 
         AuthSignupStep2Request request = new AuthSignupStep2Request(
             (String) session.getAttribute("temp_email"),
-            (String) session.getAttribute("temp_password"),
+            req.getParameter("password"),
+            req.getParameter("confirmPassword"),
             req.getParameter("name"),
             req.getParameter("bio")
         );
@@ -92,11 +93,8 @@ public class AuthSignup extends HttpServlet {
         }
 
         session.removeAttribute("temp_email");
-        session.removeAttribute("temp_password");
-        
+        session = SessionUtil.createSession(req, response.getUser());
         session.setAttribute("user", response.getUser());
-        session.setAttribute("user_id", response.getUser().getId());
-        userSessionDAO.createSession(response.getUser().getId(), session.getId());
 
         if (response.getMasterKey() != null) {
             session.setAttribute("masterKey", response.getMasterKey());

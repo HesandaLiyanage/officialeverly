@@ -38,6 +38,18 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="password" class="profile-label">Password</label>
+                                <input type="password" id="password" name="password" class="profile-input"
+                                    placeholder="Re-enter your password" required autocomplete="new-password">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword" class="profile-label">Confirm Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="profile-input"
+                                    placeholder="Confirm your password" required autocomplete="new-password">
+                            </div>
+
+                            <div class="form-group">
                                 <label for="bio" class="profile-label">Bio (Optional)</label>
                                 <textarea id="bio" name="bio" class="profile-textarea"
                                     placeholder="Tell us a bit about yourself..." rows="4"></textarea>
@@ -60,6 +72,8 @@
                 if (!profileForm) return;
 
                 const nameInput = document.getElementById('name');
+                const passwordInput = document.getElementById('password');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
                 const bioInput = document.getElementById('bio');
 
                 profileForm.addEventListener('submit', function (e) {
@@ -73,6 +87,20 @@
                         e.preventDefault();
                         alert('Name must be between 2 and 60 characters.');
                         nameInput.focus();
+                        return;
+                    }
+
+                    if (passwordInput.value.length < 8) {
+                        e.preventDefault();
+                        alert('Password must be at least 8 characters long.');
+                        passwordInput.focus();
+                        return;
+                    }
+
+                    if (passwordInput.value !== confirmPasswordInput.value) {
+                        e.preventDefault();
+                        alert('Passwords do not match.');
+                        confirmPasswordInput.focus();
                         return;
                     }
 

@@ -144,6 +144,9 @@
                             <label class="form-label">Name of the memory</label>
                             <input type="text" class="form-input" name="memoryName" placeholder="e.g., Summer Vacation"
                                 required />
+                            <label class="form-label">Your Name</label>
+                            <input type="text" class="form-input" name="userName" placeholder="Put your name here"
+                                   required />
                         </div>
 
                         <!-- Date Input -->
