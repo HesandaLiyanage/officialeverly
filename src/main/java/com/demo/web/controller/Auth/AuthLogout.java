@@ -1,16 +1,18 @@
 package com.demo.web.controller.Auth;
 
 import com.demo.web.util.SessionUtil;
+import com.demo.web.dao.Auth.userSessionDAO;
+import com.demo.web.util.RememberMeUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Cookie;
 import java.io.IOException;
 
 public class AuthLogout extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private final userSessionDAO userSessionDAO = new userSessionDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -26,31 +28,8 @@ public class AuthLogout extends HttpServlet {
 
     private void handleLogout(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-
-        System.out.println("=== LogoutServlet: Processing logout ===");
-
-        // Revoke session (both HTTP session and database session)
         SessionUtil.revokeSession(request);
-        System.out.println("Session revoked");
-
-        // Clear the "Remember Me" cookie if it exists
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("session_token".equals(cookie.getName())) {
-                    cookie.setValue("");
-                    cookie.setMaxAge(0); // Delete the cookie
-                    cookie.setPath("/");
-                    response.addCookie(cookie);
-                    System.out.println("Remember Me cookie cleared");
-                    break;
-                }
-            }
-        }
-
-        System.out.println("Redirecting to landing page");
-
-        // Redirect to landing page
+        RememberMeUtil.clearRememberMe(request, response, userSessionDAO);
         response.sendRedirect(request.getContextPath() + "/");
     }
 }

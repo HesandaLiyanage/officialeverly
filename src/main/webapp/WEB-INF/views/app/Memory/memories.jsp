@@ -95,7 +95,7 @@
                                         <c:set var="finalCover"
                                             value="${not empty coverUrl ? coverUrl : pageContext.request.contextPath.concat('/resources/images/default-memory.jpg')}" />
 
-                                        <div class="memory-card" data-title="${memory.title}"
+                                        <div class="memory-card" data-title="${memory.title} , ${memory.description}"
                                             onclick="location.href='/memoryview?id=${memory.memoryId}'"
                                             style="cursor: pointer;">
                                             <!-- Cover image served by ViewMediaServlet -->

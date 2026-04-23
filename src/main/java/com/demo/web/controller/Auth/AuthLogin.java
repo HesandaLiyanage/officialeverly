@@ -6,6 +6,10 @@ import com.demo.web.model.Auth.user;
 import com.demo.web.dto.Auth.AuthLoginRequest;
 import com.demo.web.dto.Auth.AuthLoginResponse;
 import com.demo.web.service.AuthService;
+import com.demo.web.util.AppLogger;
+import com.demo.web.util.CookieUtil;
+import com.demo.web.util.RememberMeUtil;
+import com.demo.web.util.RequestPathUtil;
 import com.demo.web.util.SessionUtil;
 
 import javax.servlet.ServletException;
@@ -13,11 +17,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Cookie;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class AuthLogin extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = AppLogger.getLogger(AuthLogin.class);
 
     private AuthService authService;
     private userSessionDAO userSessionDAO;
@@ -69,23 +74,15 @@ public class AuthLogin extends HttpServlet {
         AuthLoginResponse res = authService.login(req);
 
         if (res.isSuccess()) {
-            SessionUtil.createSession(request, res.getUser());
-
-            HttpSession session = request.getSession();
+            HttpSession session = SessionUtil.createSession(request, res.getUser());
             if (res.getMasterKey() != null) {
                 session.setAttribute("masterKey", res.getMasterKey());
-                String sessionId = (String) session.getAttribute("sessionId");
-                if (sessionId != null) {
-                    userSessionDAO.storeMasterKeyInCache(sessionId, res.getMasterKey());
-                }
+                userSessionDAO.storeMasterKeyInCache(session.getId(), res.getMasterKey());
             }
 
             if (res.getRememberMeToken() != null) {
-                Cookie cookie = new Cookie("session_token", res.getRememberMeToken());
-                cookie.setMaxAge(30 * 24 * 60 * 60); // 30 days
-                cookie.setHttpOnly(true);
-                cookie.setPath("/");
-                response.addCookie(cookie);
+                CookieUtil.addHttpOnlyCookie(request, response, RememberMeUtil.COOKIE_NAME,
+                        res.getRememberMeToken(), 30 * 24 * 60 * 60);
             }
 
             if (res.getRedirectUrl() != null) {
@@ -104,8 +101,9 @@ public class AuthLogin extends HttpServlet {
             if (returnUrl == null || returnUrl.isEmpty()) {
                 returnUrl = request.getParameter("return");
             }
-            if (returnUrl != null && !returnUrl.isEmpty() && (returnUrl.startsWith("/") || returnUrl.startsWith(request.getContextPath()))) {
-                response.sendRedirect(returnUrl);
+            String safeRedirect = RequestPathUtil.toApplicationRedirect(request, returnUrl);
+            if (safeRedirect != null) {
+                response.sendRedirect(safeRedirect);
             } else {
                 response.sendRedirect(request.getContextPath() + "/memories");
             }
@@ -116,20 +114,20 @@ public class AuthLogin extends HttpServlet {
     }
 
     private user checkRememberMeToken(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("session_token".equals(cookie.getName())) {
-                    try {
-                        Integer userId = userSessionDAO.getUserIdByToken(cookie.getValue());
-                        if (userId != null) {
-                            return userDAO.findById(userId);
-                        }
-                    } catch (Exception e) {}
-                    break;
-                }
-            }
+        String token = RememberMeUtil.getRememberMeToken(request);
+        if (token == null || token.isBlank()) {
+            return null;
         }
+
+        try {
+            Integer userId = userSessionDAO.getUserIdByToken(token);
+            if (userId != null) {
+                return userDAO.findById(userId);
+            }
+        } catch (Exception e) {
+            AppLogger.warn(logger, "Unable to restore remembered session", e);
+        }
+
         return null;
     }
 }

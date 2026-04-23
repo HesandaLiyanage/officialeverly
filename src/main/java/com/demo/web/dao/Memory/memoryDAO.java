@@ -18,8 +18,8 @@ public class memoryDAO {
 
         try {
             conn = DatabaseUtil.getConnection();
-            String sql = "INSERT INTO memory (title, description, user_id, updated_at, is_public, group_id) " +
-                    "VALUES (?, ?, ?, ?, ?, ?) RETURNING memory_id";
+            String sql = "INSERT INTO memory (title, description, user_id, updated_at, is_public, group_id, user_name) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING memory_id";
 
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, memory.getTitle());
@@ -32,6 +32,7 @@ public class memoryDAO {
             } else {
                 stmt.setNull(6, java.sql.Types.INTEGER);
             }
+          stmt.setString(7, memory.getUserName());
 
             rs = stmt.executeQuery();
 

@@ -5,117 +5,81 @@ import com.demo.web.model.Auth.user;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 public class SessionUtil {
 
-    private static userSessionDAO userSessionDAO = new userSessionDAO();
+    private static final userSessionDAO userSessionDAO = new userSessionDAO();
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
-    /**
-     * Create HTTP session and store in database
-     */
-    public static void createSession(HttpServletRequest request, user user) {
-        System.out.println("=== SessionUtil.createSession START ===");
+    public static HttpSession createSession(HttpServletRequest request, user user) {
+        HttpSession existingSession = request.getSession(false);
+        String previousSessionId = existingSession != null ? existingSession.getId() : null;
 
-        // Create HTTP session
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(true);
+        request.changeSessionId();
+        session = request.getSession(false);
+
+        if (previousSessionId != null && !previousSessionId.equals(session.getId())) {
+            userSessionDAO.revokeSession(previousSessionId);
+        }
+
         session.setAttribute("user_id", user.getId());
         session.setAttribute("username", user.getUsername());
         session.setAttribute("email", user.getEmail());
-        session.setMaxInactiveInterval(30 * 60); // 30 minutes
-
-        System.out.println("HTTP Session created - ID: " + session.getId());
-        System.out.println("User ID: " + user.getId());
-
-        // Store in database
-        String sessionId = session.getId();
-        String deviceName = getDeviceName(request);
-        String deviceType = getDeviceType(request.getHeader("User-Agent"));
-        String ipAddress = getClientIpAddress(request);
-        String userAgent = request.getHeader("User-Agent");
-
-        System.out.println("Device Name: " + deviceName);
-        System.out.println("Device Type: " + deviceType);
-        System.out.println("IP Address: " + ipAddress);
+        session.setAttribute("is_admin", AdminAccessUtil.isAdminUser(user));
+        session.setAttribute("csrf_token", generateCsrfToken());
+        session.setMaxInactiveInterval(30 * 60);
 
         boolean dbResult = userSessionDAO.createSession(
                 user.getId(),
-                sessionId,
-                deviceName,
-                deviceType,
-                ipAddress,
-                userAgent != null ? userAgent : "Unknown Browser"
+                session.getId(),
+                getDeviceName(request),
+                getDeviceType(request.getHeader("User-Agent")),
+                getClientIpAddress(request),
+                request.getHeader("User-Agent") != null ? request.getHeader("User-Agent") : "Unknown Browser"
         );
 
-        System.out.println("Database session created: " + dbResult);
-        System.out.println("=== SessionUtil.createSession END ===");
+        if (!dbResult) {
+            session.invalidate();
+            throw new IllegalStateException("Failed to persist session");
+        }
+
+        return session;
     }
 
-    /**
-     * Validate session against database
-     */
     public static boolean isValidSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-
-        System.out.println("=== SessionUtil.isValidSession START ===");
-        System.out.println("Session exists: " + (session != null));
-
         if (session == null) {
-            System.out.println("Session is null - returning false");
             return false;
         }
 
         Object userId = session.getAttribute("user_id");
-        System.out.println("user_id in session: " + userId);
-
         if (userId == null) {
-            System.out.println("user_id is null - returning false");
             return false;
         }
 
-        // Check database
-        String sessionId = session.getId();
-        System.out.println("Checking session ID in DB: " + sessionId);
-
-        boolean isValid = userSessionDAO.isValidSession(sessionId);
-        System.out.println("Database validation result: " + isValid);
-
-        if (isValid) {
-            System.out.println("Session is valid - returning true");
-            return true;
-        } else {
-            System.out.println("Session invalid in DB - invalidating HTTP session");
+        boolean isValid = userSessionDAO.isValidSession(session.getId());
+        if (!isValid) {
             session.invalidate();
-            return false;
         }
+        return isValid;
     }
 
-    /**
-     * Revoke session (logout)
-     */
     public static void revokeSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
         if (session != null) {
-            String sessionId = session.getId();
-
-            // Revoke in database
-            userSessionDAO.revokeSession(sessionId);
-
-            // Invalidate HTTP session
+            userSessionDAO.revokeSession(session.getId());
             session.invalidate();
         }
     }
 
-    /**
-     * Revoke specific session by ID (for linked devices feature)
-     */
     public static boolean revokeSessionById(String sessionId) {
         return userSessionDAO.revokeSession(sessionId);
     }
 
-    /**
-     * Get device name from request
-     */
     private static String getDeviceName(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
         if (userAgent == null) {
@@ -137,9 +101,6 @@ public class SessionUtil {
         }
     }
 
-    /**
-     * Get device type from user agent
-     */
     private static String getDeviceType(String userAgent) {
         if (userAgent == null) {
             return "Unknown";
@@ -155,9 +116,6 @@ public class SessionUtil {
         }
     }
 
-    /**
-     * Get client IP address
-     */
     private static String getClientIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
@@ -167,5 +125,11 @@ public class SessionUtil {
             ipAddress = request.getRemoteAddr();
         }
         return ipAddress;
+    }
+
+    private static String generateCsrfToken() {
+        byte[] token = new byte[32];
+        SECURE_RANDOM.nextBytes(token);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(token);
     }
 }

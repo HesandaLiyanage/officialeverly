@@ -81,6 +81,12 @@ public class SettingsService {
                     return response;
                 }
 
+                if (!PasswordUtil.isPasswordStrong(request.getNewPassword())) {
+                    response.setErrorMessage(PasswordUtil.getPasswordRequirements());
+                    response.setRedirectUrl("/editprofile");
+                    return response;
+                }
+
                 if (!PasswordUtil.verifyPassword(request.getCurrentPassword(), currentUser.getSalt(), currentUser.getPassword())) {
                     response.setErrorMessage("Current password is incorrect");
                     response.setRedirectUrl("/editprofile");

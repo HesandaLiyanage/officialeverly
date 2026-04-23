@@ -18,6 +18,17 @@ public class Memory {
     private String collabShareKey;
     private Integer groupId; // null if not a group memory
     private boolean isInVault;
+  private String userName;
+
+  public String getUserName() {
+    return userName;
+  }
+
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
+
+
 
     // Constructors
     public Memory() {

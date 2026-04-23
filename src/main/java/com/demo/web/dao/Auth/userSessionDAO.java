@@ -1,6 +1,7 @@
 package com.demo.web.dao.Auth;
 
 import com.demo.web.model.Auth.UserSession;
+import com.demo.web.util.AppLogger;
 import com.demo.web.util.DatabaseUtil;
 
 import javax.crypto.SecretKey;
@@ -14,10 +15,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 public class userSessionDAO {
 
     private static final Map<String, SecretKey> masterKeyCache = new ConcurrentHashMap<>();
+    private static final Logger logger = AppLogger.getLogger(userSessionDAO.class);
 
     public boolean createSession(int userId, String sessionId,
                                  String deviceName, String deviceType,
@@ -49,7 +52,7 @@ public class userSessionDAO {
             return rowsInserted > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(logger, "Failed to create session for user " + userId, e);
             return false;
         } finally {
             closeResources(null, stmt, conn);
@@ -117,7 +120,7 @@ public class userSessionDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(logger, "Failed to look up session " + sessionId, e);
         } finally {
             closeResources(rs, stmt, conn);
         }
@@ -159,7 +162,7 @@ public class userSessionDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(logger, "Failed to load sessions for user " + userId, e);
         } finally {
             closeResources(rs, stmt, conn);
         }
@@ -188,7 +191,7 @@ public class userSessionDAO {
             return false;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(logger, "Failed to revoke session " + sessionId, e);
             return false;
         } finally {
             closeResources(null, stmt, conn);
@@ -235,7 +238,7 @@ public class userSessionDAO {
             return rowsUpdated;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(logger, "Failed to revoke sibling sessions for user " + userId, e);
             return 0;
         } finally {
             closeResources(rs, stmt, conn);
@@ -263,7 +266,7 @@ public class userSessionDAO {
             return false;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(logger, "Failed to delete session " + sessionId, e);
             return false;
         } finally {
             closeResources(null, stmt, conn);
@@ -305,7 +308,7 @@ public class userSessionDAO {
             return rowsDeleted;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(logger, "Failed to delete expired sessions", e);
             return 0;
         } finally {
             closeResources(rs, stmt, conn);
@@ -330,7 +333,7 @@ public class userSessionDAO {
             return rs.next();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.warn(logger, "Session validation query failed for " + sessionId, e);
             return false;
         } finally {
             closeResources(rs, stmt, conn);
@@ -358,7 +361,7 @@ public class userSessionDAO {
             return rowsUpdated > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(logger, "Failed to extend session " + sessionId, e);
             return false;
         } finally {
             closeResources(null, stmt, conn);
@@ -388,7 +391,7 @@ public class userSessionDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(logger, "Failed to create remember-me token for user " + userId, e);
         } finally {
             closeResources(null, stmt, conn);
         }
@@ -416,12 +419,30 @@ public class userSessionDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.warn(logger, "Failed to resolve remember-me token", e);
         } finally {
             closeResources(rs, stmt, conn);
         }
 
         return null;
+    }
+
+    public boolean deleteRememberMeToken(String token) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DatabaseUtil.getConnection();
+            String sql = "DELETE FROM remember_me_tokens WHERE token = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, token);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            AppLogger.warn(logger, "Failed to delete remember-me token", e);
+            return false;
+        } finally {
+            closeResources(null, stmt, conn);
+        }
     }
 
     public int getMasterKeyCacheSize() {
@@ -438,7 +459,7 @@ public class userSessionDAO {
             if (stmt != null) stmt.close();
             if (conn != null) conn.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.warn(logger, "Failed to close JDBC resources", e);
         }
     }
 }

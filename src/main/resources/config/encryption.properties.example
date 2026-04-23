@@ -1,0 +1,5 @@
+# Server-side encryption secret for media at-rest encryption.
+# Copy to encryption.properties or encryption.local.properties for local development,
+# or set EVERLY_ENCRYPTION_SERVER_SECRET in the environment.
+# If this secret changes unexpectedly, previously encrypted media keys will not decrypt.
+encryption.server.secret=CHANGE_ME

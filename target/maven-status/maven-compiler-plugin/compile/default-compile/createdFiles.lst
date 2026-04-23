@@ -25,11 +25,13 @@ com/demo/web/controller/Feed/FeedReportPost.class
 com/demo/web/model/Autographs/AutographActivity.class
 com/demo/web/dto/Events/EventDashboardRequest.class
 com/demo/web/controller/_unused/MainServlet.class
+com/demo/web/filter/SecurityHeadersFilter.class
 com/demo/web/controller/Settings/SettingsSubscriptionManage.class
 com/demo/web/controller/Settings/SettingsSharedLinksView.class
 com/demo/web/dao/Auth/userSessionDAO.class
 com/demo/web/dto/Groups/GroupAnnouncementViewRequest.class
 com/demo/web/dto/Notifications/NotificationPrefsPostRequest.class
+com/demo/web/util/RequestPathUtil.class
 com/demo/web/controller/Memory/CollabMemberRemove.class
 com/demo/web/dto/Groups/GroupsListResponse.class
 com/demo/web/dto/Notifications/NotificationCountRequest.class
@@ -111,6 +113,7 @@ com/demo/web/controller/Feed/FeedUnblockUser.class
 com/demo/web/controller/Events/EventUpdate.class
 com/demo/web/service/JournalService.class
 com/demo/web/dto/Memory/CollabMemoriesListRequest.class
+com/demo/web/util/CookieUtil.class
 com/demo/web/util/EncryptionService$EncryptedData.class
 com/demo/web/controller/Journals/JournalDelete.class
 com/demo/web/dto/Memory/MemoryEditRequest.class
@@ -137,6 +140,7 @@ com/demo/web/dto/Vault/VaultSetupGetRequest.class
 com/demo/web/controller/Groups/GroupMembersList.class
 com/demo/web/controller/Groups/GroupsList.class
 com/demo/web/model/Journals/JournalStreak.class
+com/demo/web/filter/CsrfProtectionFilter.class
 com/demo/web/service/AutographService.class
 com/demo/web/dto/Groups/GroupMemberActionResponse.class
 com/demo/web/dto/Autographs/AutographDashboardResponse.class
@@ -256,6 +260,7 @@ com/demo/web/controller/Admin/AdminSettingsAction.class
 com/demo/web/controller/Events/EventVote.class
 com/demo/web/controller/Vault/VaultSetup.class
 com/demo/web/dto/Journals/JournalDashboardRequest.class
+com/demo/web/util/AppLogger.class
 com/demo/web/dto/Settings/SettingsStorageSenseResponse.class
 com/demo/web/dto/Vault/VaultJournalsResponse.class
 com/demo/web/dto/Journals/JournalViewRequest.class
@@ -271,6 +276,7 @@ com/demo/web/dto/Groups/GroupEditResponse.class
 com/demo/web/dto/Memory/MemoryViewRequest.class
 com/demo/web/dto/Autographs/AutographCreateResponse.class
 com/demo/web/controller/Notifications/NotificationsList.class
+com/demo/web/util/RememberMeUtil.class
 com/demo/web/controller/Memory/CollabMemoriesList.class
 com/demo/web/controller/Journals/JournalEdit.class
 com/demo/web/dto/Autographs/AutographUpdateRequest.class

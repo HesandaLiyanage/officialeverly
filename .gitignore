@@ -12,3 +12,21 @@
 
 # Logs
 *.log
+
+# Local config and secrets
+src/main/resources/config/db.properties
+src/main/resources/config/db.local.properties
+src/main/resources/config/encryption.properties
+src/main/resources/config/encryption.local.properties
+
+# Database dumps / local exports
+db_export/
+everly_schema.sql
+everly_schema_pgadmin.sql
+sql/everly_full_schema.sql
+
+# Runtime uploads / local backups
+src/main/webapp/media_uploads/*
+!src/main/webapp/media_uploads/.gitkeep
+src/main/webapp/resources/css_backup_20260214_101724/
+admin test/

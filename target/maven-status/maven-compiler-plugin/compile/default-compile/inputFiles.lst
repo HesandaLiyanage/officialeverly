@@ -300,6 +300,8 @@
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dto/Vault/VaultSetupPostRequest.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/dto/Vault/VaultSetupPostResponse.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/filter/AuthenticationFilter.java
+/Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/filter/CsrfProtectionFilter.java
+/Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/filter/SecurityHeadersFilter.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/middleware/FrontControllerServlet.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Auth/UserSession.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/model/Auth/user.java
@@ -338,10 +340,14 @@
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/service/UserService.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/service/VaultService.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/AdminAccessUtil.java
+/Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/AppLogger.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/ControllerSessionUtil.java
+/Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/CookieUtil.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/DatabaseUtil.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/EncryptionService.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/PasswordUtil.java
+/Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/RememberMeUtil.java
+/Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/RequestPathUtil.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/SessionUtil.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/ValidationUtil.java
 /Users/hesandatest/Documents/GitHub/officialeverly/src/main/java/com/demo/web/util/VaultUtil.java

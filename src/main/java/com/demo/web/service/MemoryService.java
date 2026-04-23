@@ -54,10 +54,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Service for memory operations.
- * Provides business logic for memory management.
- */
+
 public class MemoryService {
 
     private memoryDAO memoryDAO;
@@ -108,7 +105,7 @@ public class MemoryService {
 
     public MemoryCreateResponse createMemory(MemoryCreateRequest request) {
         int userId = request.getUserId();
-        
+
         try {
             // 1. Business Logic: Check Memory and Storage Limits
             int count = subscriptionDAO.getMemoryCount(userId);
@@ -138,6 +135,7 @@ public class MemoryService {
             memory.setUserId(userId);
             memory.setPublic(false);
             memory.setCollaborative(request.isCollaborative());
+          memory.setUserName(request.getUserName());
 
             // 3. Business Logic: Handle Group Memory and Permissions
             Integer groupId = request.getGroupId();
@@ -150,7 +148,7 @@ public class MemoryService {
                 GroupRole memberRole = GroupRole.fromValue(groupMemberDAO.getMemberRole(groupId, userId));
                 boolean isGroupMember = isGroupAdmin || memberRole != null;
                 boolean canCreate = isGroupAdmin || (memberRole != null && memberRole.canCreateMemories());
-                
+
                 if (!isGroupMember) {
                     return MemoryCreateResponse.error("You are not a member of this group", 403);
                 }
@@ -207,9 +205,7 @@ public class MemoryService {
         }
     }
 
-    /**
-     * Encrypts and saves media files to disk, storing DB records.
-     */
+
     private int processMediaUploads(Collection<Part> fileParts, int userId, int memoryId, String applicationPath) throws Exception {
         int uploadedCount = 0;
         if (fileParts == null) return 0;
@@ -336,9 +332,7 @@ public class MemoryService {
                 keyData.getIv());
     }
 
-    /**
-     * Dispatches notifications for collaborative uploads.
-     */
+
     private void sendCollabUploadNotifications(int memoryId, int userId, int uploadedCount, String memoryName) {
         try {
             List<Integer> members = notificationDAO.getCollabMemoryMembers(memoryId, userId);
@@ -378,13 +372,8 @@ public class MemoryService {
         return null;
     }
 
-   // ==========================================
-    // View Memory Logic
-    // ==========================================
 
-    /**
-     * Views a memory. Checks permissions and loads media items.
-     */
+
     public MemoryViewResponse viewMemory(MemoryViewRequest request) {
         int memoryId = request.getMemoryId();
         int userId = request.getUserId();
@@ -445,9 +434,7 @@ public class MemoryService {
         }
     }
 
-    // ==========================================
-    // Update Memory Logic
-    // ==========================================
+
 
     public MemoryUpdateResponse updateMemory(MemoryUpdateRequest request) {
         int memoryId = request.getMemoryId();
@@ -585,9 +572,6 @@ public class MemoryService {
         }
     }
 
-    // ==========================================
-    // Delete Memory Logic
-    // ==========================================
 
     public MemoryDeleteResponse deleteMemory(MemoryDeleteRequest request) {
         int memoryId = request.getMemoryId();
@@ -640,9 +624,6 @@ public class MemoryService {
         return physicalUploadPath;
     }
 
-    // ==========================================
-    // Fetch Memories List
-    // ==========================================
 
     public MemoriesListResponse getMemoriesList(MemoriesListRequest request) {
         int userId = request.getUserId();
@@ -693,9 +674,7 @@ public class MemoryService {
         }
     }
 
-    // ==========================================
-    // Handle Shared Links
-    // ==========================================
+
 
     public MemoryShareLinkResponse handleShareLink(MemoryShareLinkRequest request) {
         int memoryId = request.getMemoryId();
@@ -743,9 +722,7 @@ public class MemoryService {
         return sb.toString();
     }
 
-    // ==========================================
-    // Memory Edit Handling
-    // ==========================================
+
 
     public com.demo.web.dto.Memory.MemoryEditResponse getMemoryForEdit(com.demo.web.dto.Memory.MemoryEditRequest request) {
         com.demo.web.dto.Memory.MemoryEditResponse response = new com.demo.web.dto.Memory.MemoryEditResponse();
@@ -801,9 +778,6 @@ public class MemoryService {
         return response;
     }
 
-    // ==========================================
-    // Collab Memories Listing and Viewing
-    // ==========================================
 
     public CollabMemoriesListResponse getCollabMemoriesList(CollabMemoriesListRequest request) {
         CollabMemoriesListResponse response = new CollabMemoriesListResponse();
@@ -881,9 +855,7 @@ public class MemoryService {
         return response;
     }
 
-    // ==========================================
-    // Memory Recap Generation
-    // ==========================================
+
 
     public MemoryRecapResponse getMemoryRecaps(MemoryRecapRequest request) {
         MemoryRecapResponse response = new MemoryRecapResponse();
@@ -904,18 +876,18 @@ public class MemoryService {
             for (java.util.Map<String, Object> r : timeRecaps) { r.put("category", "time"); allRecaps.add(r); }
             for (java.util.Map<String, Object> r : eventRecaps) { r.put("category", "event"); allRecaps.add(r); }
             for (java.util.Map<String, Object> r : groupRecaps) { r.put("category", "group"); allRecaps.add(r); }
-            
+
             java.util.Collections.shuffle(allRecaps);
 
             response.setTotalMemories(recapDAO.getTotalMemoryCount(userId));
             response.setTotalEvents(recapDAO.getTotalEventCount(userId));
             response.setTotalGroups(recapDAO.getTotalGroupCount(userId));
-            
+
             response.setAllRecaps(allRecaps);
             response.setTimeRecaps(timeRecaps);
             response.setEventRecaps(eventRecaps);
             response.setGroupRecaps(groupRecaps);
-            
+
             // Build JSON
             StringBuilder json = new StringBuilder("{");
             for (int i = 0; i < allRecaps.size(); i++) {
@@ -997,9 +969,7 @@ public class MemoryService {
                 .replace("\t", "\\t");
     }
 
-    // ==========================================
-    // Handle Collaborative Actions (Join/Leave/Remove)
-    // ==========================================
+
 
     public CollabActionResponse processCollabAction(CollabActionRequest request) {
         int userId = request.getRequesterId();
@@ -1068,9 +1038,7 @@ public class MemoryService {
         }
     }
 
-    // ==========================================
-    // Legacy Getters (kept for backwards compatibility)
-    // ==========================================
+
 
     public List<Memory> getMemoriesByUserId(int userId) {
         try {

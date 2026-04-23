@@ -61,7 +61,6 @@ public class MemoryCreate extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Authenticate Request
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             sendJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "{\"error\": \"Not logged in\"}");
@@ -71,12 +70,12 @@ public class MemoryCreate extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("user_id");
 
         try {
-            // 2. Build Request DTO
             MemoryCreateRequest createRequest = new MemoryCreateRequest();
             createRequest.setUserId(userId);
             createRequest.setMemoryName(request.getParameter("memoryName"));
             createRequest.setMemoryDate(request.getParameter("memoryDate"));
-            
+            createRequest.setUserName(request.getParameter("userName"));
+
             String isCollabParam = request.getParameter("isCollaborative");
             createRequest.setCollaborative("true".equalsIgnoreCase(isCollabParam) || "on".equalsIgnoreCase(isCollabParam));
 
@@ -92,12 +91,10 @@ public class MemoryCreate extends HttpServlet {
             createRequest.setMediaFiles(request.getParts());
             createRequest.setApplicationPath(request.getServletContext().getRealPath(""));
 
-            // 3. Execute Business Logic via Service Layer
             MemoryCreateResponse createResponse = memoryService.createMemory(createRequest);
 
-            // 4. Handle Service Response
             if (!createResponse.isSuccess()) {
-                sendJsonResponse(response, createResponse.getStatusCode(), 
+                sendJsonResponse(response, createResponse.getStatusCode(),
                     "{\"error\": \"" + createResponse.getErrorMessage().replace("\"", "'") + "\"}");
                 return;
             }
@@ -105,16 +102,16 @@ public class MemoryCreate extends HttpServlet {
             // Success
             String successJson = String.format(
                     "{\"success\": true, \"memoryId\": %d, \"filesUploaded\": %d, \"isCollaborative\": %s, \"groupId\": %s}",
-                    createResponse.getMemoryId(), 
-                    createResponse.getFilesUploaded(), 
-                    createResponse.isCollaborative(), 
+                    createResponse.getMemoryId(),
+                    createResponse.getFilesUploaded(),
+                    createResponse.isCollaborative(),
                     createResponse.getGroupId() != null ? createResponse.getGroupId() : "null"
             );
             sendJsonResponse(response, HttpServletResponse.SC_OK, successJson);
 
         } catch (Exception e) {
             e.printStackTrace();
-            sendJsonResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+            sendJsonResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                 "{\"error\": \"Failed: " + e.getMessage().replace("\"", "'") + "\"}");
         }
     }

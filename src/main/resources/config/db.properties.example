@@ -1,0 +1,22 @@
+# PostgreSQL Database Configuration
+# Copy to db.properties or db.local.properties for local development.
+# Environment variables override these values:
+# EVERLY_DB_DRIVER, EVERLY_DB_URL, EVERLY_DB_USERNAME, EVERLY_DB_PASSWORD
+db.driver=org.postgresql.Driver
+db.url=jdbc:postgresql://localhost:5432/everly
+db.username=postgres
+db.password=CHANGE_ME
+
+# Connection Pool Settings
+db.pool.initialSize=5
+db.pool.maxActive=20
+db.pool.maxIdle=10
+db.pool.minIdle=2
+db.pool.maxWaitMillis=30000
+
+# Connection timeout settings
+db.connection.timeout=30
+db.validation.query=SELECT 1
+
+# SSL Settings (optional - set to true for production)
+db.ssl=false

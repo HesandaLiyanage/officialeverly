@@ -1,11 +1,15 @@
 package com.demo.web.filter;
 
 import com.demo.web.util.SessionUtil;
+import com.demo.web.util.RequestPathUtil;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,16 +19,14 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        // Pages that don't require login
-        publicPaths = new HashSet<>(Arrays.asList(
+        publicPaths = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                 "/",
                 "/login",
                 "/register",
                 "/aboutus",
                 "/contact",
+                "/api/login",
                 "/loginservlet",
-                "linkeddevicesservlet",
-                "editprofileservlet",
                 "/saveEvent",
                 "/signup",
                 "/signup2",
@@ -45,12 +47,15 @@ public class AuthenticationFilter implements Filter {
                 "/passwordresetenterpassword",
                 "/plans",
                 "/signupthankyou",
+                "/write-autograph",
                 "/whyeverly",
                 "/youcantaccessthis",
                 "/emailsentreset",
                 "/privacy",
-                "/resources/assets/landing.mp4"
-        ));
+                "/resources/assets/landing.mp4",
+                "/viewMedia",
+                "/viewmedia"
+        )));
     }
 
     @Override
@@ -60,10 +65,10 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        String path = req.getRequestURI().substring(req.getContextPath().length());
+        String path = RequestPathUtil.normalizePath(req);
 
         // Skip static resources
-        if (isStaticResource(path)) {
+        if ("OPTIONS".equalsIgnoreCase(req.getMethod()) || RequestPathUtil.isStaticResource(path)) {
             chain.doFilter(request, response);
             return;
         }
@@ -81,18 +86,13 @@ public class AuthenticationFilter implements Filter {
         }
 
         // Not logged in: redirect to login with return URL
-        String returnUrl = req.getRequestURI().substring(req.getContextPath().length());
-        String loginUrl = req.getContextPath() + "/login?return=" + java.net.URLEncoder.encode(returnUrl, "UTF-8");
+        String returnUrl = path;
+        if (req.getQueryString() != null && !req.getQueryString().isBlank()) {
+            returnUrl = returnUrl + "?" + req.getQueryString();
+        }
+        String loginUrl = req.getContextPath() + "/login?return=" +
+                URLEncoder.encode(returnUrl, StandardCharsets.UTF_8);
         res.sendRedirect(loginUrl);
-    }
-
-    private boolean isStaticResource(String path) {
-        return path.endsWith(".css") || path.endsWith(".js") ||
-                path.endsWith(".jpg") || path.endsWith(".png") ||
-                path.endsWith(".gif") || path.endsWith(".ico") ||
-                path.endsWith(".svg") || path.endsWith(".woff") ||
-                path.endsWith(".woff2") || path.endsWith(".ttf") ||
-                path.endsWith(".eot");
     }
 
     @Override

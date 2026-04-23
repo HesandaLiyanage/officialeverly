@@ -29,14 +29,10 @@ public class MediaView extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-
-        // Check if user is logged in
-        if (session == null || session.getAttribute("user_id") == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Not logged in");
-            return;
+        Integer userId = null;
+        if (session != null) {
+            userId = (Integer) session.getAttribute("user_id");
         }
-
-        Integer userId = (Integer) session.getAttribute("user_id");
 
         // Get media ID from URL (support both 'id' and 'mediaId' parameters)
         String mediaIdParam = request.getParameter("id");
@@ -51,7 +47,7 @@ public class MediaView extends HttpServlet {
         try {
             int mediaId = Integer.parseInt(mediaIdParam);
             MediaStreamRequest streamRequest = new MediaStreamRequest();
-            streamRequest.setUserId(userId);
+            streamRequest.setUserId(userId != null ? userId : -1);
             streamRequest.setMediaId(mediaId);
             streamRequest.setApplicationPath(request.getServletContext().getRealPath(""));
 

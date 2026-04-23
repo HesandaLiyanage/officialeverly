@@ -15,6 +15,17 @@ public class MemoryCreateRequest {
     private Integer groupId;
     private Collection<Part> mediaFiles;
     private String applicationPath;
+  private String userName;
+
+  public String getUserName() {
+    return userName;
+  }
+
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
+
+
 
     // Getters and Setters
 
